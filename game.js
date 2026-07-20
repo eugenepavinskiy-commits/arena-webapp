@@ -1,227 +1,140 @@
-const config = {
-    type: Phaser.CANVAS,
-    width: 400,
-    height: 700,
-    parent: 'game-container',
-    backgroundColor: '#e6d8b8',
-    scene: {
-        create: create
-    }
-};
-
-const game = new Phaser.Game(config);
-
-// Инициализация Telegram WebApp API
-const tg = window.Telegram ? window.Telegram.WebApp : null;
-if (tg) {
-    tg.ready();
-    tg.expand(); // Разворачиваем окно Telegram на весь экран
-}
-
-let combatStep = 'att1'; 
-let attackZones = []; 
-let defendZone1 = null;
-let defendZone2 = null;
-let tempSelectedZone = null;
-
-let statusLabel; 
-let zoneObjects = {};
-let applyBtn;
-
-let p1Hp = 100, p2Hp = 100;
-let p1HpBar, p2HpBar, p1HpText, p2HpText;
-let battleLogText;
-
-// Размеры и координаты кубиков анатомической сетки
-const bodyParts = {
-    head_left:   { x: 186, y: 195, w: 24, h: 24 },
-    head_right:  { x: 214, y: 195, w: 24, h: 24 },
-    chest_left:  { x: 183, y: 232, w: 30, h: 30 },
-    chest_right: { x: 217, y: 232, w: 30, h: 30 },
-    l_arm_top:   { x: 152, y: 235, w: 20, h: 22 },
-    l_arm_bot:   { x: 152, y: 260, w: 20, h: 22 },
-    r_arm_top:   { x: 248, y: 235, w: 20, h: 22 },
-    r_arm_bot:   { x: 248, y: 260, w: 20, h: 22 },
-    belly_top:   { x: 200, y: 270, w: 42, h: 18 },
-    belly_bot:   { x: 200, y: 290, w: 42, h: 18 },
-    leg_left:    { x: 186, y: 330, w: 24, h: 42 },
-    leg_right:   { x: 214, y: 330, w: 24, h: 42 }
-};
-
-function create() {
-    const scene = this;
-
-    // --- ШАПКА И СТАТУСЫ ---
-    scene.add.text(200, 20, 'ТАКТИКА БОЯ: 2 УДАРА / 2 БЛОКА', {
-        fontSize: '13px', fill: '#800000', fontStyle: 'bold', fontFamily: 'Arial'
-    }).setOrigin(0.5);
-
-    // Шкалы HP
-    scene.add.text(25, 45, 'Вы:', { fontSize: '11px', fill: '#2e7d32', fontStyle: 'bold' });
-    p1HpText = scene.add.text(55, 45, '100/100', { fontSize: '11px', fill: '#2e7d32' });
-    scene.add.rectangle(25, 60, 160, 8, 0xcccccc).setOrigin(0, 0.5);
-    p1HpBar = scene.add.rectangle(25, 60, 160, 8, 0x4caf50).setOrigin(0, 0.5);
-
-    scene.add.text(215, 45, 'Враг:', { fontSize: '11px', fill: '#c62828', fontStyle: 'bold' });
-    p2HpText = scene.add.text(245, 45, '100/100', { fontSize: '11px', fill: '#c62828' });
-    scene.add.rectangle(215, 60, 160, 8, 0xcccccc).setOrigin(0, 0.5);
-    p2HpBar = scene.add.rectangle(215, 60, 160, 8, 0xf44336).setOrigin(0, 0.5);
-
-    // Фоновая подложка под сетку
-    const mapBg = scene.add.rectangle(200, 260, 320, 260, 0xf5e9be).setOrigin(0.5);
-    mapBg.setStrokeStyle(1, 0x800000);
-
-    statusLabel = scene.add.text(200, 145, '1-й Удар', {
-        fontSize: '16px', fill: '#800000', fontStyle: 'bold', fontFamily: 'Arial'
-    }).setOrigin(0.5);
-
-    // Слоты экипировки
-    const slotLeft = scene.add.rectangle(80, 250, 42, 42, 0xd4c4a8).setOrigin(0.5);
-    slotLeft.setStrokeStyle(1, 0x800000);
-    scene.add.text(80, 246, '⚔️', { fontSize: '18px' }).setOrigin(0.5);
-    scene.add.text(80, 276, 'Меч', { fontSize: '9px', fill: '#5a4a3a', fontStyle: 'bold' }).setOrigin(0.5);
-
-    const slotRight = scene.add.rectangle(320, 250, 42, 42, 0xd4c4a8).setOrigin(0.5);
-    slotRight.setStrokeStyle(1, 0x800000);
-    scene.add.text(320, 246, '🛡️', { fontSize: '18px' }).setOrigin(0.5);
-    scene.add.text(320, 276, 'Щит', { fontSize: '9px', fill: '#5a4a3a', fontStyle: 'bold' }).setOrigin(0.5);
-
-    // --- СОЗДАНИЕ ОБЪЕМНЫХ КУБИКОВ (3D EFFECT) ---
-    Object.keys(bodyParts).forEach(key => {
-        const part = bodyParts[key];
-
-        const shadow = scene.add.rectangle(part.x + 1, part.y + 1, part.w, part.h, 0x3a4550).setOrigin(0.5);
-        const mainRect = scene.add.rectangle(part.x, part.y, part.w, part.h, 0x7a8b99).setOrigin(0.5);
-        mainRect.setStrokeStyle(1, 0x2c3e50);
-        mainRect.setInteractive();
-
-        const highlight = scene.add.rectangle(part.x, part.y - (part.h / 2) + 2, part.w - 2, 2, 0xffffff, 0.4).setOrigin(0.5);
-
-        zoneObjects[key] = { main: mainRect, shadow: shadow, highlight: highlight, data: part };
-
-        mainRect.on('pointerdown', function () {
-            tempSelectedZone = key;
-            redrawHuman();
-        });
-    });
-
-    // Кнопка "Применить"
-    const btnShadow = scene.add.rectangle(201, 356, 110, 26, 0x3a2e24).setOrigin(0.5);
-    applyBtn = scene.add.rectangle(200, 355, 110, 26, 0xd4c4a8).setOrigin(0.5);
-    applyBtn.setStrokeStyle(2, 0x5a4a3a);
-    applyBtn.setInteractive();
-
-    scene.add.text(200, 355, 'Применить', {
-        fontSize: '12px', fill: '#000000', fontStyle: 'bold', fontFamily: 'Arial'
-    }).setOrigin(0.5);
-
-    // Текстовый лог боя
-    scene.add.text(30, 395, '📜 Лог боя:', {
-        fontSize: '12px', fill: '#5a4a3a', fontStyle: 'bold'
-    });
-
-    const logBg = scene.add.rectangle(200, 490, 340, 160, 0xfcf8ed).setOrigin(0.5);
-    logBg.setStrokeStyle(1, 0xb89768);
-
-    battleLogText = scene.add.text(40, 420, 'Бой начался.\nВыберите 2 удара и 2 блока.', {
-        fontSize: '11px', fill: '#333333', fontFamily: 'Arial',
-        wordWrap: { width: 310 }
-    });
-
-    // Обработка нажатия кнопки "Применить"
-    applyBtn.on('pointerdown', function () {
-        if (!tempSelectedZone) return;
-
-        if (combatStep === 'att1') {
-            attackZones[0] = tempSelectedZone;
-            tempSelectedZone = null;
-            combatStep = 'att2';
-            statusLabel.setText('2-й Удар');
-            statusLabel.setFill('#800000');
-            battleLogText.setText('1-й удар выбран.\nВыберите 2-й удар.');
-        } 
-        else if (combatStep === 'att2') {
-            attackZones[1] = tempSelectedZone;
-            tempSelectedZone = null;
-            combatStep = 'def1';
-            statusLabel.setText('1-й Блок');
-            statusLabel.setFill('#000080');
-            battleLogText.setText('Удары зафиксированы.\nПоставьте 1-й блок.');
-        } 
-        else if (combatStep === 'def1') {
-            defendZone1 = tempSelectedZone;
-            tempSelectedZone = null;
-            combatStep = 'def2';
-            statusLabel.setText('2-й Блок');
-            statusLabel.setFill('#000080');
-            battleLogText.setText('1-й блок поставлен.\nПоставьте 2-й блок.');
-        } 
-        else if (combatStep === 'def2') {
-            defendZone2 = tempSelectedZone;
-            tempSelectedZone = null;
-
-            // Формируем объект с выбранными 2 ударами и 2 блоками
-            const turnData = {
-                attacks: attackZones,
-                defends: [defendZone1, defendZone2]
-            };
-
-            // Если открыто внутри Telegram Mini App — отправляем данные боту!
-            if (tg) {
-                battleLogText.setText('Ход отправлен серверу!\nОжидание ответа...');
-                tg.sendData(JSON.stringify(turnData));
-            } else {
-                // Если проверяем локально в браузере (для тестов без Telegram)
-                p2Hp = Math.max(0, p2Hp - 15);
-                p1Hp = Math.max(0, p1Hp - 10);
-
-                p1HpBar.width = (p1Hp / 100) * 160;
-                p2HpBar.width = (p2Hp / 100) * 160;
-                p1HpText.setText(p1Hp + '/100');
-                p2HpText.setText(p2Hp + '/100');
-
-                battleLogText.setText('Раунд рассчитан!\nВы нанесли 15 урона.\nВраг нанес 10 урона.\nНовый раунд.');
-            }
-
-            // Сброс состояния для следующего шага
-            combatStep = 'att1';
-            attackZones = [];
-            defendZone1 = null;
-            defendZone2 = null;
-            statusLabel.setText('1-й Удар');
-            statusLabel.setFill('#800000');
-            redrawHuman();
-        }
-        redrawHuman();
-    });
-}
-
-function redrawHuman() {
-    Object.keys(bodyParts).forEach(key => {
-        const item = zoneObjects[key];
-        const rect = item.main;
+[17:05, 20.07.2026] Джон Павинский: <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Арена</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #18191c; color: white; text-align: center; margin: 0; padding: 12px; }
         
-        rect.setFillStyle(0x7a8b99);
-        rect.setStrokeStyle(1, 0x2c3e50);
+        /* Вкладки */
+        .nav-tabs { display: flex; justify-content: space-around; background: #22242a; padding: 6px; border-radius: 10px; margin-bottom: 12px; }
+        .tab-btn { background: transparent; color: #aaa; border: none; padding: 8px 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .ta…
+[17:07, 20.07.2026] Джон Павинский: const tg = window.Telegram.WebApp;
+tg.expand();
 
-        if (tempSelectedZone === key) {
-            rect.setFillStyle(0xe67e22);
-            rect.setStrokeStyle(2, 0xd35400);
-        }
+// SVG-векторы оружия
+const svgModels = {
+    sword: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffb74d" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/></svg>,
+    dagger: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M6 18L18 6"/><path d="M18 6V11"/><path d="M18 6H13"/><path d="M4 20l3-3"/></svg>,
+    axe: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e57373" stroke-width="2"><path d="M14 4c0 0 4 1 4 5s-4 5-4 5V4z"/><path d="M5 19l9-9"/></svg>,
+    fists: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg>
+};
 
-        if (attackZones.includes(key)) {
-            rect.setFillStyle(0xc0392b);
-            rect.setStrokeStyle(2, 0x7b241c);
-        }
+const parts = [
+    { id: 'head_left', name: '🙆‍♂️ Голова (Л)' }, { id: 'head_right', name: '🙆‍♂️ Голова (П)' },
+    { id: 'chest_left', name: '🛡️ Грудь (Л)' }, { id: 'chest_right', name: '🛡️ Грудь (П)' },
+    { id: 'l_arm_top', name: '🥊 Л.Рука (В)' }, { id: 'r_arm_top', name: '🥊 П.Рука (В)' },
+    { id: 'belly_top', name: '腹 Живот (В)' }, { id: 'belly_bot', name: '腹 Живот (Н)' },
+    { id: 'leg_left', name: '🦿 Нога (Л)' }, { id: 'leg_right', name: '🦿 Нога (П)' }
+];
 
-        if (defendZone1 === key || defendZone2 === key) {
-            if (attackZones.includes(key)) {
-                rect.setFillStyle(0x8e44ad);
-                rect.setStrokeStyle(2, 0x512e5f);
-            } else {
-                rect.setFillStyle(0x2980b9);
-                rect.setStrokeStyle(2, 0x1b4f72);
-            }
-        }
+let selectedAttacks = [], selectedDefends = [];
+let currentWeapon = 'fists';
+let freePoints = 5, strVal = 5, agiVal = 5, luckVal = 5;
+
+// Рендер иконок в магазине
+document.getElementById('icon-sword').innerHTML = svgModels.sword;
+document.getElementById('icon-dagger').innerHTML = svgModels.dagger;
+document.getElementById('icon-axe').innerHTML = svgModels.axe;
+
+function renderHeroAvatar() {
+    const avatar = document.getElementById('hero-avatar');
+    avatar.innerHTML = `
+        <svg width="100" height="150" viewBox="0 0 100 150">
+            <!-- Голова -->
+            <circle cx="50" cy="30" r="18" fill="#ffd54f"/>
+            <!-- Тело -->
+            <rect x="35" y="52" width="30" height="45" rx="5" fill="#424242"/>
+            <!-- Ноги -->
+            <rect x="37" y="100" width="10" height="35" fill="#212121"/>
+            <rect x="53" y="100" width="10" height="35" fill="#212121"/>
+            <!-- Руки -->
+            <rect x="20" y="55" width="10" height="35" fill="#ffd54f"/>
+            <rect x="70" y="55" width="10" height="35" fill="#ffd54f"/>
+            <!-- Моделька оружия в правой руке -->
+            <g transform="translate(68, 70)">${svgModels[currentWeapon] || ''}</g>
+        </svg>
+    `;
+}
+
+function upgradeStat(stat) {
+    if (freePoints <= 0) return;
+    freePoints--;
+    if (stat === 'str') strVal++;
+    if (stat === 'agi') agiVal++;
+    if (stat === 'luck') luckVal++;
+    
+    document.getElementById('free-points-val').innerText = freePoints;
+    document.getElementById('str-val').innerText = strVal;
+    document.getElementById('agi-val').innerText = agiVal + '%';
+    document.getElementById('luck-val').innerText = luckVal + '%';
+
+    tg.sendData(JSON.stringify({ type: 'upgrade', stat: stat }));
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    if(tab === 'arena') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-arena').classList.add('active');
+    } else if(tab === 'hero') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-hero').classList.add('active');
+        renderHeroAvatar();
+    } else {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        document.getElementById('tab-shop').classList.add('active');
+    }
+}
+
+function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    parts.forEach(p => {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.innerText = p.name;
+        cell.onclick = () => toggleSelect(p.id, cell);
+        grid.appendChild(cell);
     });
 }
+
+function toggleSelect(id, cell) {
+    if (selectedAttacks.includes(id)) {
+        selectedAttacks = selectedAttacks.filter(i => i !== id);
+        selectedDefends.push(id);
+        cell.className = 'cell defend';
+    } else if (selectedDefends.includes(id)) {
+        selectedDefends = selectedDefends.filter(i => i !== id);
+        cell.className = 'cell';
+    } else {
+        if (selectedAttacks.length < 2) {
+            selectedAttacks.push(id);
+            cell.className = 'cell attack';
+        } else if (selectedDefends.length < 2) {
+            selectedDefends.push(id);
+            cell.className = 'cell defend';
+        }
+    }
+}
+
+function sendBattleTurn() {
+    if (selectedAttacks.length !== 2 || selectedDefends.length !== 2) {
+        alert("Выберите 2 зоны атаки (красные) и 2 зоны защиты (синие)!");
+        return;
+    }
+    tg.sendData(JSON.stringify({ type: 'turn', attacks: selectedAttacks, defends: selectedDefends }));
+}
+
+function buyItem(weaponKey) {
+    currentWeapon = weaponKey;
+    tg.sendData(JSON.stringify({ type: 'buy', weapon: weaponKey }));
+}
+
+renderGrid();
+renderHeroAvatar();
