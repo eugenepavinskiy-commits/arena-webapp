@@ -3,213 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apeha RPG Arena</title>
+    <title>Apeha Arena</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #141518; color: #e0e0e0; text-align: center; margin: 0; padding: 10px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #121316; color: #fff; text-align: center; margin: 0; padding: 12px; }
         
-        .nav-tabs { display: flex; justify-content: space-around; background: #1f2128; padding: 4px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #2d303b; }
-        .tab-btn { background: transparent; color: #888; border: none; padding: 12px 8px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; width: 32%; touch-action: manipulation; }
-        .tab-btn.active { background: #ff9800; color: #111; }
+        .header-title { font-size: 16px; font-weight: bold; color: #ff9800; margin-bottom: 8px; }
+        .sub-text { font-size: 12px; color: #aaa; margin-bottom: 12px; }
+
+        /* Полоски Здоровья */
+        .status-box { display: flex; justify-content: space-between; align-items: center; background: #1a1b20; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        .p-info { width: 45%; font-size: 12px; font-weight: bold; }
+        .hp-bar-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+        .hp-bar-fill { background: #4caf50; height: 100%; width: 100%; }
+
+        /* Кнопки выбора зон тела */
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; max-width: 320px; margin: 0 auto 15px auto; }
+        .zone-btn { background: #2a2d36; border: 2px solid #444; color: #fff; font-size: 13px; font-weight: bold; padding: 12px 4px; border-radius: 8px; cursor: pointer; text-align: center; }
         
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        /* Состояния: Атака (Красный) и Защита (Синий) */
+        .zone-btn.attack { background: #b71c1c !important; border-color: #f44336 !important; color: #fff !important; }
+        .zone-btn.defend { background: #0d47a1 !important; border-color: #2196f3 !important; color: #fff !important; }
 
-        .status-container { display: flex; justify-content: space-between; align-items: center; background: #1e2026; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2d303b; }
-        .player-info { width: 45%; font-size: 11px; font-weight: bold; }
-        .bar-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 3px; }
-        .hp-fill { background: #4caf50; height: 100%; width: 100%; }
-
-        .manikin-wrapper { width: 200px; height: 250px; margin: 0 auto 10px auto; background: #1e2026; border-radius: 14px; border: 2px solid #2d303b; padding: 10px; display: flex; justify-content: center; align-items: center; }
-        .body-part { fill: #4a4d57; stroke: #787d8d; stroke-width: 2; cursor: pointer; pointer-events: visiblePainted; transition: fill 0.15s; }
-        .body-part.attack { fill: #d32f2f !important; stroke: #f44336 !important; }
-        .body-part.defend { fill: #1976d2 !important; stroke: #2196f3 !important; }
-
-        .battle-log { background: #0c0d0f; border: 1px solid #2a2d36; border-radius: 8px; padding: 10px; height: 130px; overflow-y: auto; text-align: left; font-family: monospace; font-size: 11px; line-height: 1.4; margin-top: 10px; }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #1a1c23; padding-bottom: 2px; }
-
-        .shop-card { background: #1e2026; border: 1px solid #2d303b; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-        .action-btn { background: #4caf50; border: none; color: white; padding: 10px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; touch-action: manipulation; }
+        .action-btn { width: 100%; max-width: 320px; padding: 14px; background: #ff9800; border: none; color: #000; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 5px; }
+        
+        /* Лог боя */
+        .log-box { background: #0a0b0d; border: 1px solid #222; border-radius: 8px; padding: 10px; height: 120px; overflow-y: auto; text-align: left; font-family: monospace; font-size: 11px; margin-top: 15px; max-width: 320px; margin-left: auto; margin-right: auto; }
+        .log-line { margin-bottom: 4px; border-bottom: 1px solid #18191e; padding-bottom: 2px; color: #ccc; }
     </style>
 </head>
 <body>
 
-    <div class="nav-tabs">
-        <button id="btn-arena" class="tab-btn active" onclick="switchTab('arena')">⚔️ Арена</button>
-        <button id="btn-boss" class="tab-btn" onclick="switchTab('boss')">🐉 Босс</button>
-        <button id="btn-shop" class="tab-btn" onclick="switchTab('shop')">🛒 Лавка</button>
-    </div>
+    <div class="header-title">⚔️ Apeha RPG Арена</div>
+    <div class="sub-text">Нажмите 2 зоны для атаки и 2 зоны для защиты</div>
 
-    <!-- 1. АРЕНА -->
-    <div id="tab-arena" class="tab-content active">
-        <div class="status-container">
-            <div class="player-info" style="text-align:left;">
-                <span>Вы</span> (100 HP)
-                <div class="bar-bg"><div class="hp-fill" style="width:100%;"></div></div>
-            </div>
-            <div style="font-size:14px; font-weight:bold; color:#ff9800;">VS</div>
-            <div class="player-info" style="text-align:right;">
-                <span>Противник</span> (100 HP)
-                <div class="bar-bg"><div class="hp-fill" style="width:100%; background:#f44336;"></div></div>
-            </div>
+    <div class="status-box">
+        <div class="p-info" style="text-align:left;"> Вы (100 HP)
+            <div class="hp-bar-bg"><div class="hp-bar-fill"></div></div>
         </div>
-
-        <div class="manikin-wrapper">
-            <svg width="180" height="230" viewBox="0 0 200 280">
-                <circle id="head" class="body-part" cx="100" cy="35" r="22" onclick="handlePartClick('head')"/>
-                <rect id="chest" class="body-part" x="70" y="65" width="60" height="50" rx="6" onclick="handlePartClick('chest')"/>
-                <rect id="belly" class="body-part" x="73" y="120" width="54" height="40" rx="6" onclick="handlePartClick('belly')"/>
-                <rect id="l_arm" class="body-part" x="35" y="65" width="28" height="80" rx="6" onclick="handlePartClick('l_arm')"/>
-                <rect id="r_arm" class="body-part" x="137" y="65" width="28" height="80" rx="6" onclick="handlePartClick('r_arm')"/>
-                <rect id="leg_left" class="body-part" x="73" y="165" width="24" height="100" rx="6" onclick="handlePartClick('leg_left')"/>
-                <rect id="leg_right" class="body-part" x="103" y="165" width="24" height="100" rx="6" onclick="handlePartClick('leg_right')"/>
-            </svg>
-        </div>
-
-        <div style="font-size:12px; color:#aaa; margin-top:5px;">Нажмите 2 зоны атаки и 2 защиты, затем жмите кнопку внизу экрана.</div>
-
-        <div class="battle-log" id="battle-log">
-            <div class="log-entry"><span style="color:#666;">[System]</span> Клиент Apeha запущен. Ожидание выбора зон...</div>
+        <div style="color:#ff9800; font-size:14px; font-weight:bold;">VS</div>
+        <div class="p-info" style="text-align:right;"> Враг (100 HP)
+            <div class="hp-bar-bg"><div class="hp-bar-fill" style="background:#f44336;"></div></div>
         </div>
     </div>
 
-    <!-- 2. БОСС -->
-    <div id="tab-boss" class="tab-content">
-        <div style="background:#1e2026; padding:20px; border-radius:12px; border:1px solid #d32f2f;">
-            <div style="font-size:50px; margin-bottom:10px;">🐉</div>
-            <h3 style="margin:5px 0; color:#f44336;">Древний Дракон</h3>
-            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">Мировой Босс сервера.</p>
-            <button class="action-btn" style="background:#d32f2f; width:100%; padding:14px;" onclick="attackBoss()">🔥 Нанести удар</button>
-        </div>
+    <!-- СЕТКА ЗОН С УНИВЕРСАЛЬНОЙ ОБРАБОТКОЙ -->
+    <div class="grid-container">
+        <div class="zone-btn" style="grid-column: span 3;" data-zone="head">🙆‍♂️ Голова</div>
+        <div class="zone-btn" data-zone="l_arm">🖐️ Л.Рука</div>
+        <div class="zone-btn" data-zone="chest">🛡️ Грудь</div>
+        <div class="zone-btn" data-zone="r_arm">🖐️ П.Рука</div>
+        <div class="zone-btn" style="grid-column: span 3;" data-zone="belly">🥊 Живот</div>
+        <div class="zone-btn" style="grid-column: span 1.5;" data-zone="leg_left">🦵 Л.Нога</div>
+        <div class="zone-btn" style="grid-column: span 1.5;" data-zone="leg_right">🦵 П.Нога</div>
     </div>
 
-    <!-- 3. ЛАВКА -->
-    <div id="tab-shop" class="tab-content">
-        <div class="shop-card">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">⚔️ Железный меч</div>
-                <div style="font-size:11px; color:#aaa;">+4 к Силе урона</div>
-            </div>
-            <button class="action-btn" onclick="buyItem('sword')">100 🪙</button>
-        </div>
-        <div class="shop-card">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">🗡️ Кинжал Убийцы</div>
-                <div style="font-size:11px; color:#aaa;">+6% к Ловкости</div>
-            </div>
-            <button class="action-btn" onclick="buyItem('dagger')">120 🪙</button>
-        </div>
-        <div class="shop-card">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">🪓 Двуручный Топор</div>
-                <div style="font-size:11px; color:#aaa;">+8% к Удаче</div>
-            </div>
-            <button class="action-btn" onclick="buyItem('axe')">150 🪙</button>
-        </div>
-        <div class="shop-card">
-            <div style="text-align:left;">
-                <div style="font-weight:bold;">🔱 Древний Трезубец</div>
-                <div style="font-size:11px; color:#aaa;">+3 Сила, +3% Ловк, +3% Удача</div>
-            </div>
-            <button class="action-btn" onclick="buyItem('trident')">200 🪙</button>
-        </div>
+    <button class="action-btn" id="send-btn">⚔️ СОВЕРШИТЬ ХОД</button>
+
+    <div class="log-box" id="log-box">
+        <div class="log-line"><span style="color:#666;">[System]</span> Выберите зоны. 1-е нажатие — Атака, 2-е — Защита.</div>
     </div>
 
     <script>
         const tg = window.Telegram?.WebApp;
-        if (tg) { 
-            try { 
-                tg.ready(); 
-                tg.expand(); 
-                tg.MainButton.text = "⚔️ СОВЕРШИТЬ ХОД";
-                tg.MainButton.color = "#ff9800";
-                tg.MainButton.textColor = "#000000";
-                tg.MainButton.show();
+        if (tg) {
+            try {
+                tg.ready();
+                tg.expand();
+            } catch(e) {}
+        }
+
+        let attacks = [];
+        let defends = [];
+
+        // Навешиваем слушатели событий прямо на элементы
+        document.querySelectorAll('.zone-btn').forEach(btn => {
+            const handleSelect = (e) => {
+                e.preventDefault();
+                const zone = btn.getAttribute('data-zone');
                 
-                // Обработка нажатия на главную кнопку Telegram
-                Telegram.WebApp.onEvent('mainButtonClicked', function(){
-                    sendBattleTurn();
-                });
-            } catch(e){} 
-        }
-
-        let selectedAttacks = [], selectedDefends = [];
-
-        function handlePartClick(id) {
-            const element = document.getElementById(id);
-            if (!element) return;
-
-            if (selectedAttacks.includes(id)) {
-                selectedAttacks = selectedAttacks.filter(i => i !== id);
-                selectedDefends.push(id);
-                element.setAttribute('class', 'body-part defend');
-            } else if (selectedDefends.includes(id)) {
-                selectedDefends = selectedDefends.filter(i => i !== id);
-                element.setAttribute('class', 'body-part');
-            } else {
-                if (selectedAttacks.length < 2) {
-                    selectedAttacks.push(id);
-                    element.setAttribute('class', 'body-part attack');
-                } else if (selectedDefends.length < 2) {
-                    selectedDefends.push(id);
-                    element.setAttribute('class', 'body-part defend');
+                if (attacks.includes(zone)) {
+                    // Перевод из Атаки в Защиту
+                    attacks = attacks.filter(z => z !== zone);
+                    defends.push(zone);
+                    btn.classList.remove('attack');
+                    btn.classList.add('defend');
+                } else if (defends.includes(zone)) {
+                    // Сброс
+                    defends = defends.filter(z => z !== zone);
+                    btn.classList.remove('defend');
+                } else {
+                    // Выбор зоны
+                    if (attacks.length < 2) {
+                        attacks.push(zone);
+                        btn.classList.add('attack');
+                    } else if (defends.length < 2) {
+                        defends.push(zone);
+                        btn.classList.add('defend');
+                    }
                 }
-            }
-        }
+            };
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            const btn = document.getElementById('btn-' + tab);
-            const content = document.getElementById('tab-' + tab);
-            
-            if (btn) btn.classList.add('active');
-            if (content) content.classList.add('active');
+            btn.addEventListener('touchstart', handleSelect, { passive: false });
+            btn.addEventListener('click', handleSelect);
+        });
 
-            if (tg && tg.MainButton) {
-                if (tab === 'arena') tg.MainButton.show();
-                else tg.MainButton.hide();
-            }
-        }
-
-        function addLogEntry(text) {
-            const log = document.getElementById('battle-log');
-            if (!log) return;
-            const now = new Date().toLocaleTimeString().slice(0, 5);
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = <span style="color:#666;">[${now}]</span> ${text};
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function sendBattleTurn() {
-            if (selectedAttacks.length !== 2 || selectedDefends.length !== 2) {
-                alert("Выберите 2 зоны атаки и 2 зоны защиты!");
+        document.getElementById('send-btn').addEventListener('click', () => {
+            if (attacks.length !== 2 || defends.length !== 2) {
+                alert("Выберите ровно 2 зоны для атаки (красные) и 2 для защиты (синие)!");
                 return;
             }
-            addLogEntry(<span style="color:#ff9800;">Ход отправлен боту! Ожидаем соперника...</span>);
+
+            const log = document.getElementById('log-box');
+            const entry = document.createElement('div');
+            entry.className = 'log-line';
+            entry.innerHTML = <span style="color:#ff9800;">[Ход]</span> Атака: ${attacks.join(', ')} | Защита: ${defends.join(', ')};
+            log.appendChild(entry);
+
             if (tg) {
-                tg.sendData(JSON.stringify({ 
-                    type: 'turn', 
-                    attacks: selectedAttacks, 
-                    defends: selectedDefends 
+                tg.sendData(JSON.stringify({
+                    type: 'turn',
+                    attacks: attacks,
+                    defends: defends
                 }));
             }
-        }
-
-        function attackBoss() {
-            addLogEntry("🔥 Вы нанесли удар по Дракону!");
-            if (tg) tg.sendData(JSON.stringify({ type: 'attack_boss' }));
-        }
-
-        function buyItem(itemKey) {
-            const names = { sword: 'Железный меч', dagger: 'Кинжал Убийцы', axe: 'Двуручный Топор', trident: 'Древний Трезубец' };
-            addLogEntry(🎉 Куплено оружие: ${names[itemKey]});
-            if (tg) tg.sendData(JSON.stringify({ type: 'buy', item: itemKey }));
-        }
+        });
     </script>
 </body>
 </html>
