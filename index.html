@@ -2,28 +2,29 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPG Арена</title>
+    <!-- Официальный скрипт Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #18191c; color: white; text-align: center; margin: 0; padding: 12px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #18191c; color: white; text-align: center; margin: 0; padding: 12px; user-select: none; }
         
-        .nav-tabs { display: flex; justify-content: space-around; background: #22242a; padding: 6px; border-radius: 10px; margin-bottom: 12px; }
-        .tab-btn { background: transparent; color: #aaa; border: none; padding: 10px 14px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .nav-tabs { display: flex; justify-content: space-around; background: #22242a; padding: 4px; border-radius: 10px; margin-bottom: 12px; }
+        .tab-btn { background: transparent; color: #aaa; border: none; padding: 10px 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; width: 32%; }
         .tab-btn.active { background: #ff9800; color: #111; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
-        .cell { background: #2a2c33; border: 2px solid #3a3d47; border-radius: 8px; padding: 12px; font-size: 12px; cursor: pointer; user-select: none; }
+        .cell { background: #2a2c33; border: 2px solid #3a3d47; border-radius: 8px; padding: 12px; font-size: 12px; cursor: pointer; }
         .cell.attack { background: #b71c1c; border-color: #f44336; }
         .cell.defend { background: #0d47a1; border-color: #2196f3; }
 
         .hero-card { background: #22242a; border-radius: 12px; padding: 15px; margin-bottom: 12px; }
-        .avatar { width: 100px; height: 100px; margin: 0 auto 10px; background: #2f323b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; border: 2px solid #ff9800; }
+        .avatar { width: 80px; height: 80px; margin: 0 auto 10px; background: #2f323b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2px solid #ff9800; }
         .stats-list { text-align: left; background: #1a1b1e; padding: 12px; border-radius: 8px; font-size: 14px; }
-        .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .plus-btn { background: #ff9800; border: none; color: black; font-weight: bold; border-radius: 6px; width: 32px; height: 32px; font-size: 18px; cursor: pointer; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .plus-btn { background: #ff9800; border: none; color: black; font-weight: bold; border-radius: 6px; width: 30px; height: 30px; font-size: 16px; cursor: pointer; }
 
         .shop-card { background: #22242a; border: 1px solid #333; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
         .item-info { text-align: left; }
@@ -40,13 +41,13 @@
         <button id="btn-shop" class="tab-btn" onclick="switchTab('shop')">🛒 Магазин</button>
     </div>
 
-    <!-- ВАКЛАДКА 1: БОЙ -->
+    <!-- 1. ВКЛАДКА: БОЙ -->
     <div id="tab-arena" class="tab-content active">
         <div class="body-grid" id="grid"></div>
         <button class="submit-btn" onclick="sendBattleTurn()">Принять ход</button>
     </div>
 
-    <!-- ВКЛАДКА 2: ГЕРОЙ -->
+    <!-- 2. ВКЛАДКА: ГЕРОЙ -->
     <div id="tab-hero" class="tab-content">
         <div class="hero-card">
             <div class="avatar" id="hero-avatar">🗡️</div>
@@ -55,7 +56,7 @@
                     <span>✨ Очки прокачки:</span>
                     <strong id="free-points-val">5</strong>
                 </div>
-                <hr style="border-color:#333; margin: 10px 0;">
+                <hr style="border-color:#333; margin: 8px 0;">
                 <div class="stat-row">
                     <span>💪 Сила: <b id="str-val">5</b></span>
                     <button class="plus-btn" onclick="upgradeStat('str')">+</button>
@@ -72,7 +73,7 @@
         </div>
     </div>
 
-    <!-- ВКЛАДКА 3: МАГАЗИН -->
+    <!-- 3. ВКЛАДКА: МАГАЗИН -->
     <div id="tab-shop" class="tab-content">
         <div class="shop-card">
             <div class="item-info">
@@ -98,8 +99,12 @@
     </div>
 
     <script>
-        const tg = window.Telegram?.WebApp || { expand: ()=>{}, sendData: ()=>{} };
-        try { tg.expand(); } catch(e){}
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready(); // Снимаем серый экран загрузки!
+            tg.expand(); // Разворачиваем на полный экран
+        }
 
         const parts = [
             { id: 'head_left', name: '🙆‍♂️ Голова (Л)' }, { id: 'head_right', name: '🙆‍♂️ Голова (П)' },
@@ -163,7 +168,7 @@
             document.getElementById('agi-val').innerText = agiVal + '%';
             document.getElementById('luck-val').innerText = luckVal + '%';
 
-            tg.sendData(JSON.stringify({ type: 'upgrade', stat: stat }));
+            if (tg) tg.sendData(JSON.stringify({ type: 'upgrade', stat: stat }));
         }
 
         function sendBattleTurn() {
@@ -171,13 +176,13 @@
                 alert("Выберите 2 зоны атаки (красные) и 2 зоны защиты (синие)!");
                 return;
             }
-            tg.sendData(JSON.stringify({ type: 'turn', attacks: selectedAttacks, defends: selectedDefends }));
+            if (tg) tg.sendData(JSON.stringify({ type: 'turn', attacks: selectedAttacks, defends: selectedDefends }));
         }
 
         function buyItem(weaponKey) {
             const avatars = { sword: '⚔️', dagger: '🗡️', axe: '🪓' };
             document.getElementById('hero-avatar').innerText = avatars[weaponKey] || '🗡️';
-            tg.sendData(JSON.stringify({ type: 'buy', weapon: weaponKey }));
+            if (tg) tg.sendData(JSON.stringify({ type: 'buy', weapon: weaponKey }));
         }
 
         renderGrid();
