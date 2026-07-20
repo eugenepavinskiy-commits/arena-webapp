@@ -1,40 +1,4 @@
-[18:58, 20.07.2026] Джон Павинский: <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apeha RPG Arena Pro</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #121316; color: #e0e0e0; text-align: center; margin: 0; padding: 10px; user-select: none; }
-        
-        .nav-tabs { display: flex; justify-content: space-between; background: #1e2026; padding: 4px; border-radius: 10px; margin-bottom: 10px; gap: 4px; }
-        .tab-btn { background: transparent; color: #888; border: none; padding: 8px 6px; font-weight: …
-[18:59, 20.07.2026] Джон Павинский: import asyncio
-import json
-import logging
-import random
-import sqlite3
-import time
-from aiogram import Bot, Dispatcher, F, types
-from aiogram.filters import CommandStart
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
-
-BOT_TOKEN = "ВАШ_ТОКЕН_БОТА"  # Токен от BotFather
-WEBAPP_URL = "https://eugenepavinskiy-commits.github.io/arena-webapp/?v=8"
-
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
-
-# === БАЗА ДАННЫХ ===
-conn = sqlite3.connect("arena_game.db", check_same_thread=False)
-cursor = conn.cursor()
-cursor.execute(
-    """CREATE TABLE IF NOT EXISTS players (
-    user_id INTEGER PRIMARY KEY, name TEXT, hp INTEGER DEFAULT 100, max_hp INTEGER DEFAULT 100,
-    mp INTEGER DEFAULT 50, max_mp INTEGER DE…
-[19:07, 20.07.2026] Джон Павинский: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -42,33 +6,40 @@ cursor.execute(
     <title>Apeha RPG Arena</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #121316; color: #e0e0e0; text-align: center; margin: 0; padding: 10px; user-select: none; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #141518; color: #e0e0e0; text-align: center; margin: 0; padding: 10px; user-select: none; }
         
-        .nav-tabs { display: flex; justify-content: space-between; background: #1e2026; padding: 4px; border-radius: 10px; margin-bottom: 10px; gap: 4px; }
-        .tab-btn { background: transparent; color: #888; border: none; padding: 8px 6px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px; flex: 1; }
+        /* Вкладки */
+        .nav-tabs { display: flex; justify-content: space-around; background: #1f2128; padding: 4px; border-radius: 10px; margin-bottom: 12px; border: 1px solid #2d303b; }
+        .tab-btn { background: transparent; color: #888; border: none; padding: 10px 8px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; width: 32%; }
         .tab-btn.active { background: #ff9800; color: #111; }
+        
+        /* Изоляция вкладок */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Полоски здоровья */
-        .status-container { display: flex; justify-content: space-between; align-items: center; background: #1a1b1f; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
+        /* Полоски Здоровья */
+        .status-container { display: flex; justify-content: space-between; align-items: center; background: #1e2026; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2d303b; }
         .player-info { width: 45%; font-size: 11px; font-weight: bold; }
         .bar-bg { background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 3px; }
         .hp-fill { background: #4caf50; height: 100%; width: 100%; transition: width 0.3s; }
 
-        /* Игровой макет человека */
-        .manikin-wrapper { position: relative; width: 180px; height: 230px; margin: 0 auto 10px; background: #1e2026; border-radius: 14px; border: 2px solid #2a2d35; padding: 8px; }
-        .body-part { fill: #2a2d35; stroke: #444; stroke-width: 2; cursor: pointer; transition: 0.2s; }
-        .body-part.attack { fill: #d32f2f !important; stroke: #f44336; }
-        .body-part.defend { fill: #1976d2 !important; stroke: #2196f3; }
+        /* СВЕТЛАЯ МОДЕЛЬКА ЧЕЛОВЕКА */
+        .manikin-wrapper { width: 200px; height: 250px; margin: 0 auto 10px auto; background: #1e2026; border-radius: 14px; border: 2px solid #2d303b; padding: 10px; display: flex; justify-content: center; align-items: center; }
+        .body-part { fill: #4a4d57; stroke: #787d8d; stroke-width: 2; cursor: pointer; transition: background 0.2s, fill 0.2s; }
+        .body-part.attack { fill: #d32f2f !important; stroke: #f44336 !important; }
+        .body-part.defend { fill: #1976d2 !important; stroke: #2196f3 !important; }
 
-        /* Лог боя */
-        .battle-log { background: #0a0b0d; border: 1px solid #222; border-radius: 8px; padding: 8px; height: 110px; overflow-y: auto; text-align: left; font-family: monospace; font-size: 11px; line-height: 1.4; }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #141518; padding-bottom: 2px; }
+        /* ЛОГ БОЯ СНИЗУ */
+        .battle-log { background: #0c0d0f; border: 1px solid #2a2d36; border-radius: 8px; padding: 10px; height: 130px; overflow-y: auto; text-align: left; font-family: monospace; font-size: 11px; line-height: 1.4; margin-top: 10px; }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #1a1c23; padding-bottom: 2px; }
 
-        .submit-btn { width: 100%; padding: 12px; background: #ff9800; border: none; color: black; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 8px; }
-        .shop-card { background: #1e2026; border: 1px solid #333; border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-        .action-btn { background: #4caf50; border: none; color: white; padding: 6px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; }
+        /* Кнопка */
+        .submit-btn { width: 100%; padding: 14px; background: #ff9800; border: none; color: black; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+
+        /* Магазин */
+        .shop-card { background: #1e2026; border: 1px solid #2d303b; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .action-btn { background: #4caf50; border: none; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -79,20 +50,21 @@ cursor.execute(
         <button id="btn-shop" class="tab-btn" onclick="switchTab('shop')">🛒 Лавка</button>
     </div>
 
-    <!-- 1. ВКЛАДКА: АРЕНА -->
+    <!-- 1. ВКЛАДКА: АРЕНА (ТОЛЬКО БОЙ, СВЕТЛАЯ МОДЕЛЬ И ЛОГ СНИЗУ) -->
     <div id="tab-arena" class="tab-content active">
         <div class="status-container">
             <div class="player-info" style="text-align:left;">
-                <span id="p1-name">Вы</span> (<span id="p1-hp">100</span> HP)
-                <div class="bar-bg"><div id="p1-hp-bar" class="hp-fill"></div></div>
+                <span>Вы</span> (<span id="p1-hp">100</span> HP)
+                <div class="bar-bg"><div class="hp-fill"></div></div>
             </div>
             <div style="font-size:14px; font-weight:bold; color:#ff9800;">VS</div>
             <div class="player-info" style="text-align:right;">
-                <span id="p2-name">Противник</span> (<span id="p2-hp">100</span> HP)
-                <div class="bar-bg"><div id="p2-hp-bar" class="hp-fill" style="background:#f44336;"></div></div>
+                <span>Противник</span> (<span id="p2-hp">100</span> HP)
+                <div class="bar-bg"><div class="hp-fill" style="background:#f44336;"></div></div>
             </div>
         </div>
 
+        <!-- Светлый макет -->
         <div class="manikin-wrapper">
             <svg width="180" height="230" viewBox="0 0 200 280">
                 <circle id="head" class="body-part" cx="100" cy="35" r="22"/>
@@ -107,21 +79,23 @@ cursor.execute(
 
         <button class="submit-btn" id="turn-btn" onclick="sendBattleTurn()">⚔️ Совершить ход</button>
 
+        <!-- Лог боя снизу -->
         <div class="battle-log" id="battle-log">
-            <div class="log-entry"><span style="color:#666;">[System]</span> Окно больше не сворачивается! Выберите 2 зоны атаки и 2 защиты.</div>
+            <div class="log-entry"><span style="color:#666;">[System]</span> Выберите 2 зоны атаки (красные) и 2 защиты (синие).</div>
         </div>
     </div>
 
     <!-- 2. ВКЛАДКА: БОСС -->
     <div id="tab-boss" class="tab-content">
-        <div style="background:#1e2026; padding:15px; border-radius:12px; border:1px solid #d32f2f;">
-            <div style="font-size:40px;">🐉</div>
+        <div style="background:#1e2026; padding:20px; border-radius:12px; border:1px solid #d32f2f;">
+            <div style="font-size:50px; margin-bottom:10px;">🐉</div>
             <h3 style="margin:5px 0; color:#f44336;">Древний Дракон</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">Мировой Босс сервера.</p>
             <button class="submit-btn" style="background:#d32f2f; color:white;" onclick="attackBoss()">🔥 Нанести удар</button>
         </div>
     </div>
 
-    <!-- 3. ВКЛАДКА: МАГАЗИН С 4 ВИДАМИ ОРУЖИЯ -->
+    <!-- 3. ВКЛАДКА: ЛАВКА (4 ВИДА ОРУЖИЯ) -->
     <div id="tab-shop" class="tab-content">
         <div class="shop-card">
             <div style="text-align:left;">
@@ -133,14 +107,14 @@ cursor.execute(
         <div class="shop-card">
             <div style="text-align:left;">
                 <div style="font-weight:bold;">🗡️ Кинжал Убийцы</div>
-                <div style="font-size:11px; color:#aaa;">+6% к Ловкости (Уворот)</div>
+                <div style="font-size:11px; color:#aaa;">+6% к Ловкости</div>
             </div>
             <button class="action-btn" onclick="buyItem('dagger')">120 🪙</button>
         </div>
         <div class="shop-card">
             <div style="text-align:left;">
                 <div style="font-weight:bold;">🪓 Двуручный Топор</div>
-                <div style="font-size:11px; color:#aaa;">+8% к Удаче (Крит)</div>
+                <div style="font-size:11px; color:#aaa;">+8% к Удаче</div>
             </div>
             <button class="action-btn" onclick="buyItem('axe')">150 🪙</button>
         </div>
@@ -187,6 +161,7 @@ cursor.execute(
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
             document.getElementById('btn-' + tab).classList.add('active');
             document.getElementById('tab-' + tab).classList.add('active');
         }
@@ -201,12 +176,12 @@ cursor.execute(
             log.scrollTop = log.scrollHeight;
         }
 
-        // Вызываем закрытие ТОЛЬКО при отправке боевого хода
         function sendBattleTurn() {
             if (selectedAttacks.length !== 2 || selectedDefends.length !== 2) {
                 alert("Выберите 2 зоны атаки и 2 зоны защиты!");
                 return;
             }
+            addLogEntry(<span style="color:#ff9800;">Ход отправлен! Ожидание соперника...</span>);
             if (tg) {
                 tg.sendData(JSON.stringify({ 
                     type: 'turn', 
