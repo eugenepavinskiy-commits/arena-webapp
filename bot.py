@@ -38,5 +38,5 @@ def save_feedback(message):
     bot.send_message(message.chat.id, "✅ Спасибо! Отзыв отправлен.")
 
 if __name__ == "__main__":
-    print("Бот запущен...")
+    print("Бот успешно запущен и работает...")
     bot.infinity_polling()
