@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - Ultimate Perfect Edition</title>
+    <title>Arena RPG - Masterpiece Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -440,7 +440,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ЛАВКА (ПОКУПКА В ИНВЕНТАРЬ) -->
+        <!-- ВКЛАДКА 5: ЛАВКА (ТРЕБОВАНИЯ ПО УРОВНЯМ И БЕЗОПАСНАЯ ПОКУПКА) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 <div class="shop-category">🧪 Алхимия</div>
@@ -453,54 +453,54 @@
                     <button class="btn-buy" onclick="buyPotion(70, 150)">70 🪙</button>
                 </div>
 
-                <div class="shop-category">🛡️ Экипировка [Уровень 10]</div>
+                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 10]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b class="rarity-common">Шлем Стража [Lvl 10]</b><br><span style="color:var(--text-muted);">+35 HP, +5 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t1_helm', 150)">150 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t1_helm" onclick="buyItem('t1_helm', 150)">150 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-common">Клинок Новичка [Lvl 10]</b><br><span style="color:var(--text-muted);">+12 Сила, +5% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t1_wep', 180)">180 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t1_wep" onclick="buyItem('t1_wep', 180)">180 🪙</button>
                 </div>
 
-                <div class="shop-category">🛡️ Экипировка [Уровень 20]</div>
+                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 20]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-rare">Шлем Ветерана [Lvl 20]</b><br><span style="color:var(--text-muted);">+75 HP, +12 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t2_helm', 450)">450 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t2_helm" onclick="buyItem('t2_helm', 450)">450 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b class="rarity-rare">Меч Гладиатора [Lvl 20]</b><br><span style="color:var(--text-muted);">+24 Сила, +12% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t2_wep', 520)">520 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t2_wep" onclick="buyItem('t2_wep', 520)">520 🪙</button>
                 </div>
 
-                <div class="shop-category">🛡️ Экипировка [Уровень 30]</div>
+                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 30]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b class="rarity-rare">Латы Героя [Lvl 30]</b><br><span style="color:var(--text-muted);">+160 HP, +25 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t3_armor', 1200)">1200 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t3_armor" onclick="buyItem('t3_armor', 1200)">1200 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b class="rarity-rare">Топор Палача [Lvl 30]</b><br><span style="color:var(--text-muted);">+45 Сила, +20% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t3_wep', 1400)">1400 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t3_wep" onclick="buyItem('t3_wep', 1400)">1400 🪙</button>
                 </div>
 
-                <div class="shop-category">🛡️ Экипировка [Уровень 40]</div>
+                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 40]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b class="rarity-epic">Амулет Повелителя [Lvl 40]</b><br><span style="color:var(--text-muted);">+30 Ловк, +250 HP</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t4_amulet', 3200)">3200 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t4_amulet" onclick="buyItem('t4_amulet', 3200)">3200 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b class="rarity-epic">Лук Бури [Lvl 40]</b><br><span style="color:var(--text-muted);">+40 Ловк, +30% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t4_wep', 3500)">3500 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t4_wep" onclick="buyItem('t4_wep', 3500)">3500 🪙</button>
                 </div>
 
-                <div class="shop-category">🛡️ Экипировка [Уровень 50]</div>
+                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 50]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-epic">Шлем Полубога [Lvl 50]</b><br><span style="color:var(--text-muted);">+500 HP, +50 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t5_helm', 8000)">8000 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t5_helm" onclick="buyItem('t5_helm', 8000)">8000 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-epic">Меч Бессмертных [Lvl 50]</b><br><span style="color:var(--text-muted);">+90 Сила, +40% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t5_wep', 9500)">9500 🪙</button>
+                    <button class="btn-buy" id="btn-shop-t5_wep" onclick="buyItem('t5_wep', 9500)">9500 🪙</button>
                 </div>
             </div>
         </div>
@@ -519,12 +519,12 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 7: КУЗНИЦА -->
+        <!-- ВКЛАДКА 7: КУЗНИЦА (С МЯГКИМ СТРАХОМ ПОЛОМКИ - СБРОС ЗАТОЧКИ НА -1) -->
         <div id="tab-forge" class="tab-content">
             <div class="box-panel" style="text-align: center;">
                 <h3 style="color: var(--accent-gold); margin-top: 0; text-transform: uppercase; font-size: 13px;">⚒️ Наковальня Кузнеца</h3>
                 <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">
-                    Затачивайте экипировку до <b>+10</b> с помощью камней заточки (💎). При неудаче предмет может **сломаться**!
+                    Затачивайте экипировку до <b>+10</b> с помощью камней заточки (💎). При неудаче предмет **теряет 1 уровень заточки**, но не ломается!
                 </p>
                 <div id="forge-item-info" style="background: #16161c; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin: 10px 0; font-size: 12px; text-align: left;">
                     Нажмите на слот предмета на вкладке «Герой», чтобы выбрать его для заточки.
@@ -618,7 +618,7 @@
                         <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label></div>
-                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'legs')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                     </div>
                 </div>
 
@@ -795,24 +795,25 @@
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
+        // База вещей с требованием по уровню (reqLvl)
         const itemsDB = {
-            t1_helm: { name: 'Шлем Стража [Lvl 10]', type: 'helm', rarity: 'common', stat: 'hp', val: 35, stat2: 'def', val2: 5, icon: '🪖' },
-            t1_wep: { name: 'Клинок Новичка [Lvl 10]', type: 'weapon', rarity: 'common', stat: 'str', val: 12, stat2: 'critBonus', val2: 5, icon: '🗡️', classReq: 'human' },
+            t1_helm: { name: 'Шлем Стража [Lvl 10]', type: 'helm', rarity: 'common', reqLvl: 10, stat: 'hp', val: 35, stat2: 'def', val2: 5, icon: '🪖' },
+            t1_wep: { name: 'Клинок Новичка [Lvl 10]', type: 'weapon', rarity: 'common', reqLvl: 10, stat: 'str', val: 12, stat2: 'critBonus', val2: 5, icon: '🗡️', classReq: 'human' },
 
-            t2_helm: { name: 'Шлем Ветерана [Lvl 20]', type: 'helm', rarity: 'rare', stat: 'hp', val: 75, stat2: 'def', val2: 12, icon: '👑' },
-            t2_wep: { name: 'Меч Гладиатора [Lvl 20]', type: 'weapon', rarity: 'rare', stat: 'str', val: 24, stat2: 'critBonus', val2: 12, icon: '⚔️', classReq: 'human' },
+            t2_helm: { name: 'Шлем Ветерана [Lvl 20]', type: 'helm', rarity: 'rare', reqLvl: 20, stat: 'hp', val: 75, stat2: 'def', val2: 12, icon: '👑' },
+            t2_wep: { name: 'Меч Гладиатора [Lvl 20]', type: 'weapon', rarity: 'rare', reqLvl: 20, stat: 'str', val: 24, stat2: 'critBonus', val2: 12, icon: '⚔️', classReq: 'human' },
 
-            t3_armor: { name: 'Латы Героя [Lvl 30]', type: 'armor', rarity: 'rare', stat: 'hp', val: 160, stat2: 'def', val2: 25, icon: '🛡️' },
-            t3_wep: { name: 'Топор Палача [Lvl 30]', type: 'weapon', rarity: 'rare', stat: 'str', val: 45, stat2: 'critBonus', val2: 20, icon: '🪓', classReq: 'orc' },
+            t3_armor: { name: 'Латы Героя [Lvl 30]', type: 'armor', rarity: 'rare', reqLvl: 30, stat: 'hp', val: 160, stat2: 'def', val2: 25, icon: '🛡️' },
+            t3_wep: { name: 'Топор Палача [Lvl 30]', type: 'weapon', rarity: 'rare', reqLvl: 30, stat: 'str', val: 45, stat2: 'critBonus', val2: 20, icon: '🪓', classReq: 'orc' },
 
-            t4_amulet: { name: 'Амулет Повелителя [Lvl 40]', type: 'amulet', rarity: 'epic', stat: 'agi', val: 30, stat2: 'hp', val2: 250, icon: '🔮', classReq: 'elf' },
-            t4_wep: { name: 'Лук Бури [Lvl 40]', type: 'weapon', rarity: 'epic', stat: 'agi', val: 40, stat2: 'critBonus', val2: 30, icon: '🏹', classReq: 'elf' },
+            t4_amulet: { name: 'Амулет Повелителя [Lvl 40]', type: 'amulet', rarity: 'epic', reqLvl: 40, stat: 'agi', val: 30, stat2: 'hp', val2: 250, icon: '🔮', classReq: 'elf' },
+            t4_wep: { name: 'Лук Бури [Lvl 40]', type: 'weapon', rarity: 'epic', reqLvl: 40, stat: 'agi', val: 40, stat2: 'critBonus', val2: 30, icon: '🏹', classReq: 'elf' },
 
-            t5_helm: { name: 'Шлем Полубога [Lvl 50]', type: 'helm', rarity: 'epic', stat: 'hp', val: 500, stat2: 'def', val2: 50, icon: '👑' },
-            t5_wep: { name: 'Меч Бессмертных [Lvl 50]', type: 'weapon', rarity: 'epic', stat: 'str', val: 90, stat2: 'critBonus', val2: 40, icon: '🗡️', classReq: 'human' },
+            t5_helm: { name: 'Шлем Полубога [Lvl 50]', type: 'helm', rarity: 'epic', reqLvl: 50, stat: 'hp', val: 500, stat2: 'def', val2: 50, icon: '👑' },
+            t5_wep: { name: 'Меч Бессмертных [Lvl 50]', type: 'weapon', rarity: 'epic', reqLvl: 50, stat: 'str', val: 90, stat2: 'critBonus', val2: 40, icon: '🗡️', classReq: 'human' },
 
-            leg_sword: { name: '🔥 Испепелитель Миров [Легендарное]', type: 'weapon', rarity: 'legendary', stat: 'str', val: 130, stat2: 'critBonus', val2: 45, stat3: 'critMultBonus', val3: 1.2, icon: '🗡️' },
-            leg_helm: { name: '👑 Корона Архидракона [Легендарная]', type: 'helm', rarity: 'legendary', stat: 'hp', val: 800, stat2: 'def', val2: 80, icon: '👑' }
+            leg_sword: { name: '🔥 Испепелитель Миров [Легендарное]', type: 'weapon', rarity: 'legendary', reqLvl: 50, stat: 'str', val: 130, stat2: 'critBonus', val2: 45, stat3: 'critMultBonus', val3: 1.2, icon: '🗡️' },
+            leg_helm: { name: '👑 Корона Архидракона [Легендарная]', type: 'helm', rarity: 'legendary', reqLvl: 50, stat: 'hp', val: 800, stat2: 'def', val2: 80, icon: '👑' }
         };
 
         function switchTab(tabId) {
@@ -825,7 +826,7 @@
             if(tabId === 'auction') updateAuctionUI();
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v170', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v180', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -841,7 +842,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped, auctionList: auctionList };
-            tg.CloudStorage.setItem('arenaRPGData_v170', JSON.stringify(data), function() {
+            tg.CloudStorage.setItem('arenaRPGData_v180', JSON.stringify(data), function() {
                 let indicator = document.getElementById('save-status');
                 if(indicator) {
                     indicator.innerText = '💾 Сохранено';
@@ -1080,7 +1081,7 @@
         function selectForgeSlot(slotName) {
             let eqKey = equipped[slotName];
             if (!eqKey || !itemsDB[eqKey]) {
-                document.getElementById('forge-item-info').innerText = "В этом слоте нет надетого предмета для заточки! Наденьте вещь на куклу персонажа, чтобы заточить её.";
+                document.getElementById('forge-item-info').innerText = "В этом слоте нет надетого предмета для заточки!";
                 document.getElementById('btn-upgrade-item').style.display = 'none';
                 selectedForgeSlot = null;
                 return;
@@ -1099,10 +1100,11 @@
             let chances = { 1: 100, 2: 100, 3: 100, 4: 75, 5: 75, 6: 75, 7: 50, 8: 50, 9: 50, 10: 30 };
             let chance = chances[lvl + 1] || 30;
 
-            document.getElementById('forge-item-info').innerHTML = `<b>${itm.name}</b> [Заточка: +${lvl} ➡️ +${lvl + 1}]<br>Шанс успеха: <b>${chance}%</b> (Риск поломки при неудаче!)<br>В наличии камней: <b>💎 ${stats.stones || 0}</b>`;
+            document.getElementById('forge-item-info').innerHTML = `<b>${itm.name}</b> [Заточка: +${lvl} ➡️ +${lvl + 1}]<br>Шанс успеха: <b>${chance}%</b> (При неудаче заточка снизится на -1!)<br>В наличии камней: <b>💎 ${stats.stones || 0}</b>`;
             document.getElementById('btn-upgrade-item').style.display = 'block';
         }
 
+        // Логика кузнеца с мягким сбросом заточки при неудаче (без удаления вещи)
         function upgradeEquippedItem() {
             if (!selectedForgeSlot) return;
             let eqKey = equipped[selectedForgeSlot];
@@ -1132,14 +1134,17 @@
                 playSound('win');
                 tg.showAlert(`🎉 УСПЕХ! Предмет заточен до +${lvl + 1}!`);
             } else {
-                equipped[selectedForgeSlot] = null;
-                delete stats.forgeLevels[eqKey];
+                // Мягкий штраф: снижение заточки на 1 (если была больше 0)
+                if (lvl > 0) {
+                    stats.forgeLevels[eqKey] = lvl - 1;
+                    if(stats.forgeLevels[eqKey] === 0) delete stats.forgeLevels[eqKey];
+                }
                 recalculateStats();
                 updateSetupUI();
-                document.getElementById('btn-upgrade-item').style.display = 'none';
-                document.getElementById('forge-item-info').innerHTML = `<b style="color:#e74c3c;">💥 ПРЕДМЕТ СЛОМАЛСЯ И РАЗЛЕТЕЛСЯ НА ОСКОЛКИ!</b><br>Неудача при попытке заточить на +${lvl + 1}.`;
+                selectForgeSlot(selectedForgeSlot);
                 saveGame();
                 playSound('damage');
+                tg.showAlert(`💥 НЕУДАЧА! Заточка предмета упала на 1 уровень.`);
             }
         }
 
@@ -1190,12 +1195,18 @@
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
+        // Покупка с проверкой требований по уровню персонажа
         function buyItem(itemKey, cost) {
             let itm = itemsDB[itemKey];
             if (!itm) return;
 
+            if (itm.reqLvl && stats.lvl < itm.reqLvl) {
+                tg.showAlert(`⚠️ Ваш уровень (${stats.lvl}) слишком мал! Требуется уровень ${itm.reqLvl}.`);
+                return;
+            }
+
             if (itm.classReq && itm.classReq !== stats.race) {
-                tg.showAlert("Этот предмет лавки предназначен только для класса вашего героя!");
+                tg.showAlert("⚠️ Этот предмет предназначен только для вашего класса!");
                 return;
             }
 
@@ -1205,7 +1216,7 @@
                 
                 updateSetupUI();
                 saveGame();
-                tg.showAlert(`📦 Предмет "${itm.name}" успешно куплен и добавлен в инвентарь (сумку)!`);
+                tg.showAlert(`📦 Предмет "${itm.name}" успешно куплен и добавлен в инвентарь!`);
             } else {
                 tg.showAlert("Недостаточно золота!");
             }
@@ -1214,6 +1225,11 @@
         function toggleEquip(itemKey) {
             let itm = itemsDB[itemKey];
             if (!itm) return;
+
+            if (itm.reqLvl && stats.lvl < itm.reqLvl) {
+                tg.showAlert(`⚠️ Нельзя надеть! Требуется уровень ${itm.reqLvl}.`);
+                return;
+            }
 
             let targetSlot = itm.type;
             let currentEquipped = equipped[targetSlot];
