@@ -8,7 +8,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 TOKEN = "8630345177:AAHS29S0LP1e08AdvOkDnXkDKhUeM16zbE"
 bot = telebot.TeleBot(TOKEN)
 
-# Функция для запуска простого веб-сервера (чтобы index.html открывался в Telegram)
+# Функция для запуска веб-сервера, чтобы Telegram мог загрузить index.html
 def run_web_server():
     port = int(os.environ.get("PORT", 8080))
     server_address = ("", port)
@@ -19,7 +19,7 @@ def run_web_server():
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = InlineKeyboardMarkup()
-    # Ссылка, которую вы только что сгенерировали в Railway
+    # Ссылка на ваше веб-приложение в Railway
     web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/") 
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app))
     
@@ -30,7 +30,7 @@ def send_welcome(message):
     )
 
 if __name__ == "__main__":
-    # Запускаем веб-сервер в отдельном потоке
+    # Запускаем веб-сервер в фоновом режиме
     server_thread = threading.Thread(target=run_web_server, daemon=True)
     server_thread.start()
     
