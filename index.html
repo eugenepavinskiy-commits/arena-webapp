@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - Ultimate Edition</title>
+    <title>Arena RPG - Ultimate Perfect Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -618,7 +618,7 @@
                         <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label></div>
-                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'legs')"><span></span></label></div>
                     </div>
                 </div>
 
@@ -825,7 +825,7 @@
             if(tabId === 'auction') updateAuctionUI();
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v160', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v170', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -841,7 +841,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped, auctionList: auctionList };
-            tg.CloudStorage.setItem('arenaRPGData_v160', JSON.stringify(data), function() {
+            tg.CloudStorage.setItem('arenaRPGData_v170', JSON.stringify(data), function() {
                 let indicator = document.getElementById('save-status');
                 if(indicator) {
                     indicator.innerText = '💾 Сохранено';
@@ -1190,7 +1190,6 @@
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
-        // Надежная покупка: вещь падает в инвентарь сумки
         function buyItem(itemKey, cost) {
             let itm = itemsDB[itemKey];
             if (!itm) return;
@@ -1202,7 +1201,7 @@
 
             if (stats.gold >= cost) {
                 stats.gold -= cost;
-                inventory[itemKey] = true; // добавляем в сумку
+                inventory[itemKey] = true;
                 
                 updateSetupUI();
                 saveGame();
@@ -1307,7 +1306,6 @@
             document.getElementById('banner-icon').innerText = banner.icon;
             document.getElementById('banner-title').innerText = banner.title;
 
-            // Кукла экипировки (кликом можно выбрать для кузнеца)
             ['helm', 'amulet', 'weapon', 'armor', 'ring', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
                 if (!slotEl) return;
@@ -1332,7 +1330,6 @@
                 }
             });
 
-            // Инвентарь сумки
             let invGrid = document.getElementById('inventory-grid');
             invGrid.innerHTML = '';
             
