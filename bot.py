@@ -5,7 +5,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 # Ваш токен бота
-TOKEN = "8630345177:AAHS29S0LP1e08AdvOkDnXkDKhUeM16zbE"
+TOKEN = "8630345177:AAEtJ-GwXZ8v7HsQ0hv9mWUrcuxG-rFirj4"
 bot = telebot.TeleBot(TOKEN)
 
 # Функция для запуска веб-сервера, чтобы Telegram мог загрузить index.html
