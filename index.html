@@ -103,7 +103,6 @@
             font-size: 12px; display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--border-color); 
         }
 
-        /* Кнопки распределения очков характеристик */
         .btn-plus { background: #27ae60; color: #fff; border: none; padding: 2px 6px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 5px; }
 
         /* Инвентарь */
@@ -275,7 +274,6 @@
             </div>
 
             <div class="hero-layout">
-                <!-- Расширенная бумажная кукла с новыми слотами (Шлем, Амулет, Кольцо) -->
                 <div class="paper-doll">
                     <div style="font-size: 8px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Экипировка</div>
                     <div class="doll-slot" id="slot-helm" title="Шлем">🪖</div>
@@ -309,11 +307,9 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: ЛАВКА С УНИКАЛЬНЫМИ БИЛДАМИ НА ВСЕ СЛОТЫ -->
+        <!-- ВКЛАДКА 4: ЛАВКА -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
-                
-                <!-- ШЛЕМЫ -->
                 <div class="shop-category">🪖 Шлемы</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b>Шлем Стража</b><br><span style="color:var(--text-muted);">+25 HP, +2 Сила</span></div></div>
@@ -324,7 +320,6 @@
                     <button class="btn-buy" id="buy-helm2" onclick="buyItem('helm2', 120, 'str', 4, 'helm', '👑', 'orc', 'agi', 5)">120 🪙</button>
                 </div>
 
-                <!-- АМУЛЕТЫ -->
                 <div class="shop-category">📿 Амулеты</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">📿</div><div><b>Амулет Ветра</b><br><span style="color:var(--text-muted);">+6 Ловк, +10 HP</span></div></div>
@@ -335,7 +330,6 @@
                     <button class="btn-buy" id="buy-amulet2" onclick="buyItem('amulet2', 130, 'hp', 40, 'amulet', '🔮', 'human', 'str', 3)">130 🪙</button>
                 </div>
 
-                <!-- ОРУЖИЕ -->
                 <div class="shop-category">⚔️ Оружие</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Меч Потрошителя</b><br><span style="color:var(--text-muted);">+6 Сила, +10 HP</span></div></div>
@@ -350,7 +344,6 @@
                     <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 8, 'weapon', '🏹', 'elf', 'str', 2)">100 🪙</button>
                 </div>
 
-                <!-- БРОНЯ -->
                 <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Латы Джаггернаута</b><br><span style="color:var(--text-muted);">+60 HP, +2 Сила</span></div></div>
@@ -361,14 +354,12 @@
                     <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 120, 'hp', 40, 'armor', '🧥', 'elf', 'agi', 8)">120 🪙</button>
                 </div>
 
-                <!-- КОЛЬЦА -->
                 <div class="shop-category">💍 Кольца</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">💍</div><div><b>Кольцо Силы</b><br><span style="color:var(--text-muted);">+4 Сила, +5 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-ring1" onclick="buyItem('ring1', 110, 'str', 4, 'ring', '💍', 'human', 'agi', 5)">110 🪙</button>
                 </div>
 
-                <!-- ОБУВЬ -->
                 <div class="shop-category">🥾 Обувь</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сапоги Спринтера</b><br><span style="color:var(--text-muted);">+6 Ловк, +15 HP</span></div></div>
@@ -483,7 +474,6 @@
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
-        // База вещей с глубоким разделением статов для билдов
         const itemsDB = {
             helm1: { name: 'Шлем Стража', type: 'helm', stat: 'hp', val: 25, stat2: 'str', val2: 2, icon: '🪖' },
             helm2: { name: 'Шлем Берсерка', type: 'helm', stat: 'str', val: 4, stat2: 'agi', val2: 5, icon: '👑' },
@@ -514,7 +504,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v21', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v22', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -527,7 +517,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v21', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v22', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -552,7 +542,6 @@
             }
         }
 
-        // Система прокачки уровней и распределения статов
         function addStat(statName) {
             if (stats.freePoints > 0) {
                 stats.freePoints--;
@@ -570,7 +559,7 @@
                 stats.exp -= stats.expMax;
                 stats.lvl++;
                 stats.expMax = Math.floor(stats.expMax * 1.4);
-                stats.freePoints += 3; // дает 3 очка за уровень
+                stats.freePoints += 3;
                 tg.showAlert(`🎉 ПОЗДРАВЛЯЕМ! Новый ${stats.lvl} уровень! Получено 3 очка характеристик.`);
             }
         }
@@ -580,7 +569,6 @@
             if (stats.race === 'orc') { baseStr = 14; baseAgi = 7; baseHp = 115; }
             else if (stats.race === 'elf') { baseStr = 7; baseAgi = 15; baseHp = 90; }
 
-            // Базовые + очки прокачки
             stats.str = baseStr + (stats.lvl - 1) * 2; 
             stats.agi = baseAgi + (stats.lvl - 1) * 2;
             stats.maxHp = baseHp + (stats.lvl - 1) * 20;
@@ -655,7 +643,6 @@
             document.getElementById('doll-agi').innerText = stats.agi;
             document.getElementById('doll-hp').innerText = stats.maxHp;
 
-            // Управление кнопками распределения очков
             if (stats.freePoints > 0) {
                 document.getElementById('btn-plus-str').style.display = 'inline-block';
                 document.getElementById('btn-plus-agi').style.display = 'inline-block';
@@ -690,7 +677,6 @@
             document.getElementById('banner-icon').innerText = banner.icon;
             document.getElementById('banner-title').innerText = banner.title;
 
-            // Обновление всех слотов экипировки (включая новые)
             ['helm', 'amulet', 'weapon', 'armor', 'ring', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
                 if (!slotEl) return;
