@@ -24,6 +24,16 @@
             background-image: radial-gradient(circle at 50% 0%, #1f1f2e 0%, var(--bg-dark) 75%);
             min-height: 100vh;
         }
+
+        @keyframes screenShake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-4px, 2px); }
+            40% { transform: translate(4px, -2px); }
+            60% { transform: translate(-2px, -1px); }
+            80% { transform: translate(2px, 1px); }
+            100% { transform: translate(0, 0); }
+        }
+        .shake { animation: screenShake 0.3s ease; }
         
         .screen { display: none; }
         #setup-screen { display: block; }
@@ -85,7 +95,6 @@
         .class-banner-icon { font-size: 32px; margin-bottom: 4px; }
         .class-banner-title { font-size: 12px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Расширенная кукла и статы */
         .hero-layout { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
         .paper-doll { 
             width: 110px; background: var(--panel-bg); border-radius: 10px; padding: 8px; 
@@ -266,7 +275,7 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С РАСПРЕДЕЛЕНИЕМ ОЧКОВ И РАСШИРЕННЫМИ СЛОТАМИ -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ -->
         <div id="tab-hero" class="tab-content">
             <div class="class-banner">
                 <div class="class-banner-icon" id="banner-icon">🛡️⚔️</div>
@@ -400,7 +409,7 @@
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
-        <div class="enemy-visual-container">
+        <div class="enemy-visual-container" id="enemy-container-box">
             <div class="enemy-avatar-icon" id="enemy-icon-display">🦅</div>
             <div class="enemy-name-glow" id="enemy-name-display">Грифон</div>
         </div>
@@ -451,6 +460,65 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
+
+        // Инициализация Web Audio API для звуков ударов и побед
+        let audioCtx = null;
+        function playSound(type) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                let now = audioCtx.currentTime;
+                if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'block') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'win') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(450, now + 0.1);
+                    osc.frequency.setValueAtTime(600, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'damage') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(90, now);
+                    osc.frequency.exponentialRampToValueAtTime(30, now + 0.2);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        // Эффект потряхивания экрана при получении урона
+        function triggerScreenShake() {
+            let box = document.getElementById('enemy-container-box');
+            if (box) {
+                box.classList.add('shake');
+                setTimeout(() => box.classList.remove('shake'), 300);
+            }
+        }
 
         let stats = { 
             str: 10, agi: 10, hp: 100, maxHp: 100, 
@@ -504,7 +572,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v22', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v37', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -517,7 +585,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v22', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v37', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -560,6 +628,7 @@
                 stats.lvl++;
                 stats.expMax = Math.floor(stats.expMax * 1.4);
                 stats.freePoints += 3;
+                playSound('win');
                 tg.showAlert(`🎉 ПОЗДРАВЛЯЕМ! Новый ${stats.lvl} уровень! Получено 3 очка характеристик.`);
             }
         }
@@ -809,8 +878,10 @@
             // АТАКА ИГРОКА
             pAtk.forEach(zone => {
                 if (eBlk.includes(zone)) {
+                    playSound('block');
                     turnLog += `🛡 ${currentEnemy.name} заблокировал ваш удар в ${zoneNames[zone]}!<br>`;
                 } else {
+                    playSound('hit');
                     let pDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
                     currentEnemy.hp -= pDmg;
                     turnLog += `⚔️ Вы пробили ${zoneNames[zone]} на ${pDmg} урона!<br>`;
@@ -823,6 +894,7 @@
                 addExp(currentEnemy.exp);
                 if (currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
                 
+                playSound('win');
                 updateBattleUI();
                 logMessage(turnLog + `🏆 <b>ПОБЕДА!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}` + (currentEnemy.ratingGain ? ` | 🏆 Славы: +${currentEnemy.ratingGain}` : ''));
                 endBattle();
@@ -837,9 +909,12 @@
                     turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
                 } 
                 else if (pBlk.includes(zone)) {
+                    playSound('block');
                     turnLog += `🛡 Вы успешно заблокировали удар в ${zoneNames[zone]}!<br>`;
                 } 
                 else {
+                    playSound('damage');
+                    triggerScreenShake();
                     let eDmg = Math.floor(currentEnemy.str / 1.5) + Math.floor(Math.random() * 4);
                     stats.hp -= eDmg;
                     turnLog += `🩸 ${currentEnemy.name} пробил вашу защиту (${zoneNames[zone]}) на ${eDmg} урона!<br>`;
