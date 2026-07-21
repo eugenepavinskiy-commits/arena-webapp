@@ -14,11 +14,19 @@
             margin: 0; padding: 20px; text-align: center; 
         }
         
-        /* Скрываем элементы по умолчанию */
         .screen { display: none; }
-        
-        /* Экран прокачки */
         #setup-screen { display: block; }
+        
+        /* Стили для картинок */
+        .game-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
         .points-box { font-size: 18px; color: #ffaa00; margin-bottom: 20px; font-weight: bold; }
         .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-radius: 10px; }
         .stat-name { font-size: 18px; font-weight: bold; }
@@ -26,11 +34,9 @@
         .btn-add { background: #4caf50; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; }
         .btn-add:disabled { background: #555; }
         
-        /* Экран боя */
         .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
-        #battle-log { background: #111; padding: 15px; height: 200px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 14px; line-height: 1.5; }
+        #battle-log { background: #111; padding: 15px; height: 180px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 14px; line-height: 1.5; }
         
-        /* Общие кнопки действий */
         .btn-action { background: #e53935; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; width: 100%; margin-top: 15px; cursor: pointer; font-weight: bold; }
         .btn-start { background: #4caf50; }
         .btn-restart { background: #ffaa00; color: #000; }
@@ -41,6 +47,10 @@
     <!-- ================= ЭКРАН 1: ПРОКАЧКА ================= -->
     <div id="setup-screen" class="screen">
         <h2>Подготовка к бою</h2>
+        
+        <!-- Аватар героя (Замените ссылку на своего рыцаря) -->
+        <img src="https://dummyimage.com/600x300/2b2b2b/ffffff&text=Ваш+Рыцарь" alt="Герой" class="game-image">
+
         <div class="points-box">Свободных очков: <span id="points">5</span></div>
 
         <div class="stat-row">
@@ -67,6 +77,10 @@
     <!-- ================= ЭКРАН 2: АРЕНА ================= -->
     <div id="battle-screen" class="screen">
         <h2>Арена</h2>
+        
+        <!-- Изображение врага (Замените ссылку на грифона или монстра) -->
+        <img id="enemy-img" src="https://dummyimage.com/600x300/8c1c1c/ffffff&text=Свирепый+Враг" alt="Враг" class="game-image">
+
         <div class="health-box">
             <span>Вы: <span id="my-hp">100</span> ❤️</span>
             <span>Враг: <span id="enemy-hp">50</span> ❤️</span>
@@ -79,30 +93,23 @@
     </div>
 
     <script>
-        // Инициализируем Web App на весь экран
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Базовые статы игрока и врага
         let stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
-        let enemy = { name: 'Гладиатор', hp: 50, maxHp: 50, str: 8 };
+        let enemy = { name: 'Грифон', hp: 50, maxHp: 50, str: 8 };
 
-        // 1. ЗАГРУЗКА ИЗ ОБЛАКА TELEGRAM
         tg.CloudStorage.getItem('arenaStats', function(error, value) {
             if (!error && value) {
-                // Если сохранение найдено, применяем его
                 stats = JSON.parse(value);
             }
-            // Обновляем интерфейс только после попытки загрузки
             updateSetupUI();
         });
 
-        // 2. ЛОГИКА ИНТЕРФЕЙСА ПРОКАЧКИ
         function addStat(type, amount) {
             if (stats.points > 0) {
                 stats[type] += amount;
                 stats.points -= 1;
-                // Если качаем здоровье, увеличиваем его максимальный запас
                 if(type === 'hp') stats.maxHp += amount; 
                 updateSetupUI();
             }
@@ -115,26 +122,20 @@
             document.getElementById('val-hp').innerText = stats.hp;
 
             if (stats.points === 0) {
-                // Блокируем кнопки и показываем кнопку В БОЙ
                 document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = true);
                 document.getElementById('start-btn').style.display = 'block';
-                
-                // СОХРАНЕНИЕ В ОБЛАКО TELEGRAM
                 tg.CloudStorage.setItem('arenaStats', JSON.stringify(stats));
             }
         }
 
-        // 3. ПЕРЕХОД МЕЖДУ ЭКРАНАМИ
         function startBattle() {
-            // Прячем меню прокачки, показываем арену
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
             
-            // Восстанавливаем здоровье перед боем
             stats.hp = stats.maxHp; 
             enemy.hp = enemy.maxHp;
             
-            document.getElementById('battle-log').innerHTML = "Гонг прозвучал! Вы вышли на песок арены.<br>";
+            document.getElementById('battle-log').innerHTML = `Гонг прозвучал! Вы вышли на арену.<br>Противник: <b>${enemy.name}</b><br><br>`;
             updateBattleUI();
         }
 
@@ -145,13 +146,10 @@
 
         function logMessage(msg) {
             let log = document.getElementById('battle-log');
-            // Добавляем новые сообщения наверх
             log.innerHTML = msg + "<br><br>" + log.innerHTML; 
         }
 
-        // 4. МЕХАНИКА БОЯ (Урон и Уклонение)
         function attack() {
-            // Удар игрока (с небольшим разбросом)
             let pDmg = stats.str + Math.floor(Math.random() * 5) - 2;
             enemy.hp -= pDmg;
             logMessage(`⚔️ Вы нанесли ${pDmg} урона!`);
@@ -159,12 +157,11 @@
             if (enemy.hp <= 0) {
                 enemy.hp = 0;
                 updateBattleUI();
-                logMessage(`🏆 ПРОТИВНИК ПОВЕРЖЕН!`);
+                logMessage(`🏆 ${enemy.name} ПОВЕРЖЕН!`);
                 endBattle();
                 return;
             }
 
-            // Ответный удар врага с проверкой на вашу Ловкость
             let dodgeChance = stats.agi * 2;
             if (Math.random() * 100 <= dodgeChance) {
                 logMessage(`💨 Вы уклонились от ответного удара!`);
@@ -185,16 +182,12 @@
         }
 
         function endBattle() {
-            // Прячем кнопку атаки, показываем рестарт
             document.getElementById('attack-btn').style.display = 'none';
             document.getElementById('restart-btn').style.display = 'block';
         }
 
         function resetGame() {
-            // УДАЛЕНИЕ СОХРАНЕНИЯ ИЗ ОБЛАКА
             tg.CloudStorage.removeItem('arenaStats');
-            
-            // Полный сброс характеристик
             stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
             enemy.hp = enemy.maxHp;
             
@@ -203,13 +196,11 @@
             document.getElementById('attack-btn').style.display = 'block';
             document.getElementById('restart-btn').style.display = 'none';
             
-            // Возвращаемся на экран прокачки
             document.getElementById('battle-screen').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'block';
             
             updateSetupUI();
         }
-
     </script>
 </body>
 </html>
