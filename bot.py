@@ -41,7 +41,7 @@ def index():
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
   markup = telebot.types.InlineKeyboardMarkup()
-  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/")
+  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/?v=105")
   markup.add(
       telebot.types.InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app)
   )
