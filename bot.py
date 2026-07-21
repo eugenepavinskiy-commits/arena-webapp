@@ -1,7 +1,24 @@
 import os
 import telebot
 from telebot import types
+from threading import Thread
+from flask import Flask
 
+# Настраиваем мини-веб-сервер для бесплатного тарифа Render
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is running online!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=10000)
+
+def keep_alive():
+    t = Thread(target=run_web)
+    t.start()
+
+# Получаем токен из настроек Render
 TOKEN = os.getenv("BOT_TOKEN")
 
 if not TOKEN:
@@ -27,5 +44,7 @@ def send_welcome(message):
     )
 
 if __name__ == "__main__":
-    print("Бот запущен и работает автономно в облаке...")
+    print("Запуск веб-сервера для удержания бота...")
+    keep_alive()
+    print("Бот запущен и работает в облаке...")
     bot.infinity_polling()
