@@ -25,26 +25,25 @@
         .btn-add:disabled { background: #555; }
         
         .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
-        #battle-log { background: #111; padding: 10px; height: 140px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 12px; line-height: 1.4; border: 1px solid #333; }
+        #battle-log { background: #111; padding: 10px; height: 130px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 12px; line-height: 1.4; border: 1px solid #333; }
         
-        /* === ИНТЕРФЕЙС БОЯ С 2 ДЕЛЕНИЯМИ НА ЗОНУ === */
+        /* === ТОЧНАЯ СЕТКА СИЛУЭТА 1 В 1 КАК НА СКРИНШОТЕ === */
         .battle-controls { background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 15px; }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 10px; }
         
         .combat-figure { display: flex; flex-direction: column; align-items: center; }
-        .figure-title { font-size: 14px; margin-bottom: 15px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .figure-title { font-size: 13px; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .atk-title { color: #ff5252; }
         .blk-title { color: #64b5f6; }
 
-        /* Сетка силуэта */
+        /* Пропорциональная сетка человечка */
         .body-grid {
             display: grid;
-            grid-template-columns: 45px 45px 45px;
-            grid-template-rows: 40px 40px 40px 40px;
-            gap: 4px;
+            grid-template-columns: 28px 36px 28px;
+            grid-template-rows: 28px 28px 28px 28px;
+            gap: 3px;
         }
 
-        /* Позиционирование элементов по частям тела */
         .cell-head { grid-column: 2; grid-row: 1; }
         .cell-larm { grid-column: 1; grid-row: 2; }
         .cell-chest { grid-column: 2; grid-row: 2; }
@@ -52,30 +51,21 @@
         .cell-stomach { grid-column: 2; grid-row: 3; }
         .cell-legs { grid-column: 2; grid-row: 4; }
 
-        /* Контейнер для двух делений внутри зоны */
-        .zone-box { display: flex; gap: 3px; width: 100%; height: 100%; }
+        /* Блоки с делениями */
+        .zone-box { display: flex; gap: 2px; width: 100%; height: 100%; }
         
         .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
         .zone-cb input { display: none; }
         .zone-cb span { 
             display: block; width: 100%; height: 100%; background: #111; 
-            border: 2px solid #555; border-radius: 4px; transition: 0.2s; 
-            position: relative;
+            border: 1px solid #555; border-radius: 3px; transition: 0.15s; 
         }
 
-        .zone-cb span::after {
-            content: '✔';
-            display: none;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white; font-size: 12px;
-        }
-        .zone-cb input:checked + span::after { display: block; }
+        /* Цвета делений при выборе */
+        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ff8a80; box-shadow: 0 0 5px #e53935; }
+        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #82b1ff; box-shadow: 0 0 5px #1e88e5; }
 
-        /* Цвета: Удар (Красный), Блок (Синий) */
-        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ff8a80; }
-        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #82b1ff; }
+        .error-msg { color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 10px; min-height: 18px; }
 
         .btn-action { background: #4caf50; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
         .btn-restart { background: #ffaa00; color: #000; margin-top: 15px; }
@@ -118,74 +108,75 @@
         
         <div id="battle-log"></div>
         
-        <!-- ПАНЕЛЬ БОЯ С 2 ДЕЛЕНИЯМИ НА ЗОНУ -->
+        <!-- ПАНЕЛЬ БОЯ С СИЛУЭТАМИ И СТРОГИМ ЛИМИТОМ -->
         <div id="battle-ui" class="battle-controls">
             <div class="figures-container">
                 
                 <!-- ФИГУРА УДАРА -->
                 <div class="combat-figure atk-figure">
-                    <div class="figure-title atk-title">Удар (макс. 2)</div>
+                    <div class="figure-title atk-title">Удар</div>
                     <div class="body-grid">
                         <div class="cell-head zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="head"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="head"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="head" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="head" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                         <div class="cell-larm zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                         <div class="cell-chest zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                         <div class="cell-rarm zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                         <div class="cell-stomach zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                         <div class="cell-legs zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs" onchange="checkLimit(this, 'atk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs" onchange="checkLimit(this, 'atk')"><span></span></label>
                         </div>
                     </div>
                 </div>
 
                 <!-- ФИГУРА БЛОКА -->
                 <div class="combat-figure blk-figure">
-                    <div class="figure-title blk-title">Блок (макс. 2)</div>
+                    <div class="figure-title blk-title">Блок</div>
                     <div class="body-grid">
                         <div class="cell-head zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="head"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="head"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="head" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="head" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                         <div class="cell-larm zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                         <div class="cell-chest zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                         <div class="cell-rarm zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                         <div class="cell-stomach zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                         <div class="cell-legs zone-box">
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs"><span></span></label>
-                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs" onchange="checkLimit(this, 'blk')"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs" onchange="checkLimit(this, 'blk')"><span></span></label>
                         </div>
                     </div>
                 </div>
 
             </div>
             
+            <div id="error-box" class="error-msg"></div>
             <button class="btn-action" onclick="makeTurn()">Применить</button>
         </div>
 
@@ -238,6 +229,7 @@
             
             document.getElementById('battle-log').innerHTML = "Бой начался! Выберите ровно по 2 деления для удара и блока.<br><br>";
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('error-box').innerText = "";
             updateBattleUI();
         }
 
@@ -249,6 +241,20 @@
         function logMessage(msg) {
             let log = document.getElementById('battle-log');
             log.innerHTML = msg + "<br><br>" + log.innerHTML; 
+        }
+
+        // ЖЕСТКИЙ ЛИМИТ: если пытаются выбрать больше 2 делений, отменяем выбор
+        function checkLimit(element, groupName) {
+            let checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+            let checkedCount = 0;
+            checkboxes.forEach(cb => { if(cb.checked) checkedCount++; });
+
+            if (checkedCount > 2) {
+                element.checked = false;
+                document.getElementById('error-box').innerText = "Максимум можно выбрать только 2 деления!";
+            } else {
+                document.getElementById('error-box').innerText = "";
+            }
         }
 
         function getCheckedValues(name) {
@@ -268,12 +274,13 @@
         function makeTurn() {
             let pAtk = getCheckedValues('atk');
             let pBlk = getCheckedValues('blk');
+            let errBox = document.getElementById('error-box');
 
-            // Жесткая проверка: строго по 2 деления
             if (pAtk.length !== 2 || pBlk.length !== 2) {
-                tg.showAlert("Можно выбрать строго по 2 деления для удара и блока!");
+                errBox.innerText = "Нужно выбрать ровно по 2 деления для удара и блока!";
                 return;
             }
+            errBox.innerText = "";
 
             let eAtk = getRandomZones();
             let eBlk = getRandomZones();
