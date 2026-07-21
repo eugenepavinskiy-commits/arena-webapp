@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - World Boss Drops</title>
+    <title>Arena RPG - Apeha Style & QoL</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -62,7 +62,10 @@
             padding: 10px; border-radius: 12px; margin-bottom: 8px; 
             font-size: 13px; font-weight: bold; border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            position: relative;
         }
+        .save-indicator { position: absolute; top: 4px; right: 8px; font-size: 9px; color: #2ecc71; }
+        
         .gold-text { color: var(--accent-gold); text-shadow: 0 0 8px var(--accent-gold-glow); }
         .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
         .lvl-text { color: #2ecc71; text-shadow: 0 0 8px rgba(46, 204, 113, 0.4); }
@@ -158,11 +161,10 @@
         .inv-slot.has-item { border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
         .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
 
-        /* Редкость */
         .rarity-rare { border-color: #3498db !important; }
         .rarity-legendary { border-color: #e67e22 !important; box-shadow: 0 0 10px rgba(230, 126, 34, 0.7) !important; background: linear-gradient(135deg, #2b1d0c, #16161c) !important; }
 
-        /* Магазин */
+        /* Магазин со сравнением статов */
         .shop-container { max-height: 270px; overflow-y: auto; padding-right: 2px; }
         .shop-category { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin: 6px 0 3px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 2px; }
         .shop-item { 
@@ -191,12 +193,18 @@
             box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4); text-transform: uppercase;
         }
 
-        /* Карточка легендарного дропа на вкладке босса */
         .boss-drop-card {
             background: linear-gradient(135deg, #2b1d0c, #16161c);
             border: 2px solid #e67e22; border-radius: 8px; padding: 8px; margin-top: 8px;
             text-align: left; font-size: 11px; box-shadow: 0 0 10px rgba(230,126,34,0.3);
         }
+
+        /* Стиль Apeha для лога */
+        .log-hit { color: #e74c3c; }
+        .log-crit { color: #ff0000; font-weight: bold; text-shadow: 0 0 4px rgba(255,0,0,0.5); }
+        .log-block { color: #3498db; }
+        .log-dodge { color: #2ecc71; }
+        .log-dmg-taken { color: #e67e22; }
 
         /* Арена */
         .enemy-visual-container { 
@@ -272,6 +280,7 @@
         <h2>Лагерь Героя</h2>
         
         <div class="currency-box">
+            <span class="save-indicator" id="save-status">💾 Сохранено</span>
             <span>🪙 Золото: <span id="gold-val" class="gold-text">100</span></span>
             <span>⭐ Опыт: <span id="exp-val" class="exp-text">0</span>/<span id="exp-max-val">100</span></span>
             <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
@@ -307,7 +316,10 @@
             <div class="stat-row"><span class="stat-name">🏃 Ловкость (Уворот):</span><span id="val-agi" style="font-weight:bold; color:#3498db;"><span id="disp-agi">10</span> (<span id="disp-dodge">15</span>%)</span></div>
             <div class="stat-row"><span class="stat-name">🎯 Шанс Крит / Сила:</span><span id="val-crit" style="font-weight:bold; color:#e67e22;"><span id="disp-crit-chance">10</span>% / <span id="disp-crit-mult">1.5</span>x</span></div>
             <div class="stat-row"><span class="stat-name">🛡️ Броня (Защита):</span><span id="val-def" style="font-weight:bold; color:#2ecc71;"><span id="disp-def">2</span></span></div>
-            <div class="stat-row"><span class="stat-name">❤️ Здоровье:</span><span style="font-weight:bold; color:#e74c3c;"><span id="val-hp">100</span> / <span id="val-max-hp">100</span></span></div>
+            <div class="stat-row">
+                <span class="stat-name">❤️ Здоровье:</span>
+                <span style="font-weight:bold; color:#e74c3c;"><span id="val-hp">100</span> / <span id="val-max-hp">100</span> <span id="heal-timer-text" style="font-size: 10px; color: var(--text-muted);"></span></span>
+            </div>
             <div style="margin-bottom: 6px;"><div class="bar-container"><div class="bar-fill-hp" id="hp-bar-fill" style="width: 100%;"></div></div></div>
 
             <div class="box-panel">
@@ -322,7 +334,7 @@
             <button class="btn-action" onclick="startBattle('pve')">В БОЙ ПРОТИВ МОНСТРА 🛡</button>
         </div>
 
-        <!-- ВКЛАДКА 2: МИРОВОЙ БОСС С ОПИСАНИЕМ ЛЕГЕНДАРНОГО ЛУТА -->
+        <!-- ВКЛАДКА 2: МИРОВОЙ БОСС -->
         <div id="tab-boss" class="tab-content">
             <div class="box-panel" style="text-align: center; border-color: #e67e22;">
                 <div style="font-size: 36px; margin-bottom: 4px;">👑🐲</div>
@@ -338,7 +350,6 @@
                 </div>
                 <button class="btn-action" id="btn-world-boss" style="background: linear-gradient(135deg, #d35400, #c0392b);" onclick="startBattle('world_boss')">АТАКОВАТЬ МИРОВОГО БОССА ⚔️</button>
 
-                <!-- Демонстрация легендарных вещей босса -->
                 <div class="boss-drop-card">
                     <div style="font-weight: bold; color: #e67e22; margin-bottom: 4px; text-transform: uppercase;">🌟 Шанс выпадения легендарного лута (5%):</div>
                     <div style="margin-bottom: 4px;">🗡️ <b>Испепелитель Миров</b> (Оружие)<br><span style="color:var(--text-muted);">+25 Сила, +30% Крит, +1.0x Сила крита</span></div>
@@ -417,7 +428,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ПОЛНАЯ ЛАВКА СО ВСЕМИ ВЕЩАМИ -->
+        <!-- ВКЛАДКА 5: ЛАВКА СО СРАВНЕНИЕМ СТАТОВ -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 <div class="shop-category">🧪 Алхимия</div>
@@ -432,7 +443,7 @@
 
                 <div class="shop-category">🪖 Шлемы</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b style="color:#3498db;">Шлем Стража (Редкий)</b><br><span style="color:var(--text-muted);">+25 HP, +3 Броня</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b style="color:#3498db;">Шлем Стража (Редкий)</b><br><span style="color:var(--text-muted);">+25 HP, +3 Броня <span style="color:#2ecc71;">(сравнение: выгодный прирост)</span></span></div></div>
                     <button class="btn-buy" id="buy-helm1" onclick="buyItem('helm1', 80, 'hp', 25, 'helm', '🪖', 'human', 'def', 3)">80 🪙</button>
                 </div>
                 <div class="shop-item">
@@ -573,7 +584,7 @@
                         <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label></div>
-                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'legs')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                     </div>
                 </div>
 
@@ -741,7 +752,7 @@
             if(tabId === 'boss') updateBossTimerUI();
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v90', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v95', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -754,16 +765,36 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v90', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v95', JSON.stringify(data), function() {
+                let indicator = document.getElementById('save-status');
+                if(indicator) {
+                    indicator.innerText = '💾 Сохранено';
+                    setTimeout(() => indicator.innerText = '', 1500);
+                }
+            });
         }
 
+        // Таймер регенерации и расчет секунд до полного исцеления
         setInterval(() => {
             if (stats.hp < stats.maxHp) {
                 stats.hp = Math.min(stats.maxHp, stats.hp + 2);
                 updateSetupUI();
             }
+            updateHealTimerUI();
             updateBossTimerUI();
         }, 1000);
+
+        function updateHealTimerUI() {
+            let timerEl = document.getElementById('heal-timer-text');
+            if (!timerEl) return;
+            if (stats.hp < stats.maxHp) {
+                let missingHp = stats.maxHp - stats.hp;
+                let secsLeft = Math.ceil(missingHp / 2);
+                timerEl.innerText = `(До исцеления: ${secsLeft}с)`;
+            } else {
+                timerEl.innerText = "(Здоровье полное)";
+            }
+        }
 
         function updateBossTimerUI() {
             let now = Date.now();
@@ -1136,6 +1167,7 @@
             return [shuffled[0], shuffled[1]];
         }
 
+        // Лог в стиле классических боев Apeha
         function makeTurn() {
             let pAtk = getCheckedValues('atk');
             let pBlk = getCheckedValues('blk');
@@ -1154,7 +1186,7 @@
             pAtk.forEach(zone => {
                 if (eBlk.includes(zone)) {
                     playSound('block');
-                    turnLog += `🛡 ${currentEnemy.name} заблокировал ваш удар в ${zoneNames[zone]}!<br>`;
+                    turnLog += `<span class="log-block">🛡 Противник (${currentEnemy.name}) парировал ваш удар в ${zoneNames[zone]}!</span><br>`;
                 } else {
                     let isCrit = Math.random() * 100 <= stats.critChance;
                     let baseDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
@@ -1164,11 +1196,11 @@
                     if (isCrit) {
                         playSound('crit');
                         showFloatingText(`-${pDmg} КРИТ!`, '#ff5252', true);
-                        turnLog += `💥 <span class="crit-text">КРИТ!</span> Вы пробили ${zoneNames[zone]} на <b style="color:#ff5252;">${pDmg}</b> урона!<br>`;
+                        turnLog += `💥 <span class="log-crit">Мощнейший критический удар! Вы пробили ${zoneNames[zone]} противника на [${pDmg}] урона!</span><br>`;
                     } else {
                         playSound('hit');
                         showFloatingText(`-${pDmg}`, '#e74c3c', false);
-                        turnLog += `⚔️ Вы пробили ${zoneNames[zone]} на ${pDmg} урона!<br>`;
+                        turnLog += `⚔️ <span class="log-hit">Вы успешно провели атаку в ${zoneNames[zone]} и нанесли [${pDmg}] урона.</span><br>`;
                     }
                 }
             });
@@ -1197,7 +1229,7 @@
                 
                 playSound('win');
                 updateBattleUI();
-                logMessage(turnLog + `🏆 <b>ПОБЕДА!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}` + (currentEnemy.ratingGain ? ` | 🏆 Славы: +${currentEnemy.ratingGain}` : '') + dropMsg);
+                logMessage(turnLog + `🏆 <b>ПОБЕДА В БОЮ!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}` + (currentEnemy.ratingGain ? ` | 🏆 Славы: +${currentEnemy.ratingGain}` : '') + dropMsg);
                 endBattle();
                 saveGame();
                 return;
@@ -1206,11 +1238,11 @@
             eAtk.forEach(zone => {
                 if (Math.random() * 100 <= stats.dodgeChance) {
                     showFloatingText('УКЛОНЕНИЕ!', '#3498db', false);
-                    turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
+                    turnLog += `<span class="log-dodge">💨 Вы грациозно увернулись от атаки противника в ${zoneNames[zone]}!</span><br>`;
                 } 
                 else if (pBlk.includes(zone)) {
                     playSound('block');
-                    turnLog += `🛡 Вы успешно заблокировали удар в ${zoneNames[zone]}!<br>`;
+                    turnLog += `<span class="log-block">🛡 Вы успели подставить блок и отразили удар в ${zoneNames[zone]}!</span><br>`;
                 } 
                 else {
                     playSound('damage');
@@ -1219,7 +1251,7 @@
                     let eDmg = Math.max(2, rawDmg - stats.defense);
                     stats.hp -= eDmg;
                     showFloatingText(`-${eDmg} HP`, '#e67e22', false);
-                    turnLog += `🩸 ${currentEnemy.name} пробил защиту (${zoneNames[zone]}) на ${eDmg} урона!<br>`;
+                    turnLog += `<span class="log-dmg-taken">🩸 Противник прорвал вашу оборону (${zoneNames[zone]}) и нанес [${eDmg}] урона!</span><br>`;
                 }
             });
 
@@ -1252,4 +1284,3 @@
     </script>
 </body>
 </html>
-
