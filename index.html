@@ -56,8 +56,9 @@
         
         h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
+        /* Исправленная верхняя панель (чтобы не было наложений на узких экранах) */
         .currency-box { 
-            display: flex; justify-content: space-around; 
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
             background: var(--panel-bg); 
             padding: 10px; border-radius: 12px; margin-bottom: 8px; 
             font-size: 11px; font-weight: bold; border: 1px solid var(--border-color);
@@ -560,7 +561,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 9: ЗАЛ СЛАВЫ -->
+        <!-- ВКЛАДКА 9: ЗАЛ СЛАВЫ И ГЛОБАЛЬНЫЙ РЕЙТИНГ -->
         <div id="tab-hall" class="tab-content">
             <div class="box-panel">
                 <h3 style="font-size: 13px; color: var(--accent-gold); margin-top: 0; text-transform: uppercase; text-align: center;">🏆 Зал Великих Достижений</h3>
@@ -586,6 +587,15 @@
                         <span class="ach-title">🎒 Вещей в Сумке</span>
                         <span class="ach-value" id="ach-items">0</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- БЛОК ГЛОБАЛЬНОГО РЕЙТИНГА -->
+            <div class="box-panel" style="margin-top: 10px;">
+                <h3 style="font-size: 13px; color: #3498db; margin-top: 0; text-transform: uppercase; text-align: center;">🌍 Топ Гладиаторов</h3>
+                <p style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Глобальный рейтинг (Слава PvP)</p>
+                <div id="global-leaderboard" class="leaderboard-container">
+                    <!-- Сюда подгрузится топ при нажатии на вкладку -->
                 </div>
             </div>
         </div>
@@ -733,6 +743,36 @@
             setTimeout(() => el.remove(), 800);
         }
 
+        // Загрузка Глобального Рейтинга
+        function loadGlobalLeaderboard() {
+            let leaderboardEl = document.getElementById('global-leaderboard');
+            if (!leaderboardEl) return;
+            
+            // Заглушки других игроков. Сюда можно будет подключить настоящую БД!
+            let topPlayers = [
+                { name: "УбийцаДраконов", rating: 1250, lvl: 45 },
+                { name: "Shadow", rating: 980, lvl: 38 },
+                { name: "Гендальф", rating: 850, lvl: 30 },
+                { name: "Вы (Игрок)", rating: stats.rating || 0, lvl: stats.lvl }
+            ];
+
+            // Сортируем топ от большего рейтинга к меньшему
+            topPlayers.sort((a, b) => b.rating - a.rating);
+
+            let html = '';
+            topPlayers.forEach((p, index) => {
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                let isMe = p.name === "Вы (Игрок)" ? 'background: rgba(46, 204, 113, 0.1); border-color: #2ecc71;' : '';
+                
+                html += `
+                <div class="achievement-item" style="${isMe}">
+                    <span class="ach-title">${medal} ${p.name} <span style="font-size:9px; color:var(--text-muted);">[Lvl ${p.lvl}]</span></span>
+                    <span class="ach-value">${p.rating} 🏆</span>
+                </div>`;
+            });
+            leaderboardEl.innerHTML = html;
+        }
+
         let stats = { 
             str: 10, agi: 10, hp: 100, maxHp: 100, 
             gold: 100, stones: 5, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
@@ -823,6 +863,7 @@
             event.currentTarget.classList.add('active');
             if(tabId === 'boss') updateBossTimerUI();
             if(tabId === 'auction') updateAuctionUI();
+            if(tabId === 'hall') loadGlobalLeaderboard(); // Обновляем топ при входе
         }
 
         tg.CloudStorage.getItem('arenaRPGData_v190', function(error, value) {
@@ -876,10 +917,23 @@
             }
         }
 
+        // Легкая функция обновления интерфейса для таймера HP
+        function updateHpUIOnly() {
+            let hpEl = document.getElementById('val-hp');
+            let hpDollEl = document.getElementById('doll-hp');
+            let hpBar = document.getElementById('hp-bar-fill');
+            if (hpEl) hpEl.innerText = stats.hp;
+            if (hpDollEl) hpDollEl.innerText = stats.hp;
+            if (hpBar) {
+                let hpPct = Math.min(100, Math.max(0, (stats.hp / stats.maxHp) * 100));
+                hpBar.style.width = hpPct + '%';
+            }
+        }
+
         setInterval(() => {
             if (stats.hp < stats.maxHp) {
                 stats.hp = Math.min(stats.maxHp, stats.hp + 2);
-                updateSetupUI();
+                updateHpUIOnly();
             }
             updateHealTimerUI();
             updateBossTimerUI();
@@ -1298,7 +1352,7 @@
             }
             
             let raceNames = { human: 'Человек', orc: 'Орк', elf: 'Эльф' };
-            document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек';
+            document.getElementById('hero-race-text') && (document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек');
 
             if (stats.raceChosen) {
                 document.getElementById('race-selection-box').style.display = 'none';
@@ -1342,11 +1396,14 @@
                 }
             });
 
+            // Расширяющийся инвентарь (исправление бага исчезновения вещей)
             let invGrid = document.getElementById('inventory-grid');
             invGrid.innerHTML = '';
             
             let invKeys = Object.keys(inventory);
-            for (let i = 0; i < 8; i++) {
+            let totalSlots = Math.max(8, Math.ceil(invKeys.length / 4) * 4);
+            
+            for (let i = 0; i < totalSlots; i++) {
                 let slotDiv = document.createElement('div');
                 slotDiv.className = 'inv-slot';
                 
@@ -1462,6 +1519,8 @@
             let turnLog = `<b>--- Обмен ударами ---</b><br>`;
 
             pAtk.forEach(zone => {
+                if (currentEnemy.hp <= 0) return; // Защита от избиения трупа
+                
                 if (eBlk.includes(zone)) {
                     playSound('block');
                     turnLog += `<span class="log-block">🛡 Противник (${currentEnemy.name}) парировал ваш удар в ${zoneNames[zone]}!</span><br>`;
@@ -1532,6 +1591,8 @@
             }
 
             eAtk.forEach(zone => {
+                if (stats.hp <= 0) return; // Защита героя от ударов после гибели
+                
                 if (Math.random() * 100 <= stats.dodgeChance) {
                     showFloatingText('УКЛОНЕНИЕ!', '#3498db', false);
                     turnLog += `<span class="log-dodge">💨 Вы грациозно увернулись от атаки противника в ${zoneNames[zone]}!</span><br>`;
