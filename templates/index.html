@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena of Legends: PvP</title>
+    <title>Game - Лагерь героя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -42,8 +42,8 @@
             text-align: center;
         }
         button {
-            background-color: #f39c12;
-            color: #121212;
+            background-color: #e74c3c;
+            color: #ffffff;
             border: none;
             padding: 12px;
             width: 100%;
@@ -54,13 +54,44 @@
             margin-top: 10px;
         }
         button:active {
-            background-color: #d68910;
+            background-color: #c0392b;
+        }
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .nav-btn {
+            background: #2c2c2c;
+            color: #fff;
+            border: none;
+            padding: 8px 5px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .nav-btn.active {
+            background: #f39c12;
+            color: #121212;
+            font-weight: bold;
         }
         .tab-content {
             display: none;
         }
         .tab-content.active {
             display: block;
+        }
+        .class-badge {
+            background: #252525;
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #f39c12;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -72,38 +103,54 @@
             <img src="{{ url_for('static', filename='1784659131417.png') }}" alt="Arena of Legends Preview">
         </div>
 
-        <!-- Вкладка: Лагерь / Главная -->
-        <div id="tab-pve" class="tab-content active">
-            <div class="card">
-                <h2>⚔️ Арена Героев</h2>
-                <p id="player-info">Загрузка профиля...</p>
-                <button onclick="findPvP()">Встать в очередь PvP</button>
-            </div>
+        <h2 style="text-align: center; color: #f39c12; margin-bottom: 15px;">ЛАГЕРЬ ГЕРОЯ</h2>
+
+        <!-- Навигация по вкладкам -->
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="switchTab('pve', this)">⚔️ PVE</button>
+            <button class="nav-btn" onclick="switchTab('boss', this)">🦖 БОСС</button>
+            <button class="nav-btn" onclick="switchTab('pvp', this)">🛡️ PVP</button>
+            <button class="nav-btn active-tab" onclick="switchTab('hero', this)">👤 ГЕРОЙ</button>
         </div>
 
         <!-- Вкладка: Герой -->
-        <div id="tab-hero" class="tab-content">
-            <div class="card">
-                <h2>🛡️ Статус Героя</h2>
-                
-                <!-- Внедренная картинка персонажа -->
-                <div style="text-align: center; margin: 15px 0;">
-                    <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой Воин" style="width: 100%; max-width: 280px; height: auto; border-radius: 12px; border: 2px solid #f39c12; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
-                </div>
+        <div id="tab-hero" class="tab-content active">
+            <div class="class-badge">
+                🛡️ ⚔️<br>ВОИН – ЗАЩИТНИК КОРОЛЕВСТВА
+            </div>
 
-                <p><b>Класс:</b> Воин – Защитник королевства</p>
-                <p><b>Уровень:</b> 1</p>
-                <p><b>Сила:</b> 10</p>
-                <p><b>Ловкость:</b> 10</p>
-                <p><b>Здоровье:</b> 100 / 100</p>
+            <!-- Картинка воина в профиле -->
+            <div class="card" style="text-align: center;">
+                <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Воин" style="width: 100%; max-width: 260px; border-radius: 10px; border: 2px solid #f39c12; margin-bottom: 10px;">
+                
+                <div style="text-align: left;">
+                    <p><b>Уровень героя:</b> 1</p>
+                    <p><b>Сила атаки:</b> 10</p>
+                    <p><b>Ловкость (Уворот):</b> 10 (15%)</p>
+                    <p><b>Здоровье:</b> 100 / 100</p>
+                </div>
             </div>
         </div>
 
-        <!-- Вкладка: Зал славы -->
-        <div id="tab-hall" class="tab-content">
+        <!-- Вкладка: PVE (остальные вкладки для структуры) -->
+        <div id="tab-pve" class="tab-content">
             <div class="card">
-                <h2>🏆 Зал славы</h2>
-                <div id="leaderboard-list">Загрузка рейтинга...</div>
+                <h2>⚔️ Сражение с монстром</h2>
+                <button onclick="alert('В бой!')">В БОЙ ПРОТИВ МОНСТРА 🛡️</button>
+            </div>
+        </div>
+
+        <div id="tab-boss" class="tab-content">
+            <div class="card">
+                <h2>🦖 Рейд на Босса</h2>
+                <p>Скоро здесь появятся эпические боссы!</p>
+            </div>
+        </div>
+
+        <div id="tab-pvp" class="tab-content">
+            <div class="card">
+                <h2>🛡️ Арена PvP</h2>
+                <button onclick="alert('Поиск соперника...')">Встать в очередь PvP</button>
             </div>
         </div>
     </div>
@@ -112,15 +159,15 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const user = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : {
-            id: 12345,
-            first_name: "Гладиатор"
-        };
-
-        document.getElementById('player-info').innerHTML = `Игрок: <b>${user.first_name}</b><br>Уровень: 1 | Рейтинг: 0`;
-
-        function findPvP() {
-            alert("Поиск противника на арене...");
+        function switchTab(tabName, btnElement) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Убираем активный класс у кнопок
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            // Показываем нужную вкладку
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if(btnElement) btnElement.classList.add('active');
         }
     </script>
 
