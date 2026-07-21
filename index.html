@@ -176,137 +176,55 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: ЛАВКА (РАСШИРЕННЫЙ АРСЕНАЛ ПО КЛАССАМ) -->
+        <!-- ВКЛАДКА 3: ЛАВКА (БАЛАНС 3 ПУТЕЙ РАЗВИТИЯ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
-                <!-- ОРУЖИЕ -->
-                <div class="shop-category">⚔️ Оружие Воина (Человек)</div>
+                
+                <!-- ВОИН (ЧЕЛОВЕК) -->
+                <div class="shop-category">⚔️ Арсенал Воина (Человек)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Короткий меч</b><br><span style="color:#aaa;">+3 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-human_sword1" onclick="buyItem('human_sword1', 100, 'str', 3, 'weapon', '🗡️', 'human')">100 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Путь Мечника (Тяжелый)</b><br><span style="color:#aaa;">+4 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 100, 'str', 4, 'weapon', '🗡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Рыцарский меч</b><br><span style="color:#aaa;">+7 Сила, +2 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-human_sword2" onclick="buyItem('human_sword2', 220, 'str', 7, 'weapon', '⚔️', 'human', 'agi', 2)">220 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Путь Стража (Гибрид)</b><br><span style="color:#aaa;">+3 Сила, +2 Ловк, +20 HP</span></div></div>
+                    <button class="btn-buy" id="buy-human_w2" onclick="buyItem('human_w2', 200, 'str', 3, 'weapon', '⚔️', 'human', 'agi', 2, 'hp', 20)">200 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Эскалибур</b><br><span style="color:#aaa;">+14 Сила, +5 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-human_sword3" onclick="buyItem('human_sword3', 450, 'str', 14, 'weapon', '✨', 'human', 'agi', 5)">450 🪙</button>
-                </div>
-
-                <div class="shop-category">🪓 Оружие Берсерка (Орк)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Каменный топор</b><br><span style="color:#aaa;">+5 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-orc_axe1" onclick="buyItem('orc_axe1', 100, 'str', 5, 'weapon', '🪓', 'orc')">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚒️</div><div><b>Двуручный молот</b><br><span style="color:#aaa;">+10 Сила, +20 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_axe2" onclick="buyItem('orc_axe2', 240, 'str', 10, 'weapon', '⚒️', 'orc', 'hp', 20)">240 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🔥</div><div><b>Сокрушитель Миров</b><br><span style="color:#aaa;">+20 Сила, +50 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_axe3" onclick="buyItem('orc_axe3', 500, 'str', 20, 'weapon', '🔥', 'orc', 'hp', 50)">500 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Путь Паладина (Защита)</b><br><span style="color:#aaa;">+2 Сила, +50 HP</span></div></div>
+                    <button class="btn-buy" id="buy-human_w3" onclick="buyItem('human_w3', 350, 'str', 2, 'weapon', '✨', 'human', 'hp', 50)">350 🪙</button>
                 </div>
 
-                <div class="shop-category">🏹 Оружие Следопыта (Эльф)</div>
+                <!-- БЕРСЕРК (ОРК) -->
+                <div class="shop-category">🪓 Арсенал Берсерка (Орк)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Охотничий лук</b><br><span style="color:#aaa;">+3 Ловк, +2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_bow1" onclick="buyItem('elf_bow1', 100, 'agi', 3, 'weapon', '🏹', 'elf', 'str', 2)">100 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Путь Ярости (Чистый урон)</b><br><span style="color:#aaa;">+6 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 100, 'str', 6, 'weapon', '🪓', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🎯</div><div><b>Эльфийский лук</b><br><span style="color:#aaa;">+8 Ловк, +4 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_bow2" onclick="buyItem('elf_bow2', 230, 'agi', 8, 'weapon', '🎯', 'elf', 'str', 4)">230 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">⚒️</div><div><b>Путь Джаггернаута (Танк)</b><br><span style="color:#aaa;">+8 Сила, +40 HP</span></div></div>
+                    <button class="btn-buy" id="buy-orc_w2" onclick="buyItem('orc_w2', 220, 'str', 8, 'weapon', '⚒️', 'orc', 'hp', 40)">220 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">💫</div><div><b>Лук Звездного Света</b><br><span style="color:#aaa;">+16 Ловк, +8 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_bow3" onclick="buyItem('elf_bow3', 480, 'agi', 16, 'weapon', '💫', 'elf', 'str', 8)">480 🪙</button>
-                </div>
-
-                <!-- БРОНЯ -->
-                <div class="shop-category">🛡 Броня Воина (Человек)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Кольчуга</b><br><span style="color:#aaa;">+30 HP</span></div></div>
-                    <button class="btn-buy" id="buy-human_armor1" onclick="buyItem('human_armor1', 100, 'hp', 30, 'armor', '🛡️', 'human')">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🦾</div><div><b>Стальные латы</b><br><span style="color:#aaa;">+70 HP, +2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-human_armor2" onclick="buyItem('human_armor2', 220, 'hp', 70, 'armor', '🦾', 'human', 'str', 2)">220 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🌟</div><div><b>Доспех Короля</b><br><span style="color:#aaa;">+150 HP, +5 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-human_armor3" onclick="buyItem('human_armor3', 460, 'hp', 150, 'armor', '🌟', 'human', 'str', 5)">460 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🔥</div><div><b>Путь Разрушителя (Босс-тир)</b><br><span style="color:#aaa;">+14 Сила, +80 HP</span></div></div>
+                    <button class="btn-buy" id="buy-orc_w3" onclick="buyItem('orc_w3', 400, 'str', 14, 'weapon', '🔥', 'orc', 'hp', 80)">400 🪙</button>
                 </div>
 
-                <div class="shop-category">🥋 Броня Берсерка (Орк)</div>
+                <!-- СЛЕДОПЫТ (ЭЛЬФ) -->
+                <div class="shop-category">🏹 Арсенал Следопыта (Эльф)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Шкуры вепря</b><br><span style="color:#aaa;">+40 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_armor1" onclick="buyItem('orc_armor1', 100, 'hp', 40, 'armor', '🥋', 'orc')">100 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Путь Стрелка (Скорость)</b><br><span style="color:#aaa;">+5 Ловкость</span></div></div>
+                    <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 5, 'weapon', '🏹', 'elf')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Панцирь огра</b><br><span style="color:#aaa;">+90 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_armor2" onclick="buyItem('orc_armor2', 230, 'hp', 90, 'armor', '🛡️', 'orc')">230 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🎯</div><div><b>Путь Ассасина (Крит/Уворот)</b><br><span style="color:#aaa;">+7 Ловкость, +3 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-elf_w2" onclick="buyItem('elf_w2', 210, 'agi', 7, 'weapon', '🎯', 'elf', 'str', 3)">210 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🌋</div><div><b>Броня Титана</b><br><span style="color:#aaa;">+180 HP, +5 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-orc_armor3" onclick="buyItem('orc_armor3', 480, 'hp', 180, 'armor', '🌋', 'orc', 'str', 5)">480 🪙</button>
-                </div>
-
-                <div class="shop-category">🧥 Броня Следопыта (Эльф)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Кожаный кафтан</b><br><span style="color:#aaa;">+20 HP, +3 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-elf_armor1" onclick="buyItem('elf_armor1', 100, 'hp', 20, 'armor', '🧥', 'elf', 'agi', 3)">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🍃</div><div><b>Мантия Лиственного леса</b><br><span style="color:#aaa;">+50 HP, +7 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-elf_armor2" onclick="buyItem('elf_armor2', 210, 'hp', 50, 'armor', '🍃', 'elf', 'agi', 7)">210 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Доспех Лунного Света</b><br><span style="color:#aaa;">+100 HP, +15 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-elf_armor3" onclick="buyItem('elf_armor3', 450, 'hp', 100, 'armor', '✨', 'elf', 'agi', 15)">450 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">💫</div><div><b>Путь Ветра (Неуловимый)</b><br><span style="color:#aaa;">+12 Ловкость, +30 HP</span></div></div>
+                    <button class="btn-buy" id="buy-elf_w3" onclick="buyItem('elf_w3', 380, 'agi', 12, 'weapon', '💫', 'elf', 'hp', 30)">380 🪙</button>
                 </div>
 
-                <!-- ОБУВЬ -->
-                <div class="shop-category">🥾 Обувь Воина (Человек)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Кожаные ботинки</b><br><span style="color:#aaa;">+3 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-human_boots1" onclick="buyItem('human_boots1', 100, 'agi', 3, 'boots', '🥿', 'human')">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Сапоги с утяжелителем</b><br><span style="color:#aaa;">+6 Ловк, +2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-human_boots2" onclick="buyItem('human_boots2', 210, 'agi', 6, 'boots', '🥾', 'human', 'str', 2)">210 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚡</div><div><b>Ботинки Гермеса</b><br><span style="color:#aaa;">+12 Ловк, +4 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-human_boots3" onclick="buyItem('human_boots3', 420, 'agi', 12, 'boots', '⚡', 'human', 'str', 4)">420 🪙</button>
-                </div>
-
-                <div class="shop-category">🥾 Обувь Берсерка (Орк)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Тяжелые башмаки</b><br><span style="color:#aaa;">+2 Сила, +1 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-orc_boots1" onclick="buyItem('orc_boots1', 100, 'str', 2, 'boots', '🥾', 'orc', 'agi', 1)">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Железноступы</b><br><span style="color:#aaa;">+5 Сила, +3 Ловк, +20 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_boots2" onclick="buyItem('orc_boots2', 230, 'str', 5, 'boots', '🥾', 'orc', 'agi', 3, 'hp', 20)">230 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🌋</div><div><b>Поножи Землетрясения</b><br><span style="color:#aaa;">+10 Сила, +6 Ловк, +50 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_boots3" onclick="buyItem('orc_boots3', 490, 'str', 10, 'boots', '🌋', 'orc', 'agi', 6, 'hp', 50)">490 🪙</button>
-                </div>
-
-                <div class="shop-category">🥾 Обувь Следопыта (Эльф)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Мягкие туфли</b><br><span style="color:#aaa;">+5 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-elf_boots1" onclick="buyItem('elf_boots1', 100, 'agi', 5, 'boots', '🥿', 'elf')">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Легкие сандалии</b><br><span style="color:#aaa;">+10 Ловк, +2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_boots2" onclick="buyItem('elf_boots2', 220, 'agi', 10, 'boots', '🥾', 'elf', 'str', 2)">220 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Сапоги Ветролома</b><br><span style="color:#aaa;">+20 Ловк, +5 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_boots3" onclick="buyItem('elf_boots3', 460, 'agi', 20, 'boots', '✨', 'elf', 'str', 5)">460 🪙</button>
-                </div>
             </div>
         </div>
 
@@ -406,40 +324,19 @@
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
-        // База данных расширенного арсенала
+        // База данных оружия с несколькими путями развития статов
         const itemsDB = {
-            // Воин (Человек)
-            human_sword1: { name: 'Короткий меч', type: 'weapon', stat: 'str', val: 3, icon: '🗡️', classReq: 'human' },
-            human_sword2: { name: 'Рыцарский меч', type: 'weapon', stat: 'str', val: 7, stat2: 'agi', val2: 2, icon: '⚔️', classReq: 'human' },
-            human_sword3: { name: 'Эскалибур', type: 'weapon', stat: 'str', val: 14, stat2: 'agi', val2: 5, icon: '✨', classReq: 'human' },
-            human_armor1: { name: 'Кольчуга', type: 'armor', stat: 'hp', val: 30, icon: '🛡️', classReq: 'human' },
-            human_armor2: { name: 'Стальные латы', type: 'armor', stat: 'hp', val: 70, stat2: 'str', val2: 2, icon: '🦾', classReq: 'human' },
-            human_armor3: { name: 'Доспех Короля', type: 'armor', stat: 'hp', val: 150, stat2: 'str', val2: 5, icon: '🌟', classReq: 'human' },
-            human_boots1: { name: 'Кожаные ботинки', type: 'boots', stat: 'agi', val: 3, icon: '🥿', classReq: 'human' },
-            human_boots2: { name: 'Сапоги с утяжелителем', type: 'boots', stat: 'agi', val: 6, stat2: 'str', val2: 2, icon: '🥾', classReq: 'human' },
-            human_boots3: { name: 'Ботинки Гермеса', type: 'boots', stat: 'agi', val: 12, stat2: 'str', val2: 4, icon: '⚡', classReq: 'human' },
+            human_w1: { name: 'Путь Мечника', type: 'weapon', stat: 'str', val: 4, icon: '🗡️', classReq: 'human' },
+            human_w2: { name: 'Путь Стража', type: 'weapon', stat: 'str', val: 3, stat2: 'agi', val2: 2, stat3: 'hp', val3: 20, icon: '⚔️', classReq: 'human' },
+            human_w3: { name: 'Путь Паладина', type: 'weapon', stat: 'str', val: 2, stat2: 'hp', val2: 50, icon: '✨', classReq: 'human' },
 
-            // Берсерк (Орк)
-            orc_axe1: { name: 'Каменный топор', type: 'weapon', stat: 'str', val: 5, icon: '🪓', classReq: 'orc' },
-            orc_axe2: { name: 'Двуручный молот', type: 'weapon', stat: 'str', val: 10, stat2: 'hp', val2: 20, icon: '⚒️', classReq: 'orc' },
-            orc_axe3: { name: 'Сокрушитель Миров', type: 'weapon', stat: 'str', val: 20, stat2: 'hp', val2: 50, icon: '🔥', classReq: 'orc' },
-            orc_armor1: { name: 'Шкуры вепря', type: 'armor', stat: 'hp', val: 40, icon: '🥋', classReq: 'orc' },
-            orc_armor2: { name: 'Панцирь огра', type: 'armor', stat: 'hp', val: 90, icon: '🛡️', classReq: 'orc' },
-            orc_armor3: { name: 'Броня Титана', type: 'armor', stat: 'hp', val: 180, stat2: 'str', val2: 5, icon: '🌋', classReq: 'orc' },
-            orc_boots1: { name: 'Тяжелые башмаки', type: 'boots', stat: 'str', val: 2, stat2: 'agi', val2: 1, icon: '🥾', classReq: 'orc' },
-            orc_boots2: { name: 'Железноступы', type: 'boots', stat: 'str', val: 5, stat2: 'agi', val2: 3, stat3: 'hp', val3: 20, icon: '🥾', classReq: 'orc' },
-            orc_boots3: { name: 'Поножи Землетрясения', type: 'boots', stat: 'str', val: 10, stat2: 'agi', val2: 6, stat3: 'hp', val3: 50, icon: '🌋', classReq: 'orc' },
+            orc_w1: { name: 'Путь Ярости', type: 'weapon', stat: 'str', val: 6, icon: '🪓', classReq: 'orc' },
+            orc_w2: { name: 'Путь Джаггернаута', type: 'weapon', stat: 'str', val: 8, stat2: 'hp', val2: 40, icon: '⚒️', classReq: 'orc' },
+            orc_w3: { name: 'Путь Разрушителя', type: 'weapon', stat: 'str', val: 14, stat2: 'hp', val2: 80, icon: '🔥', classReq: 'orc' },
 
-            // Следопыт (Эльф)
-            elf_bow1: { name: 'Охотничий лук', type: 'weapon', stat: 'agi', val: 3, stat2: 'str', val2: 2, icon: '🏹', classReq: 'elf' },
-            elf_bow2: { name: 'Эльфийский лук', type: 'weapon', stat: 'agi', val: 8, stat2: 'str', val2: 4, icon: '🎯', classReq: 'elf' },
-            elf_bow3: { name: 'Лук Звездного Света', type: 'weapon', stat: 'agi', val: 16, stat2: 'str', val2: 8, icon: '💫', classReq: 'elf' },
-            elf_armor1: { name: 'Кожаный кафтан', type: 'armor', stat: 'hp', val: 20, stat2: 'agi', val2: 3, icon: '🧥', classReq: 'elf' },
-            elf_armor2: { name: 'Мантия Лиственного леса', type: 'armor', stat: 'hp', val: 50, stat2: 'agi', val2: 7, icon: '🍃', classReq: 'elf' },
-            elf_armor3: { name: 'Доспех Лунного Света', type: 'armor', stat: 'hp', val: 100, stat2: 'agi', val2: 15, icon: '✨', classReq: 'elf' },
-            elf_boots1: { name: 'Мягкие туфли', type: 'boots', stat: 'agi', val: 5, icon: '🥿', classReq: 'elf' },
-            elf_boots2: { name: 'Легкие сандалии', type: 'boots', stat: 'agi', val: 10, stat2: 'str', val2: 2, icon: '🥾', classReq: 'elf' },
-            elf_boots3: { name: 'Сапоги Ветролома', type: 'boots', stat: 'agi', val: 20, stat2: 'str', val2: 5, icon: '✨', classReq: 'elf' }
+            elf_w1: { name: 'Путь Стрелка', type: 'weapon', stat: 'agi', val: 5, icon: '🏹', classReq: 'elf' },
+            elf_w2: { name: 'Путь Ассасина', type: 'weapon', stat: 'agi', val: 7, stat2: 'str', val2: 3, icon: '🎯', classReq: 'elf' },
+            elf_w3: { name: 'Путь Ветра', type: 'weapon', stat: 'agi', val: 12, stat2: 'hp', val2: 30, icon: '💫', classReq: 'elf' }
         };
 
         function switchTab(tabId) {
@@ -450,7 +347,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v8', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v9', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -464,7 +361,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v8', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v9', JSON.stringify(data));
         }
 
         function changeRace() {
