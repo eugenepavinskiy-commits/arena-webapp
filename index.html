@@ -83,13 +83,19 @@
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // 1. СИСТЕМА СОХРАНЕНИЙ (localStorage)
-        // Проверяем, есть ли уже сохраненные статы, иначе даем базовые
-        let savedStats = localStorage.getItem('playerStats');
-        let stats = savedStats ? JSON.parse(savedStats) : { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
-        
-        // Характеристики Гладиатора
+        // Базовые статы игрока и врага
+        let stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
         let enemy = { name: 'Гладиатор', hp: 50, maxHp: 50, str: 8 };
+
+        // 1. ЗАГРУЗКА ИЗ ОБЛАКА TELEGRAM
+        tg.CloudStorage.getItem('arenaStats', function(error, value) {
+            if (!error && value) {
+                // Если сохранение найдено, применяем его
+                stats = JSON.parse(value);
+            }
+            // Обновляем интерфейс только после попытки загрузки
+            updateSetupUI();
+        });
 
         // 2. ЛОГИКА ИНТЕРФЕЙСА ПРОКАЧКИ
         function addStat(type, amount) {
@@ -113,8 +119,8 @@
                 document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = true);
                 document.getElementById('start-btn').style.display = 'block';
                 
-                // Автоматически сохраняем прогресс в память устройства
-                localStorage.setItem('playerStats', JSON.stringify(stats));
+                // СОХРАНЕНИЕ В ОБЛАКО TELEGRAM
+                tg.CloudStorage.setItem('arenaStats', JSON.stringify(stats));
             }
         }
 
@@ -185,9 +191,12 @@
         }
 
         function resetGame() {
-            // Полный сброс сохранений и интерфейса
-            localStorage.removeItem('playerStats');
+            // УДАЛЕНИЕ СОХРАНЕНИЯ ИЗ ОБЛАКА
+            tg.CloudStorage.removeItem('arenaStats');
+            
+            // Полный сброс характеристик
             stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
+            enemy.hp = enemy.maxHp;
             
             document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = false);
             document.getElementById('start-btn').style.display = 'none';
@@ -201,8 +210,6 @@
             updateSetupUI();
         }
 
-        // Запуск UI при загрузке страницы
-        updateSetupUI();
     </script>
 </body>
 </html>
