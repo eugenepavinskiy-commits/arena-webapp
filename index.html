@@ -21,9 +21,9 @@
         .gold-text { color: #ffaa00; }
         .exp-text { color: #64b5f6; }
 
-        /* Навигационные вкладки */
-        .nav-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
-        .tab-btn { flex: 1; background: #333; color: #fff; border: none; padding: 7px 2px; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        /* Навигационные вкладки (теперь их 5) */
+        .nav-tabs { display: flex; gap: 3px; margin-bottom: 8px; }
+        .tab-btn { flex: 1; background: #333; color: #fff; border: none; padding: 6px 1px; font-size: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; }
         .tab-btn.active { background: #4caf50; }
 
         .tab-content { display: none; text-align: left; }
@@ -60,7 +60,7 @@
         .btn-buy { background: #ffaa00; color: #000; border: none; padding: 5px 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 10px; white-space: nowrap; }
         .btn-buy:disabled { background: #444; color: #777; cursor: not-allowed; }
 
-        /* Визуал врага на арене */
+        /* Визуал противника */
         .enemy-visual-container { margin-bottom: 8px; border-radius: 10px; overflow: hidden; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .enemy-img { width: 100%; height: 130px; object-fit: cover; display: block; }
 
@@ -117,31 +117,23 @@
 
         <!-- НАВИГАЦИЯ -->
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('camp')">⚔️ Бой</button>
-            <button class="tab-btn" onclick="switchTab('hero')">🛡 Персонаж</button>
+            <button class="tab-btn active" onclick="switchTab('camp')">⚔️ PvE</button>
+            <button class="tab-btn" onclick="switchTab('pvp')">🛡️ PvP</button>
+            <button class="tab-btn" onclick="switchTab('hero')">👤 Герой</button>
             <button class="tab-btn" onclick="switchTab('shop')">🛒 Лавка</button>
             <button class="tab-btn" onclick="switchTab('race')">🧬 Раса</button>
         </div>
 
-        <!-- ВКЛАДКА 1: БОЙ -->
+        <!-- ВКЛАДКА 1: PvE БОЙ -->
         <div id="tab-camp" class="tab-content active">
             <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
             
-            <div class="stat-row">
-                <span class="stat-name">⚔️ Сила атаки:</span>
-                <span id="val-str" style="font-weight:bold; color:#ff5252;">10</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-name">🏃 Ловкость (уворот):</span>
-                <span id="val-agi" style="font-weight:bold; color:#64b5f6;">10</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-name">❤️ Макс. здоровье:</span>
-                <span id="val-hp" style="font-weight:bold; color:#ff8a80;">100</span>
-            </div>
+            <div class="stat-row"><span class="stat-name">⚔️ Сила атаки:</span><span id="val-str" style="font-weight:bold; color:#ff5252;">10</span></div>
+            <div class="stat-row"><span class="stat-name">🏃 Ловкость (уворот):</span><span id="val-agi" style="font-weight:bold; color:#64b5f6;">10</span></div>
+            <div class="stat-row"><span class="stat-name">❤️ Макс. здоровье:</span><span id="val-hp" style="font-weight:bold; color:#ff8a80;">100</span></div>
 
             <div class="box-panel">
-                <label style="font-size: 12px; font-weight: bold; color: #aaa;">🎯 Выберите противника:</label>
+                <label style="font-size: 12px; font-weight: bold; color: #aaa;">🎯 Выберите монстра (PvE):</label>
                 <select id="enemy-select">
                     <option value="wolf">🐺 Дикий Волк (Легкий)</option>
                     <option value="griffin" selected>🦅 Грифон (Средний)</option>
@@ -149,10 +141,31 @@
                 </select>
             </div>
 
-            <button class="btn-action" onclick="startBattle()">В БОЙ НА АРЕНУ! 🛡</button>
+            <button class="btn-action" onclick="startBattle('pve')">В БОЙ ПРОТИВ МОНСТРА 🛡</button>
         </div>
 
-        <!-- ВКЛАДКА 2: ПЕРСОНАЖ -->
+        <!-- ВКЛАДКА 2: PvP АРЕНА -->
+        <div id="tab-pvp" class="tab-content">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=60" alt="PvP Арена" class="game-image">
+            
+            <div style="background: #2a2a2a; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; line-height: 1.4;">
+                <b>⚔️ PvP Дуэли на Арене</b><br>
+                Сразитесь с гладиаторами других классов! Награды за победу вдвое выше, но противники умнее и опаснее.
+            </div>
+
+            <div class="box-panel">
+                <label style="font-size: 12px; font-weight: bold; color: #aaa;">⚔️ Выберите соперника на арене:</label>
+                <select id="pvp-select">
+                    <option value="pvp_warrior">🛡️ Гладиатор-Воин (Сбалансированный)</option>
+                    <option value="pvp_berserk" selected>🪓 Кровавый Берсерк (Тяжелый урон)</option>
+                    <option value="pvp_ranger">🏹 Элитный Следопыт (Уворотливый)</option>
+                </select>
+            </div>
+
+            <button class="btn-action" style="background: #e53935;" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
+        </div>
+
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ -->
         <div id="tab-hero" class="tab-content">
             <div class="hero-layout">
                 <div class="paper-doll">
@@ -176,59 +189,42 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: ЛАВКА (БАЛАНС 3 ПУТЕЙ РАЗВИТИЯ) -->
+        <!-- ВКЛАДКА 4: ЛАВКА -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
-                
-                <!-- ВОИН (ЧЕЛОВЕК) -->
-                <div class="shop-category">⚔️ Арсенал Воина (Человек)</div>
+                <div class="shop-category">⚔️ Оружие Воина (Человек)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Путь Мечника (Тяжелый)</b><br><span style="color:#aaa;">+4 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Путь Мечника</b><br><span style="color:#aaa;">+4 Сила</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 100, 'str', 4, 'weapon', '🗡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Путь Стража (Гибрид)</b><br><span style="color:#aaa;">+3 Сила, +2 Ловк, +20 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Путь Стража</b><br><span style="color:#aaa;">+3 Сила, +2 Ловк, +20 HP</span></div></div>
                     <button class="btn-buy" id="buy-human_w2" onclick="buyItem('human_w2', 200, 'str', 3, 'weapon', '⚔️', 'human', 'agi', 2, 'hp', 20)">200 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Путь Паладина (Защита)</b><br><span style="color:#aaa;">+2 Сила, +50 HP</span></div></div>
-                    <button class="btn-buy" id="buy-human_w3" onclick="buyItem('human_w3', 350, 'str', 2, 'weapon', '✨', 'human', 'hp', 50)">350 🪙</button>
-                </div>
 
-                <!-- БЕРСЕРК (ОРК) -->
-                <div class="shop-category">🪓 Арсенал Берсерка (Орк)</div>
+                <div class="shop-category">🪓 Оружие Берсерка (Орк)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Путь Ярости (Чистый урон)</b><br><span style="color:#aaa;">+6 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Путь Ярости</b><br><span style="color:#aaa;">+6 Сила</span></div></div>
                     <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 100, 'str', 6, 'weapon', '🪓', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚒️</div><div><b>Путь Джаггернаута (Танк)</b><br><span style="color:#aaa;">+8 Сила, +40 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">⚒️</div><div><b>Путь Джаггернаута</b><br><span style="color:#aaa;">+8 Сила, +40 HP</span></div></div>
                     <button class="btn-buy" id="buy-orc_w2" onclick="buyItem('orc_w2', 220, 'str', 8, 'weapon', '⚒️', 'orc', 'hp', 40)">220 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🔥</div><div><b>Путь Разрушителя (Босс-тир)</b><br><span style="color:#aaa;">+14 Сила, +80 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_w3" onclick="buyItem('orc_w3', 400, 'str', 14, 'weapon', '🔥', 'orc', 'hp', 80)">400 🪙</button>
-                </div>
 
-                <!-- СЛЕДОПЫТ (ЭЛЬФ) -->
-                <div class="shop-category">🏹 Арсенал Следопыта (Эльф)</div>
+                <div class="shop-category">🏹 Оружие Следопыта (Эльф)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Путь Стрелка (Скорость)</b><br><span style="color:#aaa;">+5 Ловкость</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Путь Стрелка</b><br><span style="color:#aaa;">+5 Ловкость</span></div></div>
                     <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 5, 'weapon', '🏹', 'elf')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🎯</div><div><b>Путь Ассасина (Крит/Уворот)</b><br><span style="color:#aaa;">+7 Ловкость, +3 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🎯</div><div><b>Путь Ассасина</b><br><span style="color:#aaa;">+7 Ловкость, +3 Сила</span></div></div>
                     <button class="btn-buy" id="buy-elf_w2" onclick="buyItem('elf_w2', 210, 'agi', 7, 'weapon', '🎯', 'elf', 'str', 3)">210 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">💫</div><div><b>Путь Ветра (Неуловимый)</b><br><span style="color:#aaa;">+12 Ловкость, +30 HP</span></div></div>
-                    <button class="btn-buy" id="buy-elf_w3" onclick="buyItem('elf_w3', 380, 'agi', 12, 'weapon', '💫', 'elf', 'hp', 30)">380 🪙</button>
-                </div>
-
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: РАСА -->
+        <!-- ВКЛАДКА 5: РАСА -->
         <div id="tab-race" class="tab-content">
             <div class="box-panel" style="text-align: center;">
                 <label style="font-size: 13px; font-weight: bold; color: #ffaa00;">🧬 Выберите расу и класс героя:</label>
@@ -246,17 +242,17 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 2: АРЕНА -->
+    <!-- ЭКРАН 2: АРЕНА (PvE / PvP) -->
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
         <div class="enemy-visual-container">
-            <img id="enemy-image" src="" alt="Враг" class="enemy-img">
+            <img id="enemy-image" src="" alt="Противник" class="enemy-img">
         </div>
 
         <div class="health-box">
             <span>Вы: <span id="my-hp">100</span> ❤️</span>
-            <span id="enemy-name-hp">Враг: <span id="enemy-hp">50</span> ❤️</span>
+            <span id="enemy-name-hp">Соперник: <span id="enemy-hp">50</span> ❤️</span>
         </div>
         
         <div id="battle-log"></div>
@@ -305,38 +301,28 @@
         let inventory = {}; 
         let equipped = { weapon: null, armor: null, boots: null };
         
-        let enemies = {
-            wolf: { 
-                name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, goldReward: 25, expReward: 20, 
-                img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=600&auto=format&fit=crop&q=60' 
-            },
-            griffin: { 
-                name: 'Грифон', hp: 60, maxHp: 60, str: 9, goldReward: 50, expReward: 50, 
-                img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=60' 
-            },
-            dragon: { 
-                name: 'Черный Дракон', hp: 110, maxHp: 110, str: 14, goldReward: 120, expReward: 120, 
-                img: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60' 
-            }
+        // База PvE и PvP противников
+        let opponents = {
+            wolf: { name: 'Дикий Волк (PvE)', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 20, img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=600&auto=format&fit=crop&q=60' },
+            griffin: { name: 'Грифон (PvE)', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 50, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=60' },
+            dragon: { name: 'Черный Дракон (PvE Босс)', hp: 110, maxHp: 110, str: 14, gold: 120, exp: 120, img: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60' },
+            
+            pvp_warrior: { name: 'Гладиатор Марк (PvP Воин)', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=60' },
+            pvp_berserk: { name: 'Орк-Головорез (PvP Берсерк)', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60' },
+            pvp_ranger: { name: 'Эльф-Ассасин (PvP Дуэлянт)', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=60' }
         };
         let currentEnemy = {};
 
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
-        // База данных оружия с несколькими путями развития статов
         const itemsDB = {
             human_w1: { name: 'Путь Мечника', type: 'weapon', stat: 'str', val: 4, icon: '🗡️', classReq: 'human' },
             human_w2: { name: 'Путь Стража', type: 'weapon', stat: 'str', val: 3, stat2: 'agi', val2: 2, stat3: 'hp', val3: 20, icon: '⚔️', classReq: 'human' },
-            human_w3: { name: 'Путь Паладина', type: 'weapon', stat: 'str', val: 2, stat2: 'hp', val2: 50, icon: '✨', classReq: 'human' },
-
             orc_w1: { name: 'Путь Ярости', type: 'weapon', stat: 'str', val: 6, icon: '🪓', classReq: 'orc' },
             orc_w2: { name: 'Путь Джаггернаута', type: 'weapon', stat: 'str', val: 8, stat2: 'hp', val2: 40, icon: '⚒️', classReq: 'orc' },
-            orc_w3: { name: 'Путь Разрушителя', type: 'weapon', stat: 'str', val: 14, stat2: 'hp', val2: 80, icon: '🔥', classReq: 'orc' },
-
             elf_w1: { name: 'Путь Стрелка', type: 'weapon', stat: 'agi', val: 5, icon: '🏹', classReq: 'elf' },
-            elf_w2: { name: 'Путь Ассасина', type: 'weapon', stat: 'agi', val: 7, stat2: 'str', val2: 3, icon: '🎯', classReq: 'elf' },
-            elf_w3: { name: 'Путь Ветра', type: 'weapon', stat: 'agi', val: 12, stat2: 'hp', val2: 30, icon: '💫', classReq: 'elf' }
+            elf_w2: { name: 'Путь Ассасина', type: 'weapon', stat: 'agi', val: 7, stat2: 'str', val2: 3, icon: '🎯', classReq: 'elf' }
         };
 
         function switchTab(tabId) {
@@ -347,7 +333,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v9', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v10', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -361,7 +347,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v9', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v10', JSON.stringify(data));
         }
 
         function changeRace() {
@@ -487,17 +473,19 @@
             }
         }
 
-        function startBattle() {
-            let selectedKey = document.getElementById('enemy-select').value;
-            let template = enemies[selectedKey];
+        function startBattle(mode) {
+            let selectId = (mode === 'pve') ? 'enemy-select' : 'pvp-select';
+            let selectedKey = document.getElementById(selectId).value;
+            let template = opponents[selectedKey];
+            
             currentEnemy = { 
                 name: template.name, hp: template.hp, maxHp: template.maxHp, 
-                str: template.str, gold: template.goldReward, exp: template.expReward, img: template.img 
+                str: template.str, gold: template.gold, exp: template.exp, img: template.img 
             };
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
-            document.getElementById('arena-title').innerText = "Арена: " + currentEnemy.name;
+            document.getElementById('arena-title').innerText = (mode === 'pve' ? "PvE Арена: " : "PvP Дуэль: ") + currentEnemy.name;
             document.getElementById('enemy-image').src = currentEnemy.img;
             
             stats.hp = stats.maxHp; 
@@ -584,13 +572,13 @@
                 stats.gold += currentEnemy.gold;
                 stats.exp += currentEnemy.exp;
                 updateBattleUI();
-                logMessage(turnLog + `🏆 <b>${currentEnemy.name} ПОВЕРЖЕН!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}`);
+                logMessage(turnLog + `🏆 <b>ПОБЕДА В ДУЭЛИ!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}`);
                 endBattle();
                 saveGame();
                 return;
             }
 
-            // АТАКА ВРАГА
+            // АТАКА СОПЕРНИКА
             eAtk.forEach(zone => {
                 let dodgeChance = stats.agi * 1.5; 
                 if (Math.random() * 100 <= dodgeChance) {
@@ -609,7 +597,7 @@
             if (stats.hp <= 0) {
                 stats.hp = 0;
                 updateBattleUI();
-                logMessage(turnLog + `☠️ <b>ВЫ ПОГИБЛИ НА АРЕНЕ...</b>`);
+                logMessage(turnLog + `☠️ <b>ВЫ ПАЛИ НА АРЕНЕ...</b>`);
                 endBattle();
                 saveGame();
                 return;
@@ -635,3 +623,4 @@
     </script>
 </body>
 </html>
+
