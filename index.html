@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Арена: Характеристики</title>
+    <!-- Подключаем библиотеку Telegram -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: var(--tg-theme-bg-color, #1e1e1e);
+            color: var(--tg-theme-text-color, #ffffff);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h2 { margin-bottom: 5px; }
+        .points-box {
+            font-size: 18px;
+            color: #ffaa00;
+            margin-bottom: 20px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+        .stat-name { font-size: 18px; font-weight: bold; }
+        .stat-value { font-size: 20px; width: 40px; }
+        .btn-add {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-add:disabled { background: #555; }
+    </style>
+</head>
+<body>
+
+    <h2>Подготовка к бою</h2>
+    <div class="points-box">Свободных очков: <span id="points">5</span></div>
+
+    <div class="stat-row">
+        <span class="stat-name">⚔️ Сила</span>
+        <span class="stat-value" id="val-str">10</span>
+        <button class="btn-add" onclick="addStat('str', 1)">+</button>
+    </div>
+
+    <div class="stat-row">
+        <span class="stat-name">🏃 Ловкость</span>
+        <span class="stat-value" id="val-agi">10</span>
+        <button class="btn-add" onclick="addStat('agi', 1)">+</button>
+    </div>
+
+    <div class="stat-row">
+        <span class="stat-name">❤️ Здоровье</span>
+        <span class="stat-value" id="val-hp">100</span>
+        <button class="btn-add" onclick="addStat('hp', 10)">+</button>
+    </div>
+
+    <script>
+        // Инициализируем Web App
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем на весь экран
+
+        let stats = { points: 5, str: 10, agi: 10, hp: 100 };
+
+        function addStat(type, amount) {
+            if (stats.points > 0) {
+                stats[type] += amount;
+                stats.points -= 1;
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('points').innerText = stats.points;
+            document.getElementById('val-str').innerText = stats.str;
+            document.getElementById('val-agi').innerText = stats.agi;
+            document.getElementById('val-hp').innerText = stats.hp;
+
+            // Если очки кончились, отключаем кнопки и показываем главную кнопку Telegram внизу
+            if (stats.points === 0) {
+                let buttons = document.querySelectorAll('.btn-add');
+                buttons.forEach(btn => btn.disabled = true);
+                
+                tg.MainButton.text = "В БОЙ!";
+                tg.MainButton.show();
+            }
+        }
+
+        // Обработка нажатия на главную кнопку "В БОЙ"
+        tg.MainButton.onClick(function() {
+            // Отправляем данные обратно в бота (в Python)
+            tg.sendData(JSON.stringify(stats));
+        });
+    </script>
+</body>
+</html>
