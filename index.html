@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Арена</title>
-    <!-- Подключаем библиотеку Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { 
@@ -17,16 +16,7 @@
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        /* Стили для картинок */
-        .game-image {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-
+        .game-image { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .points-box { font-size: 18px; color: #ffaa00; margin-bottom: 20px; font-weight: bold; }
         .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-radius: 10px; }
         .stat-name { font-size: 18px; font-weight: bold; }
@@ -35,22 +25,32 @@
         .btn-add:disabled { background: #555; }
         
         .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
-        #battle-log { background: #111; padding: 15px; height: 180px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 14px; line-height: 1.5; }
+        #battle-log { background: #111; padding: 10px; height: 160px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 13px; line-height: 1.4; border: 1px solid #333; }
         
-        .btn-action { background: #e53935; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; width: 100%; margin-top: 15px; cursor: pointer; font-weight: bold; }
-        .btn-start { background: #4caf50; }
-        .btn-restart { background: #ffaa00; color: #000; }
+        /* Стили для системы зон БК */
+        .battle-controls { background: #2a2a2a; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        .control-group { margin-bottom: 10px; }
+        .control-title { font-size: 14px; margin-bottom: 8px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .zones-grid { display: flex; gap: 5px; justify-content: space-between; }
+        
+        .radio-btn { flex: 1; cursor: pointer; }
+        .radio-btn input { display: none; }
+        .radio-btn span { display: block; background: #111; padding: 8px 0; border-radius: 6px; border: 1px solid #444; font-size: 12px; font-weight: bold; transition: 0.2s; }
+        
+        /* Цвета для атаки и защиты */
+        .atk-btn input:checked + span { background: #e53935; border-color: #ff5252; color: white; }
+        .blk-btn input:checked + span { background: #1e88e5; border-color: #64b5f6; color: white; }
+
+        .btn-action { background: #4caf50; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        .btn-restart { background: #ffaa00; color: #000; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- ================= ЭКРАН 1: ПРОКАЧКА ================= -->
+    <!-- ЭКРАН 1: ПРОКАЧКА -->
     <div id="setup-screen" class="screen">
         <h2>Подготовка к бою</h2>
-        
-        <!-- Аватар героя (Замените ссылку на своего рыцаря) -->
         <img src="https://dummyimage.com/600x300/2b2b2b/ffffff&text=Ваш+Рыцарь" alt="Герой" class="game-image">
-
         <div class="points-box">Свободных очков: <span id="points">5</span></div>
 
         <div class="stat-row">
@@ -58,27 +58,23 @@
             <span class="stat-value" id="val-str">10</span>
             <button class="btn-add" onclick="addStat('str', 1)">+</button>
         </div>
-
         <div class="stat-row">
             <span class="stat-name">🏃 Ловкость</span>
             <span class="stat-value" id="val-agi">10</span>
             <button class="btn-add" onclick="addStat('agi', 1)">+</button>
         </div>
-
         <div class="stat-row">
             <span class="stat-name">❤️ Здоровье</span>
             <span class="stat-value" id="val-hp">100</span>
             <button class="btn-add" onclick="addStat('hp', 10)">+</button>
         </div>
 
-        <button id="start-btn" class="btn-action btn-start" style="display:none;" onclick="startBattle()">В БОЙ! 🛡</button>
+        <button id="start-btn" class="btn-action" style="display:none;" onclick="startBattle()">В БОЙ! 🛡</button>
     </div>
 
-    <!-- ================= ЭКРАН 2: АРЕНА ================= -->
+    <!-- ЭКРАН 2: АРЕНА (В СТИЛЕ БК) -->
     <div id="battle-screen" class="screen">
         <h2>Арена</h2>
-        
-        <!-- Изображение врага (Замените ссылку на грифона или монстра) -->
         <img id="enemy-img" src="https://dummyimage.com/600x300/8c1c1c/ffffff&text=Свирепый+Враг" alt="Враг" class="game-image">
 
         <div class="health-box">
@@ -88,7 +84,31 @@
         
         <div id="battle-log"></div>
         
-        <button class="btn-action" id="attack-btn" onclick="attack()">Атаковать мечом ⚔️</button>
+        <!-- ПАНЕЛЬ ВЫБОРА ЗОН -->
+        <div id="battle-ui" class="battle-controls">
+            <div class="control-group">
+                <div class="control-title">⚔️ Куда бьем:</div>
+                <div class="zones-grid">
+                    <label class="radio-btn atk-btn"><input type="radio" name="atk" value="head" checked><span>ГОЛОВА</span></label>
+                    <label class="radio-btn atk-btn"><input type="radio" name="atk" value="chest"><span>ГРУДЬ</span></label>
+                    <label class="radio-btn atk-btn"><input type="radio" name="atk" value="stomach"><span>ЖИВОТ</span></label>
+                    <label class="radio-btn atk-btn"><input type="radio" name="atk" value="legs"><span>НОГИ</span></label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="control-title">🛡 Что защищаем:</div>
+                <div class="zones-grid">
+                    <label class="radio-btn blk-btn"><input type="radio" name="blk" value="head" checked><span>ГОЛОВА</span></label>
+                    <label class="radio-btn blk-btn"><input type="radio" name="blk" value="chest"><span>ГРУДЬ</span></label>
+                    <label class="radio-btn blk-btn"><input type="radio" name="blk" value="stomach"><span>ЖИВОТ</span></label>
+                    <label class="radio-btn blk-btn"><input type="radio" name="blk" value="legs"><span>НОГИ</span></label>
+                </div>
+            </div>
+            
+            <button class="btn-action" style="margin-top: 10px;" onclick="makeTurn()">Сделать ход</button>
+        </div>
+
         <button class="btn-action btn-restart" id="restart-btn" style="display:none;" onclick="resetGame()">Начать заново 🔄</button>
     </div>
 
@@ -99,10 +119,12 @@
         let stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
         let enemy = { name: 'Грифон', hp: 50, maxHp: 50, str: 8 };
 
+        // Словари для красивого лога
+        const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги' };
+        const zones = ['head', 'chest', 'stomach', 'legs'];
+
         tg.CloudStorage.getItem('arenaStats', function(error, value) {
-            if (!error && value) {
-                stats = JSON.parse(value);
-            }
+            if (!error && value) { stats = JSON.parse(value); }
             updateSetupUI();
         });
 
@@ -135,7 +157,7 @@
             stats.hp = stats.maxHp; 
             enemy.hp = enemy.maxHp;
             
-            document.getElementById('battle-log').innerHTML = `Гонг прозвучал! Вы вышли на арену.<br>Противник: <b>${enemy.name}</b><br><br>`;
+            document.getElementById('battle-log').innerHTML = "Бой начался! Выберите зоны атаки и защиты.<br><br>";
             updateBattleUI();
         }
 
@@ -149,40 +171,74 @@
             log.innerHTML = msg + "<br><br>" + log.innerHTML; 
         }
 
-        function attack() {
-            let pDmg = stats.str + Math.floor(Math.random() * 5) - 2;
-            enemy.hp -= pDmg;
-            logMessage(`⚔️ Вы нанесли ${pDmg} урона!`);
+        function getRadioValue(name) {
+            let ele = document.getElementsByName(name);
+            for(let i = 0; i < ele.length; i++) {
+                if(ele[i].checked) return ele[i].value;
+            }
+            return 'head';
+        }
+
+        // ОСНОВНАЯ ЛОГИКА БОЯ (Apeha / БК)
+        function makeTurn() {
+            let pAtk = getRadioValue('atk');
+            let pBlk = getRadioValue('blk');
+
+            // Враг выбирает зоны случайно
+            let eAtk = zones[Math.floor(Math.random() * zones.length)];
+            let eBlk = zones[Math.floor(Math.random() * zones.length)];
+
+            let turnLog = `<b>--- Обмен ударами ---</b><br>`;
+
+            // 1. ВАША АТАКА
+            if (pAtk === eBlk) {
+                turnLog += `🛡 Враг заблокировал ваш удар в ${zoneNames[pAtk]}!<br>`;
+            } else {
+                let pDmg = stats.str + Math.floor(Math.random() * 5) - 2;
+                enemy.hp -= pDmg;
+                turnLog += `⚔️ Вы пробили ${zoneNames[pAtk]} на ${pDmg} урона!<br>`;
+            }
 
             if (enemy.hp <= 0) {
                 enemy.hp = 0;
                 updateBattleUI();
-                logMessage(`🏆 ${enemy.name} ПОВЕРЖЕН!`);
+                logMessage(turnLog + `🏆 <b>${enemy.name} ПОВЕРЖЕН!</b>`);
                 endBattle();
                 return;
             }
 
+            // 2. АТАКА ВРАГА
             let dodgeChance = stats.agi * 2;
+            
+            // Сначала проверяем вашу ловкость (шанс уворота)
             if (Math.random() * 100 <= dodgeChance) {
-                logMessage(`💨 Вы уклонились от ответного удара!`);
-            } else {
+                turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[eAtk]}!<br>`;
+            } 
+            // Если не увернулись — спасает ли блок?
+            else if (eAtk === pBlk) {
+                turnLog += `🛡 Вы успешно заблокировали удар в ${zoneNames[eAtk]}!<br>`;
+            } 
+            // Если блок не угадан и ловкость не спасла — получаем урон
+            else {
                 let eDmg = enemy.str + Math.floor(Math.random() * 5) - 2;
                 stats.hp -= eDmg;
-                logMessage(`🩸 Враг ударил вас на ${eDmg} урона!`);
+                turnLog += `🩸 Враг пробил вашу защиту (${zoneNames[eAtk]}) на ${eDmg} урона!<br>`;
             }
 
             if (stats.hp <= 0) {
                 stats.hp = 0;
                 updateBattleUI();
-                logMessage(`☠️ ВЫ ПОГИБЛИ НА АРЕНЕ...`);
+                logMessage(turnLog + `☠️ <b>ВЫ ПОГИБЛИ НА АРЕНЕ...</b>`);
                 endBattle();
                 return;
             }
+
             updateBattleUI();
+            logMessage(turnLog);
         }
 
         function endBattle() {
-            document.getElementById('attack-btn').style.display = 'none';
+            document.getElementById('battle-ui').style.display = 'none';
             document.getElementById('restart-btn').style.display = 'block';
         }
 
@@ -193,7 +249,7 @@
             
             document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = false);
             document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('attack-btn').style.display = 'block';
+            document.getElementById('battle-ui').style.display = 'block';
             document.getElementById('restart-btn').style.display = 'none';
             
             document.getElementById('battle-screen').style.display = 'none';
