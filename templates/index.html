@@ -44,17 +44,9 @@
             animation: floatUp 0.8s ease-out forwards; z-index: 100; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
-        @keyframes critPulse {
-            0% { transform: scale(1); color: #ff5252; }
-            50% { transform: scale(1.25); color: #ff0000; text-shadow: 0 0 15px #ff0000; }
-            100% { transform: scale(1); color: #ff5252; }
-        }
-        .crit-text { animation: critPulse 0.3s ease; display: inline-block; font-weight: bold; }
-        
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        /* Исправлены отступы заголовков против наложений */
         h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 12px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); padding-top: 5px; }
         
         .currency-box { 
@@ -280,7 +272,6 @@
 </head>
 <body onclick="initAudioUserInteraction()">
 
-    <!-- ЭКРАН 1: ЛАГЕРЬ И ВКЛАДКИ -->
     <div id="setup-screen" class="screen">
         <h2>Лагерь Героя</h2>
         
@@ -302,7 +293,6 @@
             <button class="btn-potion" onclick="usePotionCamp()">Выпить (+50 HP)</button>
         </div>
 
-        <!-- НАВИГАЦИЯ -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('camp')">⚔️ PvE</button>
             <button class="tab-btn" onclick="switchTab('boss')">🐉 Босс</button>
@@ -315,7 +305,6 @@
             <button class="tab-btn" onclick="switchTab('hall')">🏆 Зал</button>
         </div>
 
-        <!-- ВКЛАДКА 1: PvE БОЙ -->
         <div id="tab-camp" class="tab-content active">
             <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
             
@@ -347,52 +336,25 @@
             <button class="btn-action" onclick="startBattle('pve')">В БОЙ ПРОТИВ МОНСТРА 🛡</button>
         </div>
 
-        <!-- ВКЛАДКА 2: МИРОВОЙ БОСС -->
         <div id="tab-boss" class="tab-content">
             <div class="box-panel" style="text-align: center; border-color: #e67e22;">
                 <div style="font-size: 36px; margin-bottom: 4px;">👑🐲</div>
                 <h3 style="color: #e67e22; margin: 4px 0; text-transform: uppercase; font-size: 14px;">Архидракон [Уровень 50]</h3>
-                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">
-                    Мировой босс возрождается <b>раз в 24 часа</b>. Гарантированно дает камни заточки и шанс на легендарку!
-                </p>
-                <div id="boss-status-box" style="margin: 8px 0; font-size: 12px; font-weight: bold; color: #2ecc71;">
-                    Статус: Босс ожидает битвы! 🔥
-                </div>
-                <div id="boss-timer-box" style="font-size: 11px; color: var(--accent-gold); margin-bottom: 8px; display: none;">
-                    Возрождение через: <span id="timer-countdown">00:00:00</span>
-                </div>
+                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">Мировой босс возрождается <b>раз в 24 часа</b>.</p>
+                <div id="boss-status-box" style="margin: 8px 0; font-size: 12px; font-weight: bold; color: #2ecc71;">Статус: Босс ожидает битвы! 🔥</div>
+                <div id="boss-timer-box" style="font-size: 11px; color: var(--accent-gold); margin-bottom: 8px; display: none;">Возрождение через: <span id="timer-countdown">00:00:00</span></div>
                 <button class="btn-action" id="btn-world-boss" style="background: linear-gradient(135deg, #d35400, #c0392b);" onclick="startBattle('world_boss')">АТАКОВАТЬ МИРОВОГО БОССА ⚔️</button>
-
-                <div class="boss-drop-card">
-                    <div style="font-weight: bold; color: #e67e22; margin-bottom: 4px; text-transform: uppercase;">🌟 Дроп с босса:</div>
-                    <div>💎 <b>Камни заточки</b> (+10 шт. - 100%)</div>
-                    <div>🔥 <b>Испепелитель Миров / Корона Архидракона</b> (5% шанс)</div>
-                </div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: PvP АРЕНА -->
         <div id="tab-pvp" class="tab-content">
             <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=60" alt="PvP Арена" class="game-image">
-            
             <div class="box-panel" style="font-size: 11px; line-height: 1.3; color: var(--text-muted);">
-                <b style="color: var(--accent-gold);">⚔️ PvP Дуэли на Арене</b><br>
-                Повышайте свой рейтинг Славы в боях с другими гладиаторами!
+                <b style="color: var(--accent-gold);">⚔️ Живые PvP Дуэли</b><br>Сражайтесь с реальными игроками со всего мира!
             </div>
-
-            <div class="box-panel">
-                <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">⚔️ Выберите соперника на арене:</label>
-                <select id="pvp-select">
-                    <option value="pvp_warrior">🛡️ Гладиатор-Воин [Lvl 10]</option>
-                    <option value="pvp_berserk" selected>🪓 Кровавый Берсерк [Lvl 25]</option>
-                    <option value="pvp_ranger">🏹 Элитный Следопыт [Lvl 40]</option>
-                </select>
-            </div>
-
-            <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
+            <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c); margin-top: 10px;" onclick="findRealPlayerPvP()">НАЙТИ СОПЕРНИКА ОНЛАЙН ⚔️</button>
         </div>
 
-        <!-- ВКЛАДКА 4: ПЕРСОНАЖ -->
         <div id="tab-hero" class="tab-content">
             <div class="class-banner">
                 <div class="class-banner-icon" id="banner-icon">🛡️⚔️</div>
@@ -429,9 +391,6 @@
                         <span>❤️ HP: <b id="doll-hp" style="color:#e74c3c;">100</b></span> 
                         <button class="btn-plus" onclick="addStat('hp')" id="btn-plus-hp" style="display:none;">+1</button>
                     </div>
-                    <div style="font-size: 10px; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 3px;">
-                        🎯 Крит: <span id="doll-crit" style="color:#e67e22;">5%</span> | Уворот: <span id="doll-dodge" style="color:#3498db;">15%</span>
-                    </div>
                 </div>
             </div>
 
@@ -441,185 +400,88 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ЛАВКА -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 <div class="shop-category">🧪 Алхимия</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🧪</div><div><b>Малое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Восстанавливает +50 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🧪</div><div><b>Малое Зелье Здоровья</b><br><span style="color:var(--text-muted);">+50 HP</span></div></div>
                     <button class="btn-buy" onclick="buyPotion(30, 50)">30 🪙</button>
                 </div>
+                <div class="shop-category">🛡️ Экипировка [Lvl 10]</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🍷</div><div><b>Большое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Восстанавливает +150 HP</span></div></div>
-                    <button class="btn-buy" onclick="buyPotion(70, 150)">70 🪙</button>
-                </div>
-
-                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 10]</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b class="rarity-common">Шлем Стража [Lvl 10]</b><br><span style="color:var(--text-muted);">+35 HP, +5 Броня</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b class="rarity-common">Шлем Стража</b><br><span style="color:var(--text-muted);">+35 HP, +5 Броня</span></div></div>
                     <button class="btn-buy" onclick="buyItem('t1_helm', 150)">150 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-common">Клинок Новичка [Lvl 10]</b><br><span style="color:var(--text-muted);">+12 Сила, +5% Крит</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-common">Клинок Новичка</b><br><span style="color:var(--text-muted);">+12 Сила</span></div></div>
                     <button class="btn-buy" onclick="buyItem('t1_wep', 180)">180 🪙</button>
                 </div>
-
-                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 20]</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-rare">Шлем Ветерана [Lvl 20]</b><br><span style="color:var(--text-muted);">+75 HP, +12 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t2_helm', 450)">450 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b class="rarity-rare">Меч Гладиатора [Lvl 20]</b><br><span style="color:var(--text-muted);">+24 Сила, +12% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t2_wep', 520)">520 🪙</button>
-                </div>
-
-                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 30]</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b class="rarity-rare">Латы Героя [Lvl 30]</b><br><span style="color:var(--text-muted);">+160 HP, +25 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t3_armor', 1200)">1200 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b class="rarity-rare">Топор Палача [Lvl 30]</b><br><span style="color:var(--text-muted);">+45 Сила, +20% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t3_wep', 1400)">1400 🪙</button>
-                </div>
-
-                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 40]</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b class="rarity-epic">Амулет Повелителя [Lvl 40]</b><br><span style="color:var(--text-muted);">+30 Ловк, +250 HP</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t4_amulet', 3200)">3200 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b class="rarity-epic">Лук Бури [Lvl 40]</b><br><span style="color:var(--text-muted);">+40 Ловк, +30% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t4_wep', 3500)">3500 🪙</button>
-                </div>
-
-                <div class="shop-category">🛡️ Экипировка [Требуется Уровень 50]</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-epic">Шлем Полубога [Lvl 50]</b><br><span style="color:var(--text-muted);">+500 HP, +50 Броня</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t5_helm', 8000)">8000 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-epic">Меч Бессмертных [Lvl 50]</b><br><span style="color:var(--text-muted);">+90 Сила, +40% Крит</span></div></div>
-                    <button class="btn-buy" onclick="buyItem('t5_wep', 9500)">9500 🪙</button>
-                </div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 6: АУКЦИОН -->
         <div id="tab-auction" class="tab-content">
             <div class="box-panel" style="text-align: center;">
-                <h3 style="color: var(--accent-gold); margin-top: 0; text-transform: uppercase; font-size: 13px;">🏛️ Аукцион Цитадели</h3>
-                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">
-                    Выставляйте ненужные трофеи на продажу или покупайте снаряжение за золото!
-                </p>
-                <div id="auction-list" style="max-height: 180px; overflow-y: auto; margin-bottom: 10px; font-size: 11px; text-align: left;">
-                    <!-- Динамический список -->
-                </div>
-                <button class="btn-action" style="background: linear-gradient(135deg, #2980b9, #3498db);" onclick="openSellModal()">Выставить вещь из сумки 📦</button>
+                <h3 style="color: var(--accent-gold); margin-top: 0; font-size: 13px;">🏛️ Аукцион Цитадели</h3>
+                <div id="auction-list" style="max-height: 180px; overflow-y: auto; margin-bottom: 10px; font-size: 11px; text-align: left;"></div>
+                <button class="btn-action" style="background: linear-gradient(135deg, #2980b9, #3498db);" onclick="openSellModal()">Выставить вещь 📦</button>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 7: КУЗНИЦА -->
         <div id="tab-forge" class="tab-content">
             <div class="box-panel" style="text-align: center;">
-                <h3 style="color: var(--accent-gold); margin-top: 0; text-transform: uppercase; font-size: 13px;">⚒️ Наковальня Кузнеца</h3>
-                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">
-                    Затачивайте экипировку до <b>+10</b> с помощью камней заточки (💎). При неудаче предмет **теряет 1 уровень заточки**, но не ломается!
-                </p>
-                <div id="forge-item-info" style="background: #16161c; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin: 10px 0; font-size: 12px; text-align: left;">
-                    Нажмите на слот предмета на вкладке «Герой», чтобы выбрать его для заточки.
-                </div>
-                <button class="btn-action" id="btn-upgrade-item" style="background: linear-gradient(135deg, #d35400, #f39c12); display:none;" onclick="upgradeEquippedItem()">ЗАТОЧИТЬ ПРЕДМЕТ (💎 1 Камень)</button>
+                <h3 style="color: var(--accent-gold); margin-top: 0; font-size: 13px;">⚒️ Наковальня Кузнеца</h3>
+                <div id="forge-item-info" style="background: #16161c; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin: 10px 0; font-size: 12px; text-align: left;">Нажмите на слот предмета на вкладке «Герой», чтобы выбрать его для заточки.</div>
+                <button class="btn-action" id="btn-upgrade-item" style="background: linear-gradient(135deg, #d35400, #f39c12); display:none;" onclick="upgradeEquippedItem()">ЗАТОЧИТЬ ПРЕДМЕТ (💎 1)</button>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 8: ВЫБОР КЛАССА -->
         <div id="tab-race" class="tab-content">
             <div class="box-panel" style="text-align: center;">
                 <label style="font-size: 13px; font-weight: bold; color: var(--accent-gold);">🧬 Ваш класс и раса:</label>
-                
                 <div id="race-selection-box">
                     <select id="race-select" style="margin-top: 10px;">
-                        <option value="human">Человек (Класс: Воин)</option>
-                        <option value="orc">Орк (Класс: Берсерк)</option>
-                        <option value="elf">Эльф (Класс: Следопыт)</option>
+                        <option value="human">Человек (Воин)</option>
+                        <option value="orc">Орк (Берсерк)</option>
+                        <option value="elf">Эльф (Следопыт)</option>
                     </select>
-                    <button class="btn-action" style="margin-top: 10px; padding: 8px; font-size: 12px;" onclick="confirmRace()">Подтвердить выбор</button>
+                    <button class="btn-action" style="margin-top: 10px; padding: 8px; font-size: 12px;" onclick="confirmRace()">Подтвердить</button>
                 </div>
-
                 <div id="race-locked-box" style="display:none; margin-top: 10px;">
-                    <p style="font-size: 13px; color: #2ecc71; font-weight: bold;">Класс уже выбран и закреплен за героем!</p>
-                    <button class="btn-donate" onclick="resetClassForDonate()">✨ Сменить класс за 🪙 200 монет</button>
+                    <p style="font-size: 13px; color: #2ecc71; font-weight: bold;">Класс закреплен!</p>
+                    <button class="btn-donate" onclick="resetClassForDonate()">Сменить класс (200 🪙)</button>
                 </div>
-
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.4;">
-                    <b>Воин:</b> Сбалансированный урон и защита.<br>
-                    <b>Берсерк:</b> Огромная сокрушающая сила.<br>
-                    <b>Следопыт:</b> Мастер уворотов и быстрых атак.
-                </p>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 9: ЗАЛ СЛАВЫ И ГЛОБАЛЬНЫЙ РЕЙТИНГ -->
         <div id="tab-hall" class="tab-content">
             <div class="box-panel">
-                <h3 style="font-size: 13px; color: var(--accent-gold); margin-top: 0; text-transform: uppercase; text-align: center;">🏆 Зал Великих Достижений</h3>
-                
+                <h3 style="font-size: 13px; color: var(--accent-gold); margin-top: 0; text-align: center;">🏆 Зал Достижений</h3>
                 <div class="leaderboard-container">
-                    <div class="achievement-item">
-                        <span class="ach-title">🎖️ Уровень Героя</span>
-                        <span class="ach-value" id="ach-lvl">1</span>
-                    </div>
-                    <div class="achievement-item">
-                        <span class="ach-title">🏆 Ранг Славы (PvP)</span>
-                        <span class="ach-value" id="ach-rating">0</span>
-                    </div>
-                    <div class="achievement-item">
-                        <span class="ach-title">⚔️ Побед в Дуэлях и PvE</span>
-                        <span class="ach-value" id="ach-wins">0</span>
-                    </div>
-                    <div class="achievement-item">
-                        <span class="ach-title">🪙 Всего Золота</span>
-                        <span class="ach-value" id="ach-gold">100</span>
-                    </div>
-                    <div class="achievement-item">
-                        <span class="ach-title">🎒 Вещей в Сумке</span>
-                        <span class="ach-value" id="ach-items">0</span>
-                    </div>
+                    <div class="achievement-item"><span class="ach-title">🎖️ Уровень</span><span class="ach-value" id="ach-lvl">1</span></div>
+                    <div class="achievement-item"><span class="ach-title">🏆 Ранг Славы</span><span class="ach-value" id="ach-rating">0</span></div>
+                    <div class="achievement-item"><span class="ach-title">⚔️ Победы</span><span class="ach-value" id="ach-wins">0</span></div>
                 </div>
             </div>
-
-            <!-- БЛОК ГЛОБАЛЬНОГО РЕЙТИНГА -->
             <div class="box-panel" style="margin-top: 10px;">
-                <h3 style="font-size: 13px; color: #3498db; margin-top: 0; text-transform: uppercase; text-align: center;">🌍 Топ Гладиаторов</h3>
-                <p style="font-size: 10px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Глобальный рейтинг (Слава PvP)</p>
-                <div id="global-leaderboard" class="leaderboard-container">
-                    <!-- Сюда подгрузится топ при нажатии на вкладку -->
-                </div>
+                <h3 style="font-size: 13px; color: #3498db; margin-top: 0; text-align: center;">🌍 Топ Гладиаторов (Онлайн)</h3>
+                <div id="global-leaderboard" class="leaderboard-container"></div>
             </div>
         </div>
     </div>
 
-    <!-- ЭКРАН 2: АРЕНА -->
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
-        
         <div class="enemy-visual-container" id="enemy-container-box">
-            <div class="enemy-avatar-icon" id="enemy-icon-display">🦅</div>
-            <div class="enemy-name-glow" id="enemy-name-display">Грифон</div>
+            <div class="enemy-avatar-icon" id="enemy-icon-display">⚔️</div>
+            <div class="enemy-name-glow" id="enemy-name-display">Соперник</div>
         </div>
-
         <div class="health-box">
             <span>Вы: <span id="my-hp">100</span> ❤️</span>
             <span id="enemy-name-hp">Соперник: <span id="enemy-hp">50</span> ❤️</span>
         </div>
-        
-        <div id="battle-log" style="position: relative;"></div>
-        
+        <div id="battle-log"></div>
         <div id="battle-ui" class="battle-controls">
             <div class="figures-container">
-                <!-- УДАР -->
                 <div class="combat-figure atk-figure">
                     <div class="figure-title atk-title">Удар (2)</div>
                     <div class="body-grid">
@@ -631,830 +493,132 @@
                         <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                     </div>
                 </div>
-
-                <!-- БЛОК -->
                 <div class="combat-figure blk-figure">
                     <div class="figure-title blk-title">Блок (2)</div>
                     <div class="body-grid">
                         <div class="cell-head zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-larm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
-                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                     </div>
                 </div>
             </div>
-            
             <div id="error-box" class="error-msg"></div>
             <button class="btn-action" onclick="makeTurn()">Применить</button>
         </div>
-
         <button class="btn-action btn-restart" id="restart-btn" style="display:none;" onclick="returnToSetup()">В лагерь ⛺</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
+        let userId = tg.initDataUnsafe?.user?.id || Math.floor(Math.random() * 100000);
+        let userName = tg.initDataUnsafe?.user?.first_name || 'Гладиатор';
 
-        let audioCtx = null;
-        function initAudioUserInteraction() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function playSound(type) {
-            try {
-                initAudioUserInteraction();
-                if (!audioCtx) return;
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                let now = audioCtx.currentTime;
-                if (type === 'hit') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(180, now);
-                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
-                    gain.gain.setValueAtTime(0.3, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-                    osc.start(now); osc.stop(now + 0.15);
-                } else if (type === 'crit') {
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(320, now);
-                    osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
-                    gain.gain.setValueAtTime(0.4, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now); osc.stop(now + 0.25);
-                } else if (type === 'block') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-                    osc.start(now); osc.stop(now + 0.1);
-                } else if (type === 'win') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(350, now);
-                    osc.frequency.setValueAtTime(520, now + 0.12);
-                    osc.frequency.setValueAtTime(700, now + 0.24);
-                    gain.gain.setValueAtTime(0.3, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
-                    osc.start(now); osc.stop(now + 0.5);
-                } else if (type === 'legendary') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.15);
-                    osc.frequency.setValueAtTime(783.99, now + 0.3);
-                    osc.frequency.setValueAtTime(1046.50, now + 0.45);
-                    gain.gain.setValueAtTime(0.4, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.8);
-                    osc.start(now); osc.stop(now + 0.8);
-                } else if (type === 'damage') {
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(110, now);
-                    osc.frequency.exponentialRampToValueAtTime(30, now + 0.2);
-                    gain.gain.setValueAtTime(0.4, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now); osc.stop(now + 0.2);
-                }
-            } catch(e) {}
-        }
-
-        function triggerScreenShake() {
-            let box = document.getElementById('enemy-container-box');
-            if (box) {
-                box.classList.add('shake');
-                setTimeout(() => box.classList.remove('shake'), 350);
-            }
-        }
-
-        function showFloatingText(text, color, isCrit) {
-            let container = document.getElementById('enemy-container-box');
-            if (!container) return;
-            let el = document.createElement('div');
-            el.className = 'floating-dmg';
-            el.innerText = text;
-            el.style.color = color;
-            el.style.left = (40 + Math.random() * 20) + '%';
-            el.style.top = (30 + Math.random() * 20) + '%';
-            if(isCrit) el.style.fontSize = '22px';
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 800);
-        }
-
-        function loadGlobalLeaderboard() {
-            let leaderboardEl = document.getElementById('global-leaderboard');
-            if (!leaderboardEl) return;
-            
-            let topPlayers = [
-                { name: "УбийцаДраконов", rating: 1250, lvl: 45 },
-                { name: "Shadow", rating: 980, lvl: 38 },
-                { name: "Гендальф", rating: 850, lvl: 30 },
-                { name: "Вы (Игрок)", rating: stats.rating || 0, lvl: stats.lvl }
-            ];
-
-            topPlayers.sort((a, b) => b.rating - a.rating);
-
-            let html = '';
-            topPlayers.forEach((p, index) => {
-                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
-                let isMe = p.name === "Вы (Игрок)" ? 'background: rgba(46, 204, 113, 0.1); border-color: #2ecc71;' : '';
-                
-                html += `
-                <div class="achievement-item" style="${isMe}">
-                    <span class="ach-title">${medal} ${p.name} <span style="font-size:9px; color:var(--text-muted);">[Lvl ${p.lvl}]</span></span>
-                    <span class="ach-value">${p.rating} 🏆</span>
-                </div>`;
-            });
-            leaderboardEl.innerHTML = html;
-        }
-
-        let stats = { 
-            str: 10, agi: 10, hp: 100, maxHp: 100, 
-            gold: 100, stones: 5, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
-            rating: 0, totalWins: 0, potions: 0, race: 'human', raceChosen: false,
-            distributedStr: 0, distributedAgi: 0, distributedHp: 0,
-            lastBossTime: 0, lastLoginDate: '', forgeLevels: {}
-        };
+        let stats = { str: 10, agi: 10, hp: 100, maxHp: 100, gold: 100, stones: 5, exp: 0, expMax: 100, lvl: 1, freePoints: 0, rating: 0, totalWins: 0, potions: 0, race: 'human', raceChosen: false, distributedStr: 0, distributedAgi: 0, distributedHp: 0, lastBossTime: 0, lastLoginDate: '', forgeLevels: {} };
         let inventory = {}; 
         let equipped = { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
-        let auctionList = [
-            { id: 1, itemKey: 't2_wep', price: 400, seller: 'Гладиатор' },
-            { id: 2, itemKey: 't3_armor', price: 950, seller: 'Ветеран' }
-        ];
+        let auctionList = [];
         let selectedForgeSlot = null;
-        
-        let opponents = {
-            wolf: { 
-                name: 'Дикий Волк', lvl: 1, hp: 35, maxHp: 35, str: 6, gold: 20, stones: 1, exp: 30, icon: '🐺',
-                drops: [{ key: 't1_helm', chance: 25 }, { key: 't1_wep', chance: 15 }]
-            },
-            wolf_5: { 
-                name: 'Альфа-Волк', lvl: 5, hp: 70, maxHp: 70, str: 10, gold: 50, stones: 1, exp: 70, icon: '🐺',
-                drops: [{ key: 't1_helm', chance: 35 }, { key: 't1_wep', chance: 20 }]
-            },
-            griffin: { 
-                name: 'Грифон', lvl: 10, hp: 120, maxHp: 120, str: 15, gold: 110, stones: 2, exp: 130, icon: '🦅',
-                drops: [{ key: 't1_helm', chance: 40 }, { key: 't1_wep', chance: 25 }]
-            },
-            griffin_20: { 
-                name: 'Элитный Грифон', lvl: 20, hp: 240, maxHp: 240, str: 25, gold: 280, stones: 3, exp: 290, icon: '🦅',
-                drops: [{ key: 't2_helm', chance: 30 }, { key: 't2_wep', chance: 20 }]
-            },
-            dragon_30: { 
-                name: 'Черный Дракон', lvl: 30, hp: 450, maxHp: 450, str: 38, gold: 650, stones: 4, exp: 600, icon: '🐉',
-                drops: [{ key: 't3_armor', chance: 25 }, { key: 't3_wep', chance: 15 }]
-            },
-            dragon_40: { 
-                name: 'Древний Дракон', lvl: 40, hp: 800, maxHp: 800, str: 55, gold: 1400, stones: 6, exp: 1200, icon: '🐉',
-                drops: [{ key: 't4_amulet', chance: 20 }, { key: 't4_wep', chance: 15 }]
-            },
-            dragon_50: { 
-                name: 'Архи-Дракон', lvl: 50, hp: 1300, maxHp: 1300, str: 75, gold: 3000, stones: 8, exp: 2500, icon: '🐉',
-                drops: [{ key: 't5_helm', chance: 20 }, { key: 't5_wep', chance: 15 }]
-            },
-            dragon_60: { 
-                name: 'Повелитель Бездны', lvl: 60, hp: 2100, maxHp: 2100, str: 98, gold: 6500, stones: 12, exp: 5000, icon: '💀',
-                drops: [{ key: 'leg_sword', chance: 8 }, { key: 'leg_helm', chance: 8 }]
-            },
-            world_boss: { 
-                name: 'Архидракон (Мировой Босс)', lvl: 50, hp: 2000, maxHp: 2000, str: 90, gold: 6000, stones: 12, exp: 5000, ratingGain: 150, 
-                icon: '👑🐲', isWorldBoss: true,
-                drops: [{ key: 'leg_sword', chance: 5 }, { key: 'leg_helm', chance: 5 }]
-            },
-            pvp_warrior: { name: 'Гладиатор Марк', lvl: 10, hp: 130, maxHp: 130, str: 16, gold: 100, stones: 1, exp: 100, ratingGain: 20, icon: '🛡️', drops: [] },
-            pvp_berserk: { name: 'Кровавый Берсерк', lvl: 25, hp: 350, maxHp: 350, str: 32, gold: 350, stones: 2, exp: 350, ratingGain: 35, icon: '🪓', drops: [] },
-            pvp_ranger: { name: 'Эльф-Ассасин', lvl: 40, hp: 750, maxHp: 750, str: 52, gold: 900, stones: 3, exp: 900, ratingGain: 60, icon: '🏹', drops: [] }
-        };
         let currentEnemy = {};
 
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
-
         const itemsDB = {
             t1_helm: { name: 'Шлем Стража [Lvl 10]', type: 'helm', rarity: 'common', reqLvl: 10, stat: 'hp', val: 35, stat2: 'def', val2: 5, icon: '🪖' },
-            t1_wep: { name: 'Клинок Новичка [Lvl 10]', type: 'weapon', rarity: 'common', reqLvl: 10, stat: 'str', val: 12, stat2: 'critBonus', val2: 5, icon: '🗡️', classReq: 'human' },
+            t1_wep: { name: 'Клинок Новичка [Lvl 10]', type: 'weapon', rarity: 'common', reqLvl: 10, stat: 'str', val: 12, stat2: 'critBonus', val2: 5, icon: '🗡️' }
+        };
 
-            t2_helm: { name: 'Шлем Ветерана [Lvl 20]', type: 'helm', rarity: 'rare', reqLvl: 20, stat: 'hp', val: 75, stat2: 'def', val2: 12, icon: '👑' },
-            t2_wep: { name: 'Меч Гладиатора [Lvl 20]', type: 'weapon', rarity: 'rare', reqLvl: 20, stat: 'str', val: 24, stat2: 'critBonus', val2: 12, icon: '⚔️', classReq: 'human' },
-
-            t3_armor: { name: 'Латы Героя [Lvl 30]', type: 'armor', rarity: 'rare', reqLvl: 30, stat: 'hp', val: 160, stat2: 'def', val2: 25, icon: '🛡️' },
-            t3_wep: { name: 'Топор Палача [Lvl 30]', type: 'weapon', rarity: 'rare', reqLvl: 30, stat: 'str', val: 45, stat2: 'critBonus', val2: 20, icon: '🪓', classReq: 'orc' },
-
-            t4_amulet: { name: 'Амулет Повелителя [Lvl 40]', type: 'amulet', rarity: 'epic', reqLvl: 40, stat: 'agi', val: 30, stat2: 'hp', val2: 250, icon: '🔮', classReq: 'elf' },
-            t4_wep: { name: 'Лук Бури [Lvl 40]', type: 'weapon', rarity: 'epic', reqLvl: 40, stat: 'agi', val: 40, stat2: 'critBonus', val2: 30, icon: '🏹', classReq: 'elf' },
-
-            t5_helm: { name: 'Шлем Полубога [Lvl 50]', type: 'helm', rarity: 'epic', reqLvl: 50, stat: 'hp', val: 500, stat2: 'def', val2: 50, icon: '👑' },
-            t5_wep: { name: 'Меч Бессмертных [Lvl 50]', type: 'weapon', rarity: 'epic', reqLvl: 50, stat: 'str', val: 90, stat2: 'critBonus', val2: 40, icon: '🗡️', classReq: 'human' },
-
-            leg_sword: { name: '🔥 Испепелитель Миров [Легендарное]', type: 'weapon', rarity: 'legendary', reqLvl: 50, stat: 'str', val: 130, stat2: 'critBonus', val2: 45, stat3: 'critMultBonus', val3: 1.2, icon: '🗡️' },
-            leg_helm: { name: '👑 Корона Архидракона [Легендарная]', type: 'helm', rarity: 'legendary', reqLvl: 50, stat: 'hp', val: 800, stat2: 'def', val2: 80, icon: '👑' }
+        const opponents = {
+            wolf: { name: 'Дикий Волк', lvl: 1, hp: 35, maxHp: 35, str: 6, gold: 20, stones: 1, exp: 30, icon: '🐺', drops: [] },
+            griffin: { name: 'Грифон', lvl: 10, hp: 120, maxHp: 120, str: 15, gold: 110, stones: 2, exp: 130, icon: '🦅', drops: [] },
+            world_boss: { name: 'Архидракон (Мировой Босс)', lvl: 50, hp: 2000, maxHp: 2000, str: 90, gold: 6000, stones: 12, exp: 5000, ratingGain: 150, icon: '👑🐲', isWorldBoss: true, drops: [] }
         };
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
             document.getElementById('tab-' + tabId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if(tabId === 'boss') updateBossTimerUI();
-            if(tabId === 'auction') updateAuctionUI();
             if(tabId === 'hall') loadGlobalLeaderboard(); 
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v190', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v200', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
                 inventory = data.inventory || {};
-                equipped = data.equipped || { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
-                auctionList = data.auctionList || auctionList;
+                equipped = data.equipped || equipped;
             }
-            if (isNaN(stats.hp) || stats.hp === undefined) stats.hp = stats.maxHp || 100;
-            checkDailyReward();
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             recalculateStats();
             updateSetupUI();
-            updateMobDropInfo();
+            saveGame();
         });
 
         function saveGame() {
-            let data = { stats: stats, inventory: inventory, equipped: equipped, auctionList: auctionList };
-            tg.CloudStorage.setItem('arenaRPGData_v190', JSON.stringify(data), function() {
+            let data = { stats: stats, inventory: inventory, equipped: equipped };
+            tg.CloudStorage.setItem('arenaRPGData_v200', JSON.stringify(data), function() {
                 let indicator = document.getElementById('save-status');
-                if(indicator) {
-                    indicator.innerText = '💾 Сохранено';
-                    setTimeout(() => indicator.innerText = '', 1500);
-                }
+                if(indicator) { indicator.innerText = '💾 Сохранено'; setTimeout(() => indicator.innerText = '', 1500); }
             });
+
+            fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, username: userName, lvl: stats.lvl, str: stats.str, agi: stats.agi, hp: stats.maxHp, rating: stats.rating || 0, wins: stats.totalWins || 0 })
+            }).catch(e => console.log('Sync error:', e));
         }
 
-        function checkDailyReward() {
-            let today = new Date().toDateString();
-            if (stats.lastLoginDate !== today) {
-                stats.lastLoginDate = today;
-                stats.gold += 300;
-                stats.stones = (stats.stones || 0) + 5;
-                stats.potions = (stats.potions || 0) + 3;
-                saveGame();
-                tg.showAlert("🎁 Ежедневная награда получена!\n🪙 Золото: +300 | 💎 Камни заточки: +5 | 🧪 Зелья: +3");
-            }
-        }
-
-        function triggerRandomEvent() {
-            let roll = Math.random() * 100;
-            if (roll <= 25) {
-                let events = [
-                    { title: "🌟 Древний Алтарь", desc: "Сила предков озаряет вас!", reward: () => { stats.exp += 100; tg.showAlert("🌟 Вы получили +100 опыта!"); } },
-                    { title: "💎 Заброшенная шахта", desc: "Вы нашли тайник с камнями.", reward: () => { stats.stones = (stats.stones || 0) + 4; tg.showAlert("💎 Найдено +4 камня заточки!"); } },
-                    { title: "🪙 Странствующий купец", desc: "Купец дарит вам монету.", reward: () => { stats.gold += 150; tg.showAlert("🪙 Найдено +150 золота!"); } }
-                ];
-                let ev = events[Math.floor(Math.random() * events.length)];
-                ev.reward();
-                saveGame();
-            }
-        }
-
-        function updateHpUIOnly() {
-            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
-            let hpEl = document.getElementById('val-hp');
-            let hpDollEl = document.getElementById('doll-hp');
-            let hpBar = document.getElementById('hp-bar-fill');
-            if (hpEl) hpEl.innerText = stats.hp;
-            if (hpDollEl) hpDollEl.innerText = stats.hp;
-            if (hpBar) {
-                let hpPct = Math.min(100, Math.max(0, (stats.hp / stats.maxHp) * 100));
-                hpBar.style.width = hpPct + '%';
-            }
-        }
-
-        setInterval(() => {
-            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
-            if (stats.hp < stats.maxHp) {
-                stats.hp = Math.min(stats.maxHp, stats.hp + 2);
-                updateHpUIOnly();
-            }
-            updateHealTimerUI();
-            updateBossTimerUI();
-        }, 1000);
-
-        function updateHealTimerUI() {
-            let timerEl = document.getElementById('heal-timer-text');
-            if (!timerEl) return;
-            if (stats.hp < stats.maxHp) {
-                let missingHp = stats.maxHp - stats.hp;
-                let secsLeft = Math.ceil(missingHp / 2);
-                timerEl.innerText = `(До исцеления: ${secsLeft}с)`;
-            } else {
-                timerEl.innerText = "(Здоровье полное)";
-            }
-        }
-
-        function updateBossTimerUI() {
-            let now = Date.now();
-            let cooldown = 24 * 60 * 60 * 1000;
-            let timeLeft = (stats.lastBossTime || 0) + cooldown - now;
-
-            let btn = document.getElementById('btn-world-boss');
-            let statusBox = document.getElementById('boss-status-box');
-            let timerBox = document.getElementById('boss-timer-box');
-
-            if (timeLeft > 0) {
-                let hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                let mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                let secs = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                
-                if(btn) btn.disabled = true;
-                if(statusBox) statusBox.innerText = "Статус: Босс повержен, восстанавливает силы... ⏳";
-                if(timerBox) {
-                    timerBox.style.display = 'block';
-                    timerBox.innerText = `Возрождение через: ${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-                }
-            } else {
-                if(btn) btn.disabled = false;
-                if(statusBox) statusBox.innerText = "Статус: Архидракон ждет битвы в руинах! 🔥";
-                if(timerBox) timerBox.style.display = 'none';
-            }
-        }
-
-        function updateMobDropInfo() {
-            let select = document.getElementById('enemy-select');
-            let mobKey = select.value;
-            let mob = opponents[mobKey];
-            let preview = document.getElementById('mob-drop-preview');
-            if (!preview || !mob) return;
-
-            if (!mob.drops || mob.drops.length === 0) {
-                preview.innerHTML = "🔮 Возможный дроп: Только золото и камни заточки.";
-                return;
-            }
-
-            let dropTexts = mob.drops.map(d => {
-                let itm = itemsDB[d.key];
-                return `${itm ? itm.name : d.key} [Шанс: ${d.chance}%]`;
-            });
-            preview.innerHTML = `🔮 Возможный дроп: ${dropTexts.join(' | ')}`;
-        }
-
-        function updateAuctionUI() {
-            let listEl = document.getElementById('auction-list');
-            if (!listEl) return;
-            if (auctionList.length === 0) {
-                listEl.innerHTML = "<div style='color: var(--text-muted); text-align:center; padding:10px;'>На аукционе пока нет лотов.</div>";
-                return;
-            }
-
-            let html = '';
-            auctionList.forEach(lot => {
-                let itm = itemsDB[lot.itemKey];
-                if (!itm) return;
-                html += `
-                    <div style="background: #16161c; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span>${itm.icon} <b>${itm.name}</b></span><br>
-                            <span style="font-size: 9px; color: var(--text-muted);">Продавец: ${lot.seller} | Цена: <b style="color:var(--accent-gold);">${lot.price} 🪙</b></span>
-                        </div>
-                        <button class="btn-buy" onclick="buyAuctionLot(${lot.id}, ${lot.price}, '${lot.itemKey}')">Купить</button>
-                    </div>
-                `;
-            });
-            listEl.innerHTML = html;
-        }
-
-        function openSellModal() {
-            let invKeys = Object.keys(inventory);
-            if (invKeys.length === 0) {
-                tg.showAlert("Ваша сумка пуста! Нечего выставлять на аукцион.");
-                return;
-            }
-            let itemKey = invKeys[0];
-            let itm = itemsDB[itemKey];
-            let price = 300;
-
-            if (confirm(`Выставить ${itm.name} на аукцион за ${price} 🪙?`)) {
-                delete inventory[itemKey];
-                auctionList.push({ id: Date.now(), itemKey: itemKey, price: price, seller: 'Вы' });
-                updateSetupUI();
-                updateAuctionUI();
-                saveGame();
-                tg.showAlert("Предмет успешно выставлен на аукцион!");
-            }
-        }
-
-        function buyAuctionLot(lotId, price, itemKey) {
-            if (stats.gold >= price) {
-                stats.gold -= price;
-                inventory[itemKey] = true;
-                auctionList = auctionList.filter(l => l.id !== lotId);
-                updateSetupUI();
-                updateAuctionUI();
-                saveGame();
-                playSound('win');
-                tg.showAlert("🎉 Поздравляем с покупкой на аукционе!");
-            } else {
-                tg.showAlert("Недостаточно золота для покупки!");
-            }
-        }
-
-        function buyPotion(cost, healAmount) {
-            if (stats.gold >= cost) {
-                stats.gold -= cost;
-                stats.potions = (stats.potions || 0) + 1;
-                updateSetupUI();
-                saveGame();
-                tg.showAlert(`🧪 Куплено зелье здоровья! В сумке: ${stats.potions} шт.`);
-            } else {
-                tg.showAlert("Недостаточно золота!");
-            }
-        }
-
-        function usePotionCamp() {
-            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
-            if ((stats.potions || 0) > 0) {
-                if (stats.hp < stats.maxHp) {
-                    stats.potions--;
-                    stats.hp = Math.min(stats.maxHp, stats.hp + 50);
-                    updateSetupUI();
-                    saveGame();
-                    tg.showAlert("❤️ Вы выпили зелье здоровья (+50 HP)!");
-                } else {
-                    tg.showAlert("Ваше здоровье и так полностью восстановлено!");
-                }
-            } else {
-                tg.showAlert("У вас нет зелий! Купите их в лавке.");
-            }
-        }
-
-        function confirmRace() {
-            stats.race = document.getElementById('race-select').value;
-            stats.raceChosen = true;
-            recalculateStats();
-            updateSetupUI();
-            saveGame();
-            tg.showAlert("Класс успешно выбран и закреплен за героем!");
-        }
-
-        function resetClassForDonate() {
-            if (stats.gold >= 200) {
-                stats.gold -= 200;
-                stats.raceChosen = false;
-                equipped = { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
-                updateSetupUI();
-                saveGame();
-                tg.showAlert("Класс сброшен! Выберите новый путь.");
-            } else {
-                tg.showAlert("Недостаточно монет! Нужно 200 🪙.");
-            }
-        }
-
-        function addStat(statName) {
-            if (stats.freePoints > 0) {
-                stats.freePoints--;
-                if (statName === 'str') stats.distributedStr += 1;
-                if (statName === 'agi') stats.distributedAgi += 1;
-                if (statName === 'hp') stats.distributedHp += 15;
-                recalculateStats();
-                updateSetupUI();
-                saveGame();
-            }
-        }
-
-        function addExp(amount) {
-            stats.exp += amount;
-            if (stats.exp >= stats.expMax) {
-                stats.exp -= stats.expMax;
-                stats.lvl++;
-                stats.expMax = Math.floor(stats.expMax * 1.4);
-                stats.freePoints += 3;
-                playSound('win');
-                tg.showAlert(`🎉 НОВЫЙ УРОВЕНЬ (${stats.lvl})! Получено +3 свободных очка характеристик.`);
-            }
-        }
-
-        function selectForgeSlot(slotName) {
-            let eqKey = equipped[slotName];
-            if (!eqKey || !itemsDB[eqKey]) {
-                document.getElementById('forge-item-info').innerText = "В этом слоте нет надетого предмета для заточки!";
-                document.getElementById('btn-upgrade-item').style.display = 'none';
-                selectedForgeSlot = null;
-                return;
-            }
-            selectedForgeSlot = slotName;
-            let itm = itemsDB[eqKey];
-            if(!stats.forgeLevels) stats.forgeLevels = {};
-            let lvl = stats.forgeLevels[eqKey] || 0;
-
-            if (lvl >= 10) {
-                document.getElementById('forge-item-info').innerHTML = `<b>${itm.name}</b> [+10]<br><span style="color:#2ecc71;">Достигнут максимальный уровень заточки!</span>`;
-                document.getElementById('btn-upgrade-item').style.display = 'none';
-                return;
-            }
-
-            let chances = { 1: 100, 2: 100, 3: 100, 4: 75, 5: 75, 6: 75, 7: 50, 8: 50, 9: 50, 10: 30 };
-            let chance = chances[lvl + 1] || 30;
-
-            document.getElementById('forge-item-info').innerHTML = `<b>${itm.name}</b> [Заточка: +${lvl} ➡️ +${lvl + 1}]<br>Шанс успеха: <b>${chance}%</b> (При неудаче заточка снизится на -1!)<br>В наличии камней: <b>💎 ${stats.stones || 0}</b>`;
-            document.getElementById('btn-upgrade-item').style.display = 'block';
-        }
-
-        function upgradeEquippedItem() {
-            if (!selectedForgeSlot) return;
-            let eqKey = equipped[selectedForgeSlot];
-            if (!eqKey) return;
-
-            if ((stats.stones || 0) < 1) {
-                tg.showAlert("Недостаточно камней заточки (💎)! Добывайте их в боях с монстрами.");
-                return;
-            }
-
-            if(!stats.forgeLevels) stats.forgeLevels = {};
-            let lvl = stats.forgeLevels[eqKey] || 0;
-            if (lvl >= 10) return;
-
-            stats.stones--;
-
-            let chances = { 1: 100, 2: 100, 3: 100, 4: 75, 5: 75, 6: 75, 7: 50, 8: 50, 9: 50, 10: 30 };
-            let chance = chances[lvl + 1] || 30;
-            let roll = Math.random() * 100;
-
-            if (roll <= chance) {
-                stats.forgeLevels[eqKey] = lvl + 1;
-                recalculateStats();
-                updateSetupUI();
-                selectForgeSlot(selectedForgeSlot);
-                saveGame();
-                playSound('win');
-                tg.showAlert(`🎉 УСПЕХ! Предмет заточен до +${lvl + 1}!`);
-            } else {
-                if (lvl > 0) {
-                    stats.forgeLevels[eqKey] = lvl - 1;
-                    if(stats.forgeLevels[eqKey] === 0) delete stats.forgeLevels[eqKey];
-                }
-                recalculateStats();
-                updateSetupUI();
-                selectForgeSlot(selectedForgeSlot);
-                saveGame();
-                playSound('damage');
-                tg.showAlert(`💥 НЕУДАЧА! Заточка предмета упала на 1 уровень.`);
-            }
-        }
-
-        function recalculateStats() {
-            let baseStr = 10, baseAgi = 10, baseHp = 100;
-            if (stats.race === 'orc') { baseStr = 14; baseAgi = 7; baseHp = 115; }
-            else if (stats.race === 'elf') { baseStr = 7; baseAgi = 15; baseHp = 90; }
-
-            stats.str = baseStr + (stats.distributedStr || 0);
-            stats.agi = baseAgi + (stats.distributedAgi || 0);
-            stats.maxHp = baseHp + (stats.distributedHp || 0);
-
-            let itemCritBonus = 0;
-            let itemCritMultBonus = 0;
-            let itemDef = 0;
-
-            if(!stats.forgeLevels) stats.forgeLevels = {};
-
-            for (let slot in equipped) {
-                let itemKey = equipped[slot];
-                if (itemKey && itemsDB[itemKey]) {
-                    let itm = itemsDB[itemKey];
-                    let forgeLvl = stats.forgeLevels[itemKey] || 0;
-                    let mult = 1 + (forgeLvl * 0.35);
-
-                    let stList = [ {s: itm.stat, v: itm.val}, {s: itm.stat2, v: itm.val2}, {s: itm.stat3, v: itm.val3} ];
-                    stList.forEach(st => {
-                        if (!st.s) return;
-                        let boostedVal = st.v * mult;
-                        if (st.s === 'hp') stats.maxHp += boostedVal;
-                        if (st.s === 'str') stats.str += boostedVal;
-                        if (st.s === 'agi') stats.agi += boostedVal;
-                        if (st.s === 'def') itemDef += boostedVal;
-                        if (st.s === 'critBonus') itemCritBonus += boostedVal;
-                        if (st.s === 'critMultBonus') itemCritMultBonus += st.v;
+        function loadGlobalLeaderboard() {
+            let leaderboardEl = document.getElementById('global-leaderboard');
+            if (!leaderboardEl) return;
+            fetch('/api/leaderboard')
+                .then(res => res.json())
+                .then(topPlayers => {
+                    let html = '';
+                    topPlayers.forEach((p, index) => {
+                        let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                        let isMe = p.name === userName ? 'background: rgba(46, 204, 113, 0.1); border-color: #2ecc71;' : '';
+                        html += `<div class="achievement-item" style="${isMe}"><span class="ach-title">${medal} ${p.name} [Lvl ${p.lvl}]</span><span class="ach-value">${p.rating} 🏆</span></div>`;
                     });
-                }
-            }
-
-            stats.str = Math.floor(stats.str);
-            stats.agi = Math.floor(stats.agi);
-            stats.maxHp = Math.floor(stats.maxHp);
-            stats.dodgeChance = Math.min(65, Math.floor(stats.agi * 1.5));
-            stats.critChance = Math.min(80, Math.floor(stats.agi * 0.8) + 5 + itemCritBonus);
-            stats.critMult = parseFloat((1.5 + Math.floor(stats.str / 10) * 0.05 + itemCritMultBonus).toFixed(2));
-            stats.defense = Math.floor(stats.str * 0.4) + itemDef;
-
-            if(isNaN(stats.hp) || stats.hp > stats.maxHp) stats.hp = stats.maxHp;
+                    leaderboardEl.innerHTML = html || "<div style='color:var(--text-muted); text-align:center;'>Нет игроков в сети</div>";
+                }).catch(e => leaderboardEl.innerHTML = "<div style='color:var(--text-muted); text-align:center;'>Ошибка загрузки</div>");
         }
 
-        function buyItem(itemKey, cost) {
-            let itm = itemsDB[itemKey];
-            if (!itm) return;
-
-            if (itm.reqLvl && stats.lvl < itm.reqLvl) {
-                tg.showAlert(`⚠️ Ваш уровень (${stats.lvl}) слишком мал! Требуется уровень ${itm.reqLvl}.`);
-                return;
-            }
-
-            if (itm.classReq && itm.classReq !== stats.race) {
-                tg.showAlert("⚠️ Этот предмет предназначен только для вашего класса!");
-                return;
-            }
-
-            if (stats.gold >= cost) {
-                stats.gold -= cost;
-                inventory[itemKey] = true;
+        function findRealPlayerPvP() {
+            fetch('/api/pvp/find', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let opp = data.opponent;
+                currentEnemy = { name: opp.name, lvl: opp.lvl, hp: opp.hp, maxHp: opp.maxHp, str: opp.str, gold: opp.gold, stones: 2, exp: 200, ratingGain: opp.ratingGain || 30, icon: opp.icon, drops: [] };
                 
-                updateSetupUI();
-                saveGame();
-                tg.showAlert(`📦 Предмет "${itm.name}" успешно куплен и добавлен в инвентарь!`);
-            } else {
-                tg.showAlert("Недостаточно золота!");
-            }
-        }
-
-        function toggleEquip(itemKey) {
-            let itm = itemsDB[itemKey];
-            if (!itm) return;
-
-            if (itm.reqLvl && stats.lvl < itm.reqLvl) {
-                tg.showAlert(`⚠️ Нельзя надеть! Требуется уровень ${itm.reqLvl}.`);
-                return;
-            }
-
-            let targetSlot = itm.type;
-            let currentEquipped = equipped[targetSlot];
-
-            if (currentEquipped === itemKey) {
-                equipped[targetSlot] = null;
-                inventory[itemKey] = true;
-            } else {
-                if (currentEquipped) {
-                    inventory[currentEquipped] = true;
-                }
-                equipped[targetSlot] = itemKey;
-                delete inventory[itemKey];
-            }
-            recalculateStats();
-            updateSetupUI();
-            saveGame();
-        }
-
-        function updateSetupUI() {
-            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
-            document.getElementById('val-lvl').innerText = stats.lvl;
-            document.getElementById('val-str').innerText = stats.str;
-            
-            document.getElementById('disp-agi').innerText = stats.agi;
-            document.getElementById('disp-dodge').innerText = stats.dodgeChance;
-            document.getElementById('disp-crit-chance').innerText = stats.critChance;
-            document.getElementById('disp-crit-mult').innerText = stats.critMult;
-            document.getElementById('disp-def').innerText = stats.defense;
-
-            document.getElementById('val-hp').innerText = stats.hp;
-            document.getElementById('val-max-hp').innerText = stats.maxHp;
-            
-            let hpPct = Math.min(100, Math.max(0, (stats.hp / stats.maxHp) * 100));
-            document.getElementById('hp-bar-fill').style.width = hpPct + '%';
-
-            let expPct = Math.min(100, Math.max(0, (stats.exp / stats.expMax) * 100));
-            document.getElementById('exp-bar-fill').style.width = expPct + '%';
-
-            document.getElementById('gold-val').innerText = stats.gold;
-            document.getElementById('stone-val').innerText = stats.stones || 0;
-            document.getElementById('exp-val').innerText = stats.exp;
-            document.getElementById('exp-max-val').innerText = stats.expMax;
-            document.getElementById('rating-val').innerText = stats.rating || 0;
-            document.getElementById('potion-count').innerText = stats.potions || 0;
-
-            document.getElementById('hero-lvl-text').innerText = stats.lvl;
-            document.getElementById('doll-str').innerText = stats.str;
-            document.getElementById('doll-agi').innerText = stats.agi;
-            document.getElementById('doll-hp').innerText = stats.hp;
-            document.getElementById('doll-crit').innerText = stats.critChance + '%';
-            document.getElementById('doll-dodge').innerText = stats.dodgeChance + '%';
-
-            document.getElementById('ach-lvl').innerText = stats.lvl;
-            document.getElementById('ach-rating').innerText = stats.rating || 0;
-            document.getElementById('ach-wins').innerText = stats.totalWins || 0;
-            document.getElementById('ach-gold').innerText = stats.gold;
-            document.getElementById('ach-items').innerText = Object.keys(inventory).length;
-
-            if (stats.freePoints > 0) {
-                document.getElementById('stat-dist-panel').style.display = 'block';
-                document.getElementById('free-points').innerText = stats.freePoints;
-                document.getElementById('btn-plus-str').style.display = 'inline-block';
-                document.getElementById('btn-plus-agi').style.display = 'inline-block';
-                document.getElementById('btn-plus-hp').style.display = 'inline-block';
-            } else {
-                document.getElementById('stat-dist-panel').style.display = 'none';
-                document.getElementById('btn-plus-str').style.display = 'none';
-                document.getElementById('btn-plus-agi').style.display = 'none';
-                document.getElementById('btn-plus-hp').style.display = 'none';
-            }
-            
-            let raceNames = { human: 'Человек', orc: 'Орк', elf: 'Эльф' };
-            document.getElementById('hero-race-text') && (document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек');
-
-            if (stats.raceChosen) {
-                document.getElementById('race-selection-box').style.display = 'none';
-                document.getElementById('race-locked-box').style.display = 'block';
-            } else {
-                document.getElementById('race-selection-box').style.display = 'block';
-                document.getElementById('race-locked-box').style.display = 'none';
-                document.getElementById('race-select').value = stats.race;
-            }
-
-            let classBanners = {
-                human: { icon: '🛡️⚔️', title: 'Воин — Защитник Королевства' },
-                orc: { icon: '🪓🔥', title: 'Берсерк — Неистовый Орк' },
-                elf: { icon: '🏹🍃', title: 'Следопыт — Теневой Ассасин' }
-            };
-            let banner = classBanners[stats.race] || classBanners.human;
-            document.getElementById('banner-icon').innerText = banner.icon;
-            document.getElementById('banner-title').innerText = banner.title;
-
-            ['helm', 'amulet', 'weapon', 'armor', 'ring', 'boots'].forEach(slot => {
-                let slotEl = document.getElementById(`slot-${slot}`);
-                if (!slotEl) return;
-                let eqKey = equipped[slot];
-                if (eqKey && itemsDB[eqKey]) {
-                    let forgeLvl = (stats.forgeLevels && stats.forgeLevels[eqKey]) || 0;
-                    slotEl.innerHTML = itemsDB[eqKey].icon + (forgeLvl > 0 ? `<span style="position:absolute; top:1px; right:2px; font-size:8px; color:#f39c12; font-weight:bold;">+${forgeLvl}</span>` : '');
-                    
-                    let glowClass = '';
-                    if (forgeLvl >= 10) glowClass = 'glow-mythic';
-                    else if (forgeLvl >= 7) glowClass = 'glow-gold';
-                    else if (forgeLvl >= 4) glowClass = 'glow-purple';
-                    else if (forgeLvl >= 1) glowClass = 'glow-blue';
-
-                    slotEl.className = 'doll-slot equipped ' + glowClass;
-                    slotEl.onclick = function() { switchTab('forge'); selectForgeSlot(slot); };
-                } else {
-                    let defaultIcons = { helm: '🪖', amulet: '📿', weapon: '⚔️', armor: '🛡️', ring: '💍', boots: '🥾' };
-                    slotEl.innerHTML = defaultIcons[slot];
-                    slotEl.className = 'doll-slot';
-                    slotEl.onclick = function() { switchTab('forge'); selectForgeSlot(slot); };
-                }
-            });
-
-            let invGrid = document.getElementById('inventory-grid');
-            invGrid.innerHTML = '';
-            
-            let invKeys = Object.keys(inventory);
-            let totalSlots = Math.max(8, Math.ceil(invKeys.length / 4) * 4);
-            
-            for (let i = 0; i < totalSlots; i++) {
-                let slotDiv = document.createElement('div');
-                slotDiv.className = 'inv-slot';
-                
-                if (i < invKeys.length) {
-                    let k = invKeys[i];
-                    let itm = itemsDB[k];
-                    if (itm) {
-                        slotDiv.classList.add('has-item');
-                        if(itm.rarity === 'legendary') slotDiv.classList.add('rarity-legendary');
-                        else slotDiv.classList.add('rarity-rare');
-
-                        slotDiv.innerHTML = `${itm.icon}<span class="item-badge">✓</span>`;
-                        slotDiv.title = itm.name;
-                        slotDiv.onclick = function() { toggleEquip(k); };
-                    }
-                }
-                invGrid.appendChild(slotDiv);
-            }
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('battle-screen').style.display = 'block';
+                document.getElementById('arena-title').innerText = "⚔️ PvP Дуэль с живым игроком: " + currentEnemy.name;
+                document.getElementById('enemy-icon-display').innerText = currentEnemy.icon;
+                document.getElementById('enemy-name-display').innerText = `${currentEnemy.name} [Lvl ${currentEnemy.lvl}]`;
+                updateBattleUI();
+            })
+            .catch(e => alert("Не удалось найти соперника, попробуйте еще раз."));
         }
 
         function startBattle(mode) {
             if (isNaN(stats.hp)) stats.hp = stats.maxHp;
-            let selectId = (mode === 'pve') ? 'enemy-select' : 'pvp-select';
-            let selectedKey = (mode === 'world_boss') ? 'world_boss' : document.getElementById(selectId).value;
+            let template = opponents[document.getElementById('enemy-select').value];
+            currentEnemy = { name: template.name, lvl: template.lvl, hp: template.hp, maxHp: template.maxHp, str: template.str, gold: template.gold, stones: template.stones, exp: template.exp, ratingGain: template.ratingGain || 0, icon: template.icon, drops: [] };
             
-            if (mode === 'world_boss') {
-                let now = Date.now();
-                let cooldown = 24 * 60 * 60 * 1000;
-                if ((stats.lastBossTime || 0) + cooldown > now) {
-                    tg.showAlert("Мировой босс еще не возродился! Приходите позже.");
-                    return;
-                }
-                stats.lastBossTime = now;
-                saveGame();
-            }
-
-            let template = opponents[selectedKey];
-            currentEnemy = { 
-                name: template.name, lvl: template.lvl, hp: template.hp, maxHp: template.maxHp, 
-                str: template.str, gold: template.gold, stones: template.stones || 1, exp: template.exp, 
-                ratingGain: template.ratingGain || 0, icon: template.icon, 
-                isWorldBoss: template.isWorldBoss || false, drops: template.drops || []
-            };
-
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
-            document.getElementById('arena-title').innerText = (mode === 'world_boss' ? "👑 МИРОВОЙ БОСС: " : mode === 'pve' ? "PvE Арена: " : "PvP Дуэль: ") + currentEnemy.name;
-            
+            document.getElementById('arena-title').innerText = "PvE Арена: " + currentEnemy.name;
             document.getElementById('enemy-icon-display').innerText = currentEnemy.icon;
             document.getElementById('enemy-name-display').innerText = `${currentEnemy.name} [Lvl ${currentEnemy.lvl}]`;
-            
             updateBattleUI();
         }
 
@@ -1473,155 +637,69 @@
             let checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
             let checkedList = [];
             checkboxes.forEach(cb => { if(cb.checked) checkedList.push(cb); });
-
-            if (checkedList.length > 2) {
-                element.checked = false;
-                document.getElementById('error-box').innerText = "Максимум можно выбрать только 2 деления!";
-            } else {
-                document.getElementById('error-box').innerText = "";
-            }
+            if (checkedList.length > 2) { element.checked = false; document.getElementById('error-box').innerText = "Строго по 2 деления!"; }
+            else { document.getElementById('error-box').innerText = ""; }
         }
 
         function resetCheckboxes() {
-            let checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(cb => {
-                cb.checked = false;
-                cb.removeAttribute('checked');
-            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             document.getElementById('error-box').innerText = "";
         }
 
         function getCheckedValues(name) {
-            let ele = document.getElementsByName(name);
-            let values = [];
-            for(let i = 0; i < ele.length; i++) {
-                if(ele[i].checked) values.push(ele[i].value);
-            }
+            let ele = document.getElementsByName(name), values = [];
+            for(let i=0; i<ele.length; i++) if(ele[i].checked) values.push(ele[i].value);
             return values;
         }
 
-        function getRandomZones() {
-            let shuffled = zones.sort(() => 0.5 - Math.random());
-            return [shuffled[0], shuffled[1]];
-        }
-
         function makeTurn() {
-            let pAtk = getCheckedValues('atk');
-            let pBlk = getCheckedValues('blk');
-            let errBox = document.getElementById('error-box');
+            let pAtk = getCheckedValues('atk'), pBlk = getCheckedValues('blk');
+            if (pAtk.length !== 2 || pBlk.length !== 2) { document.getElementById('error-box').innerText = "Нужно выбрать по 2 деления!"; return; }
+            document.getElementById('error-box').innerText = "";
 
-            if (pAtk.length !== 2 || pBlk.length !== 2) {
-                errBox.innerText = "Нужно выбрать строго по 2 деления!";
-                return;
-            }
-            errBox.innerText = "";
-
-            let eAtk = getRandomZones();
-            let eBlk = getRandomZones();
-            let turnLog = `<b>--- Обмен ударами ---</b><br>`;
+            let eAtk = [zones[Math.floor(Math.random()*zones.length)], zones[Math.floor(Math.random()*zones.length)]];
+            let eBlk = [zones[Math.floor(Math.random()*zones.length)], zones[Math.floor(Math.random()*zones.length)]];
+            let turnLog = `<b>--- Раунд ---</b><br>`;
 
             pAtk.forEach(zone => {
-                if (currentEnemy.hp <= 0) return; 
-                
+                if (currentEnemy.hp <= 0) return;
                 if (eBlk.includes(zone)) {
-                    playSound('block');
-                    turnLog += `<span class="log-block">🛡 Противник (${currentEnemy.name}) парировал ваш удар в ${zoneNames[zone]}!</span><br>`;
+                    turnLog += `🛡 Соперник парировал удар в ${zoneNames[zone]}!<br>`;
                 } else {
-                    let isCrit = Math.random() * 100 <= stats.critChance;
-                    let baseDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
-                    let pDmg = isCrit ? Math.floor(baseDmg * stats.critMult) : baseDmg;
-
+                    let pDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
                     currentEnemy.hp -= pDmg;
-                    if (isCrit) {
-                        playSound('crit');
-                        showFloatingText(`-${pDmg} КРИТ!`, '#ff5252', true);
-                        turnLog += `💥 <span class="log-crit">Мощнейший критический удар! Вы пробили ${zoneNames[zone]} противника на [${pDmg}] урона!</span><br>`;
-                    } else {
-                        playSound('hit');
-                        showFloatingText(`-${pDmg}`, '#e74c3c', false);
-                        turnLog += `⚔️ <span class="log-hit">Вы успешно провели атаку в ${zoneNames[zone]} и нанесли [${pDmg}] урона.</span><br>`;
-                    }
+                    turnLog += `⚔️ Вы нанесли ${pDmg} урона в ${zoneNames[zone]}.<br>`;
                 }
             });
 
             if (currentEnemy.hp <= 0) {
                 currentEnemy.hp = 0;
                 stats.gold += currentEnemy.gold;
-                stats.stones = (stats.stones || 0) + (currentEnemy.stones || 1);
-                stats.totalWins = (stats.totalWins || 0) + 1;
-                addExp(currentEnemy.exp);
-                if (currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
-
-                let dropMsg = `<br>💎 Камни заточки: +${currentEnemy.stones || 1}`;
-                
-                if (currentEnemy.drops && currentEnemy.drops.length > 0) {
-                    currentEnemy.drops.forEach(d => {
-                        let roll = Math.random() * 100;
-                        if (roll <= d.chance) {
-                            let itmKey = d.key;
-                            if (!inventory[itmKey] && !Object.values(equipped).includes(itmKey)) {
-                                inventory[itmKey] = true;
-                                let itm = itemsDB[itmKey];
-                                dropMsg += `<br><b style="color:#e67e22;">🌟 ВЫПАЛ ТРОФЕЙ: ${itm ? itm.name : itmKey}!</b>`;
-                                playSound('legendary');
-                            }
-                        }
-                    });
-                }
-
-                if (currentEnemy.isWorldBoss) {
-                    let roll = Math.random() * 100;
-                    if (roll <= 5) {
-                        let legKeys = ['leg_sword', 'leg_helm'];
-                        let pickedLeg = legKeys[Math.floor(Math.random() * legKeys.length)];
-                        if (!inventory[pickedLeg] && !Object.values(equipped).includes(pickedLeg)) {
-                            inventory[pickedLeg] = true;
-                            let legItem = itemsDB[pickedLeg];
-                            dropMsg += `<br><b style="color:#ff0055;">🌟 МИФИЧЕСКИЙ ДРОП С БОССА: ${legItem.name}!</b>`;
-                            playSound('legendary');
-                        }
-                    }
-                }
-                
-                playSound('win');
+                stats.stones += currentEnemy.stones;
+                stats.totalWins++;
+                if(currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
                 updateBattleUI();
-                logMessage(turnLog + `🏆 <b>ПОБЕДА В БОЮ!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}` + (currentEnemy.ratingGain ? ` | 🏆 Славы: +${currentEnemy.ratingGain}` : '') + dropMsg);
-                triggerRandomEvent();
+                logMessage(turnLog + `🏆 <b>ПОБЕДА!</b> Золото +${currentEnemy.gold}, Опыт +${currentEnemy.exp}`);
                 endBattle();
                 saveGame();
                 return;
             }
 
             eAtk.forEach(zone => {
-                if (stats.hp <= 0) return; 
-                
-                if (Math.random() * 100 <= stats.dodgeChance) {
-                    showFloatingText('УКЛОНЕНИЕ!', '#3498db', false);
-                    turnLog += `<span class="log-dodge">💨 Вы грациозно увернулись от атаки противника в ${zoneNames[zone]}!</span><br>`;
-                } 
-                else if (pBlk.includes(zone)) {
-                    playSound('block');
-                    turnLog += `<span class="log-block">🛡 Вы успели подставить блок и отразили удар в ${zoneNames[zone]}!</span><br>`;
-                } 
-                else {
-                    playSound('damage');
-                    triggerScreenShake();
-                    let rawDmg = Math.floor(currentEnemy.str / 1.5) + Math.floor(Math.random() * 4);
-                    let eDmg = Math.max(2, rawDmg - (stats.defense || 0));
-                    
-                    if (isNaN(stats.hp)) stats.hp = stats.maxHp;
+                if (stats.hp <= 0) return;
+                if (pBlk.includes(zone)) {
+                    turnLog += `🛡 Вы заблокировали удар в ${zoneNames[zone]}!<br>`;
+                } else {
+                    let eDmg = Math.max(2, Math.floor(currentEnemy.str / 1.5) - (stats.defense || 0));
                     stats.hp -= eDmg;
-                    if (stats.hp < 0) stats.hp = 0;
-                    
-                    showFloatingText(`-${eDmg} HP`, '#e67e22', false);
-                    turnLog += `<span class="log-dmg-taken">🩸 Противник прорвал вашу оборону (${zoneNames[zone]}) и нанес [${eDmg}] урона!</span><br>`;
+                    turnLog += `🩸 Соперник пробил ${zoneNames[zone]} на ${eDmg} урона.<br>`;
                 }
             });
 
             if (stats.hp <= 0) {
                 stats.hp = 0;
                 updateBattleUI();
-                logMessage(turnLog + `☠️ <b>ВЫ ПАЛИ НА АРЕНЕ...</b>`);
+                logMessage(turnLog + `☠️ <b>ВЫ ПОГИБЛИ...</b>`);
                 endBattle();
                 saveGame();
                 return;
@@ -1644,6 +722,25 @@
             document.getElementById('setup-screen').style.display = 'block';
             updateSetupUI();
         }
+
+        function recalculateStats() {
+            stats.maxHp = 100 + (stats.distributedHp || 0);
+            stats.str = 10 + (stats.distributedStr || 0);
+            stats.agi = 10 + (stats.distributedAgi || 0);
+            stats.defense = Math.floor(stats.str * 0.4);
+            if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
+        }
+
+        function updateSetupUI() {
+            document.getElementById('val-lvl').innerText = stats.lvl;
+            document.getElementById('val-str').innerText = stats.str;
+            document.getElementById('val-hp').innerText = stats.hp;
+            document.getElementById('val-max-hp').innerText = stats.maxHp;
+            document.getElementById('gold-val').innerText = stats.gold;
+            document.getElementById('stone-val').innerText = stats.stones;
+            document.getElementById('rating-val').innerText = stats.rating || 0;
+            document.getElementById('hp-bar-fill').style.width = Math.min(100, (stats.hp / stats.maxHp) * 100) + '%';
+        }
     </script>
 </body>
-                                                  </html>
+</html>
