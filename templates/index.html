@@ -15,17 +15,17 @@
         }
         .header-stats {
             background: #1e1e1e;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
         .nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .nav-btn {
             background: #2c2c2c;
@@ -48,13 +48,14 @@
             border-radius: 8px;
             padding: 10px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #f39c12;
             font-weight: bold;
+            font-size: 13px;
         }
         .hero-section {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         .equipment {
             width: 70px;
@@ -80,34 +81,37 @@
             flex-grow: 1;
             background: #1e1e1e;
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
+            font-size: 13px;
         }
         .hero-avatar {
             width: 100%;
-            border-radius: 8px;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
             border: 1px solid #f39c12;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align: center; color: #f39c12; margin: 5px 0 10px 0;">ЛАГЕРЬ ГЕРОЯ</h2>
+    <h2 style="text-align: center; color: #f39c12; margin: 4px 0 8px 0; font-size: 18px;">ЛАГЕРЬ ГЕРОЯ</h2>
 
     <div class="header-stats">
-        🟡 Золото: 100 | 💎 Камни: 5 | ⭐ Опыт: 0/100 | 🏆 Ранг: 0
+        🟡 Золото: 210 | 💎 Камни: 7 | ⭐ Опыт: 0/100 | 🏆 Ранг: 0
     </div>
 
     <!-- Навигация -->
     <div class="nav-grid">
-        <button class="nav-btn" onclick="location.href='#'">⚔️ PVE</button>
-        <button class="nav-btn" onclick="location.href='#'">🦖 БОСС</button>
-        <button class="nav-btn" onclick="location.href='#'">🛡️ PVP</button>
-        <button class="nav-btn active" onclick="location.href='#'">👤 ГЕРОЙ</button>
-        <button class="nav-btn" onclick="location.href='#'">🛒 ЛАВКА</button>
-        <button class="nav-btn" onclick="location.href='#'">🏛️ АУКЦИОН</button>
-        <button class="nav-btn" onclick="location.href='#'">⛏️ КУЗНЕЦ</button>
-        <button class="nav-btn" onclick="location.href='#'">📜 КЛАСС</button>
+        <button class="nav-btn">⚔️ PVE</button>
+        <button class="nav-btn">🦖 БОСС</button>
+        <button class="nav-btn">🛡️ PVP</button>
+        <button class="nav-btn active">👤 ГЕРОЙ</button>
+        <button class="nav-btn">🛒 ЛАВКА</button>
+        <button class="nav-btn">🏛️ АУКЦИОН</button>
+        <button class="nav-btn">⛏️ КУЗНЕЦ</button>
+        <button class="nav-btn">📜 КЛАСС</button>
     </div>
 
     <div class="class-banner">
@@ -118,7 +122,7 @@
     <div class="hero-section">
         <!-- Слоты экипировки слева -->
         <div class="equipment">
-            <div style="font-size: 10px; color: #888; margin-bottom: 2px;">ЭКИПИРОВКА</div>
+            <div style="font-size: 9px; color: #888; margin-bottom: 2px; text-align: center;">ЭКИПИРОВКА</div>
             <div class="equip-slot">🪖</div>
             <div class="equip-slot">📿</div>
             <div class="equip-slot">⚔️</div>
@@ -132,11 +136,12 @@
             <!-- Внедренная картинка воина -->
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Воин" class="hero-avatar">
             
-            <p style="margin: 5px 0;"><b>Уровень:</b> 1</p>
-            <p style="margin: 5px 0;"><b>Класс:</b> Воин</p>
-            <p style="margin: 5px 0;">⚔️ Сила: 10</p>
-            <p style="margin: 5px 0;">🏃 Ловк: 10</p>
-            <p style="margin: 5px 0;">❤️ HP: 100</p>
+            <p style="margin: 4px 0;"><b>Уровень героя:</b> 1</p>
+            <p style="margin: 4px 0;"><b>Класс:</b> Воин</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 6px 0;">
+            <p style="margin: 4px 0;">⚔️ Сила атаки: 10</p>
+            <p style="margin: 4px 0;">🏃 Ловкость: 10 (15%)</p>
+            <p style="margin: 4px 0;">❤️ Здоровье: 100 / 100</p>
         </div>
     </div>
 
