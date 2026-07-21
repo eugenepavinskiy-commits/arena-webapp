@@ -7,13 +7,13 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #121216;
-            --panel-bg: rgba(28, 28, 36, 0.85);
+            --bg-dark: #0d0d11;
+            --panel-bg: rgba(22, 22, 29, 0.9);
             --accent-gold: #f39c12;
             --accent-gold-glow: rgba(243, 156, 18, 0.4);
             --text-main: #f0f0f5;
-            --text-muted: #9ba0b0;
-            --border-color: #2e2e3e;
+            --text-muted: #8c90a0;
+            --border-color: #2b2b3d;
         }
 
         body { 
@@ -21,21 +21,21 @@
             background: var(--bg-dark); 
             color: var(--text-main); 
             margin: 0; padding: 10px; text-align: center; 
-            background-image: radial-gradient(circle at 50% 0%, #1f1f2e 0%, var(--bg-dark) 70%);
+            background-image: radial-gradient(circle at 50% 0%, #1a1a26 0%, var(--bg-dark) 75%);
             min-height: 100vh;
         }
         
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
         .currency-box { 
             display: flex; justify-content: space-around; 
             background: var(--panel-bg); backdrop-filter: blur(10px);
             padding: 10px; border-radius: 12px; margin-bottom: 10px; 
             font-size: 14px; font-weight: bold; border: 1px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
         .gold-text { color: var(--accent-gold); text-shadow: 0 0 8px var(--accent-gold-glow); }
         .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
@@ -43,12 +43,12 @@
         /* Вкладки */
         .nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
         .tab-btn { 
-            flex: 1; background: #1a1a24; color: var(--text-muted); border: 1px solid var(--border-color); 
+            flex: 1; background: #161620; color: var(--text-muted); border: 1px solid var(--border-color); 
             padding: 8px 2px; font-size: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; 
             transition: all 0.2s ease; text-transform: uppercase;
         }
         .tab-btn.active { 
-            background: linear-gradient(135deg, #d35400, #f39c12); 
+            background: linear-gradient(135deg, #b5370f, #f39c12); 
             color: #fff; border-color: var(--accent-gold);
             box-shadow: 0 0 10px var(--accent-gold-glow);
         }
@@ -67,22 +67,22 @@
         
         .box-panel { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
         .box-panel select, select { 
-            width: 100%; padding: 9px; background: #16161c; color: var(--text-main); 
+            width: 100%; padding: 9px; background: #121219; color: var(--text-main); 
             border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; margin-top: 5px; outline: none; 
         }
 
         .game-image { 
             width: 100%; max-height: 150px; object-fit: cover; border-radius: 10px; 
-            margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.6); 
+            margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.8); 
         }
 
-        /* Аватарка класса */
+        /* Брутальная аватарка класса */
         .hero-avatar-box {
-            width: 100%; height: 140px; border-radius: 10px; overflow: hidden;
-            margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            position: relative;
+            width: 100%; height: 160px; border-radius: 10px; overflow: hidden;
+            margin-bottom: 10px; border: 1px solid var(--accent-gold); box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+            position: relative; background: #000;
         }
-        .hero-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9) contrast(1.2); }
 
         .hero-layout { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         .paper-doll { 
@@ -90,11 +90,11 @@
             display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px solid var(--border-color); 
         }
         .doll-slot { 
-            width: 50px; height: 50px; background: #16161c; border: 2px dashed #3f3f59; 
+            width: 50px; height: 50px; background: #121219; border: 2px dashed #3a3a52; 
             border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; 
             transition: 0.2s;
         }
-        .doll-slot.equipped { border-style: solid; border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 8px var(--accent-gold-glow); }
+        .doll-slot.equipped { border-style: solid; border-color: var(--accent-gold); background: #1c1c28; box-shadow: 0 0 8px var(--accent-gold-glow); }
         
         .hero-stats-side { 
             flex: 1; background: var(--panel-bg); padding: 12px; border-radius: 10px; 
@@ -105,12 +105,12 @@
         .inventory-section { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-top: 8px; border: 1px solid var(--border-color); }
         .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
         .inv-slot { 
-            height: 50px; background: #16161c; border: 1px solid var(--border-color); 
+            height: 50px; background: #121219; border: 1px solid var(--border-color); 
             border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; cursor: pointer; 
             transition: 0.2s;
         }
         .inv-slot:hover { border-color: var(--text-muted); }
-        .inv-slot.has-item { border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
+        .inv-slot.has-item { border-color: var(--accent-gold); background: #1c1c28; box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
         .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
 
         /* Лавка */
@@ -122,25 +122,25 @@
             border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); 
         }
         .shop-item-info { display: flex; align-items: center; gap: 8px; text-align: left; }
-        .shop-icon { font-size: 20px; width: 28px; text-align: center; background: #16161c; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .shop-icon { font-size: 20px; width: 28px; text-align: center; background: #121219; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
         
         .btn-buy { 
-            background: linear-gradient(135deg, #f39c12, #d35400); color: #fff; border: none; 
+            background: linear-gradient(135deg, #f39c12, #b5370f); color: #fff; border: none; 
             padding: 6px 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 10px; white-space: nowrap; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3); text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4); text-transform: uppercase;
         }
-        .btn-buy:disabled { background: #2e2e3e; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
+        .btn-buy:disabled { background: #262633; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
         /* Арена и Визуал врага */
-        .enemy-visual-container { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 8px 20px rgba(0,0,0,0.6); position: relative; }
-        .enemy-img { width: 100%; height: 140px; object-fit: cover; display: block; filter: contrast(1.1); }
+        .enemy-visual-container { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative; }
+        .enemy-img { width: 100%; height: 140px; object-fit: cover; display: block; filter: contrast(1.2) brightness(0.9); }
 
         .health-box { 
             display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: bold; 
             color: #ff5252; background: var(--panel-bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); 
         }
         #battle-log { 
-            background: #0d0d10; padding: 10px; height: 100px; overflow-y: scroll; 
+            background: #08080a; padding: 10px; height: 100px; overflow-y: scroll; 
             border-radius: 10px; text-align: left; margin-bottom: 10px; font-family: monospace; font-size: 11px; line-height: 1.4; 
             border: 1px solid var(--border-color); color: #c0c5d0; 
         }
@@ -171,7 +171,7 @@
         .zone-box { display: flex; gap: 2px; width: 100%; height: 100%; }
         .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
         .zone-cb input { display: none; }
-        .zone-cb span { display: block; width: 100%; height: 100%; background: #16161c; border: 1px solid #3f3f59; border-radius: 4px; transition: 0.15s; }
+        .zone-cb span { display: block; width: 100%; height: 100%; background: #121219; border: 1px solid #3a3a52; border-radius: 4px; transition: 0.15s; }
 
         .atk-figure .zone-cb input:checked + span { background: #e74c3c; border-color: #ff9999; box-shadow: 0 0 8px #e74c3c; }
         .blk-figure .zone-cb input:checked + span { background: #2980b9; border-color: #85c1e9; box-shadow: 0 0 8px #2980b9; }
@@ -254,10 +254,10 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ СО СТРОГИМ АВАТАРОМ КЛАССА -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С БРУТАЛЬНЫМ АВАТАРОМ -->
         <div id="tab-hero" class="tab-content">
             <div class="hero-avatar-box">
-                <img id="hero-avatar-img" src="" alt="Аватар класса" class="hero-avatar-img">
+                <img id="hero-avatar-img" src="" alt="Брутальный герой" class="hero-avatar-img">
             </div>
 
             <div class="hero-layout">
@@ -329,7 +329,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ВЫБОР КЛАССА С ДОНАТНОЙ СМЕНОЙ -->
+        <!-- ВКЛАДКА 5: ВЫБОР КЛАССА -->
         <div id="tab-race" class="tab-content">
             <div class="box-panel" style="text-align: center;">
                 <label style="font-size: 13px; font-weight: bold; color: var(--accent-gold);">🧬 Ваш класс и раса:</label>
@@ -357,7 +357,7 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 2: АРЕНА (PvE / PvP) -->
+    <!-- ЭКРАН 2: АРЕНА -->
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
@@ -393,7 +393,7 @@
                     <div class="body-grid">
                         <div class="cell-head zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-larm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
-                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label></div>
@@ -452,7 +452,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v13', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v14', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -465,10 +465,9 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v13', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v14', JSON.stringify(data));
         }
 
-        // Первичное подтверждение выбора класса
         function confirmRace() {
             stats.race = document.getElementById('race-select').value;
             stats.raceChosen = true;
@@ -478,12 +477,11 @@
             tg.showAlert("Класс успешно выбран и закреплен за героем!");
         }
 
-        // Покупка смены класса за 200 золота (монет)
         function resetClassForDonate() {
             if (stats.gold >= 200) {
                 stats.gold -= 200;
                 stats.raceChosen = false;
-                equipped = { weapon: null, armor: null, boots: null }; // сбрасываем шмотки при смене класса
+                equipped = { weapon: null, armor: null, boots: null };
                 updateSetupUI();
                 saveGame();
                 tg.showAlert("Класс сброшен! Выберите новый путь.");
@@ -569,7 +567,6 @@
             document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек';
             document.getElementById('hero-class-text').innerText = classNames[stats.race] || 'Воин';
 
-            // Управление отображением выбора класса (заблокирован после подтверждения)
             if (stats.raceChosen) {
                 document.getElementById('race-selection-box').style.display = 'none';
                 document.getElementById('race-locked-box').style.display = 'block';
@@ -579,13 +576,13 @@
                 document.getElementById('race-select').value = stats.race;
             }
 
-            // Уникальные аватарки точно под выбранный класс
-            let classAvatars = {
-                human: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=60', // Воин
-                orc: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60',     // Берсерк
-                elf: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=60'     // Следопыт
+            // Брутальные дарк-фэнтези арты для каждого класса (Воин, Берсерк, Следопыт)
+            let darkAvatars = {
+                human: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&auto=format&fit=crop&q=60', // Мрачный рыцарь в шлеме
+                orc: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=60',     // Свирепый орк/берсерк
+                elf: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=60'      // Темный эльф-ассасин
             };
-            document.getElementById('hero-avatar-img').src = classAvatars[stats.race] || classAvatars.human;
+            document.getElementById('hero-avatar-img').src = darkAvatars[stats.race] || darkAvatars.human;
 
             ['weapon', 'armor', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
