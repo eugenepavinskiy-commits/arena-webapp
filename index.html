@@ -162,6 +162,7 @@
                     <div class="doll-slot" id="slot-boots" title="Обувь">🥾</div>
                 </div>
                 <div class="hero-stats-side">
+                    <div><b>Класс:</b> <span id="hero-class-text">Воин</span></div>
                     <div><b>Раса:</b> <span id="hero-race-text">Человек</span></div>
                     <div>⚔️ Сила: <span id="doll-str">10</span></div>
                     <div>🏃 Ловк: <span id="doll-agi">10</span></div>
@@ -175,49 +176,49 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 3: ЛАВКА -->
+        <!-- ВКЛАДКА 3: ЛАВКА (ВЕЩИ ПО КЛАССАМ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
-                <div class="shop-category">⚔️ Оружие (Сила)</div>
+                <div class="shop-category">⚔️ Оружие (Классовое)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Ржавый меч</b><br><span style="color:#aaa;">+2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-sword1" onclick="buyItem('sword1', 100, 'str', 2, 'sword', '🗡️')">100 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Меч Воина (Человек)</b><br><span style="color:#aaa;">+3 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-human_sword" onclick="buyItem('human_sword', 100, 'str', 3, 'weapon', '🗡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Стальной меч</b><br><span style="color:#aaa;">+5 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-sword2" onclick="buyItem('sword2', 200, 'str', 5, 'sword', '⚔️')">200 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка (Орк)</b><br><span style="color:#aaa;">+6 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-orc_axe" onclick="buyItem('orc_axe', 100, 'str', 6, 'weapon', '🪓', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Меч Драконоборец</b><br><span style="color:#aaa;">+10 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-sword3" onclick="buyItem('sword3', 400, 'str', 10, 'sword', '✨')">400 🪙</button>
-                </div>
-
-                <div class="shop-category">🛡 Броня (Здоровье)</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Кожаный жилет</b><br><span style="color:#aaa;">+20 HP</span></div></div>
-                    <button class="btn-buy" id="buy-armor1" onclick="buyItem('armor1', 100, 'hp', 20, 'armor', '🥋')">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Железный панцирь</b><br><span style="color:#aaa;">+50 HP</span></div></div>
-                    <button class="btn-buy" id="buy-armor2" onclick="buyItem('armor2', 220, 'hp', 50, 'armor', '🛡️')">220 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🌟</div><div><b>Доспех Паладина</b><br><span style="color:#aaa;">+110 HP</span></div></div>
-                    <button class="btn-buy" id="buy-armor3" onclick="buyItem('armor3', 450, 'hp', 110, 'armor', '🌟')">450 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Следопыта (Эльф)</b><br><span style="color:#aaa;">+2 Сила, +3 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-elf_bow" onclick="buyItem('elf_bow', 100, 'str', 2, 'weapon', '🏹', 'elf', 'agi', 3)">100 🪙</button>
                 </div>
 
-                <div class="shop-category">🥾 Обувь (Ловкость)</div>
+                <div class="shop-category">🛡 Броня (Классовая)</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Лёгкие сапоги</b><br><span style="color:#aaa;">+2 Ловк.</span></div></div>
-                    <button class="btn-buy" id="buy-boots1" onclick="buyItem('boots1', 100, 'agi', 2, 'boots', '🥿')">100 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Латы Воина (Человек)</b><br><span style="color:#aaa;">+30 HP</span></div></div>
+                    <button class="btn-buy" id="buy-human_armor" onclick="buyItem('human_armor', 100, 'hp', 30, 'armor', '🛡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Сапоги ловкача</b><br><span style="color:#aaa;">+5 Ловк.</span></div></div>
-                    <button class="btn-buy" id="buy-boots2" onclick="buyItem('boots2', 210, 'agi', 5, 'boots', '🥾')">210 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Шкуры Орка (Орк)</b><br><span style="color:#aaa;">+40 HP</span></div></div>
+                    <button class="btn-buy" id="buy-orc_armor" onclick="buyItem('orc_armor', 100, 'hp', 40, 'armor', '🥋', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚡</div><div><b>Сапоги ветра</b><br><span style="color:#aaa;">+11 Ловк.</span></div></div>
-                    <button class="btn-buy" id="buy-boots3" onclick="buyItem('boots3', 420, 'agi', 11, 'boots', '⚡')">420 🪙</button>
+                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Мантия Эльфа (Эльф)</b><br><span style="color:#aaa;">+20 HP, +3 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-elf_armor" onclick="buyItem('elf_armor', 100, 'hp', 20, 'armor', '🧥', 'elf', 'agi', 3)">100 🪙</button>
+                </div>
+
+                <div class="shop-category">🥾 Обувь (Классовая)</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сапоги Воина (Человек)</b><br><span style="color:#aaa;">+3 Ловк.</span></div></div>
+                    <button class="btn-buy" id="buy-human_boots" onclick="buyItem('human_boots', 100, 'agi', 3, 'boots', '🥿', 'human')">100 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Тяжелые сапоги (Орк)</b><br><span style="color:#aaa;">+2 Сила, +1 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-orc_boots" onclick="buyItem('orc_boots', 100, 'agi', 1, 'boots', '🥾', 'orc', 'str', 2)">100 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">⚡</div><div><b>Сапоги ветра (Эльф)</b><br><span style="color:#aaa;">+5 Ловк.</span></div></div>
+                    <button class="btn-buy" id="buy-elf_boots" onclick="buyItem('elf_boots', 100, 'agi', 5, 'boots', '⚡', 'elf')">100 🪙</button>
                 </div>
             </div>
         </div>
@@ -225,16 +226,16 @@
         <!-- ВКЛАДКА 4: РАСА -->
         <div id="tab-race" class="tab-content">
             <div class="box-panel" style="text-align: center;">
-                <label style="font-size: 13px; font-weight: bold; color: #ffaa00;">🧬 Выберите расу героя:</label>
+                <label style="font-size: 13px; font-weight: bold; color: #ffaa00;">🧬 Выберите расу и класс героя:</label>
                 <select id="race-select" onchange="changeRace()" style="margin-top: 10px;">
-                    <option value="human">Человек (Сбалансированный)</option>
-                    <option value="orc">Орк (+ Сила, - Ловкость)</option>
-                    <option value="elf">Эльф (+ Ловкость, - Сила)</option>
+                    <option value="human">Человек (Класс: Воин)</option>
+                    <option value="orc">Орк (Класс: Берсерк)</option>
+                    <option value="elf">Эльф (Класс: Следопыт)</option>
                 </select>
                 <p style="font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.4;">
-                    <b>Человек:</b> Универсальный боец.<br>
-                    <b>Орк:</b> Высокая сила и сокрушительный урон.<br>
-                    <b>Эльф:</b> Невероятная ловкость и уклонения.
+                    <b>Воин:</b> Сбалансированный урон и защита.<br>
+                    <b>Берсерк:</b> Огромная сокрушающая сила.<br>
+                    <b>Следопыт:</b> Мастер уворотов и быстрых атак.
                 </p>
             </div>
         </div>
@@ -244,7 +245,6 @@
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
-        <!-- ВИЗУАЛЬНОЕ ОТОБРАЖЕНИЕ ВРАГА -->
         <div class="enemy-visual-container">
             <img id="enemy-image" src="" alt="Враг" class="enemy-img">
         </div>
@@ -302,18 +302,15 @@
         
         let enemies = {
             wolf: { 
-                name: 'Дикий Волк', 
-                hp: 35, maxHp: 35, str: 6, goldReward: 25, expReward: 20, 
+                name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, goldReward: 25, expReward: 20, 
                 img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=600&auto=format&fit=crop&q=60' 
             },
             griffin: { 
-                name: 'Грифон', 
-                hp: 60, maxHp: 60, str: 9, goldReward: 50, expReward: 50, 
+                name: 'Грифон', hp: 60, maxHp: 60, str: 9, goldReward: 50, expReward: 50, 
                 img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=60' 
             },
             dragon: { 
-                name: 'Черный Дракон', 
-                hp: 110, maxHp: 110, str: 14, goldReward: 120, expReward: 120, 
+                name: 'Черный Дракон', hp: 110, maxHp: 110, str: 14, goldReward: 120, expReward: 120, 
                 img: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60' 
             }
         };
@@ -323,15 +320,17 @@
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
         const itemsDB = {
-            sword1: { name: 'Ржавый меч', type: 'weapon', stat: 'str', val: 2, icon: '🗡️' },
-            sword2: { name: 'Стальной меч', type: 'weapon', stat: 'str', val: 5, icon: '⚔️' },
-            sword3: { name: 'Меч Драконоборец', type: 'weapon', stat: 'str', val: 10, icon: '✨' },
-            armor1: { name: 'Кожаный жилет', type: 'armor', stat: 'hp', val: 20, icon: '🥋' },
-            armor2: { name: 'Железный панцирь', type: 'armor', stat: 'hp', val: 50, icon: '🛡️' },
-            armor3: { name: 'Доспех Паладина', type: 'armor', stat: 'hp', val: 110, icon: '🌟' },
-            boots1: { name: 'Лёгкие сапоги', type: 'boots', stat: 'agi', val: 2, icon: '🥿' },
-            boots2: { name: 'Сапоги ловкача', type: 'boots', stat: 'agi', val: 5, icon: '🥾' },
-            boots3: { name: 'Сапоги ветра', type: 'boots', stat: 'agi', val: 11, icon: '⚡' }
+            human_sword: { name: 'Меч Воина', type: 'weapon', stat: 'str', val: 3, icon: '🗡️', classReq: 'human' },
+            orc_axe: { name: 'Топор Берсерка', type: 'weapon', stat: 'str', val: 6, icon: '🪓', classReq: 'orc' },
+            elf_bow: { name: 'Лук Следопыта', type: 'weapon', stat: 'str', val: 2, stat2: 'agi', val2: 3, icon: '🏹', classReq: 'elf' },
+
+            human_armor: { name: 'Латы Воина', type: 'armor', stat: 'hp', val: 30, icon: '🛡️', classReq: 'human' },
+            orc_armor: { name: 'Шкуры Орка', type: 'armor', stat: 'hp', val: 40, icon: '🥋', classReq: 'orc' },
+            elf_armor: { name: 'Мантия Эльфа', type: 'armor', stat: 'hp', val: 20, stat2: 'agi', val2: 3, icon: '🧥', classReq: 'elf' },
+
+            human_boots: { name: 'Сапоги Воина', type: 'boots', stat: 'agi', val: 3, icon: '🥿', classReq: 'human' },
+            orc_boots: { name: 'Тяжелые сапоги', type: 'boots', stat: 'agi', val: 1, stat2: 'str', val2: 2, icon: '🥾', classReq: 'orc' },
+            elf_boots: { name: 'Сапоги ветра', type: 'boots', stat: 'agi', val: 5, icon: '⚡', classReq: 'elf' }
         };
 
         function switchTab(tabId) {
@@ -342,7 +341,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v6', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v7', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -356,7 +355,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v6', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v7', JSON.stringify(data));
         }
 
         function changeRace() {
@@ -368,8 +367,8 @@
 
         function recalculateStats() {
             if (stats.race === 'human') { stats.str = 10; stats.agi = 10; stats.maxHp = 100; }
-            else if (stats.race === 'orc') { stats.str = 13; stats.agi = 8; stats.maxHp = 110; }
-            else if (stats.race === 'elf') { stats.str = 8; stats.agi = 14; stats.maxHp = 90; }
+            else if (stats.race === 'orc') { stats.str = 14; stats.agi = 7; stats.maxHp = 115; }
+            else if (stats.race === 'elf') { stats.str = 7; stats.agi = 15; stats.maxHp = 90; }
 
             for (let slot in equipped) {
                 let itemKey = equipped[slot];
@@ -378,12 +377,16 @@
                     if (itm.stat === 'hp') stats.maxHp += itm.val;
                     if (itm.stat === 'str') stats.str += itm.val;
                     if (itm.stat === 'agi') stats.agi += itm.val;
+                    
+                    if (itm.stat2 === 'hp') stats.maxHp += itm.val2;
+                    if (itm.stat2 === 'str') stats.str += itm.val2;
+                    if (itm.stat2 === 'agi') stats.agi += itm.val2;
                 }
             }
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
-        function buyItem(itemKey, cost, statType, statAmount, itemType, icon) {
+        function buyItem(itemKey, cost, statType, statAmount, itemType, icon, classReq, stat2, val2) {
             if (stats.gold >= cost && !inventory[itemKey]) {
                 stats.gold -= cost;
                 inventory[itemKey] = true;
@@ -401,6 +404,12 @@
         function toggleEquip(itemKey) {
             let itm = itemsDB[itemKey];
             if (!itm) return;
+
+            // Проверка на соответствие класса расы
+            if (itm.classReq && itm.classReq !== stats.race) {
+                tg.showAlert("Этот предмет подходит только для класса вашей расы!");
+                return;
+            }
 
             if (equipped[itm.type] === itemKey) {
                 equipped[itm.type] = null;
@@ -424,7 +433,9 @@
             document.getElementById('doll-hp').innerText = stats.maxHp;
             
             let raceNames = { human: 'Человек', orc: 'Орк', elf: 'Эльф' };
+            let classNames = { human: 'Воин', orc: 'Берсерк', elf: 'Следопыт' };
             document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек';
+            document.getElementById('hero-class-text').innerText = classNames[stats.race] || 'Воин';
 
             ['weapon', 'armor', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
@@ -471,20 +482,13 @@
             let selectedKey = document.getElementById('enemy-select').value;
             let template = enemies[selectedKey];
             currentEnemy = { 
-                name: template.name, 
-                hp: template.hp, 
-                maxHp: template.maxHp, 
-                str: template.str, 
-                gold: template.goldReward, 
-                exp: template.expReward,
-                img: template.img
+                name: template.name, hp: template.hp, maxHp: template.maxHp, 
+                str: template.str, gold: template.goldReward, exp: template.expReward, img: template.img 
             };
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
             document.getElementById('arena-title').innerText = "Арена: " + currentEnemy.name;
-            
-            // Установка картинки врага
             document.getElementById('enemy-image').src = currentEnemy.img;
             
             stats.hp = stats.maxHp; 
@@ -517,8 +521,13 @@
             }
         }
 
+        // ЖЕСТКИЙ СБРОС ЧЕКБОКСОВ
         function resetCheckboxes() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                cb.removeAttribute('checked');
+            });
             document.getElementById('error-box').innerText = "";
         }
 
@@ -600,6 +609,8 @@
 
             updateBattleUI();
             logMessage(turnLog);
+            
+            // ПРИНУДИТЕЛЬНЫЙ СБРОС ГАЛОЧЕК ПОСЛЕ ХОДА
             resetCheckboxes();
         }
 
