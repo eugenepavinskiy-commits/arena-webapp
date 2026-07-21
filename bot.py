@@ -6,12 +6,9 @@ from telebot.types import WebAppInfo
 
 TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
-
-# Явно указываем Flask искать шаблоны в папке templates
 app = Flask(__name__, template_folder="templates")
 
 
-# Инициализация базы данных SQLite
 def init_db():
   conn = sqlite3.connect("game_database.db")
   cursor = conn.cursor()
@@ -34,7 +31,6 @@ def init_db():
 init_db()
 
 
-# Главная страница игры (отдает index.html из папки templates)
 @app.route("/")
 def index():
   return render_template("index.html")
@@ -49,12 +45,14 @@ def send_welcome(message):
   )
   bot.send_message(
       message.chat.id,
-      "Привет! Добро пожаловать на Арену. Сражайся с реальными игроками!",
+      (
+          "Привет! Добро пожаловать на Арену. Сражайся с реальными"
+          " соперниками!"
+      ),
       reply_markup=markup,
   )
 
 
-# API для сохранения прогресса игрока
 @app.route("/api/save", methods=["POST"])
 def save_player():
   data = request.json
@@ -92,7 +90,7 @@ def save_player():
   return jsonify({"status": "ok"})
 
 
-# API для поиска реального соперника для PvP
+# API поиска реального игрока (проверяет очередь)
 @app.route("/api/pvp/find", methods=["POST"])
 def find_pvp_opponent():
   data = request.json
@@ -100,6 +98,7 @@ def find_pvp_opponent():
 
   conn = sqlite3.connect("game_database.db")
   cursor = conn.cursor()
+  # Ищем случайного живого игрока, исключая себя
   cursor.execute(
       "SELECT user_id, username, lvl, str, agi, hp, rating FROM players WHERE user_id != ? ORDER"
       " BY RANDOM() LIMIT 1",
@@ -109,20 +108,7 @@ def find_pvp_opponent():
   conn.close()
 
   if not row:
-    return jsonify({
-        "found": False,
-        "opponent": {
-            "name": "Манекен для битья",
-            "lvl": 1,
-            "hp": 100,
-            "maxHp": 100,
-            "str": 10,
-            "agi": 10,
-            "gold": 50,
-            "ratingGain": 15,
-            "icon": "🤖",
-        },
-    })
+    return jsonify({"found": False})
 
   opp = {
       "user_id": row[0],
@@ -139,7 +125,6 @@ def find_pvp_opponent():
   return jsonify({"found": True, "opponent": opp})
 
 
-# API для Глобального рейтинга (Топ-10)
 @app.route("/api/leaderboard", methods=["GET"])
 def get_leaderboard():
   conn = sqlite3.connect("game_database.db")
