@@ -1,17 +1,25 @@
 import os
+import threading
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 # Ваш токен бота
-TOKEN = "8630345177:AAHS29SOLPlE08AdvOkDFnXkDKhUeMl6zbE"
-
+TOKEN = "8630345177:AAHS29S0LP1e08AdvOkDnXkDKhUeM16zbE"
 bot = telebot.TeleBot(TOKEN)
+
+# Функция для запуска простого веб-сервера (чтобы index.html открывался в Telegram)
+def run_web_server():
+    port = int(os.environ.get("PORT", 8080))
+    server_address = ("", port)
+    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+    print(f"Веб-сервер запущен на порту {port}")
+    httpd.serve_forever()
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = InlineKeyboardMarkup()
-    # Замените https://your-app.railway.app на ссылку на ваш задеплоенный Web App, если он открывается отдельно, 
-    # либо используйте относительный/прямой запуск
+    # Ссылка, которую вы только что сгенерировали в Railway
     web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/") 
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app))
     
@@ -22,5 +30,9 @@ def send_welcome(message):
     )
 
 if __name__ == "__main__":
+    # Запускаем веб-сервер в отдельном потоке
+    server_thread = threading.Thread(target=run_web_server, daemon=True)
+    server_thread.start()
+    
     print("Бот успешно запущен и ожидает сообщения...")
     bot.infinity_polling()
