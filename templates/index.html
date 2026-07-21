@@ -56,30 +56,59 @@
         button:active {
             background-color: #d68910;
         }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Блок с вашей красивой картинкой-превью -->
+        <!-- Главный баннер (превью игры) -->
         <div class="banner">
             <img src="{{ url_for('static', filename='1784659131417.png') }}" alt="Arena of Legends Preview">
         </div>
 
-        <div class="card">
-            <h2>⚔️ Арена Героев</h2>
-            <p id="player-info">Загрузка профиля...</p>
-            <button onclick="findPvP()">Встать в очередь PvP</button>
+        <!-- Вкладка: Лагерь / Главная -->
+        <div id="tab-pve" class="tab-content active">
+            <div class="card">
+                <h2>⚔️ Арена Героев</h2>
+                <p id="player-info">Загрузка профиля...</p>
+                <button onclick="findPvP()">Встать в очередь PvP</button>
+            </div>
         </div>
-        
-        <div class="card" id="rating-card">
-            <h2>🏆 Зал славы</h2>
-            <div id="leaderboard-list">Загрузка рейтинга...</div>
+
+        <!-- Вкладка: Герой -->
+        <div id="tab-hero" class="tab-content">
+            <div class="card">
+                <h2>🛡️ Статус Героя</h2>
+                
+                <!-- Внедренная картинка персонажа -->
+                <div style="text-align: center; margin: 15px 0;">
+                    <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой Воин" style="width: 100%; max-width: 280px; height: auto; border-radius: 12px; border: 2px solid #f39c12; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+                </div>
+
+                <p><b>Класс:</b> Воин – Защитник королевства</p>
+                <p><b>Уровень:</b> 1</p>
+                <p><b>Сила:</b> 10</p>
+                <p><b>Ловкость:</b> 10</p>
+                <p><b>Здоровье:</b> 100 / 100</p>
+            </div>
+        </div>
+
+        <!-- Вкладка: Зал славы -->
+        <div id="tab-hall" class="tab-content">
+            <div class="card">
+                <h2>🏆 Зал славы</h2>
+                <div id="leaderboard-list">Загрузка рейтинга...</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
 
