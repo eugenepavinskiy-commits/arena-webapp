@@ -1,9 +1,10 @@
+import os
 import sqlite3
 import telebot
 from flask import Flask, jsonify, request
 from telebot.types import WebAppInfo
 
-TOKEN = "ВАШ_ТОКЕН_БОТА"  # Замените на ваш токен
+TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
@@ -32,15 +33,14 @@ init_db()
 
 
 @bot.message_handler(commands=["start"])
-def send_welcome(v):
+def send_welcome(message):
   markup = telebot.types.InlineKeyboardMarkup()
-  # Ссылка на ваше веб-приложение на Railway
-  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/")
+  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/?v=3")
   markup.add(
       telebot.types.InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app)
   )
   bot.send_message(
-      v.chat.id,
+      message.chat.id,
       "Привет! Добро пожаловать на Арену. Сражайся с реальными игроками!",
       reply_markup=markup,
   )
@@ -92,7 +92,6 @@ def find_pvp_opponent():
 
   conn = sqlite3.connect("game_database.db")
   cursor = conn.cursor()
-  # Ищем любого другого зарегистрированного игрока, исключая текущего
   cursor.execute(
       "SELECT user_id, username, lvl, str, agi, hp, rating FROM players WHERE user_id != ? ORDER"
       " BY RANDOM() LIMIT 1",
@@ -102,7 +101,6 @@ def find_pvp_opponent():
   conn.close()
 
   if not row:
-    # Если в базе пока нет других игроков, возвращаем тренировочного манекена
     return jsonify({
         "found": False,
         "opponent": {
