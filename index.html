@@ -56,7 +56,6 @@
         
         h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
-        /* Исправленная верхняя панель (чтобы не было наложений на узких экранах) */
         .currency-box { 
             display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
             background: var(--panel-bg); 
@@ -743,12 +742,10 @@
             setTimeout(() => el.remove(), 800);
         }
 
-        // Загрузка Глобального Рейтинга
         function loadGlobalLeaderboard() {
             let leaderboardEl = document.getElementById('global-leaderboard');
             if (!leaderboardEl) return;
             
-            // Заглушки других игроков. Сюда можно будет подключить настоящую БД!
             let topPlayers = [
                 { name: "УбийцаДраконов", rating: 1250, lvl: 45 },
                 { name: "Shadow", rating: 980, lvl: 38 },
@@ -756,7 +753,6 @@
                 { name: "Вы (Игрок)", rating: stats.rating || 0, lvl: stats.lvl }
             ];
 
-            // Сортируем топ от большего рейтинга к меньшему
             topPlayers.sort((a, b) => b.rating - a.rating);
 
             let html = '';
@@ -863,7 +859,7 @@
             event.currentTarget.classList.add('active');
             if(tabId === 'boss') updateBossTimerUI();
             if(tabId === 'auction') updateAuctionUI();
-            if(tabId === 'hall') loadGlobalLeaderboard(); // Обновляем топ при входе
+            if(tabId === 'hall') loadGlobalLeaderboard(); 
         }
 
         tg.CloudStorage.getItem('arenaRPGData_v190', function(error, value) {
@@ -917,7 +913,6 @@
             }
         }
 
-        // Легкая функция обновления интерфейса для таймера HP
         function updateHpUIOnly() {
             let hpEl = document.getElementById('val-hp');
             let hpDollEl = document.getElementById('doll-hp');
@@ -1396,7 +1391,6 @@
                 }
             });
 
-            // Расширяющийся инвентарь (исправление бага исчезновения вещей)
             let invGrid = document.getElementById('inventory-grid');
             invGrid.innerHTML = '';
             
@@ -1519,7 +1513,7 @@
             let turnLog = `<b>--- Обмен ударами ---</b><br>`;
 
             pAtk.forEach(zone => {
-                if (currentEnemy.hp <= 0) return; // Защита от избиения трупа
+                if (currentEnemy.hp <= 0) return; 
                 
                 if (eBlk.includes(zone)) {
                     playSound('block');
@@ -1591,7 +1585,7 @@
             }
 
             eAtk.forEach(zone => {
-                if (stats.hp <= 0) return; // Защита героя от ударов после гибели
+                if (stats.hp <= 0) return; 
                 
                 if (Math.random() * 100 <= stats.dodgeChance) {
                     showFloatingText('УКЛОНЕНИЕ!', '#3498db', false);
