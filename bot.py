@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import telebot
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from telebot.types import WebAppInfo
 
 TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
@@ -32,10 +32,15 @@ def init_db():
 init_db()
 
 
+@app.route("/")
+def index():
+  return render_template("index.html")
+
+
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
   markup = telebot.types.InlineKeyboardMarkup()
-  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/?v=3")
+  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/")
   markup.add(
       telebot.types.InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app)
   )
@@ -46,7 +51,6 @@ def send_welcome(message):
   )
 
 
-# API для сохранения прогресса игрока
 @app.route("/api/save", methods=["POST"])
 def save_player():
   data = request.json
@@ -84,7 +88,6 @@ def save_player():
   return jsonify({"status": "ok"})
 
 
-# API для поиска реального соперника для PvP
 @app.route("/api/pvp/find", methods=["POST"])
 def find_pvp_opponent():
   data = request.json
@@ -131,7 +134,6 @@ def find_pvp_opponent():
   return jsonify({"found": True, "opponent": opp})
 
 
-# API для Глобального рейтинга (Топ-10)
 @app.route("/api/leaderboard", methods=["GET"])
 def get_leaderboard():
   conn = sqlite3.connect("game_database.db")
