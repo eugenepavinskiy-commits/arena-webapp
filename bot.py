@@ -3,7 +3,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 # Ваш токен бота
-TOKEN = "8630345177:AAHS29S0LP1e08AdvOkDnXkDKhUeM16zbE"
+TOKEN = "8630345177:AAHS29SOLPlE08AdvOkDFnXkDKhUeMl6zbE"
 
 bot = telebot.TeleBot(TOKEN)
 
