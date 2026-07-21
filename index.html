@@ -27,7 +27,7 @@
         .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
         #battle-log { background: #111; padding: 10px; height: 140px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 12px; line-height: 1.4; border: 1px solid #333; }
         
-        /* === ИНТЕРФЕЙС БОЯ С СИЛУЭТАМИ === */
+        /* === ИНТЕРФЕЙС БОЯ С 2 ДЕЛЕНИЯМИ НА ЗОНУ === */
         .battle-controls { background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
         .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 15px; }
         
@@ -36,16 +36,15 @@
         .atk-title { color: #ff5252; }
         .blk-title { color: #64b5f6; }
 
-        /* Сетка в форме силуэта */
+        /* Сетка силуэта */
         .body-grid {
             display: grid;
-            grid-template-columns: 35px 35px 35px;
-            grid-template-rows: 35px 35px 35px 35px;
-            gap: 5px;
-            position: relative;
+            grid-template-columns: 45px 45px 45px;
+            grid-template-rows: 40px 40px 40px 40px;
+            gap: 4px;
         }
 
-        /* Позиции чекбоксов */
+        /* Позиционирование элементов по частям тела */
         .cell-head { grid-column: 2; grid-row: 1; }
         .cell-larm { grid-column: 1; grid-row: 2; }
         .cell-chest { grid-column: 2; grid-row: 2; }
@@ -53,8 +52,10 @@
         .cell-stomach { grid-column: 2; grid-row: 3; }
         .cell-legs { grid-column: 2; grid-row: 4; }
 
-        /* Стили самих квадратиков */
-        .zone-cb { cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        /* Контейнер для двух делений внутри зоны */
+        .zone-box { display: flex; gap: 3px; width: 100%; height: 100%; }
+        
+        .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
         .zone-cb input { display: none; }
         .zone-cb span { 
             display: block; width: 100%; height: 100%; background: #111; 
@@ -62,20 +63,18 @@
             position: relative;
         }
 
-        /* Галочка при выборе */
         .zone-cb span::after {
             content: '✔';
             display: none;
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            color: white; font-size: 18px;
+            color: white; font-size: 12px;
         }
         .zone-cb input:checked + span::after { display: block; }
 
-        /* Цвета УДАРА (Красный) */
+        /* Цвета: Удар (Красный), Блок (Синий) */
         .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ff8a80; }
-        /* Цвета БЛОКА (Синий) */
         .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #82b1ff; }
 
         .btn-action { background: #4caf50; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
@@ -119,33 +118,69 @@
         
         <div id="battle-log"></div>
         
-        <!-- ПАНЕЛЬ С СИЛУЭТАМИ -->
+        <!-- ПАНЕЛЬ БОЯ С 2 ДЕЛЕНИЯМИ НА ЗОНУ -->
         <div id="battle-ui" class="battle-controls">
             <div class="figures-container">
                 
                 <!-- ФИГУРА УДАРА -->
                 <div class="combat-figure atk-figure">
-                    <div class="figure-title atk-title">Удар (2)</div>
+                    <div class="figure-title atk-title">Удар (макс. 2)</div>
                     <div class="body-grid">
-                        <label class="zone-cb cell-head"><input type="checkbox" name="atk" value="head"><span></span></label>
-                        <label class="zone-cb cell-larm"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
-                        <label class="zone-cb cell-chest"><input type="checkbox" name="atk" value="chest"><span></span></label>
-                        <label class="zone-cb cell-rarm"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
-                        <label class="zone-cb cell-stomach"><input type="checkbox" name="atk" value="stomach"><span></span></label>
-                        <label class="zone-cb cell-legs"><input type="checkbox" name="atk" value="legs"><span></span></label>
+                        <div class="cell-head zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="head"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="head"><span></span></label>
+                        </div>
+                        <div class="cell-larm zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
+                        </div>
+                        <div class="cell-chest zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="chest"><span></span></label>
+                        </div>
+                        <div class="cell-rarm zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
+                        </div>
+                        <div class="cell-stomach zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="stomach"><span></span></label>
+                        </div>
+                        <div class="cell-legs zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="atk" value="legs"><span></span></label>
+                        </div>
                     </div>
                 </div>
 
                 <!-- ФИГУРА БЛОКА -->
                 <div class="combat-figure blk-figure">
-                    <div class="figure-title blk-title">Блок (2)</div>
+                    <div class="figure-title blk-title">Блок (макс. 2)</div>
                     <div class="body-grid">
-                        <label class="zone-cb cell-head"><input type="checkbox" name="blk" value="head"><span></span></label>
-                        <label class="zone-cb cell-larm"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
-                        <label class="zone-cb cell-chest"><input type="checkbox" name="blk" value="chest"><span></span></label>
-                        <label class="zone-cb cell-rarm"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
-                        <label class="zone-cb cell-stomach"><input type="checkbox" name="blk" value="stomach"><span></span></label>
-                        <label class="zone-cb cell-legs"><input type="checkbox" name="blk" value="legs"><span></span></label>
+                        <div class="cell-head zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="head"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="head"><span></span></label>
+                        </div>
+                        <div class="cell-larm zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
+                        </div>
+                        <div class="cell-chest zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="chest"><span></span></label>
+                        </div>
+                        <div class="cell-rarm zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
+                        </div>
+                        <div class="cell-stomach zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="stomach"><span></span></label>
+                        </div>
+                        <div class="cell-legs zone-box">
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs"><span></span></label>
+                            <label class="zone-cb"><input type="checkbox" name="blk" value="legs"><span></span></label>
+                        </div>
                     </div>
                 </div>
 
@@ -201,7 +236,7 @@
             stats.hp = stats.maxHp; 
             enemy.hp = enemy.maxHp;
             
-            document.getElementById('battle-log').innerHTML = "Бой начался! Выберите 2 удара и 2 блока.<br><br>";
+            document.getElementById('battle-log').innerHTML = "Бой начался! Выберите ровно по 2 деления для удара и блока.<br><br>";
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             updateBattleUI();
         }
@@ -234,8 +269,9 @@
             let pAtk = getCheckedValues('atk');
             let pBlk = getCheckedValues('blk');
 
+            // Жесткая проверка: строго по 2 деления
             if (pAtk.length !== 2 || pBlk.length !== 2) {
-                tg.showAlert("Выберите ровно 2 зоны для удара и 2 зоны для блока!");
+                tg.showAlert("Можно выбрать строго по 2 деления для удара и блока!");
                 return;
             }
 
