@@ -3,106 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Арена: Характеристики</title>
+    <title>Арена</title>
     <!-- Подключаем библиотеку Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: var(--tg-theme-bg-color, #1e1e1e);
-            color: var(--tg-theme-text-color, #ffffff);
-            margin: 0;
-            padding: 20px;
-            text-align: center;
+        body { 
+            font-family: sans-serif; 
+            background-color: var(--tg-theme-bg-color, #1e1e1e); 
+            color: var(--tg-theme-text-color, #ffffff); 
+            margin: 0; padding: 20px; text-align: center; 
         }
-        h2 { margin-bottom: 5px; }
-        .points-box {
-            font-size: 18px;
-            color: #ffaa00;
-            margin-bottom: 20px;
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #2a2a2a;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
+        
+        /* Скрываем элементы по умолчанию */
+        .screen { display: none; }
+        
+        /* Экран прокачки */
+        #setup-screen { display: block; }
+        .points-box { font-size: 18px; color: #ffaa00; margin-bottom: 20px; font-weight: bold; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-radius: 10px; }
         .stat-name { font-size: 18px; font-weight: bold; }
         .stat-value { font-size: 20px; width: 40px; }
-        .btn-add {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        .btn-add { background: #4caf50; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; }
         .btn-add:disabled { background: #555; }
+        
+        /* Экран боя */
+        .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
+        #battle-log { background: #111; padding: 15px; height: 200px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 14px; line-height: 1.5; }
+        
+        /* Общие кнопки действий */
+        .btn-action { background: #e53935; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; width: 100%; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .btn-start { background: #4caf50; }
+        .btn-restart { background: #ffaa00; color: #000; }
     </style>
 </head>
 <body>
 
-    <h2>Подготовка к бою</h2>
-    <div class="points-box">Свободных очков: <span id="points">5</span></div>
+    <!-- ================= ЭКРАН 1: ПРОКАЧКА ================= -->
+    <div id="setup-screen" class="screen">
+        <h2>Подготовка к бою</h2>
+        <div class="points-box">Свободных очков: <span id="points">5</span></div>
 
-    <div class="stat-row">
-        <span class="stat-name">⚔️ Сила</span>
-        <span class="stat-value" id="val-str">10</span>
-        <button class="btn-add" onclick="addStat('str', 1)">+</button>
+        <div class="stat-row">
+            <span class="stat-name">⚔️ Сила</span>
+            <span class="stat-value" id="val-str">10</span>
+            <button class="btn-add" onclick="addStat('str', 1)">+</button>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-name">🏃 Ловкость</span>
+            <span class="stat-value" id="val-agi">10</span>
+            <button class="btn-add" onclick="addStat('agi', 1)">+</button>
+        </div>
+
+        <div class="stat-row">
+            <span class="stat-name">❤️ Здоровье</span>
+            <span class="stat-value" id="val-hp">100</span>
+            <button class="btn-add" onclick="addStat('hp', 10)">+</button>
+        </div>
+
+        <button id="start-btn" class="btn-action btn-start" style="display:none;" onclick="startBattle()">В БОЙ! 🛡</button>
     </div>
 
-    <div class="stat-row">
-        <span class="stat-name">🏃 Ловкость</span>
-        <span class="stat-value" id="val-agi">10</span>
-        <button class="btn-add" onclick="addStat('agi', 1)">+</button>
-    </div>
-
-    <div class="stat-row">
-        <span class="stat-name">❤️ Здоровье</span>
-        <span class="stat-value" id="val-hp">100</span>
-        <button class="btn-add" onclick="addStat('hp', 10)">+</button>
+    <!-- ================= ЭКРАН 2: АРЕНА ================= -->
+    <div id="battle-screen" class="screen">
+        <h2>Арена</h2>
+        <div class="health-box">
+            <span>Вы: <span id="my-hp">100</span> ❤️</span>
+            <span>Враг: <span id="enemy-hp">50</span> ❤️</span>
+        </div>
+        
+        <div id="battle-log"></div>
+        
+        <button class="btn-action" id="attack-btn" onclick="attack()">Атаковать мечом ⚔️</button>
+        <button class="btn-action btn-restart" id="restart-btn" style="display:none;" onclick="resetGame()">Начать заново 🔄</button>
     </div>
 
     <script>
-        // Инициализируем Web App
+        // Инициализируем Web App на весь экран
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем на весь экран
+        tg.expand(); 
 
-        let stats = { points: 5, str: 10, agi: 10, hp: 100 };
+        // 1. СИСТЕМА СОХРАНЕНИЙ (localStorage)
+        // Проверяем, есть ли уже сохраненные статы, иначе даем базовые
+        let savedStats = localStorage.getItem('playerStats');
+        let stats = savedStats ? JSON.parse(savedStats) : { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
+        
+        // Характеристики Гладиатора
+        let enemy = { name: 'Гладиатор', hp: 50, maxHp: 50, str: 8 };
 
+        // 2. ЛОГИКА ИНТЕРФЕЙСА ПРОКАЧКИ
         function addStat(type, amount) {
             if (stats.points > 0) {
                 stats[type] += amount;
                 stats.points -= 1;
-                updateUI();
+                // Если качаем здоровье, увеличиваем его максимальный запас
+                if(type === 'hp') stats.maxHp += amount; 
+                updateSetupUI();
             }
         }
 
-        function updateUI() {
+        function updateSetupUI() {
             document.getElementById('points').innerText = stats.points;
             document.getElementById('val-str').innerText = stats.str;
             document.getElementById('val-agi').innerText = stats.agi;
             document.getElementById('val-hp').innerText = stats.hp;
 
-            // Если очки кончились, отключаем кнопки и показываем главную кнопку Telegram внизу
             if (stats.points === 0) {
-                let buttons = document.querySelectorAll('.btn-add');
-                buttons.forEach(btn => btn.disabled = true);
+                // Блокируем кнопки и показываем кнопку В БОЙ
+                document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = true);
+                document.getElementById('start-btn').style.display = 'block';
                 
-                tg.MainButton.text = "В БОЙ!";
-                tg.MainButton.show();
+                // Автоматически сохраняем прогресс в память устройства
+                localStorage.setItem('playerStats', JSON.stringify(stats));
             }
         }
 
-        // Обработка нажатия на главную кнопку "В БОЙ"
-        tg.MainButton.onClick(function() {
-            // Отправляем данные обратно в бота (в Python)
-            tg.sendData(JSON.stringify(stats));
-        });
+        // 3. ПЕРЕХОД МЕЖДУ ЭКРАНАМИ
+        function startBattle() {
+            // Прячем меню прокачки, показываем арену
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('battle-screen').style.display = 'block';
+            
+            // Восстанавливаем здоровье перед боем
+            stats.hp = stats.maxHp; 
+            enemy.hp = enemy.maxHp;
+            
+            document.getElementById('battle-log').innerHTML = "Гонг прозвучал! Вы вышли на песок арены.<br>";
+            updateBattleUI();
+        }
+
+        function updateBattleUI() {
+            document.getElementById('my-hp').innerText = stats.hp;
+            document.getElementById('enemy-hp').innerText = enemy.hp;
+        }
+
+        function logMessage(msg) {
+            let log = document.getElementById('battle-log');
+            // Добавляем новые сообщения наверх
+            log.innerHTML = msg + "<br><br>" + log.innerHTML; 
+        }
+
+        // 4. МЕХАНИКА БОЯ (Урон и Уклонение)
+        function attack() {
+            // Удар игрока (с небольшим разбросом)
+            let pDmg = stats.str + Math.floor(Math.random() * 5) - 2;
+            enemy.hp -= pDmg;
+            logMessage(`⚔️ Вы нанесли ${pDmg} урона!`);
+
+            if (enemy.hp <= 0) {
+                enemy.hp = 0;
+                updateBattleUI();
+                logMessage(`🏆 ПРОТИВНИК ПОВЕРЖЕН!`);
+                endBattle();
+                return;
+            }
+
+            // Ответный удар врага с проверкой на вашу Ловкость
+            let dodgeChance = stats.agi * 2;
+            if (Math.random() * 100 <= dodgeChance) {
+                logMessage(`💨 Вы уклонились от ответного удара!`);
+            } else {
+                let eDmg = enemy.str + Math.floor(Math.random() * 5) - 2;
+                stats.hp -= eDmg;
+                logMessage(`🩸 Враг ударил вас на ${eDmg} урона!`);
+            }
+
+            if (stats.hp <= 0) {
+                stats.hp = 0;
+                updateBattleUI();
+                logMessage(`☠️ ВЫ ПОГИБЛИ НА АРЕНЕ...`);
+                endBattle();
+                return;
+            }
+            updateBattleUI();
+        }
+
+        function endBattle() {
+            // Прячем кнопку атаки, показываем рестарт
+            document.getElementById('attack-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'block';
+        }
+
+        function resetGame() {
+            // Полный сброс сохранений и интерфейса
+            localStorage.removeItem('playerStats');
+            stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
+            
+            document.querySelectorAll('.btn-add').forEach(btn => btn.disabled = false);
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('attack-btn').style.display = 'block';
+            document.getElementById('restart-btn').style.display = 'none';
+            
+            // Возвращаемся на экран прокачки
+            document.getElementById('battle-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'block';
+            
+            updateSetupUI();
+        }
+
+        // Запуск UI при загрузке страницы
+        updateSetupUI();
     </script>
 </body>
 </html>
