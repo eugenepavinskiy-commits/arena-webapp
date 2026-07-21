@@ -3,164 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG</title>
+    <title>Arena RPG - Old School</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #0d0d11;
-            --panel-bg: rgba(22, 22, 29, 0.9);
-            --accent-gold: #f39c12;
-            --accent-gold-glow: rgba(243, 156, 18, 0.4);
-            --text-main: #f0f0f5;
-            --text-muted: #8c90a0;
-            --border-color: #2b2b3d;
+            --bg-parchment: #f4ecd8;
+            --panel-parchment: #e9dec0;
+            --border-old: #7b5b3a;
+            --border-dark: #4a3319;
+            --text-dark: #2c1d0c;
+            --accent-red: #990000;
+            --accent-blue: #004080;
+            --gold: #b38600;
         }
 
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            margin: 0; padding: 10px; text-align: center; 
-            background-image: radial-gradient(circle at 50% 0%, #1a1a26 0%, var(--bg-dark) 75%);
+            font-family: "Georgia", serif; 
+            background: #2b1d0c; 
+            color: var(--text-dark); 
+            margin: 0; padding: 8px; text-align: center; 
+            background-image: radial-gradient(circle at 50% 0%, #4a3319 0%, #1a1005 80%);
             min-height: 100vh;
         }
         
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        /* Общие контейнеры под пергамент */
+        .parchment-box {
+            background-color: var(--panel-parchment);
+            border: 2px solid var(--border-old);
+            border-radius: 6px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.5);
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        h2 { font-size: 16px; color: var(--border-dark); text-transform: uppercase; margin: 6px 0; letter-spacing: 1px; text-shadow: 1px 1px 0px #fff; }
         
         .currency-box { 
             display: flex; justify-content: space-around; 
-            background: var(--panel-bg); backdrop-filter: blur(10px);
-            padding: 10px; border-radius: 12px; margin-bottom: 10px; 
-            font-size: 14px; font-weight: bold; border: 1px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            background: #d9c39e; border: 2px solid var(--border-old);
+            padding: 6px; border-radius: 6px; margin-bottom: 8px; 
+            font-size: 13px; font-weight: bold; color: var(--border-dark);
         }
-        .gold-text { color: var(--accent-gold); text-shadow: 0 0 8px var(--accent-gold-glow); }
-        .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
+        .gold-text { color: #855c00; }
+        .exp-text { color: #004080; }
 
-        /* Вкладки */
-        .nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+        /* Навигационные вкладки */
+        .nav-tabs { display: flex; gap: 3px; margin-bottom: 8px; }
         .tab-btn { 
-            flex: 1; background: #161620; color: var(--text-muted); border: 1px solid var(--border-color); 
-            padding: 8px 2px; font-size: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; 
-            transition: all 0.2s ease; text-transform: uppercase;
+            flex: 1; background: #c8b088; color: var(--border-dark); border: 2px solid var(--border-old); 
+            padding: 6px 1px; font-size: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; 
+            text-transform: uppercase; font-family: "Georgia", serif;
         }
         .tab-btn.active { 
-            background: linear-gradient(135deg, #b5370f, #f39c12); 
-            color: #fff; border-color: var(--accent-gold);
-            box-shadow: 0 0 10px var(--accent-gold-glow);
+            background: #7b5b3a; color: #fff; border-color: var(--border-dark);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
         }
 
-        .tab-content { display: none; text-align: left; animation: fadeIn 0.3s ease; }
+        .tab-content { display: none; text-align: left; animation: fadeIn 0.2s ease; }
         .tab-content.active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .stat-row { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--panel-bg); padding: 9px 12px; margin-bottom: 6px; 
-            border-radius: 8px; font-size: 13px; border: 1px solid var(--border-color);
+            background: #f9f5ea; padding: 6px 10px; margin-bottom: 4px; 
+            border: 1px solid var(--border-old); border-radius: 4px; font-size: 12px; 
         }
-        .stat-name { font-weight: bold; color: var(--text-muted); }
+        .stat-name { font-weight: bold; color: var(--border-dark); }
         
-        .box-panel { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
-        .box-panel select, select { 
-            width: 100%; padding: 9px; background: #121219; color: var(--text-main); 
-            border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; margin-top: 5px; outline: none; 
+        select { 
+            width: 100%; padding: 6px; background: #f9f5ea; color: var(--text-dark); 
+            border: 2px solid var(--border-old); border-radius: 4px; font-size: 12px; margin-top: 4px; font-family: "Georgia", serif; 
         }
 
-        .game-image { 
-            width: 100%; max-height: 150px; object-fit: cover; border-radius: 10px; 
-            margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.8); 
+        /* Олдскульная карточка персонажа (как на скрине 88972) */
+        .character-card {
+            display: flex; gap: 8px; background: var(--panel-parchment); 
+            border: 2px solid var(--border-old); border-radius: 6px; padding: 8px; margin-bottom: 8px;
         }
-
-        /* Брутальный графический аватар-бокс */
-        .hero-avatar-box {
-            width: 100%; height: 130px; border-radius: 10px; 
-            margin-bottom: 10px; border: 2px solid var(--accent-gold); box-shadow: 0 6px 20px rgba(0,0,0,0.8);
-            position: relative; background: linear-gradient(135deg, #181824, #0a0a0f);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        .char-portrait-frame {
+            width: 110px; background: #111; border: 2px solid var(--border-dark); border-radius: 4px;
+            overflow: hidden; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .avatar-icon { font-size: 45px; text-shadow: 0 0 15px var(--accent-gold-glow); margin-bottom: 4px; }
-        .avatar-title { font-size: 14px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; }
+        .char-avatar { width: 100%; height: 110px; object-fit: cover; }
+        
+        /* Полоски здоровья/энергии по бокам аватара */
+        .hp-bar-side { position: absolute; left: 2px; top: 2px; bottom: 2px; width: 6px; background: #333; border: 1px solid #000; border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .hp-fill { width: 100%; background: #e74c3c; height: 100%; }
 
-        .hero-layout { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .char-info-side { flex: 1; font-size: 12px; display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+
+        /* Экипировка и кукла */
+        .hero-layout { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
         .paper-doll { 
-            width: 110px; background: var(--panel-bg); border-radius: 10px; padding: 10px; 
-            display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px solid var(--border-color); 
+            width: 90px; background: var(--panel-parchment); border: 2px solid var(--border-old); border-radius: 6px; padding: 6px; 
+            display: flex; flex-direction: column; gap: 6px; align-items: center; 
         }
         .doll-slot { 
-            width: 50px; height: 50px; background: #121219; border: 2px dashed #3a3a52; 
-            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; 
-            transition: 0.2s;
+            width: 40px; height: 40px; background: #f9f5ea; border: 2px dashed var(--border-old); 
+            border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 18px; position: relative; 
         }
-        .doll-slot.equipped { border-style: solid; border-color: var(--accent-gold); background: #1c1c28; box-shadow: 0 0 8px var(--accent-gold-glow); }
-        
-        .hero-stats-side { 
-            flex: 1; background: var(--panel-bg); padding: 12px; border-radius: 10px; 
-            font-size: 13px; display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-color); 
-        }
+        .doll-slot.equipped { border-style: solid; border-color: var(--border-dark); background: #e2d2a9; }
 
         /* Инвентарь */
-        .inventory-section { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-top: 8px; border: 1px solid var(--border-color); }
-        .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+        .inventory-section { background: var(--panel-parchment); border: 2px solid var(--border-old); padding: 8px; border-radius: 6px; margin-top: 6px; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
         .inv-slot { 
-            height: 50px; background: #121219; border: 1px solid var(--border-color); 
-            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; cursor: pointer; 
-            transition: 0.2s;
+            height: 42px; background: #f9f5ea; border: 2px solid var(--border-old); 
+            border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 20px; position: relative; cursor: pointer; 
         }
-        .inv-slot:hover { border-color: var(--text-muted); }
-        .inv-slot.has-item { border-color: var(--accent-gold); background: #1c1c28; box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
-        .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
+        .inv-slot.has-item { border-color: var(--border-dark); background: #e2d2a9; }
+        .item-badge { position: absolute; bottom: 1px; right: 2px; font-size: 8px; background: var(--border-dark); color: #fff; font-weight: bold; padding: 1px 2px; border-radius: 2px; }
 
         /* Лавка */
-        .shop-container { max-height: 300px; overflow-y: auto; padding-right: 2px; }
-        .shop-category { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin: 8px 0 4px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 3px; }
+        .shop-container { max-height: 250px; overflow-y: auto; padding-right: 2px; }
+        .shop-category { font-size: 11px; font-weight: bold; color: var(--border-dark); margin: 6px 0 2px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-old); padding-bottom: 2px; }
         .shop-item { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--panel-bg); padding: 7px 10px; margin-bottom: 5px; 
-            border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); 
+            background: #f9f5ea; padding: 5px 8px; margin-bottom: 4px; 
+            border: 1px solid var(--border-old); border-radius: 4px; font-size: 11px; 
         }
-        .shop-item-info { display: flex; align-items: center; gap: 8px; text-align: left; }
-        .shop-icon { font-size: 20px; width: 28px; text-align: center; background: #121219; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .shop-item-info { display: flex; align-items: center; gap: 6px; text-align: left; }
+        .shop-icon { font-size: 18px; width: 24px; text-align: center; background: #e9dec0; padding: 2px; border: 1px solid var(--border-old); border-radius: 3px; }
         
         .btn-buy { 
-            background: linear-gradient(135deg, #f39c12, #b5370f); color: #fff; border: none; 
-            padding: 6px 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 10px; white-space: nowrap; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4); text-transform: uppercase;
+            background: #7b5b3a; color: #fff; border: 1px solid var(--border-dark); 
+            padding: 5px 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 10px; white-space: nowrap; 
+            font-family: "Georgia", serif; text-transform: uppercase;
         }
-        .btn-buy:disabled { background: #262633; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
+        .btn-buy:disabled { background: #b0a08e; color: #555; cursor: not-allowed; }
 
-        /* Арена и Визуал врага */
-        .enemy-visual-container { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative; }
-        .enemy-img { width: 100%; height: 140px; object-fit: cover; display: block; filter: contrast(1.2) brightness(0.9); }
+        /* Арена */
+        .enemy-visual-container { margin-bottom: 8px; border-radius: 6px; overflow: hidden; border: 2px solid var(--border-old); box-shadow: 0 4px 10px rgba(0,0,0,0.6); }
+        .enemy-img { width: 100%; height: 120px; object-fit: cover; display: block; filter: sepia(0.3); }
 
         .health-box { 
-            display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: bold; 
-            color: #ff5252; background: var(--panel-bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); 
+            display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: bold; 
+            color: var(--accent-red); background: var(--panel-parchment); padding: 8px 10px; border: 2px solid var(--border-old); border-radius: 6px; 
         }
         #battle-log { 
-            background: #08080a; padding: 10px; height: 100px; overflow-y: scroll; 
-            border-radius: 10px; text-align: left; margin-bottom: 10px; font-family: monospace; font-size: 11px; line-height: 1.4; 
-            border: 1px solid var(--border-color); color: #c0c5d0; 
+            background: #1a1005; color: #e2d2a9; padding: 8px; height: 90px; overflow-y: scroll; 
+            border-radius: 6px; text-align: left; margin-bottom: 8px; font-family: monospace; font-size: 11px; line-height: 1.3; 
+            border: 2px solid var(--border-old); 
         }
         
-        /* Силуэт боя */
-        .battle-controls { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
-        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 8px; }
+        /* Силуэт боя (олдскульная сетка делений) */
+        .battle-controls { background: var(--panel-parchment); padding: 8px; border: 2px solid var(--border-old); border-radius: 6px; margin-bottom: 8px; }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 6px; }
         
         .combat-figure { display: flex; flex-direction: column; align-items: center; }
-        .figure-title { font-size: 11px; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .atk-title { color: #ff5252; text-shadow: 0 0 6px rgba(255, 82, 82, 0.4); }
-        .blk-title { color: #3498db; text-shadow: 0 0 6px rgba(52, 152, 219, 0.4); }
+        .figure-title { font-size: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        .atk-title { color: var(--accent-red); }
+        .blk-title { color: var(--accent-blue); }
 
         .body-grid {
             display: grid;
-            grid-template-columns: 26px 34px 26px;
-            grid-template-rows: 26px 26px 26px 26px;
-            gap: 3px;
+            grid-template-columns: 24px 30px 24px;
+            grid-template-rows: 24px 24px 24px 24px;
+            gap: 2px;
         }
 
         .cell-head { grid-column: 2; grid-row: 1; }
@@ -173,25 +176,24 @@
         .zone-box { display: flex; gap: 2px; width: 100%; height: 100%; }
         .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
         .zone-cb input { display: none; }
-        .zone-cb span { display: block; width: 100%; height: 100%; background: #121219; border: 1px solid #3a3a52; border-radius: 4px; transition: 0.15s; }
+        .zone-cb span { display: block; width: 100%; height: 100%; background: #f9f5ea; border: 1px solid var(--border-old); border-radius: 2px; transition: 0.1s; }
 
-        .atk-figure .zone-cb input:checked + span { background: #e74c3c; border-color: #ff9999; box-shadow: 0 0 8px #e74c3c; }
-        .blk-figure .zone-cb input:checked + span { background: #2980b9; border-color: #85c1e9; box-shadow: 0 0 8px #2980b9; }
+        .atk-figure .zone-cb input:checked + span { background: var(--accent-red); border-color: #000; box-shadow: 0 0 4px var(--accent-red); }
+        .blk-figure .zone-cb input:checked + span { background: var(--accent-blue); border-color: #000; box-shadow: 0 0 4px var(--accent-blue); }
 
-        .error-msg { color: #ff5252; font-size: 11px; font-weight: bold; margin-bottom: 6px; min-height: 14px; text-align: center; }
+        .error-msg { color: var(--accent-red); font-size: 10px; font-weight: bold; margin-bottom: 4px; min-height: 12px; text-align: center; }
 
         .btn-action { 
-            background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; 
-            padding: 12px; font-size: 14px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; 
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3); transition: 0.2s; 
+            background: #7b5b3a; color: white; border: 2px solid var(--border-dark); 
+            padding: 10px; font-size: 13px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: bold; 
+            text-transform: uppercase; font-family: "Georgia", serif; box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
-        .btn-action:active { transform: scale(0.98); }
-        .btn-restart { background: linear-gradient(135deg, #f39c12, #e67e22); color: #fff; margin-top: 6px; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3); }
+        .btn-restart { background: #b38600; color: #2c1d0c; margin-top: 6px; }
         
         .btn-donate {
-            background: linear-gradient(135deg, #8e44ad, #9b59b6); color: #fff; border: none;
-            padding: 8px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            margin-top: 8px; width: 100%; box-shadow: 0 3px 10px rgba(142, 68, 173, 0.4); text-transform: uppercase;
+            background: #512b58; color: #fff; border: 2px solid #2d1633;
+            padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer; font-weight: bold;
+            margin-top: 6px; width: 100%; font-family: "Georgia", serif; text-transform: uppercase;
         }
     </style>
 </head>
@@ -217,19 +219,21 @@
 
         <!-- ВКЛАДКА 1: PvE БОЙ -->
         <div id="tab-camp" class="tab-content active">
-            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
-            
-            <div class="stat-row"><span class="stat-name">⚔️ Сила атаки:</span><span id="val-str" style="font-weight:bold; color:#ff5252;">10</span></div>
-            <div class="stat-row"><span class="stat-name">🏃 Ловкость (уворот):</span><span id="val-agi" style="font-weight:bold; color:#3498db;">10</span></div>
-            <div class="stat-row"><span class="stat-name">❤️ Макс. здоровье:</span><span id="val-hp" style="font-weight:bold; color:#e74c3c;">100</span></div>
+            <div class="parchment-box">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image" style="width:100%; max-height:120px; object-fit:cover; border-radius:4px; border:1px solid var(--border-old); margin-bottom:6px;">
+                
+                <div class="stat-row"><span class="stat-name">⚔️ Сила атаки:</span><span id="val-str" style="font-weight:bold; color:var(--accent-red);">10</span></div>
+                <div class="stat-row"><span class="stat-name">🏃 Ловкость (уворот):</span><span id="val-agi" style="font-weight:bold; color:var(--accent-blue);">10</span></div>
+                <div class="stat-row"><span class="stat-name">❤️ Макс. здоровье:</span><span id="val-hp" style="font-weight:bold; color:#a00;">100</span></div>
 
-            <div class="box-panel">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">🎯 Выберите монстра (PvE):</label>
-                <select id="enemy-select">
-                    <option value="wolf">🐺 Дикий Волк (Легкий)</option>
-                    <option value="griffin" selected>🦅 Грифон (Средний)</option>
-                    <option value="dragon">🐉 Черный Дракон (Сложный босс)</option>
-                </select>
+                <div style="margin-top: 6px;">
+                    <label style="font-size: 11px; font-weight: bold; color: var(--border-dark);">🎯 Выберите монстра (PvE):</label>
+                    <select id="enemy-select">
+                        <option value="wolf">🐺 Дикий Волк (Легкий)</option>
+                        <option value="griffin" selected>🦅 Грифон (Средний)</option>
+                        <option value="dragon">🐉 Черный Дракон (Сложный босс)</option>
+                    </select>
+                </div>
             </div>
 
             <button class="btn-action" onclick="startBattle('pve')">В БОЙ ПРОТИВ МОНСТРА 🛡</button>
@@ -237,15 +241,13 @@
 
         <!-- ВКЛАДКА 2: PvP АРЕНА -->
         <div id="tab-pvp" class="tab-content">
-            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=60" alt="PvP Арена" class="game-image">
-            
-            <div class="box-panel" style="font-size: 12px; line-height: 1.4; color: var(--text-muted);">
-                <b style="color: var(--accent-gold);">⚔️ PvP Дуэли на Арене</b><br>
-                Сразитесь с гладиаторами других классов! Награды вдвое выше, но противники опаснее.
-            </div>
+            <div class="parchment-box">
+                <div style="font-size: 11px; line-height: 1.3; color: var(--border-dark); margin-bottom: 6px;">
+                    <b style="color: var(--accent-red);">⚔️ PvP Дуэли на Арене</b><br>
+                    Сразитесь с гладиаторами других классов в честном поединке старой школы!
+                </div>
 
-            <div class="box-panel">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">⚔️ Выберите соперника на арене:</label>
+                <label style="font-size: 11px; font-weight: bold; color: var(--border-dark);">⚔️ Выберите соперника:</label>
                 <select id="pvp-select">
                     <option value="pvp_warrior">🛡️ Гладиатор-Воин (Сбалансированный)</option>
                     <option value="pvp_berserk" selected>🪓 Кровавый Берсерк (Тяжелый урон)</option>
@@ -253,80 +255,86 @@
                 </select>
             </div>
 
-            <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
+            <button class="btn-action" style="background: var(--accent-red);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С НАДЕЖНЫМ БРУТАЛЬНЫМ ВИЗУАЛОМ -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ (В СТИЛЕ ОЛДСКУЛЬНОЙ КАРТОЧКИ) -->
         <div id="tab-hero" class="tab-content">
-            <div class="hero-avatar-box">
-                <div class="avatar-icon" id="avatar-icon-emoji">⚔️</div>
-                <div class="avatar-title" id="avatar-title-text">Воин</div>
+            <!-- Олдскульная карточка персонажа с полосками жизней -->
+            <div class="character-card">
+                <div class="char-portrait-frame">
+                    <div class="hp-bar-side"><div class="hp-fill" id="hp-bar-fill"></div></div>
+                    <img id="hero-avatar-img" src="" alt="Портрет героя" class="char-avatar">
+                </div>
+                <div class="char-info-side">
+                    <div><b>Класс:</b> <span id="hero-class-text" style="color: var(--accent-red);">Воин</span></div>
+                    <div><b>Раса:</b> <span id="hero-race-text">Человек</span></div>
+                    <div>⚔️ Сила: <span id="doll-str">10</span></div>
+                    <div>🏃 Ловк: <span id="doll-agi">10</span></div>
+                    <div>❤️ HP: <span id="doll-hp">100</span></div>
+                </div>
             </div>
 
+            <!-- Кукла экипировки и инвентарь -->
             <div class="hero-layout">
                 <div class="paper-doll">
-                    <div style="font-size: 9px; font-weight: bold; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Экипировка</div>
+                    <div style="font-size: 8px; font-weight: bold; color: var(--border-dark); text-transform: uppercase;">Экипировка</div>
                     <div class="doll-slot" id="slot-weapon" title="Оружие">⚔️</div>
                     <div class="doll-slot" id="slot-armor" title="Броня">🛡️</div>
                     <div class="doll-slot" id="slot-boots" title="Обувь">🥾</div>
                 </div>
-                <div class="hero-stats-side">
-                    <div><b>Класс:</b> <span id="hero-class-text" style="color: var(--accent-gold);">Воин</span></div>
-                    <div><b>Раса:</b> <span id="hero-race-text">Человек</span></div>
-                    <div>⚔️ Сила: <span id="doll-str" style="color:#ff5252;">10</span></div>
-                    <div>🏃 Ловк: <span id="doll-agi" style="color:#3498db;">10</span></div>
-                    <div>❤️ HP: <span id="doll-hp" style="color:#e74c3c;">100</span></div>
+                
+                <div style="flex: 1;">
+                    <div class="inventory-section" style="margin-top:0;">
+                        <div style="font-size: 10px; font-weight: bold; color: var(--border-dark); text-align: left; text-transform: uppercase;">🎒 Сумка инвентаря</div>
+                        <div class="inventory-grid" id="inventory-grid"></div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="inventory-section">
-                <div style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-align: left; text-transform: uppercase;">🎒 Сумка инвентаря</div>
-                <div class="inventory-grid" id="inventory-grid"></div>
             </div>
         </div>
 
         <!-- ВКЛАДКА 4: ЛАВКА -->
         <div id="tab-shop" class="tab-content">
-            <div class="shop-container">
+            <div class="parchment-box shop-container">
                 <div class="shop-category">⚔️ Оружие</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Путь Мечника (Воин)</b><br><span style="color:var(--text-muted);">+4 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Путь Мечника (Воин)</b><br><span style="color:#666;">+4 Сила</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 100, 'str', 4, 'weapon', '🗡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Путь Ярости (Берсерк)</b><br><span style="color:var(--text-muted);">+6 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Путь Ярости (Берсерк)</b><br><span style="color:#666;">+6 Сила</span></div></div>
                     <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 100, 'str', 6, 'weapon', '🪓', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Путь Стрелка (Следопыт)</b><br><span style="color:var(--text-muted);">+5 Ловкость</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Путь Стрелка (Следопыт)</b><br><span style="color:#666;">+5 Ловкость</span></div></div>
                     <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 5, 'weapon', '🏹', 'elf')">100 🪙</button>
                 </div>
 
                 <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Кольчуга (Воин)</b><br><span style="color:var(--text-muted);">+30 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Кольчуга (Воин)</b><br><span style="color:#666;">+30 HP</span></div></div>
                     <button class="btn-buy" id="buy-human_a1" onclick="buyItem('human_a1', 100, 'hp', 30, 'armor', '🛡️', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Шкуры вепря (Берсерк)</b><br><span style="color:var(--text-muted);">+40 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Шкуры вепря (Берсерк)</b><br><span style="color:#666;">+40 HP</span></div></div>
                     <button class="btn-buy" id="buy-orc_a1" onclick="buyItem('orc_a1', 100, 'hp', 40, 'armor', '🥋', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Кафтан (Следопыт)</b><br><span style="color:var(--text-muted);">+20 HP, +3 Ловк</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Кафтан (Следопыт)</b><br><span style="color:#666;">+20 HP, +3 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 100, 'hp', 20, 'armor', '🧥', 'elf')">100 🪙</button>
                 </div>
 
                 <div class="shop-category">🥾 Обувь</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Ботинки (Воин)</b><br><span style="color:var(--text-muted);">+3 Ловк</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Ботинки (Воин)</b><br><span style="color:#666;">+3 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-human_b1" onclick="buyItem('human_b1', 100, 'agi', 3, 'boots', '🥿', 'human')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Башмаки (Берсерк)</b><br><span style="color:var(--text-muted);">+2 Сила, +1 Ловк</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Башмаки (Берсерк)</b><br><span style="color:#666;">+2 Сила, +1 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-orc_b1" onclick="buyItem('orc_b1', 100, 'str', 2, 'boots', '🥿', 'orc')">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Туфли (Следопыт)</b><br><span style="color:var(--text-muted);">+5 Ловк</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Туфли (Следопыт)</b><br><span style="color:#666;">+5 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-elf_b1" onclick="buyItem('elf_b1', 100, 'agi', 5, 'boots', '🥿', 'elf')">100 🪙</button>
                 </div>
             </div>
@@ -334,27 +342,25 @@
 
         <!-- ВКЛАДКА 5: ВЫБОР КЛАССА -->
         <div id="tab-race" class="tab-content">
-            <div class="box-panel" style="text-align: center;">
-                <label style="font-size: 13px; font-weight: bold; color: var(--accent-gold);">🧬 Ваш класс и раса:</label>
+            <div class="parchment-box" style="text-align: center;">
+                <label style="font-size: 12px; font-weight: bold; color: var(--border-dark);">🧬 Ваш класс и раса:</label>
                 
                 <div id="race-selection-box">
-                    <select id="race-select" style="margin-top: 10px;">
+                    <select id="race-select">
                         <option value="human">Человек (Класс: Воин)</option>
                         <option value="orc">Орк (Класс: Берсерк)</option>
                         <option value="elf">Эльф (Класс: Следопыт)</option>
                     </select>
-                    <button class="btn-action" style="margin-top: 10px; padding: 8px; font-size: 12px;" onclick="confirmRace()">Подтвердить выбор</button>
+                    <button class="btn-action" style="margin-top: 8px; padding: 6px; font-size: 11px;" onclick="confirmRace()">Подтвердить выбор</button>
                 </div>
 
-                <div id="race-locked-box" style="display:none; margin-top: 10px;">
-                    <p style="font-size: 13px; color: #2ecc71; font-weight: bold;">Класс уже выбран и закреплен за героем!</p>
+                <div id="race-locked-box" style="display:none; margin-top: 6px;">
+                    <p style="font-size: 11px; color: #006600; font-weight: bold;">Класс закреплен за героем!</p>
                     <button class="btn-donate" onclick="resetClassForDonate()">✨ Сменить класс за 🪙 200 монет</button>
                 </div>
 
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.4;">
-                    <b>Воин:</b> Сбалансированный урон и защита.<br>
-                    <b>Берсерк:</b> Огромная сокрушающая сила.<br>
-                    <b>Следопыт:</b> Мастер уворотов и быстрых атак.
+                <p style="font-size: 11px; color: #555; margin-top: 8px; line-height: 1.3;">
+                    <b>Воин:</b> Баланс сил.<br><b>Берсерк:</b> Сокрушающая мощь.<br><b>Следопыт:</b> Мастер уворота.
                 </p>
             </div>
         </div>
@@ -375,7 +381,7 @@
         
         <div id="battle-log"></div>
         
-        <div id="battle-ui" class="battle-controls">
+        <div class="battle-controls">
             <div class="figures-container">
                 <!-- УДАР -->
                 <div class="combat-figure atk-figure">
@@ -455,7 +461,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v16', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v17', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -468,7 +474,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v16', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v17', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -579,15 +585,17 @@
                 document.getElementById('race-select').value = stats.race;
             }
 
-            // Надежный графический визуал класса вместо внешних картинок, которые могут не загрузиться
-            let classVisuals = {
-                human: { icon: '🛡️⚔️', title: 'Воин — Защитник Королевства' },
-                orc: { icon: '🪓🔥', title: 'Берсерк — Яростный Орк' },
-                elf: { icon: '🏹🍃', title: 'Следопыт — Темный Эльф' }
+            // Брутальные дарк-фэнтези арты для классов
+            let brutalAvatars = {
+                human: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60',
+                orc: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=60',
+                elf: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=60'
             };
-            let currentVis = classVisuals[stats.race] || classVisuals.human;
-            document.getElementById('avatar-icon-emoji').innerText = currentVis.icon;
-            document.getElementById('avatar-title-text').innerText = currentVis.title;
+            document.getElementById('hero-avatar-img').src = brutalAvatars[stats.race] || brutalAvatars.human;
+
+            // Заполнение полоски HP в карточке персонажа
+            let hpPercent = Math.min(100, Math.max(0, (stats.hp / stats.maxHp) * 100));
+            document.getElementById('hp-bar-fill').style.height = hpPercent + '%';
 
             ['weapon', 'armor', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
@@ -618,7 +626,7 @@
                     slotDiv.onclick = function() { toggleEquip(k); };
                     
                     if (equipped[itm.type] === k) {
-                        slotDiv.style.borderColor = '#27ae60';
+                        slotDiv.style.borderColor = '#006600';
                     }
                 }
                 invGrid.appendChild(slotDiv);
