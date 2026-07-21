@@ -12,62 +12,27 @@
             color: #ffffff;
             margin: 0;
             padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-        .container {
-            width: 100%;
-            max-width: 500px;
-        }
-        .banner {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .banner img {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-        }
-        .card {
+        .header-stats {
             background: #1e1e1e;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-        }
-        h2 {
-            margin-top: 0;
-            color: #f39c12;
-            text-align: center;
-        }
-        button {
-            background-color: #e74c3c;
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            width: 100%;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
-        button:active {
-            background-color: #c0392b;
-        }
-        .nav-buttons {
+        .nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-bottom: 15px;
+            gap: 4px;
+            margin-bottom: 10px;
         }
         .nav-btn {
             background: #2c2c2c;
             color: #fff;
             border: none;
-            padding: 8px 5px;
-            font-size: 12px;
+            padding: 8px 2px;
+            font-size: 11px;
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
@@ -77,98 +42,107 @@
             color: #121212;
             font-weight: bold;
         }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .class-badge {
-            background: #252525;
+        .class-banner {
+            background: #1e1e1e;
             border: 2px solid #f39c12;
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: #f39c12;
             font-weight: bold;
+        }
+        .hero-section {
+            display: flex;
+            gap: 10px;
+        }
+        .equipment {
+            width: 70px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .equip-slot {
+            width: 45px;
+            height: 45px;
+            background: #2c2c2c;
+            border-radius: 6px;
+            border: 1px dashed #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stats-box {
+            flex-grow: 1;
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .hero-avatar {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #f39c12;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Главный баннер (превью игры) -->
-        <div class="banner">
-            <img src="{{ url_for('static', filename='1784659131417.png') }}" alt="Arena of Legends Preview">
+    <h2 style="text-align: center; color: #f39c12; margin: 5px 0 10px 0;">ЛАГЕРЬ ГЕРОЯ</h2>
+
+    <div class="header-stats">
+        🟡 Золото: 100 | 💎 Камни: 5 | ⭐ Опыт: 0/100 | 🏆 Ранг: 0
+    </div>
+
+    <!-- Навигация -->
+    <div class="nav-grid">
+        <button class="nav-btn" onclick="location.href='#'">⚔️ PVE</button>
+        <button class="nav-btn" onclick="location.href='#'">🦖 БОСС</button>
+        <button class="nav-btn" onclick="location.href='#'">🛡️ PVP</button>
+        <button class="nav-btn active" onclick="location.href='#'">👤 ГЕРОЙ</button>
+        <button class="nav-btn" onclick="location.href='#'">🛒 ЛАВКА</button>
+        <button class="nav-btn" onclick="location.href='#'">🏛️ АУКЦИОН</button>
+        <button class="nav-btn" onclick="location.href='#'">⛏️ КУЗНЕЦ</button>
+        <button class="nav-btn" onclick="location.href='#'">📜 КЛАСС</button>
+    </div>
+
+    <div class="class-banner">
+        🛡️ ⚔️<br>ВОИН – ЗАЩИТНИК КОРОЛЕВСТВА
+    </div>
+
+    <!-- Основной блок героя с экипировкой и статами -->
+    <div class="hero-section">
+        <!-- Слоты экипировки слева -->
+        <div class="equipment">
+            <div style="font-size: 10px; color: #888; margin-bottom: 2px;">ЭКИПИРОВКА</div>
+            <div class="equip-slot">🪖</div>
+            <div class="equip-slot">📿</div>
+            <div class="equip-slot">⚔️</div>
+            <div class="equip-slot">🛡️</div>
+            <div class="equip-slot">💍</div>
+            <div class="equip-slot">👢</div>
         </div>
 
-        <h2 style="text-align: center; color: #f39c12; margin-bottom: 15px;">ЛАГЕРЬ ГЕРОЯ</h2>
-
-        <!-- Навигация по вкладкам -->
-        <div class="nav-buttons">
-            <button class="nav-btn active" onclick="switchTab('pve', this)">⚔️ PVE</button>
-            <button class="nav-btn" onclick="switchTab('boss', this)">🦖 БОСС</button>
-            <button class="nav-btn" onclick="switchTab('pvp', this)">🛡️ PVP</button>
-            <button class="nav-btn active-tab" onclick="switchTab('hero', this)">👤 ГЕРОЙ</button>
-        </div>
-
-        <!-- Вкладка: Герой -->
-        <div id="tab-hero" class="tab-content active">
-            <div class="class-badge">
-                🛡️ ⚔️<br>ВОИН – ЗАЩИТНИК КОРОЛЕВСТВА
-            </div>
-
-            <!-- Картинка воина в профиле -->
-            <div class="card" style="text-align: center;">
-                <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Воин" style="width: 100%; max-width: 260px; border-radius: 10px; border: 2px solid #f39c12; margin-bottom: 10px;">
-                
-                <div style="text-align: left;">
-                    <p><b>Уровень героя:</b> 1</p>
-                    <p><b>Сила атаки:</b> 10</p>
-                    <p><b>Ловкость (Уворот):</b> 10 (15%)</p>
-                    <p><b>Здоровье:</b> 100 / 100</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Вкладка: PVE (остальные вкладки для структуры) -->
-        <div id="tab-pve" class="tab-content">
-            <div class="card">
-                <h2>⚔️ Сражение с монстром</h2>
-                <button onclick="alert('В бой!')">В БОЙ ПРОТИВ МОНСТРА 🛡️</button>
-            </div>
-        </div>
-
-        <div id="tab-boss" class="tab-content">
-            <div class="card">
-                <h2>🦖 Рейд на Босса</h2>
-                <p>Скоро здесь появятся эпические боссы!</p>
-            </div>
-        </div>
-
-        <div id="tab-pvp" class="tab-content">
-            <div class="card">
-                <h2>🛡️ Арена PvP</h2>
-                <button onclick="alert('Поиск соперника...')">Встать в очередь PvP</button>
-            </div>
+        <!-- Статы и картинка воина справа -->
+        <div class="stats-box">
+            <!-- Внедренная картинка воина -->
+            <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Воин" class="hero-avatar">
+            
+            <p style="margin: 5px 0;"><b>Уровень:</b> 1</p>
+            <p style="margin: 5px 0;"><b>Класс:</b> Воин</p>
+            <p style="margin: 5px 0;">⚔️ Сила: 10</p>
+            <p style="margin: 5px 0;">🏃 Ловк: 10</p>
+            <p style="margin: 5px 0;">❤️ HP: 100</p>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
-        function switchTab(tabName, btnElement) {
-            // Скрываем все вкладки
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Убираем активный класс у кнопок
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            
-            // Показываем нужную вкладку
-            document.getElementById('tab-' + tabName).classList.add('active');
-            if(btnElement) btnElement.classList.add('active');
-        }
     </script>
 
 </body>
