@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - World Boss & Legendaries</title>
+    <title>Arena RPG - World Boss Drops</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -67,7 +67,6 @@
         .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
         .lvl-text { color: #2ecc71; text-shadow: 0 0 8px rgba(46, 204, 113, 0.4); }
 
-        /* Градиентные анимированные полоски */
         .bar-container {
             width: 100%; background: #16161c; border-radius: 6px; overflow: hidden;
             height: 12px; border: 1px solid var(--border-color); margin-top: 3px; position: relative;
@@ -75,7 +74,6 @@
         .bar-fill-hp { background: linear-gradient(90deg, #c0392b, #e74c3c); height: 100%; transition: width 0.3s ease; }
         .bar-fill-exp { background: linear-gradient(90deg, #2980b9, #3498db); height: 100%; transition: width 0.3s ease; }
 
-        /* Вкладки (теперь 7 штук) */
         .nav-tabs { display: flex; gap: 2px; margin-bottom: 8px; }
         .tab-btn { 
             flex: 1; background: #1a1a24; color: var(--text-muted); border: 1px solid var(--border-color); 
@@ -160,9 +158,8 @@
         .inv-slot.has-item { border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 5px rgba(243, 156, 18, 0.2); }
         .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
 
-        /* Редкость предметов (Цветовые рамки) */
-        .rarity-common { border-color: #7f8c8d !important; }
-        .rarity-rare { border-color: #3498db !important; box-shadow: 0 0 8px rgba(52, 152, 219, 0.4) !important; }
+        /* Редкость */
+        .rarity-rare { border-color: #3498db !important; }
         .rarity-legendary { border-color: #e67e22 !important; box-shadow: 0 0 10px rgba(230, 126, 34, 0.7) !important; background: linear-gradient(135deg, #2b1d0c, #16161c) !important; }
 
         /* Магазин */
@@ -192,6 +189,13 @@
             background: linear-gradient(135deg, #c0392b, #e74c3c); color: #fff; border: none;
             padding: 5px 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px;
             box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4); text-transform: uppercase;
+        }
+
+        /* Карточка легендарного дропа на вкладке босса */
+        .boss-drop-card {
+            background: linear-gradient(135deg, #2b1d0c, #16161c);
+            border: 2px solid #e67e22; border-radius: 8px; padding: 8px; margin-top: 8px;
+            text-align: left; font-size: 11px; box-shadow: 0 0 10px rgba(230,126,34,0.3);
         }
 
         /* Арена */
@@ -273,7 +277,6 @@
             <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
         </div>
 
-        <!-- Полоска опыта с анимацией -->
         <div style="margin: 0 10px 8px 10px; text-align: left; font-size: 10px; color: var(--text-muted);">
             Опыт уровня:
             <div class="bar-container"><div class="bar-fill-exp" id="exp-bar-fill" style="width: 0%;"></div></div>
@@ -284,7 +287,7 @@
             <button class="btn-potion" onclick="usePotionCamp()">Выпить (+50 HP)</button>
         </div>
 
-        <!-- НАВИГАЦИЯ (7 Вкладок) -->
+        <!-- НАВИГАЦИЯ -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('camp')">⚔️ PvE</button>
             <button class="tab-btn" onclick="switchTab('boss')">🐉 Босс</button>
@@ -304,10 +307,7 @@
             <div class="stat-row"><span class="stat-name">🏃 Ловкость (Уворот):</span><span id="val-agi" style="font-weight:bold; color:#3498db;"><span id="disp-agi">10</span> (<span id="disp-dodge">15</span>%)</span></div>
             <div class="stat-row"><span class="stat-name">🎯 Шанс Крит / Сила:</span><span id="val-crit" style="font-weight:bold; color:#e67e22;"><span id="disp-crit-chance">10</span>% / <span id="disp-crit-mult">1.5</span>x</span></div>
             <div class="stat-row"><span class="stat-name">🛡️ Броня (Защита):</span><span id="val-def" style="font-weight:bold; color:#2ecc71;"><span id="disp-def">2</span></span></div>
-            <div class="stat-row">
-                <span class="stat-name">❤️ Здоровье:</span>
-                <span style="font-weight:bold; color:#e74c3c;"><span id="val-hp">100</span> / <span id="val-max-hp">100</span></span>
-            </div>
+            <div class="stat-row"><span class="stat-name">❤️ Здоровье:</span><span style="font-weight:bold; color:#e74c3c;"><span id="val-hp">100</span> / <span id="val-max-hp">100</span></span></div>
             <div style="margin-bottom: 6px;"><div class="bar-container"><div class="bar-fill-hp" id="hp-bar-fill" style="width: 100%;"></div></div></div>
 
             <div class="box-panel">
@@ -322,21 +322,28 @@
             <button class="btn-action" onclick="startBattle('pve')">В БОЙ ПРОТИВ МОНСТРА 🛡</button>
         </div>
 
-        <!-- ВКЛАДКА 2: МИРОВОЙ БОСС (Раз в 1 день, шанс уникален) -->
+        <!-- ВКЛАДКА 2: МИРОВОЙ БОСС С ОПИСАНИЕМ ЛЕГЕНДАРНОГО ЛУТА -->
         <div id="tab-boss" class="tab-content">
             <div class="box-panel" style="text-align: center; border-color: #e67e22;">
                 <div style="font-size: 36px; margin-bottom: 4px;">👑🐲</div>
                 <h3 style="color: #e67e22; margin: 4px 0; text-transform: uppercase; font-size: 14px;">Архидракон — Мировой Босс</h3>
                 <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">
-                    Король монстров возрождается ровно <b>раз в 24 часа</b>. Победите его, чтобы получить колоссальный опыт, золото и шанс сорвать куш с выпадением **Легендарного оружия**!
+                    Возрождается ровно <b>раз в 24 часа</b>. Сразите его и получите шанс выиграть уникальное легендарное снаряжение!
                 </p>
-                <div id="boss-status-box" style="margin: 10px 0; font-size: 12px; font-weight: bold; color: #2ecc71;">
+                <div id="boss-status-box" style="margin: 8px 0; font-size: 12px; font-weight: bold; color: #2ecc71;">
                     Статус: Босс ожидает битвы! 🔥
                 </div>
                 <div id="boss-timer-box" style="font-size: 11px; color: var(--accent-gold); margin-bottom: 8px; display: none;">
-                    Следующее возрождение через: <span id="timer-countdown">00:00:00</span>
+                    Возрождение через: <span id="timer-countdown">00:00:00</span>
                 </div>
                 <button class="btn-action" id="btn-world-boss" style="background: linear-gradient(135deg, #d35400, #c0392b);" onclick="startBattle('world_boss')">АТАКОВАТЬ МИРОВОГО БОССА ⚔️</button>
+
+                <!-- Демонстрация легендарных вещей босса -->
+                <div class="boss-drop-card">
+                    <div style="font-weight: bold; color: #e67e22; margin-bottom: 4px; text-transform: uppercase;">🌟 Шанс выпадения легендарного лута (5%):</div>
+                    <div style="margin-bottom: 4px;">🗡️ <b>Испепелитель Миров</b> (Оружие)<br><span style="color:var(--text-muted);">+25 Сила, +30% Крит, +1.0x Сила крита</span></div>
+                    <div>👑 <b>Корона Архидракона</b> (Шлем)<br><span style="color:var(--text-muted);">+150 HP, +20 Броня</span></div>
+                </div>
             </div>
         </div>
 
@@ -410,7 +417,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ЛАВКА (С РАЗЛИЧНОЙ РЕДКОСТЬЮ) -->
+        <!-- ВКЛАДКА 5: ПОЛНАЯ ЛАВКА СО ВСЕМИ ВЕЩАМИ -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 <div class="shop-category">🧪 Алхимия</div>
@@ -428,11 +435,19 @@
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b style="color:#3498db;">Шлем Стража (Редкий)</b><br><span style="color:var(--text-muted);">+25 HP, +3 Броня</span></div></div>
                     <button class="btn-buy" id="buy-helm1" onclick="buyItem('helm1', 80, 'hp', 25, 'helm', '🪖', 'human', 'def', 3)">80 🪙</button>
                 </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b style="color:#3498db;">Шлем Убийцы (Редкий)</b><br><span style="color:var(--text-muted);">+8% Крит, +4 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-helm2" onclick="buyItem('helm2', 130, 'critBonus', 8, 'helm', '👑', 'orc', 'str', 4)">130 🪙</button>
+                </div>
 
                 <div class="shop-category">📿 Амулеты</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">📿</div><div><b style="color:#3498db;">Амулет Ветра (Редкий)</b><br><span style="color:var(--text-muted);">+8 Ловкость, +15 HP</span></div></div>
                     <button class="btn-buy" id="buy-amulet1" onclick="buyItem('amulet1', 95, 'agi', 8, 'amulet', '📿', 'elf', 'hp', 15)">95 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b style="color:#3498db;">Оберег Титана (Редкий)</b><br><span style="color:var(--text-muted);">+50 HP, +5 Броня</span></div></div>
+                    <button class="btn-buy" id="buy-amulet2" onclick="buyItem('amulet2', 140, 'hp', 50, 'amulet', '🔮', 'human', 'def', 5)">140 🪙</button>
                 </div>
 
                 <div class="shop-category">⚔️ Оружие</div>
@@ -440,11 +455,35 @@
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b style="color:#3498db;">Клинок Кровопийцы (Редкий)</b><br><span style="color:var(--text-muted);">+8 Сила, +10% Крит</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 120, 'str', 8, 'weapon', '🗡️', 'human', 'critBonus', 10)">120 🪙</button>
                 </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b style="color:#3498db;">Топор Берсерка (Редкий)</b><br><span style="color:var(--text-muted);">+14 Сила, -20 HP</span></div></div>
+                    <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 110, 'str', 14, 'weapon', '🪓', 'orc', 'hp', -20)">110 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b style="color:#3498db;">Лук Снайпера (Редкий)</b><br><span style="color:var(--text-muted);">+10 Ловк, +12% Крит</span></div></div>
+                    <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 130, 'agi', 10, 'weapon', '🏹', 'elf', 'critBonus', 12)">130 🪙</button>
+                </div>
 
                 <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b style="color:#3498db;">Несокрушимые Латы (Редкие)</b><br><span style="color:var(--text-muted);">+80 HP, +10 Броня</span></div></div>
                     <button class="btn-buy" id="buy-human_a1" onclick="buyItem('human_a1', 150, 'hp', 80, 'armor', '🛡️', 'human', 'def', 10)">150 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b style="color:#3498db;">Кожаный Плащ Тени (Редкий)</b><br><span style="color:var(--text-muted);">+40 HP, +15 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 130, 'hp', 40, 'armor', '🧥', 'elf', 'agi', 15)">130 🪙</button>
+                </div>
+
+                <div class="shop-category">💍 Кольца</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">💍</div><div><b style="color:#3498db;">Кольцо Критов (Редкое)</b><br><span style="color:var(--text-muted);">+20% Крит, +0.4x Сила Крита</span></div></div>
+                    <button class="btn-buy" id="buy-ring1" onclick="buyItem('ring1', 140, 'critBonus', 20, 'ring', '💍', 'human', 'critMultBonus', 0.4)">140 🪙</button>
+                </div>
+
+                <div class="shop-category">🥾 Обувь</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b style="color:#3498db;">Сандалии Ветра (Редкие)</b><br><span style="color:var(--text-muted);">+12 Ловк, +4 Броня</span></div></div>
+                    <button class="btn-buy" id="buy-elf_b1" onclick="buyItem('elf_b1', 100, 'agi', 12, 'boots', '🥿', 'elf', 'def', 4)">100 🪙</button>
                 </div>
             </div>
         </div>
@@ -534,7 +573,7 @@
                         <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label></div>
-                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'legs')"><span></span></label></div>
                     </div>
                 </div>
 
@@ -635,7 +674,6 @@
             }
         }
 
-        // Всплывающий урон на арене
         function showFloatingText(text, color, isCrit) {
             let container = document.getElementById('enemy-container-box');
             if (!container) return;
@@ -655,7 +693,7 @@
             gold: 100, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
             rating: 0, totalWins: 0, potions: 0, race: 'human', raceChosen: false,
             distributedStr: 0, distributedAgi: 0, distributedHp: 0,
-            lastBossTime: 0 // Таймер мирового босса (раз в сутки)
+            lastBossTime: 0
         };
         let inventory = {}; 
         let equipped = { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
@@ -664,13 +702,10 @@
             wolf: { name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 35, icon: '🐺' },
             griffin: { name: 'Грифон', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 60, icon: '🦅' },
             dragon_pve: { name: 'Черный Дракон', hp: 110, maxHp: 110, str: 14, gold: 120, exp: 120, icon: '🐉' },
-            
-            // Мировой босс (Уникальный дроп легендарки, редчайший шанс)
             world_boss: { 
                 name: 'Архидракон (Мировой Босс)', hp: 350, maxHp: 350, str: 22, gold: 500, exp: 500, ratingGain: 100, 
                 icon: '👑🐲', isWorldBoss: true 
             },
-
             pvp_warrior: { name: 'Гладиатор Марк', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, ratingGain: 15, icon: '🛡️' },
             pvp_berserk: { name: 'Орк-Головорез', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, ratingGain: 25, icon: '🪓' },
             pvp_ranger: { name: 'Эльф-Ассасин', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, ratingGain: 20, icon: '🏹' }
@@ -680,7 +715,6 @@
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
-        // База вещей, включая Легендарные с мирового босса
         const itemsDB = {
             helm1: { name: 'Шлем Стража', type: 'helm', rarity: 'rare', stat: 'hp', val: 25, stat2: 'def', val2: 3, icon: '🪖' },
             helm2: { name: 'Шлем Убийцы', type: 'helm', rarity: 'rare', stat: 'critBonus', val: 8, stat2: 'str', val2: 4, icon: '👑' },
@@ -694,7 +728,6 @@
             ring1: { name: 'Кольцо Критов', type: 'ring', rarity: 'rare', stat: 'critBonus', val: 20, stat2: 'critMultBonus', val2: 0.4, icon: '💍' },
             elf_b1: { name: 'Сандалии Ветра', type: 'boots', rarity: 'rare', stat: 'agi', val: 12, stat2: 'def', val2: 4, icon: '🥿' },
 
-            // ЛЕГЕНДАРНЫЕ ВЕЩИ С МИРОВОГО БОССА
             leg_sword: { name: '🔥 Испепелитель Миров (Легендарное)', type: 'weapon', rarity: 'legendary', stat: 'str', val: 25, stat2: 'critBonus', val2: 30, stat3: 'critMultBonus', val3: 1.0, icon: '🗡️' },
             leg_helm: { name: '👑 Корона Архидракона (Легендарная)', type: 'helm', rarity: 'legendary', stat: 'hp', val: 150, stat2: 'def', val2: 20, icon: '👑' }
         };
@@ -708,7 +741,7 @@
             if(tabId === 'boss') updateBossTimerUI();
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v85', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v90', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -721,10 +754,9 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v85', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v90', JSON.stringify(data));
         }
 
-        // Таймер регенерации HP и проверки мирового босса
         setInterval(() => {
             if (stats.hp < stats.maxHp) {
                 stats.hp = Math.min(stats.maxHp, stats.hp + 2);
@@ -735,7 +767,7 @@
 
         function updateBossTimerUI() {
             let now = Date.now();
-            let cooldown = 24 * 60 * 60 * 1000; // 24 часа
+            let cooldown = 24 * 60 * 60 * 1000;
             let timeLeft = (stats.lastBossTime || 0) + cooldown - now;
 
             let btn = document.getElementById('btn-world-boss');
@@ -920,11 +952,9 @@
             document.getElementById('val-hp').innerText = stats.hp;
             document.getElementById('val-max-hp').innerText = stats.maxHp;
             
-            // Анимация полоски HP в лагере
             let hpPct = Math.min(100, Math.max(0, (stats.hp / stats.maxHp) * 100));
             document.getElementById('hp-bar-fill').style.width = hpPct + '%';
 
-            // Анимация полоски опыта
             let expPct = Math.min(100, Math.max(0, (stats.exp / stats.expMax) * 100));
             document.getElementById('exp-bar-fill').style.width = expPct + '%';
 
@@ -987,7 +1017,6 @@
                 let eqKey = equipped[slot];
                 if (eqKey && itemsDB[eqKey]) {
                     slotEl.innerHTML = itemsDB[eqKey].icon;
-                    slotEl.classList.add('equipped');
                     slotEl.className = 'doll-slot equipped ' + (itemsDB[eqKey].rarity === 'legendary' ? 'rarity-legendary' : 'rarity-rare');
                 } else {
                     let defaultIcons = { helm: '🪖', amulet: '📿', weapon: '⚔️', armor: '🛡️', ring: '💍', boots: '🥾' };
@@ -1152,10 +1181,9 @@
                 if (currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
 
                 let dropMsg = "";
-                // Уникальный шанс выпадения легендарки с мирового босса (примерно 5% шанс индивидуально для игрока)
                 if (currentEnemy.isWorldBoss) {
                     let roll = Math.random() * 100;
-                    if (roll <= 5) { // 5% шанс
+                    if (roll <= 5) {
                         let legKeys = ['leg_sword', 'leg_helm'];
                         let pickedLeg = legKeys[Math.floor(Math.random() * legKeys.length)];
                         if (!inventory[pickedLeg]) {
@@ -1177,7 +1205,6 @@
 
             eAtk.forEach(zone => {
                 if (Math.random() * 100 <= stats.dodgeChance) {
-                    showFloatingДмг = true;
                     showFloatingText('УКЛОНЕНИЕ!', '#3498db', false);
                     turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
                 } 
@@ -1225,3 +1252,4 @@
     </script>
 </body>
 </html>
+
