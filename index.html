@@ -54,7 +54,8 @@
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        /* Исправлены отступы заголовков против наложений */
+        h2 { font-size: 18px; letter-spacing: 1px; color: var(--accent-gold); text-transform: uppercase; margin: 12px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); padding-top: 5px; }
         
         .currency-box { 
             display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
@@ -637,7 +638,7 @@
                     <div class="body-grid">
                         <div class="cell-head zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-larm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
-                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label></div>
                         <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label></div>
@@ -870,6 +871,7 @@
                 equipped = data.equipped || { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
                 auctionList = data.auctionList || auctionList;
             }
+            if (isNaN(stats.hp) || stats.hp === undefined) stats.hp = stats.maxHp || 100;
             checkDailyReward();
             recalculateStats();
             updateSetupUI();
@@ -914,6 +916,7 @@
         }
 
         function updateHpUIOnly() {
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             let hpEl = document.getElementById('val-hp');
             let hpDollEl = document.getElementById('doll-hp');
             let hpBar = document.getElementById('hp-bar-fill');
@@ -926,6 +929,7 @@
         }
 
         setInterval(() => {
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             if (stats.hp < stats.maxHp) {
                 stats.hp = Math.min(stats.maxHp, stats.hp + 2);
                 updateHpUIOnly();
@@ -1065,6 +1069,7 @@
         }
 
         function usePotionCamp() {
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             if ((stats.potions || 0) > 0) {
                 if (stats.hp < stats.maxHp) {
                     stats.potions--;
@@ -1238,7 +1243,7 @@
             stats.critMult = parseFloat((1.5 + Math.floor(stats.str / 10) * 0.05 + itemCritMultBonus).toFixed(2));
             stats.defense = Math.floor(stats.str * 0.4) + itemDef;
 
-            if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
+            if(isNaN(stats.hp) || stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
         function buyItem(itemKey, cost) {
@@ -1295,6 +1300,7 @@
         }
 
         function updateSetupUI() {
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             document.getElementById('val-lvl').innerText = stats.lvl;
             document.getElementById('val-str').innerText = stats.str;
             
@@ -1419,6 +1425,7 @@
         }
 
         function startBattle(mode) {
+            if (isNaN(stats.hp)) stats.hp = stats.maxHp;
             let selectId = (mode === 'pve') ? 'enemy-select' : 'pvp-select';
             let selectedKey = (mode === 'world_boss') ? 'world_boss' : document.getElementById(selectId).value;
             
@@ -1452,6 +1459,7 @@
         }
 
         function updateBattleUI() {
+            if (isNaN(stats.hp)) stats.hp = 0;
             document.getElementById('my-hp').innerText = stats.hp;
             document.getElementById('enemy-hp').innerText = currentEnemy.hp;
         }
@@ -1599,8 +1607,12 @@
                     playSound('damage');
                     triggerScreenShake();
                     let rawDmg = Math.floor(currentEnemy.str / 1.5) + Math.floor(Math.random() * 4);
-                    let eDmg = Math.max(2, rawDmg - stats.defense);
+                    let eDmg = Math.max(2, rawDmg - (stats.defense || 0));
+                    
+                    if (isNaN(stats.hp)) stats.hp = stats.maxHp;
                     stats.hp -= eDmg;
+                    if (stats.hp < 0) stats.hp = 0;
+                    
                     showFloatingText(`-${eDmg} HP`, '#e67e22', false);
                     turnLog += `<span class="log-dmg-taken">🩸 Противник прорвал вашу оборону (${zoneNames[zone]}) и нанес [${eDmg}] урона!</span><br>`;
                 }
