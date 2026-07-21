@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - Potions & Regen</title>
+    <title>Arena RPG - Full Shop & Deep Stats</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -161,7 +161,6 @@
         }
         .btn-buy:disabled { background: #2e2e3e; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
-        /* Панель зелий в лагере */
         .potion-bar {
             display: flex; justify-content: space-between; align-items: center;
             background: var(--panel-bg); border: 1px solid #e74c3c; border-radius: 8px;
@@ -252,7 +251,6 @@
             <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
         </div>
 
-        <!-- Быстрая панель зелий в лагере -->
         <div class="potion-bar">
             <span>🧪 Зелья в сумке: <b id="potion-count" style="color: #e74c3c;">0</b> шт.</span>
             <button class="btn-potion" onclick="usePotionCamp()">Выпить (+50 HP)</button>
@@ -361,16 +359,16 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: ЛАВКА (ТЕПЕРЬ С ЗЕЛЬЯМИ ЗДОРОВЬЯ) -->
+        <!-- ВКЛАДКА 4: ПОЛНАЯ ЛАВКА (ВСЕ ВЕЩИ И БИЛДЫ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
-                <div class="shop-category">🧪 Алхимия и Расходники</div>
+                <div class="shop-category">🧪 Алхимия</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🧪</div><div><b>Малое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Мгновенно восстанавливает +50 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🧪</div><div><b>Малое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Восстанавливает +50 HP</span></div></div>
                     <button class="btn-buy" onclick="buyPotion(30, 50)">30 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🍷</div><div><b>Большое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Мгновенно восстанавливает +150 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🍷</div><div><b>Большое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Восстанавливает +150 HP</span></div></div>
                     <button class="btn-buy" onclick="buyPotion(70, 150)">70 🪙</button>
                 </div>
 
@@ -379,11 +377,19 @@
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b>Шлем Стража</b><br><span style="color:var(--text-muted);">+25 HP, +3 Броня</span></div></div>
                     <button class="btn-buy" id="buy-helm1" onclick="buyItem('helm1', 80, 'hp', 25, 'helm', '🪖', 'human', 'def', 3)">80 🪙</button>
                 </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b>Шлем Убийцы</b><br><span style="color:var(--text-muted);">+8% Крит, +4 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-helm2" onclick="buyItem('helm2', 130, 'critBonus', 8, 'helm', '👑', 'orc', 'str', 4)">130 🪙</button>
+                </div>
 
                 <div class="shop-category">📿 Амулеты</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">📿</div><div><b>Амулет Ветра</b><br><span style="color:var(--text-muted);">+8 Ловкость, +15 HP</span></div></div>
                     <button class="btn-buy" id="buy-amulet1" onclick="buyItem('amulet1', 95, 'agi', 8, 'amulet', '📿', 'elf', 'hp', 15)">95 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b>Оберег Титана</b><br><span style="color:var(--text-muted);">+50 HP, +5 Броня</span></div></div>
+                    <button class="btn-buy" id="buy-amulet2" onclick="buyItem('amulet2', 140, 'hp', 50, 'amulet', '🔮', 'human', 'def', 5)">140 🪙</button>
                 </div>
 
                 <div class="shop-category">⚔️ Оружие</div>
@@ -391,11 +397,35 @@
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Клинок Кровопийцы</b><br><span style="color:var(--text-muted);">+8 Сила, +10% Крит</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 120, 'str', 8, 'weapon', '🗡️', 'human', 'critBonus', 10)">120 🪙</button>
                 </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка</b><br><span style="color:var(--text-muted);">+14 Сила, -20 HP</span></div></div>
+                    <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 110, 'str', 14, 'weapon', '🪓', 'orc', 'hp', -20)">110 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Снайпера</b><br><span style="color:var(--text-muted);">+10 Ловк, +12% Крит</span></div></div>
+                    <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 130, 'agi', 10, 'weapon', '🏹', 'elf', 'critBonus', 12)">130 🪙</button>
+                </div>
 
                 <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Несокрушимые Латы</b><br><span style="color:var(--text-muted);">+80 HP, +10 Броня</span></div></div>
                     <button class="btn-buy" id="buy-human_a1" onclick="buyItem('human_a1', 150, 'hp', 80, 'armor', '🛡️', 'human', 'def', 10)">150 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Кожаный Плащ Тени</b><br><span style="color:var(--text-muted);">+40 HP, +15 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 130, 'hp', 40, 'armor', '🧥', 'elf', 'agi', 15)">130 🪙</button>
+                </div>
+
+                <div class="shop-category">💍 Кольца</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">💍</div><div><b>Кольцо Критов</b><br><span style="color:var(--text-muted);">+20% Крит, +0.4x Сила Крита</span></div></div>
+                    <button class="btn-buy" id="buy-ring1" onclick="buyItem('ring1', 140, 'critBonus', 20, 'ring', '💍', 'human', 'critMultBonus', 0.4)">140 🪙</button>
+                </div>
+
+                <div class="shop-category">🥾 Обувь</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сандалии Ветра</b><br><span style="color:var(--text-muted);">+12 Ловк, +4 Броня</span></div></div>
+                    <button class="btn-buy" id="buy-elf_b1" onclick="buyItem('elf_b1', 100, 'agi', 12, 'boots', '🥿', 'elf', 'def', 4)">100 🪙</button>
                 </div>
             </div>
         </div>
@@ -600,6 +630,7 @@
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
+        // Полный разнообразный набор вещей с глубокими статами для лавки
         const itemsDB = {
             helm1: { name: 'Шлем Стража', type: 'helm', stat: 'hp', val: 25, stat2: 'def', val2: 3, icon: '🪖' },
             helm2: { name: 'Шлем Убийцы', type: 'helm', stat: 'critBonus', val: 8, stat2: 'str', val2: 4, icon: '👑' },
@@ -622,7 +653,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v60', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v70', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -635,13 +666,13 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v60', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v70', JSON.stringify(data));
         }
 
-        // Постепенное восстановление HP по времени каждую секунду
+        // Постепенное восстановление HP по времени
         setInterval(() => {
             if (stats.hp < stats.maxHp) {
-                stats.hp = Math.min(stats.maxHp, stats.hp + 2); // регенерация 2 HP в секунду
+                stats.hp = Math.min(stats.maxHp, stats.hp + 2);
                 updateSetupUI();
             }
         }, 1000);
