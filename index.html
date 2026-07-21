@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - Deep Stats</title>
+    <title>Arena RPG - Potions & Regen</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -161,6 +161,18 @@
         }
         .btn-buy:disabled { background: #2e2e3e; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
+        /* Панель зелий в лагере */
+        .potion-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel-bg); border: 1px solid #e74c3c; border-radius: 8px;
+            padding: 8px 12px; margin-bottom: 8px; font-size: 12px;
+        }
+        .btn-potion {
+            background: linear-gradient(135deg, #c0392b, #e74c3c); color: #fff; border: none;
+            padding: 5px 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 11px;
+            box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4); text-transform: uppercase;
+        }
+
         /* Арена */
         .enemy-visual-container { 
             margin-bottom: 8px; border-radius: 12px; overflow: hidden; 
@@ -240,6 +252,12 @@
             <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
         </div>
 
+        <!-- Быстрая панель зелий в лагере -->
+        <div class="potion-bar">
+            <span>🧪 Зелья в сумке: <b id="potion-count" style="color: #e74c3c;">0</b> шт.</span>
+            <button class="btn-potion" onclick="usePotionCamp()">Выпить (+50 HP)</button>
+        </div>
+
         <!-- НАВИГАЦИЯ -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('camp')">⚔️ PvE</button>
@@ -259,7 +277,7 @@
             <div class="stat-row"><span class="stat-name">🏃 Ловкость (Уворот):</span><span id="val-agi" style="font-weight:bold; color:#3498db;"><span id="disp-agi">10</span> (<span id="disp-dodge">15</span>%)</span></div>
             <div class="stat-row"><span class="stat-name">🎯 Шанс Крит / Сила:</span><span id="val-crit" style="font-weight:bold; color:#e67e22;"><span id="disp-crit-chance">10</span>% / <span id="disp-crit-mult">1.5</span>x</span></div>
             <div class="stat-row"><span class="stat-name">🛡️ Броня (Защита):</span><span id="val-def" style="font-weight:bold; color:#2ecc71;"><span id="disp-def">2</span></span></div>
-            <div class="stat-row"><span class="stat-name">❤️ Макс. здоровье:</span><span id="val-hp" style="font-weight:bold; color:#e74c3c;">100</span></div>
+            <div class="stat-row"><span class="stat-name">❤️ Здоровье:</span><span style="font-weight:bold; color:#e74c3c;"><span id="val-hp">100</span> / <span id="val-max-hp">100</span> (⏳ Регенерация)</span></div>
 
             <div class="box-panel">
                 <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">🎯 Выберите монстра (PvE):</label>
@@ -294,7 +312,7 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С РАСПРЕДЕЛЕНИЕМ СТАТОВ -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ -->
         <div id="tab-hero" class="tab-content">
             <div class="class-banner">
                 <div class="class-banner-icon" id="banner-icon">🛡️⚔️</div>
@@ -319,7 +337,7 @@
                 <div class="hero-stats-side">
                     <div><b>Уровень:</b> <span id="hero-lvl-text" style="color: #2ecc71;">1</span></div>
                     <div><b>Класс:</b> <span id="hero-class-text" style="color: var(--accent-gold);">Воин</span></div>
-                    <div style="margin-top: 2px; border-top: 1px solid var(--border-color); padding-top: 3px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="margin-top: 2px; border-top: 1px solid var(--border-color); padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
                         <span>⚔️ Сила: <b id="doll-str" style="color:#ff5252;">10</b></span> 
                         <button class="btn-plus" onclick="addStat('str')" id="btn-plus-str" style="display:none;">+1</button>
                     </div>
@@ -343,17 +361,23 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: ЛАВКА С БИЛДАМИ -->
+        <!-- ВКЛАДКА 4: ЛАВКА (ТЕПЕРЬ С ЗЕЛЬЯМИ ЗДОРОВЬЯ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
+                <div class="shop-category">🧪 Алхимия и Расходники</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🧪</div><div><b>Малое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Мгновенно восстанавливает +50 HP</span></div></div>
+                    <button class="btn-buy" onclick="buyPotion(30, 50)">30 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🍷</div><div><b>Большое Зелье Здоровья</b><br><span style="color:var(--text-muted);">Мгновенно восстанавливает +150 HP</span></div></div>
+                    <button class="btn-buy" onclick="buyPotion(70, 150)">70 🪙</button>
+                </div>
+
                 <div class="shop-category">🪖 Шлемы</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b>Шлем Стража</b><br><span style="color:var(--text-muted);">+25 HP, +3 Броня</span></div></div>
                     <button class="btn-buy" id="buy-helm1" onclick="buyItem('helm1', 80, 'hp', 25, 'helm', '🪖', 'human', 'def', 3)">80 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b>Шлем Убийцы</b><br><span style="color:var(--text-muted);">+8% Крит, +4 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-helm2" onclick="buyItem('helm2', 130, 'critBonus', 8, 'helm', '👑', 'orc', 'str', 4)">130 🪙</button>
                 </div>
 
                 <div class="shop-category">📿 Амулеты</div>
@@ -361,45 +385,17 @@
                     <div class="shop-item-info"><div class="shop-icon">📿</div><div><b>Амулет Ветра</b><br><span style="color:var(--text-muted);">+8 Ловкость, +15 HP</span></div></div>
                     <button class="btn-buy" id="buy-amulet1" onclick="buyItem('amulet1', 95, 'agi', 8, 'amulet', '📿', 'elf', 'hp', 15)">95 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b>Оберег Титана</b><br><span style="color:var(--text-muted);">+50 HP, +5 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-amulet2" onclick="buyItem('amulet2', 140, 'hp', 50, 'amulet', '🔮', 'human', 'def', 5)">140 🪙</button>
-                </div>
 
                 <div class="shop-category">⚔️ Оружие</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Клинок Кровопийцы</b><br><span style="color:var(--text-muted);">+8 Сила, +10% Крит</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 120, 'str', 8, 'weapon', '🗡️', 'human', 'critBonus', 10)">120 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка</b><br><span style="color:var(--text-muted);">+14 Сила, -20 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 110, 'str', 14, 'weapon', '🪓', 'orc', 'hp', -20)">110 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Снайпера</b><br><span style="color:var(--text-muted);">+10 Ловк, +12% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 130, 'agi', 10, 'weapon', '🏹', 'elf', 'critBonus', 12)">130 🪙</button>
-                </div>
 
                 <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Несокрушимые Латы</b><br><span style="color:var(--text-muted);">+80 HP, +10 Броня</span></div></div>
                     <button class="btn-buy" id="buy-human_a1" onclick="buyItem('human_a1', 150, 'hp', 80, 'armor', '🛡️', 'human', 'def', 10)">150 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Кожаный Плащ Тени</b><br><span style="color:var(--text-muted);">+40 HP, +15 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 130, 'hp', 40, 'armor', '🧥', 'elf', 'agi', 15)">130 🪙</button>
-                </div>
-
-                <div class="shop-category">💍 Кольца</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">💍</div><div><b>Кольцо Критов</b><br><span style="color:var(--text-muted);">+20% Крит, +0.4x Сила Крита</span></div></div>
-                    <button class="btn-buy" id="buy-ring1" onclick="buyItem('ring1', 140, 'critBonus', 20, 'ring', '💍', 'human', 'critMultBonus', 0.4)">140 🪙</button>
-                </div>
-
-                <div class="shop-category">🥾 Обувь</div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сандалии Ветра</b><br><span style="color:var(--text-muted);">+12 Ловк, +4 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-elf_b1" onclick="buyItem('elf_b1', 100, 'agi', 12, 'boots', '🥿', 'elf', 'def', 4)">100 🪙</button>
                 </div>
             </div>
         </div>
@@ -584,7 +580,7 @@
         let stats = { 
             str: 10, agi: 10, hp: 100, maxHp: 100, 
             gold: 100, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
-            rating: 0, totalWins: 0, race: 'human', raceChosen: false,
+            rating: 0, totalWins: 0, potions: 0, race: 'human', raceChosen: false,
             distributedStr: 0, distributedAgi: 0, distributedHp: 0
         };
         let inventory = {}; 
@@ -626,7 +622,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v50', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v60', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -639,7 +635,43 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v50', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v60', JSON.stringify(data));
+        }
+
+        // Постепенное восстановление HP по времени каждую секунду
+        setInterval(() => {
+            if (stats.hp < stats.maxHp) {
+                stats.hp = Math.min(stats.maxHp, stats.hp + 2); // регенерация 2 HP в секунду
+                updateSetupUI();
+            }
+        }, 1000);
+
+        function buyPotion(cost, healAmount) {
+            if (stats.gold >= cost) {
+                stats.gold -= cost;
+                stats.potions = (stats.potions || 0) + 1;
+                updateSetupUI();
+                saveGame();
+                tg.showAlert(`🧪 Куплено зелье здоровья! В сумке: ${stats.potions} шт.`);
+            } else {
+                tg.showAlert("Недостаточно золота!");
+            }
+        }
+
+        function usePotionCamp() {
+            if ((stats.potions || 0) > 0) {
+                if (stats.hp < stats.maxHp) {
+                    stats.potions--;
+                    stats.hp = Math.min(stats.maxHp, stats.hp + 50);
+                    updateSetupUI();
+                    saveGame();
+                    tg.showAlert("❤️ Вы выпили зелье здоровья (+50 HP)!");
+                } else {
+                    tg.showAlert("Ваше здоровье и так полностью восстановлено!");
+                }
+            } else {
+                tg.showAlert("У вас нет зелий! Купите их в лавке.");
+            }
         }
 
         function confirmRace() {
@@ -688,7 +720,6 @@
             }
         }
 
-        // Глубокая зависимость производных статов (как в топ RPG)
         function recalculateStats() {
             let baseStr = 10, baseAgi = 10, baseHp = 100;
             if (stats.race === 'orc') { baseStr = 14; baseAgi = 7; baseHp = 115; }
@@ -719,9 +750,6 @@
                 }
             }
 
-            // Производные статы от Силы и Ловкости:
-            // - Ловкость дает уворот (1.5% за ед.) и шанс крита (0.8% за ед. ловкости)
-            // - Сила дает силу крита (0.05x за каждые 10 ед.) и броню
             stats.dodgeChance = Math.min(65, Math.floor(stats.agi * 1.5));
             stats.critChance = Math.min(80, Math.floor(stats.agi * 0.8) + 5 + itemCritBonus);
             stats.critMult = parseFloat((1.5 + Math.floor(stats.str / 10) * 0.05 + itemCritMultBonus).toFixed(2));
@@ -769,28 +797,28 @@
             document.getElementById('val-lvl').innerText = stats.lvl;
             document.getElementById('val-str').innerText = stats.str;
             
-            // Отображение производных статов в PvE и вкладке Героя
             document.getElementById('disp-agi').innerText = stats.agi;
             document.getElementById('disp-dodge').innerText = stats.dodgeChance;
             document.getElementById('disp-crit-chance').innerText = stats.critChance;
             document.getElementById('disp-crit-mult').innerText = stats.critMult;
             document.getElementById('disp-def').innerText = stats.defense;
 
-            document.getElementById('val-hp').innerText = stats.maxHp;
+            document.getElementById('val-hp').innerText = stats.hp;
+            document.getElementById('val-max-hp').innerText = stats.maxHp;
             
             document.getElementById('gold-val').innerText = stats.gold;
             document.getElementById('exp-val').innerText = stats.exp;
             document.getElementById('exp-max-val').innerText = stats.expMax;
             document.getElementById('rating-val').innerText = stats.rating || 0;
+            document.getElementById('potion-count').innerText = stats.potions || 0;
 
             document.getElementById('hero-lvl-text').innerText = stats.lvl;
             document.getElementById('doll-str').innerText = stats.str;
             document.getElementById('doll-agi').innerText = stats.agi;
-            document.getElementById('doll-hp').innerText = stats.maxHp;
+            document.getElementById('doll-hp').innerText = stats.hp;
             document.getElementById('doll-crit').innerText = stats.critChance + '%';
             document.getElementById('doll-dodge').innerText = stats.dodgeChance + '%';
 
-            // Достижения в Зале
             document.getElementById('ach-lvl').innerText = stats.lvl;
             document.getElementById('ach-rating').innerText = stats.rating || 0;
             document.getElementById('ach-wins').innerText = stats.totalWins || 0;
@@ -892,10 +920,6 @@
             document.getElementById('enemy-icon-display').innerText = currentEnemy.icon;
             document.getElementById('enemy-name-display').innerText = currentEnemy.name;
             
-            stats.hp = stats.maxHp; 
-            
-            document.getElementById('battle-log').innerHTML = `Бой начался! Против вас: <b>${currentEnemy.name}</b>.<br><br>`;
-            resetCheckboxes();
             updateBattleUI();
         }
 
@@ -960,7 +984,6 @@
             let eBlk = getRandomZones();
             let turnLog = `<b>--- Обмен ударами ---</b><br>`;
 
-            // АТАКА ИГРОКА с глубоким расчетом крита
             pAtk.forEach(zone => {
                 if (eBlk.includes(zone)) {
                     playSound('block');
@@ -996,7 +1019,6 @@
                 return;
             }
 
-            // АТАКА ПРОТИВНИКА с учетом глубокого уворота и брони
             eAtk.forEach(zone => {
                 if (Math.random() * 100 <= stats.dodgeChance) {
                     turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
@@ -1009,9 +1031,9 @@
                     playSound('damage');
                     triggerScreenShake();
                     let rawDmg = Math.floor(currentEnemy.str / 1.5) + Math.floor(Math.random() * 4);
-                    let eDmg = Math.max(2, rawDmg - stats.defense); // броня поглощает урон
+                    let eDmg = Math.max(2, rawDmg - stats.defense);
                     stats.hp -= eDmg;
-                    turnLog += `🩸 ${currentEnemy.name} пробил защиту (${zoneNames[zone]}) на ${eDmg} урона (Броня поглотила ${Math.max(0, rawDmg - eDmg)})!<br>`;
+                    turnLog += `🩸 ${currentEnemy.name} пробил защиту (${zoneNames[zone]}) на ${eDmg} урона!<br>`;
                 }
             });
 
