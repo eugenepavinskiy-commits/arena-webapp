@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG</title>
+    <title>Arena RPG - Hall of Fame</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -51,11 +51,11 @@
         .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
         .lvl-text { color: #2ecc71; text-shadow: 0 0 8px rgba(46, 204, 113, 0.4); }
 
-        /* Вкладки */
-        .nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+        /* Вкладки (теперь их 6) */
+        .nav-tabs { display: flex; gap: 3px; margin-bottom: 10px; }
         .tab-btn { 
             flex: 1; background: #1a1a24; color: var(--text-muted); border: 1px solid var(--border-color); 
-            padding: 8px 2px; font-size: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; 
+            padding: 8px 1px; font-size: 9px; font-weight: bold; border-radius: 8px; cursor: pointer; 
             transition: all 0.2s ease; text-transform: uppercase;
         }
         .tab-btn.active { 
@@ -111,12 +111,21 @@
             font-size: 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-color); 
         }
 
-        /* Кнопки распределения свободных статов */
         .stat-dist-box {
             background: #16161c; border: 1px solid var(--accent-gold); border-radius: 8px;
             padding: 8px; margin-bottom: 8px; text-align: center;
         }
         .btn-plus { background: #27ae60; color: #fff; border: none; padding: 3px 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 6px; }
+
+        /* Таблица достижений (Leaderboard) */
+        .leaderboard-container { display: flex; flex-direction: column; gap: 6px; }
+        .achievement-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel-bg); padding: 10px 12px; border-radius: 8px;
+            border: 1px solid var(--border-color); font-size: 12px;
+        }
+        .ach-title { font-weight: bold; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .ach-value { color: var(--accent-gold); font-weight: bold; font-size: 14px; }
 
         /* Инвентарь */
         .inventory-section { background: var(--panel-bg); padding: 8px; border-radius: 10px; margin-top: 6px; border: 1px solid var(--border-color); }
@@ -225,13 +234,14 @@
             <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
         </div>
 
-        <!-- НАВИГАЦИЯ -->
+        <!-- НАВИГАЦИЯ (6 ВКЛАДОК) -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('camp')">⚔️ PvE</button>
             <button class="tab-btn" onclick="switchTab('pvp')">🛡️ PvP</button>
             <button class="tab-btn" onclick="switchTab('hero')">👤 Герой</button>
             <button class="tab-btn" onclick="switchTab('shop')">🛒 Лавка</button>
             <button class="tab-btn" onclick="switchTab('race')">🧬 Класс</button>
+            <button class="tab-btn" onclick="switchTab('hall')">🏆 Зал</button>
         </div>
 
         <!-- ВКЛАДКА 1: PvE БОЙ -->
@@ -276,17 +286,16 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С БЛОКОМ РАСПРЕДЕЛЕНИЯ СТАТОВ (+3 СТАТА ЗА УРОВЕНЬ) -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ -->
         <div id="tab-hero" class="tab-content">
             <div class="class-banner">
                 <div class="class-banner-icon" id="banner-icon">🛡️⚔️</div>
                 <div class="class-banner-title" id="banner-title">Воин — Защитник Королевства</div>
             </div>
 
-            <!-- Блок распределения свободных очков статов -->
             <div class="stat-dist-box" id="stat-dist-panel" style="display:none;">
-                <div style="font-size: 11px; font-weight: bold; color: var(--accent-gold); margin-bottom: 4px;">✨ Доступно очков для распределения: <span id="free-points" style="color: #2ecc71; font-size: 13px;">0</span></div>
-                <div style="font-size: 10px; color: var(--text-muted);">Каждый уровень дает +3 свободных очка статов!</div>
+                <div style="font-size: 11px; font-weight: bold; color: var(--accent-gold); margin-bottom: 4px;">✨ Доступно очков статов: <span id="free-points" style="color: #2ecc71; font-size: 13px;">0</span></div>
+                <div style="font-size: 10px; color: var(--text-muted);">Каждый уровень дает +3 свободных очка!</div>
             </div>
 
             <div class="hero-layout">
@@ -412,6 +421,36 @@
                 </p>
             </div>
         </div>
+
+        <!-- ВКЛАДКА 6: ЗАЛ СЛАВЫ (ТАБЛИЦА ДОСТИЖЕНИЙ) -->
+        <div id="tab-hall" class="tab-content">
+            <div class="box-panel">
+                <h3 style="font-size: 13px; color: var(--accent-gold); margin-top: 0; text-transform: uppercase; text-align: center;">🏆 Зал Великих Достижений</h3>
+                
+                <div class="leaderboard-container">
+                    <div class="achievement-item">
+                        <span class="ach-title">🎖️ Уровень Героя</span>
+                        <span class="ach-value" id="ach-lvl">1</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="ach-title">🏆 Ранг Славы (PvP)</span>
+                        <span class="ach-value" id="ach-rating">0</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="ach-title">⚔️ Побед в Дуэлях и PvE</span>
+                        <span class="ach-value" id="ach-wins">0</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="ach-title">🪙 Всего Золота</span>
+                        <span class="ach-value" id="ach-gold">100</span>
+                    </div>
+                    <div class="achievement-item">
+                        <span class="ach-title">🎒 Вещей в Сумке</span>
+                        <span class="ach-value" id="ach-items">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ЭКРАН 2: АРЕНА -->
@@ -472,24 +511,18 @@
 
         let audioCtx = null;
         function initAudioUserInteraction() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(type) {
             try {
                 initAudioUserInteraction();
                 if (!audioCtx) return;
-
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 let now = audioCtx.currentTime;
                 if (type === 'hit') {
                     osc.type = 'sawtooth';
@@ -497,16 +530,14 @@
                     osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
                     gain.gain.setValueAtTime(0.3, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-                    osc.start(now);
-                    osc.stop(now + 0.15);
+                    osc.start(now); osc.stop(now + 0.15);
                 } else if (type === 'block') {
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(440, now);
                     osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
                     gain.gain.setValueAtTime(0.2, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-                    osc.start(now);
-                    osc.stop(now + 0.1);
+                    osc.start(now); osc.stop(now + 0.1);
                 } else if (type === 'win') {
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(350, now);
@@ -514,18 +545,16 @@
                     osc.frequency.setValueAtTime(700, now + 0.24);
                     gain.gain.setValueAtTime(0.3, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
-                    osc.start(now);
-                    osc.stop(now + 0.5);
+                    osc.start(now); osc.stop(now + 0.5);
                 } else if (type === 'damage') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(110, now);
                     osc.frequency.exponentialRampToValueAtTime(30, now + 0.2);
                     gain.gain.setValueAtTime(0.4, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
                 }
-            } catch(e) { console.log(e); }
+            } catch(e) {}
         }
 
         function triggerScreenShake() {
@@ -539,7 +568,7 @@
         let stats = { 
             str: 10, agi: 10, hp: 100, maxHp: 100, 
             gold: 100, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
-            rating: 0, race: 'human', raceChosen: false,
+            rating: 0, totalWins: 0, race: 'human', raceChosen: false,
             distributedStr: 0, distributedAgi: 0, distributedHp: 0
         };
         let inventory = {}; 
@@ -562,22 +591,14 @@
         const itemsDB = {
             helm1: { name: 'Шлем Стража', type: 'helm', stat: 'hp', val: 25, stat2: 'str', val2: 2, icon: '🪖' },
             helm2: { name: 'Шлем Берсерка', type: 'helm', stat: 'str', val: 4, stat2: 'agi', val2: 5, icon: '👑' },
-
             amulet1: { name: 'Амулет Ветра', type: 'amulet', stat: 'agi', val: 6, stat2: 'hp', val2: 10, icon: '📿' },
             amulet2: { name: 'Оберег Титана', type: 'amulet', stat: 'hp', val: 40, stat2: 'str', val2: 3, icon: '🔮' },
-
             human_w1: { name: 'Меч Потрошителя', type: 'weapon', stat: 'str', val: 6, stat2: 'hp', val2: 10, icon: '🗡️', classReq: 'human' },
-            human_w2: { name: 'Клинок Стража', type: 'weapon', stat: 'str', val: 3, stat2: 'agi', val2: 4, stat3: 'hp', val3: 30, icon: '⚔️', classReq: 'human' },
-
             orc_w1: { name: 'Топор Берсерка', type: 'weapon', stat: 'str', val: 9, stat2: 'hp', val2: -10, icon: '🪓', classReq: 'orc' },
-
             elf_w1: { name: 'Лук Ветра', type: 'weapon', stat: 'agi', val: 8, stat2: 'str', val2: 2, icon: '🏹', classReq: 'elf' },
-
             human_a1: { name: 'Латы Джаггернаута', type: 'armor', stat: 'hp', val: 60, stat2: 'str', val2: 2, icon: '🛡️' },
             elf_a1: { name: 'Мантия Уклонения', type: 'armor', stat: 'hp', val: 40, stat2: 'agi', val2: 8, icon: '🧥' },
-
             ring1: { name: 'Кольцо Силы', type: 'ring', stat: 'str', val: 4, stat2: 'agi', val2: 5, icon: '💍' },
-
             human_b1: { name: 'Сапоги Спринтера', type: 'boots', stat: 'agi', val: 6, stat2: 'hp', val2: 15, icon: '🥿' }
         };
 
@@ -589,7 +610,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v39', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v45', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -602,7 +623,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v39', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v45', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -627,13 +648,12 @@
             }
         }
 
-        // Распределение статов (+3 свободных за каждый уровень)
         function addStat(statName) {
             if (stats.freePoints > 0) {
                 stats.freePoints--;
                 if (statName === 'str') stats.distributedStr += 1;
                 if (statName === 'agi') stats.distributedAgi += 1;
-                if (statName === 'hp') stats.distributedHp += 10;
+                if (statName === 'hp') stats.distributedHp += 15;
                 recalculateStats();
                 updateSetupUI();
                 saveGame();
@@ -646,7 +666,7 @@
                 stats.exp -= stats.expMax;
                 stats.lvl++;
                 stats.expMax = Math.floor(stats.expMax * 1.4);
-                stats.freePoints += 3; // +3 свободных стата за каждый уровень
+                stats.freePoints += 3; // +3 очка статов за уровень
                 playSound('win');
                 tg.showAlert(`🎉 НОВЫЙ УРОВЕНЬ (${stats.lvl})! Получено +3 свободных очка характеристик.`);
             }
@@ -657,7 +677,6 @@
             if (stats.race === 'orc') { baseStr = 14; baseAgi = 7; baseHp = 115; }
             else if (stats.race === 'elf') { baseStr = 7; baseAgi = 15; baseHp = 90; }
 
-            // Базовые + распределенные пользователем очки статов
             stats.str = baseStr + (stats.distributedStr || 0);
             stats.agi = baseAgi + (stats.distributedAgi || 0);
             stats.maxHp = baseHp + (stats.distributedHp || 0);
@@ -673,10 +692,6 @@
                     if (itm.stat2 === 'hp') stats.maxHp += itm.val2;
                     if (itm.stat2 === 'str') stats.str += itm.val2;
                     if (itm.stat2 === 'agi') stats.agi += itm.val2;
-
-                    if (itm.stat3 === 'hp') stats.maxHp += itm.val3;
-                    if (itm.stat3 === 'str') stats.str += itm.val3;
-                    if (itm.stat3 === 'agi') stats.agi += itm.val3;
                 }
             }
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
@@ -733,7 +748,13 @@
             document.getElementById('doll-agi').innerText = stats.agi;
             document.getElementById('doll-hp').innerText = stats.maxHp;
 
-            // Управление панелью распределения статов
+            // Обновление Зала Славы
+            document.getElementById('ach-lvl').innerText = stats.lvl;
+            document.getElementById('ach-rating').innerText = stats.rating || 0;
+            document.getElementById('ach-wins').innerText = stats.totalWins || 0;
+            document.getElementById('ach-gold').innerText = stats.gold;
+            document.getElementById('ach-items').innerText = Object.keys(inventory).length;
+
             if (stats.freePoints > 0) {
                 document.getElementById('stat-dist-panel').style.display = 'block';
                 document.getElementById('free-points').innerText = stats.freePoints;
@@ -912,6 +933,7 @@
             if (currentEnemy.hp <= 0) {
                 currentEnemy.hp = 0;
                 stats.gold += currentEnemy.gold;
+                stats.totalWins = (stats.totalWins || 0) + 1;
                 addExp(currentEnemy.exp);
                 if (currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
                 
