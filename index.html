@@ -16,31 +16,30 @@
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        .game-image { width: 100%; max-height: 130px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
-        .points-box { font-size: 16px; color: #ffaa00; margin-bottom: 15px; font-weight: bold; }
+        .game-image { width: 100%; max-height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .points-box { font-size: 16px; color: #ffaa00; margin-bottom: 12px; font-weight: bold; }
         .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 10px; margin-bottom: 8px; border-radius: 8px; }
         .stat-name { font-size: 15px; font-weight: bold; }
         .stat-value { font-size: 16px; width: 35px; }
         .btn-add { background: #4caf50; color: white; border: none; padding: 6px 12px; font-size: 16px; border-radius: 6px; cursor: pointer; }
         .btn-add:disabled { background: #555; }
         
-        .health-box { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 10px; border-radius: 8px; }
-        #battle-log { background: #111; padding: 8px; height: 110px; overflow-y: scroll; border-radius: 8px; text-align: left; margin-bottom: 10px; font-family: monospace; font-size: 11px; line-height: 1.3; border: 1px solid #333; }
+        .health-box { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 10px; border-radius: 8px; }
+        #battle-log { background: #111; padding: 8px; height: 100px; overflow-y: scroll; border-radius: 8px; text-align: left; margin-bottom: 8px; font-family: monospace; font-size: 11px; line-height: 1.3; border: 1px solid #333; }
         
-        /* === АНАТОМИЧЕСКИЙ СИЛУЭТ С КВАДРАТНЫМИ БЛОКАМИ === */
-        .battle-controls { background: #2a2a2a; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
-        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 8px; }
+        /* === АНАТОМИЧЕСКИЙ СИЛУЭТ С ЯРКОЙ ПОДСВЕТКОЙ === */
+        .battle-controls { background: #2a2a2a; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 6px; }
         
         .combat-figure { display: flex; flex-direction: column; align-items: center; }
         .figure-title { font-size: 12px; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .atk-title { color: #ff5252; }
         .blk-title { color: #64b5f6; }
 
-        /* Пропорциональная сетка (квадратные пропорции блоков) */
         .body-grid {
             display: grid;
-            grid-template-columns: 32px 32px 32px;
-            grid-template-rows: 32px 32px 32px 32px;
+            grid-template-columns: 28px 36px 28px;
+            grid-template-rows: 28px 28px 28px 28px;
             gap: 3px;
         }
 
@@ -55,19 +54,21 @@
         
         .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
         .zone-cb input { display: none; }
+        
+        /* Базовый вид невыбранного деления */
         .zone-cb span { 
-            display: block; width: 100%; height: 100%; background: #111; 
-            border: 1px solid #555; border-radius: 3px; transition: 0.1s; 
+            display: block; width: 100%; height: 100%; background: #1a1a1a; 
+            border: 2px solid #555; border-radius: 3px; transition: 0.1s; 
         }
 
-        /* Квадратные цвета делений */
-        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ff8a80; }
-        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #82b1ff; }
+        /* ЯРКАЯ ПОДСВЕТКА ВЫБРАННЫХ ДЕЛЕНИЙ */
+        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ffffff; box-shadow: 0 0 6px #ff5252; }
+        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #ffffff; box-shadow: 0 0 6px #64b5f6; }
 
-        .error-msg { color: #ff5252; font-size: 12px; font-weight: bold; margin-bottom: 6px; min-height: 15px; }
+        .error-msg { color: #ff5252; font-size: 11px; font-weight: bold; margin-bottom: 4px; min-height: 14px; }
 
         .btn-action { background: #4caf50; color: white; border: none; padding: 10px 15px; font-size: 15px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .btn-restart { background: #ffaa00; color: #000; margin-top: 10px; }
+        .btn-restart { background: #ffaa00; color: #000; margin-top: 8px; }
     </style>
 </head>
 <body>
