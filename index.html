@@ -16,6 +16,603 @@
         .screen { display: none; }
         #setup-screen { display: block; }
         
+        .game-image { width: 100%; max-height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .currency-box { display: flex; justify-content: space-around; background: #2a2a2a; padding: 8px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+        .gold-text { color: #ffaa00; }
+        .exp-text { color: #64b5f6; }
+
+        /* Навигационные вкладки */
+        .nav-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+        .tab-btn { flex: 1; background: #333; color: #fff; border: none; padding: 7px 2px; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .tab-btn.active { background: #4caf50; }
+
+        .tab-content { display: none; text-align: left; }
+        .tab-content.active { display: block; }
+
+        .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 7px 10px; margin-bottom: 5px; border-radius: 6px; font-size: 13px; }
+        .stat-name { font-weight: bold; }
+        
+        .box-panel { background: #2a2a2a; padding: 10px; border-radius: 8px; margin-bottom: 8px; }
+        .box-panel select { width: 100%; padding: 8px; background: #111; color: #fff; border: 1px solid #555; border-radius: 6px; font-size: 13px; margin-top: 5px; }
+
+        /* Экипировка (Кукла персонажа) */
+        .hero-layout { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .paper-doll { width: 110px; background: #2a2a2a; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+        .doll-slot { width: 45px; height: 45px; background: #111; border: 2px dashed #555; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; position: relative; }
+        .doll-slot.equipped { border-style: solid; border-color: #ffaa00; background: #1a1a1a; }
+        
+        .hero-stats-side { flex: 1; background: #2a2a2a; padding: 8px; border-radius: 8px; font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+
+        /* Инвентарь */
+        .inventory-section { background: #2a2a2a; padding: 8px; border-radius: 8px; margin-top: 8px; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+        .inv-slot { height: 45px; background: #111; border: 1px solid #444; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; position: relative; cursor: pointer; }
+        .inv-slot.has-item { border-color: #ffaa00; background: #1a1a1a; }
+        .item-badge { position: absolute; bottom: 2px; right: 2px; font-size: 9px; background: #333; padding: 1px 3px; border-radius: 3px; color: #ffaa00; }
+
+        /* Магазин */
+        .shop-container { max-height: 250px; overflow-y: auto; padding-right: 2px; }
+        .shop-category { font-size: 11px; font-weight: bold; color: #ffaa00; margin: 6px 0 3px 0; text-transform: uppercase; }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 6px 8px; margin-bottom: 4px; border-radius: 6px; font-size: 12px; }
+        .shop-item-info { display: flex; align-items: center; gap: 8px; }
+        .shop-icon { font-size: 18px; width: 24px; text-align: center; }
+        
+        .btn-buy { background: #ffaa00; color: #000; border: none; padding: 5px 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; white-space: nowrap; }
+        .btn-buy:disabled { background: #444; color: #777; cursor: not-allowed; }
+
+        .health-box { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 8px 12px; border-radius: 8px; }
+        #battle-log { background: #111; padding: 8px; height: 100px; overflow-y: scroll; border-radius: 8px; text-align: left; margin-bottom: 8px; font-family: monospace; font-size: 11px; line-height: 1.3; border: 1px solid #333; }
+        
+        /* Силуэт боя */
+        .battle-controls { background: #2a2a2a; padding: 8px; border-radius: 8px; margin-bottom: 8px; }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 6px; }
+        
+        .combat-figure { display: flex; flex-direction: column; align-items: center; }
+        .figure-title { font-size: 11px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .atk-title { color: #ff5252; }
+        .blk-title { color: #64b5f6; }
+
+        .body-grid {
+            display: grid;
+            grid-template-columns: 24px 32px 24px;
+            grid-template-rows: 24px 24px 24px 24px;
+            gap: 2px;
+        }
+
+        .cell-head { grid-column: 2; grid-row: 1; }
+        .cell-larm { grid-column: 1; grid-row: 2; }
+        .cell-chest { grid-column: 2; grid-row: 2; }
+        .cell-rarm { grid-column: 3; grid-row: 2; }
+        .cell-stomach { grid-column: 2; grid-row: 3; }
+        .cell-legs { grid-column: 2; grid-row: 4; }
+
+        .zone-box { display: flex; gap: 2px; width: 100%; height: 100%; }
+        .zone-cb { cursor: pointer; flex: 1; display: flex; justify-content: center; align-items: center; }
+        .zone-cb input { display: none; }
+        .zone-cb span { display: block; width: 100%; height: 100%; background: #1a1a1a; border: 1px solid #555; border-radius: 2px; transition: 0.1s; }
+
+        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ffffff; box-shadow: 0 0 4px #ff5252; }
+        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #ffffff; box-shadow: 0 0 4px #64b5f6; }
+
+        .error-msg { color: #ff5252; font-size: 11px; font-weight: bold; margin-bottom: 4px; min-height: 14px; text-align: center; }
+
+        .btn-action { background: #4caf50; color: white; border: none; padding: 10px; font-size: 14px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+        .btn-restart { background: #ffaa00; color: #000; margin-top: 6px; }
+    </style>
+</head>
+<body>
+
+    <!-- ЭКРАН 1: ЛАГЕРЬ И ВКЛАДКИ -->
+    <div id="setup-screen" class="screen">
+        <h2>Лагерь героя</h2>
+        
+        <div class="currency-box">
+            <span>🪙 Золото: <span id="gold-val" class="gold-text">100</span></span>
+            <span>⭐ Опыт: <span id="exp-val" class="exp-text">0</span></span>
+        </div>
+
+        <!-- НАВИГАЦИЯ -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('camp')">⚔️ Бой</button>
+            <button class="tab-btn" onclick="switchTab('hero')">🛡 Персонаж</button>
+            <button class="tab-btn" onclick="switchTab('shop')">🛒 Лавка</button>
+            <button class="tab-btn" onclick="switchTab('race')">🧬 Раса</button>
+        </div>
+
+        <!-- ВКЛАДКА 1: БОЙ -->
+        <div id="tab-camp" class="tab-content active">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
+            
+            <div class="stat-row">
+                <span class="stat-name">⚔️ Сила атаки:</span>
+                <span id="val-str" style="font-weight:bold; color:#ff5252;">10</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">🏃 Ловкость (уворот):</span>
+                <span id="val-agi" style="font-weight:bold; color:#64b5f6;">10</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">❤️ Макс. здоровье:</span>
+                <span id="val-hp" style="font-weight:bold; color:#ff8a80;">100</span>
+            </div>
+
+            <div class="box-panel">
+                <label style="font-size: 12px; font-weight: bold; color: #aaa;">🎯 Выберите противника:</label>
+                <select id="enemy-select">
+                    <option value="wolf">🐺 Дикий Волк (Легкий)</option>
+                    <option value="griffin" selected>🦅 Грифон (Средний)</option>
+                    <option value="dragon">🐉 Черный Дракон (Сложный босс)</option>
+                </select>
+            </div>
+
+            <button class="btn-action" onclick="startBattle()">В БОЙ НА АРЕНУ! 🛡</button>
+        </div>
+
+        <!-- ВКЛАДКА 2: ПЕРСОНАЖ (КУКЛА И ИНВЕНТАРЬ) -->
+        <div id="tab-hero" class="tab-content">
+            <div class="hero-layout">
+                <!-- Бумажная кукла (слоты экипировки) -->
+                <div class="paper-doll">
+                    <div style="font-size: 10px; font-weight: bold; color: #aaa; margin-bottom: 2px;">ЭКИПИРОВКА</div>
+                    <div class="doll-slot" id="slot-weapon" title="Оружие">⚔️</div>
+                    <div class="doll-slot" id="slot-armor" title="Броня">🛡️</div>
+                    <div class="doll-slot" id="slot-boots" title="Обувь">🥾</div>
+                </div>
+                <!-- Статы сбоку куклы -->
+                <div class="hero-stats-side">
+                    <div><b>Раса:</b> <span id="hero-race-text">Человек</span></div>
+                    <div>⚔️ Сила: <span id="doll-str">10</span></div>
+                    <div>🏃 Ловк: <span id="doll-agi">10</span></div>
+                    <div>❤️ HP: <span id="doll-hp">100</span></div>
+                </div>
+            </div>
+
+            <!-- Инвентарь -->
+            <div class="inventory-section">
+                <div style="font-size: 12px; font-weight: bold; color: #ffaa00; text-align: left;">🎒 Сумка инвентаря</div>
+                <div class="inventory-grid" id="inventory-grid">
+                    <!-- Заполняется динамически -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 3: ЛАВКА -->
+        <div id="tab-shop" class="tab-content">
+            <div class="shop-container">
+                <div class="shop-category">⚔️ Оружие (Сила)</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Ржавый меч</b><br><span style="color:#aaa;">+2 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-sword1" onclick="buyItem('sword1', 100, 'str', 2, 'sword', '🗡️')">100 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Стальной меч</b><br><span style="color:#aaa;">+5 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-sword2" onclick="buyItem('sword2', 200, 'str', 5, 'sword', '⚔️')">200 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Меч Драконоборец</b><br><span style="color:#aaa;">+10 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-sword3" onclick="buyItem('sword3', 400, 'str', 10, 'sword', '✨')">400 🪙</button>
+                </div>
+
+                <div class="shop-category">🛡 Броня (Здоровье)</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Кожаный жилет</b><br><span style="color:#aaa;">+20 HP</span></div></div>
+                    <button class="btn-buy" id="buy-armor1" onclick="buyItem('armor1', 100, 'hp', 20, 'armor', '🥋')">100 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Железный панцирь</b><br><span style="color:#aaa;">+50 HP</span></div></div>
+                    <button class="btn-buy" id="buy-armor2" onclick="buyItem('armor2', 220, 'hp', 50, 'armor', '🛡️')">220 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🌟</div><div><b>Доспех Паладина</b><br><span style="color:#aaa;">+110 HP</span></div></div>
+                    <button class="btn-buy" id="buy-armor3" onclick="buyItem('armor3', 450, 'hp', 110, 'armor', '🌟')">450 🪙</button>
+                </div>
+
+                <div class="shop-category">🥾 Обувь (Ловкость)</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Лёгкие сапоги</b><br><span style="color:#aaa;">+2 Ловк.</span></div></div>
+                    <button class="btn-buy" id="buy-boots1" onclick="buyItem('boots1', 100, 'agi', 2, 'boots', '🥿')">100 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🥾</div><div><b>Сапоги ловкача</b><br><span style="color:#aaa;">+5 Ловк.</span></div></div>
+                    <button class="btn-buy" id="buy-boots2" onclick="buyItem('boots2', 210, 'agi', 5, 'boots', '🥾')">210 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">⚡</div><div><b>Сапоги ветра</b><br><span style="color:#aaa;">+11 Ловк.</span></div></div>
+                    <button class="btn-buy" id="buy-boots3" onclick="buyItem('boots3', 420, 'agi', 11, 'boots', '⚡')">420 🪙</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 4: РАСА -->
+        <div id="tab-race" class="tab-content">
+            <div class="box-panel" style="text-align: center;">
+                <label style="font-size: 13px; font-weight: bold; color: #ffaa00;">🧬 Выберите расу героя:</label>
+                <select id="race-select" onchange="changeRace()" style="margin-top: 10px;">
+                    <option value="human">Человек (Сбалансированный)</option>
+                    <option value="orc">Орк (+ Сила, - Ловкость)</option>
+                    <option value="elf">Эльф (+ Ловкость, - Сила)</option>
+                </select>
+                <p style="font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.4;">
+                    <b>Человек:</b> Универсальный боец.<br>
+                    <b>Орк:</b> Высокая сила и сокрушительный урон.<br>
+                    <b>Эльф:</b> Невероятная ловкость и уклонения.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 2: АРЕНА -->
+    <div id="battle-screen" class="screen">
+        <h2 id="arena-title">Арена</h2>
+        <div class="health-box">
+            <span>Вы: <span id="my-hp">100</span> ❤️</span>
+            <span id="enemy-name-hp">Враг: <span id="enemy-hp">50</span> ❤️</span>
+        </div>
+        
+        <div id="battle-log"></div>
+        
+        <div id="battle-ui" class="battle-controls">
+            <div class="figures-container">
+                <!-- УДАР -->
+                <div class="combat-figure atk-figure">
+                    <div class="figure-title atk-title">Удар (2)</div>
+                    <div class="body-grid">
+                        <div class="cell-head zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="head" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="head" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-larm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="l_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="l_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="chest" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="r_arm" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="stomach" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="atk" value="legs" onclick="handleCheck(this, 'atk')"><span></span></label></div>
+                    </div>
+                </div>
+
+                <!-- БЛОК -->
+                <div class="combat-figure blk-figure">
+                    <div class="figure-title blk-title">Блок (2)</div>
+                    <div class="body-grid">
+                        <div class="cell-head zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="head" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-larm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="l_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-chest zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="chest" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-rarm zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="r_arm" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-stomach zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="stomach" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                        <div class="cell-legs zone-box"><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label><label class="zone-cb"><input type="checkbox" name="blk" value="legs" onclick="handleCheck(this, 'blk')"><span></span></label></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="error-box" class="error-msg"></div>
+            <button class="btn-action" onclick="makeTurn()">Применить</button>
+        </div>
+
+        <button class="btn-action btn-restart" id="restart-btn" style="display:none;" onclick="returnToSetup()">В лагерь ⛺</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); 
+
+        let stats = { str: 10, agi: 10, hp: 100, maxHp: 100, gold: 100, exp: 0, race: 'human' };
+        let inventory = {}; // список купленных предметов по ключам
+        let equipped = { weapon: null, armor: null, boots: null }; // что надето на кукле
+        
+        let enemies = {
+            wolf: { name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, goldReward: 25, expReward: 20 },
+            griffin: { name: 'Грифон', hp: 60, maxHp: 60, str: 9, goldReward: 50, expReward: 50 },
+            dragon: { name: 'Черный Дракон', hp: 110, maxHp: 110, str: 14, goldReward: 120, expReward: 120 }
+        };
+        let currentEnemy = {};
+
+        const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
+        const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
+
+        // Все доступные предметы в игре с иконками и бонусами
+        const itemsDB = {
+            sword1: { name: 'Ржавый меч', type: 'weapon', stat: 'str', val: 2, icon: '🗡️' },
+            sword2: { name: 'Стальной меч', type: 'weapon', stat: 'str', val: 5, icon: '⚔️' },
+            sword3: { name: 'Меч Драконоборец', type: 'weapon', stat: 'str', val: 10, icon: '✨' },
+            armor1: { name: 'Кожаный жилет', type: 'armor', stat: 'hp', val: 20, icon: '🥋' },
+            armor2: { name: 'Железный панцирь', type: 'armor', stat: 'hp', val: 50, icon: '🛡️' },
+            armor3: { name: 'Доспех Паладина', type: 'armor', stat: 'hp', val: 110, icon: '🌟' },
+            boots1: { name: 'Лёгкие сапоги', type: 'boots', stat: 'agi', val: 2, icon: '🥿' },
+            boots2: { name: 'Сапоги ловкача', type: 'boots', stat: 'agi', val: 5, icon: '🥾' },
+            boots3: { name: 'Сапоги ветра', type: 'boots', stat: 'agi', val: 11, icon: '⚡' }
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        tg.CloudStorage.getItem('arenaRPGData_v4', function(error, value) {
+            if (!error && value) {
+                let data = JSON.parse(value);
+                stats = data.stats;
+                inventory = data.inventory || {};
+                equipped = data.equipped || { weapon: null, armor: null, boots: null };
+                document.getElementById('race-select').value = stats.race || 'human';
+            }
+            recalculateStats();
+            updateSetupUI();
+        });
+
+        function saveGame() {
+            let data = { stats: stats, inventory: inventory, equipped: equipped };
+            tg.CloudStorage.setItem('arenaRPGData_v4', JSON.stringify(data));
+        }
+
+        function changeRace() {
+            stats.race = document.getElementById('race-select').value;
+            recalculateStats();
+            updateSetupUI();
+            saveGame();
+        }
+
+        function recalculateStats() {
+            // Базовые расовые статы
+            if (stats.race === 'human') { stats.str = 10; stats.agi = 10; stats.maxHp = 100; }
+            else if (stats.race === 'orc') { stats.str = 13; stats.agi = 8; stats.maxHp = 110; }
+            else if (stats.race === 'elf') { stats.str = 8; stats.agi = 14; stats.maxHp = 90; }
+
+            // Добавляем бонусы от НАДЕТЫХ вещей
+            for (let slot in equipped) {
+                let itemKey = equipped[slot];
+                if (itemKey && itemsDB[itemKey]) {
+                    let itm = itemsDB[itemKey];
+                    if (itm.stat === 'hp') stats.maxHp += itm.val;
+                    if (itm.stat === 'str') stats.str += itm.val;
+                    if (itm.stat === 'agi') stats.agi += itm.val;
+                }
+            }
+            if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
+        }
+
+        function buyItem(itemKey, cost, statType, statAmount, itemType, icon) {
+            if (stats.gold >= cost && !inventory[itemKey]) {
+                stats.gold -= cost;
+                inventory[itemKey] = true;
+                
+                // Автоматически надеваем купленную вещь в соответствующий слот
+                equipped[itemType] = itemKey;
+
+                let btn = document.getElementById(`buy-${itemKey}`);
+                if (btn) { btn.innerText = "КУПЛЕНО"; btn.disabled = true; }
+                
+                recalculateStats();
+                updateSetupUI();
+                saveGame();
+            }
+        }
+
+        // Клик по предмету в инвентаре для надевания/снятия
+        function toggleEquip(itemKey) {
+            let itm = itemsDB[itemKey];
+            if (!itm) return;
+
+            if (equipped[itm.type] === itemKey) {
+                equipped[itm.type] = null; // снять
+            } else {
+                equipped[itm.type] = itemKey; // надеть
+            }
+            recalculateStats();
+            updateSetupUI();
+            saveGame();
+        }
+
+        function updateSetupUI() {
+            document.getElementById('val-str').innerText = stats.str;
+            document.getElementById('val-agi').innerText = stats.agi;
+            document.getElementById('val-hp').innerText = stats.maxHp;
+            document.getElementById('gold-val').innerText = stats.gold;
+            document.getElementById('exp-val').innerText = stats.exp;
+
+            document.getElementById('doll-str').innerText = stats.str;
+            document.getElementById('doll-agi').innerText = stats.agi;
+            document.getElementById('doll-hp').innerText = stats.maxHp;
+            
+            let raceNames = { human: 'Человек', orc: 'Орк', elf: 'Эльф' };
+            document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек';
+
+            // Обновляем куклу персонажа
+            ['weapon', 'armor', 'boots'].forEach(slot => {
+                let slotEl = document.getElementById(`slot-${slot}`);
+                let eqKey = equipped[slot];
+                if (eqKey && itemsDB[eqKey]) {
+                    slotEl.innerHTML = itemsDB[eqKey].icon;
+                    slotEl.classList.add('equipped');
+                } else {
+                    slotEl.innerHTML = (slot === 'weapon' ? '⚔️' : slot === 'armor' ? '🛡️' : '🥾');
+                    slotEl.classList.remove('equipped');
+                }
+            });
+
+            // Обновляем сетку инвентаря (всего 8 слотов)
+            let invGrid = document.getElementById('inventory-grid');
+            invGrid.innerHTML = '';
+            
+            let invKeys = Object.keys(inventory);
+            for (let i = 0; i < 8; i++) {
+                let slotDiv = document.createElement('div');
+                slotDiv.className = 'inv-slot';
+                
+                if (i < invKeys.length) {
+                    let k = invKeys[i];
+                    let itm = itemsDB[k];
+                    slotDiv.classList.add('has-item');
+                    slotDiv.innerHTML = `${itm.icon}<span class="item-badge">✓</span>`;
+                    slotDiv.title = itm.name;
+                    slotDiv.onclick = function() { toggleEquip(k); };
+                    
+                    // Подсветим рамкой, если вещь надета
+                    if (equipped[itm.type] === k) {
+                        slotDiv.style.borderColor = '#4caf50';
+                    }
+                }
+                invGrid.appendChild(slotDiv);
+            }
+
+            // Обновляем состояние кнопок магазина
+            for (let key in inventory) {
+                let btn = document.getElementById(`buy-${key}`);
+                if (btn) { btn.innerText = "КУПЛЕНО"; btn.disabled = true; }
+            }
+        }
+
+        function startBattle() {
+            let selectedKey = document.getElementById('enemy-select').value;
+            let template = enemies[selectedKey];
+            currentEnemy = { name: template.name, hp: template.hp, maxHp: template.maxHp, str: template.str, gold: template.goldReward, exp: template.expReward };
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('battle-screen').style.display = 'block';
+            document.getElementById('arena-title').innerText = "Арена: " + currentEnemy.name;
+            
+            stats.hp = stats.maxHp; 
+            
+            document.getElementById('battle-log').innerHTML = `Бой начался! Против вас: <b>${currentEnemy.name}</b>.<br><br>`;
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('error-box').innerText = "";
+            updateBattleUI();
+        }
+
+        function updateBattleUI() {
+            document.getElementById('my-hp').innerText = stats.hp;
+            document.getElementById('enemy-hp').innerText = currentEnemy.hp;
+        }
+
+        function logMessage(msg) {
+            let log = document.getElementById('battle-log');
+            log.innerHTML = msg + "<br><br>" + log.innerHTML; 
+        }
+
+        function handleCheck(element, groupName) {
+            let checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+            let checkedList = [];
+            checkboxes.forEach(cb => { if(cb.checked) checkedList.push(cb); });
+
+            if (checkedList.length > 2) {
+                element.checked = false;
+                document.getElementById('error-box').innerText = "Максимум можно выбрать только 2 деления!";
+            } else {
+                document.getElementById('error-box').innerText = "";
+            }
+        }
+
+        function getCheckedValues(name) {
+            let ele = document.getElementsByName(name);
+            let values = [];
+            for(let i = 0; i < ele.length; i++) {
+                if(ele[i].checked) values.push(ele[i].value);
+            }
+            return values;
+        }
+
+        function getRandomZones() {
+            let shuffled = zones.sort(() => 0.5 - Math.random());
+            return [shuffled[0], shuffled[1]];
+        }
+
+        function makeTurn() {
+            let pAtk = getCheckedValues('atk');
+            let pBlk = getCheckedValues('blk');
+            let errBox = document.getElementById('error-box');
+
+            if (pAtk.length !== 2 || pBlk.length !== 2) {
+                errBox.innerText = "Нужно выбрать строго по 2 деления!";
+                return;
+            }
+            errBox.innerText = "";
+
+            let eAtk = getRandomZones();
+            let eBlk = getRandomZones();
+            let turnLog = `<b>--- Обмен ударами ---</b><br>`;
+
+            // АТАКА ИГРОКА
+            pAtk.forEach(zone => {
+                if (eBlk.includes(zone)) {
+                    turnLog += `🛡 ${currentEnemy.name} заблокировал ваш удар в ${zoneNames[zone]}!<br>`;
+                } else {
+                    let pDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
+                    currentEnemy.hp -= pDmg;
+                    turnLog += `⚔️ Вы пробили ${zoneNames[zone]} на ${pDmg} урона!<br>`;
+                }
+            });
+
+            if (currentEnemy.hp <= 0) {
+                currentEnemy.hp = 0;
+                stats.gold += currentEnemy.gold;
+                stats.exp += currentEnemy.exp;
+                updateBattleUI();
+                logMessage(turnLog + `🏆 <b>${currentEnemy.name} ПОВЕРЖЕН!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}`);
+                endBattle();
+                saveGame();
+                return;
+            }
+
+            // АТАКА ВРАГА
+            eAtk.forEach(zone => {
+                let dodgeChance = stats.agi * 1.5; 
+                if (Math.random() * 100 <= dodgeChance) {
+                    turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
+                } 
+                else if (pBlk.includes(zone)) {
+                    turnLog += `🛡 Вы успешно заблокировали удар в ${zoneNames[zone]}!<br>`;
+                } 
+                else {
+                    let eDmg = Math.floor(currentEnemy.str / 1.5) + Math.floor(Math.random() * 4);
+                    stats.hp -= eDmg;
+                    turnLog += `🩸 ${currentEnemy.name} пробил вашу защиту (${zoneNames[zone]}) на ${eDmg} урона!<br>`;
+                }
+            });
+
+            if (stats.hp <= 0) {
+                stats.hp = 0;
+                updateBattleUI();
+                logMessage(turnLog + `☠️ <b>ВЫ ПОГИБЛИ НА АРЕНЕ...</b>`);
+                endBattle();
+                saveGame();
+                return;
+            }
+
+            updateBattleUI();
+            logMessage(turnLog);
+        }
+
+        function endBattle() {
+            document.getElementById('battle-ui').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'block';
+        }
+
+        function returnToSetup() {
+            document.getElementById('battle-ui').style.display = 'block';
+            document.getElementById('restart-btn').style.display = 'none';
+            document.getElementById('battle-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'block';
+            updateSetupUI();
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Арена</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            background-color: var(--tg-theme-bg-color, #1e1e1e); 
+            color: var(--tg-theme-text-color, #ffffff); 
+            margin: 0; padding: 10px; text-align: center; 
+        }
+        
+        .screen { display: none; }
+        #setup-screen { display: block; }
+        
         .game-image { width: 100%; max-height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .currency-box { display: flex; justify-content: space-around; background: #2a2a2a; padding: 8px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; font-weight: bold; }
         .gold-text { color: #ffaa00; }
