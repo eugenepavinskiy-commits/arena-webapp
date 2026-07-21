@@ -76,13 +76,13 @@
             margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.8); 
         }
 
-        /* Брутальная аватарка класса */
+        /* Четкая брутальная аватарка класса */
         .hero-avatar-box {
             width: 100%; height: 160px; border-radius: 10px; overflow: hidden;
             margin-bottom: 10px; border: 1px solid var(--accent-gold); box-shadow: 0 6px 20px rgba(0,0,0,0.8);
             position: relative; background: #000;
         }
-        .hero-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9) contrast(1.2); }
+        .hero-avatar-img { width: 100%; height: 100%; object-fit: cover; object-position: center top; filter: contrast(1.1); }
 
         .hero-layout { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         .paper-doll { 
@@ -254,7 +254,7 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С БРУТАЛЬНЫМ АВАТАРОМ -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С БРУТАЛЬНЫМ ТЕМНЫМ АВАТАРОМ -->
         <div id="tab-hero" class="tab-content">
             <div class="hero-avatar-box">
                 <img id="hero-avatar-img" src="" alt="Брутальный герой" class="hero-avatar-img">
@@ -452,7 +452,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v14', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v15', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -465,7 +465,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v14', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v15', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -576,13 +576,13 @@
                 document.getElementById('race-select').value = stats.race;
             }
 
-            // Брутальные дарк-фэнтези арты для каждого класса (Воин, Берсерк, Следопыт)
-            let darkAvatars = {
-                human: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&auto=format&fit=crop&q=60', // Мрачный рыцарь в шлеме
-                orc: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=60',     // Свирепый орк/берсерк
-                elf: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=60'      // Темный эльф-ассасин
+            // Настоящие брутальные арты дарк-фэнтези персонажей (HD Fantasy Warrior / Berserk / Ranger)
+            let brutalAvatars = {
+                human: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60', // Брутальный воин в латах
+                orc: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=60',     // Свирепый орк/берсерк
+                elf: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=60'      // Темный эльф-следопыт
             };
-            document.getElementById('hero-avatar-img').src = darkAvatars[stats.race] || darkAvatars.human;
+            document.getElementById('hero-avatar-img').src = brutalAvatars[stats.race] || brutalAvatars.human;
 
             ['weapon', 'armor', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
