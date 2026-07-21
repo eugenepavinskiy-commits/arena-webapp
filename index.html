@@ -10,38 +10,75 @@
             font-family: sans-serif; 
             background-color: var(--tg-theme-bg-color, #1e1e1e); 
             color: var(--tg-theme-text-color, #ffffff); 
-            margin: 0; padding: 20px; text-align: center; 
+            margin: 0; padding: 15px; text-align: center; 
         }
         
         .screen { display: none; }
         #setup-screen { display: block; }
         
-        .game-image { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .game-image { width: 100%; max-height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .points-box { font-size: 18px; color: #ffaa00; margin-bottom: 20px; font-weight: bold; }
-        .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-radius: 10px; }
-        .stat-name { font-size: 18px; font-weight: bold; }
-        .stat-value { font-size: 20px; width: 40px; }
-        .btn-add { background: #4caf50; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 12px; margin-bottom: 10px; border-radius: 10px; }
+        .stat-name { font-size: 16px; font-weight: bold; }
+        .stat-value { font-size: 18px; width: 40px; }
+        .btn-add { background: #4caf50; color: white; border: none; padding: 8px 15px; font-size: 18px; border-radius: 8px; cursor: pointer; }
         .btn-add:disabled { background: #555; }
         
-        .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
-        #battle-log { background: #111; padding: 10px; height: 180px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 13px; line-height: 1.4; border: 1px solid #333; }
+        .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
+        #battle-log { background: #111; padding: 10px; height: 140px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 12px; line-height: 1.4; border: 1px solid #333; }
         
-        /* Стили для системы зон (Чекбоксы) */
-        .battle-controls { background: #2a2a2a; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
-        .control-group { margin-bottom: 15px; }
-        .control-title { font-size: 14px; margin-bottom: 8px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .zones-grid { display: flex; gap: 5px; justify-content: space-between; }
+        /* === НОВЫЙ ИНТЕРФЕЙС БОЯ === */
+        .battle-controls { background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 15px; }
         
-        .zone-btn { flex: 1; cursor: pointer; }
-        .zone-btn input { display: none; }
-        .zone-btn span { display: block; background: #111; padding: 8px 0; border-radius: 6px; border: 1px solid #444; font-size: 12px; font-weight: bold; transition: 0.2s; }
-        
-        /* Цвета для атаки и защиты (теперь чекбоксы) */
-        .atk-btn input:checked + span { background: #e53935; border-color: #ff5252; color: white; }
-        .blk-btn input:checked + span { background: #1e88e5; border-color: #64b5f6; color: white; }
+        .combat-figure { display: flex; flex-direction: column; align-items: center; }
+        .figure-title { font-size: 14px; margin-bottom: 15px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .atk-title { color: #ff5252; }
+        .blk-title { color: #64b5f6; }
 
-        .btn-action { background: #4caf50; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        /* Сетка в форме силуэта */
+        .body-grid {
+            display: grid;
+            grid-template-columns: 35px 35px 35px;
+            grid-template-rows: 35px 35px 35px 35px;
+            gap: 5px;
+            position: relative;
+        }
+
+        /* Позиции чекбоксов */
+        .cell-head { grid-column: 2; grid-row: 1; }
+        .cell-larm { grid-column: 1; grid-row: 2; }
+        .cell-chest { grid-column: 2; grid-row: 2; }
+        .cell-rarm { grid-column: 3; grid-row: 2; }
+        .cell-stomach { grid-column: 2; grid-row: 3; }
+        .cell-legs { grid-column: 2; grid-row: 4; }
+
+        /* Стили самих квадратиков */
+        .zone-cb { cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .zone-cb input { display: none; }
+        .zone-cb span { 
+            display: block; width: 100%; height: 100%; background: #111; 
+            border: 2px solid #555; border-radius: 4px; transition: 0.2s; 
+            position: relative;
+        }
+
+        /* Галочка при выборе */
+        .zone-cb span::after {
+            content: '✔';
+            display: none;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white; font-size: 18px;
+        }
+        .zone-cb input:checked + span::after { display: block; }
+
+        /* Цвета УДАРА (Красный) */
+        .atk-figure .zone-cb input:checked + span { background: #e53935; border-color: #ff8a80; }
+        /* Цвета БЛОКА (Синий) */
+        .blk-figure .zone-cb input:checked + span { background: #1e88e5; border-color: #82b1ff; }
+
+        .btn-action { background: #4caf50; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
         .btn-restart { background: #ffaa00; color: #000; margin-top: 15px; }
     </style>
 </head>
@@ -75,8 +112,6 @@
     <!-- ЭКРАН 2: АРЕНА -->
     <div id="battle-screen" class="screen">
         <h2>Арена</h2>
-        <img id="enemy-img" src="https://dummyimage.com/600x300/8c1c1c/ffffff&text=Свирепый+Враг" alt="Враг" class="game-image">
-
         <div class="health-box">
             <span>Вы: <span id="my-hp">100</span> ❤️</span>
             <span>Враг: <span id="enemy-hp">50</span> ❤️</span>
@@ -84,29 +119,39 @@
         
         <div id="battle-log"></div>
         
-        <!-- ПАНЕЛЬ ВЫБОРА ЗОН (По 2 выбора) -->
+        <!-- НОВАЯ ПАНЕЛЬ С СИЛУЭТАМИ -->
         <div id="battle-ui" class="battle-controls">
-            <div class="control-group">
-                <div class="control-title">⚔️ Удары (выберите 2):</div>
-                <div class="zones-grid">
-                    <label class="zone-btn atk-btn"><input type="checkbox" name="atk" value="head"><span>ГОЛОВА</span></label>
-                    <label class="zone-btn atk-btn"><input type="checkbox" name="atk" value="chest"><span>ГРУДЬ</span></label>
-                    <label class="zone-btn atk-btn"><input type="checkbox" name="atk" value="stomach"><span>ЖИВОТ</span></label>
-                    <label class="zone-btn atk-btn"><input type="checkbox" name="atk" value="legs"><span>НОГИ</span></label>
+            <div class="figures-container">
+                
+                <!-- ФИГУРА УДАРА -->
+                <div class="combat-figure atk-figure">
+                    <div class="figure-title atk-title">Удар (2)</div>
+                    <div class="body-grid">
+                        <label class="zone-cb cell-head"><input type="checkbox" name="atk" value="head"><span></span></label>
+                        <label class="zone-cb cell-larm"><input type="checkbox" name="atk" value="l_arm"><span></span></label>
+                        <label class="zone-cb cell-chest"><input type="checkbox" name="atk" value="chest"><span></span></label>
+                        <label class="zone-cb cell-rarm"><input type="checkbox" name="atk" value="r_arm"><span></span></label>
+                        <label class="zone-cb cell-stomach"><input type="checkbox" name="atk" value="stomach"><span></span></label>
+                        <label class="zone-cb cell-legs"><input type="checkbox" name="atk" value="legs"><span></span></label>
+                    </div>
                 </div>
+
+                <!-- ФИГУРА БЛОКА -->
+                <div class="combat-figure blk-figure">
+                    <div class="figure-title blk-title">Блок (2)</div>
+                    <div class="body-grid">
+                        <label class="zone-cb cell-head"><input type="checkbox" name="blk" value="head"><span></span></label>
+                        <label class="zone-cb cell-larm"><input type="checkbox" name="blk" value="l_arm"><span></span></label>
+                        <label class="zone-cb cell-chest"><input type="checkbox" name="blk" value="chest"><span></span></label>
+                        <label class="zone-cb cell-rarm"><input type="checkbox" name="blk" value="r_arm"><span></span></label>
+                        <label class="zone-cb cell-stomach"><input type="checkbox" name="blk" value="stomach"><span></span></label>
+                        <label class="zone-cb cell-legs"><input type="checkbox" name="blk" value="legs"><span></span></label>
+                    </div>
+                </div>
+
             </div>
             
-            <div class="control-group">
-                <div class="control-title">🛡 Блоки (выберите 2):</div>
-                <div class="zones-grid">
-                    <label class="zone-btn blk-btn"><input type="checkbox" name="blk" value="head"><span>ГОЛОВА</span></label>
-                    <label class="zone-btn blk-btn"><input type="checkbox" name="blk" value="chest"><span>ГРУДЬ</span></label>
-                    <label class="zone-btn blk-btn"><input type="checkbox" name="blk" value="stomach"><span>ЖИВОТ</span></label>
-                    <label class="zone-btn blk-btn"><input type="checkbox" name="blk" value="legs"><span>НОГИ</span></label>
-                </div>
-            </div>
-            
-            <button class="btn-action" style="margin-top: 5px;" onclick="makeTurn()">Сделать ход</button>
+            <button class="btn-action" onclick="makeTurn()">Применить</button>
         </div>
 
         <button class="btn-action btn-restart" id="restart-btn" style="display:none;" onclick="resetGame()">Начать заново 🔄</button>
@@ -119,8 +164,9 @@
         let stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
         let enemy = { name: 'Грифон', hp: 50, maxHp: 50, str: 8 };
 
-        const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги' };
-        const zones = ['head', 'chest', 'stomach', 'legs'];
+        // Добавлены новые зоны (руки)
+        const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
+        const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
         tg.CloudStorage.getItem('arenaStats', function(error, value) {
             if (!error && value) { stats = JSON.parse(value); }
@@ -156,11 +202,8 @@
             stats.hp = stats.maxHp; 
             enemy.hp = enemy.maxHp;
             
-            document.getElementById('battle-log').innerHTML = "Бой начался! Выберите по 2 зоны для атаки и защиты.<br><br>";
-            
-            // Сброс чекбоксов перед новым боем
+            document.getElementById('battle-log').innerHTML = "Бой начался! Выберите 2 удара и 2 блока.<br><br>";
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
             updateBattleUI();
         }
 
@@ -174,7 +217,6 @@
             log.innerHTML = msg + "<br><br>" + log.innerHTML; 
         }
 
-        // Функция для получения массива выбранных чекбоксов
         function getCheckedValues(name) {
             let ele = document.getElementsByName(name);
             let values = [];
@@ -184,7 +226,6 @@
             return values;
         }
 
-        // Функция для случайного выбора 2 уникальных зон для врага
         function getRandomZones() {
             let shuffled = zones.sort(() => 0.5 - Math.random());
             return [shuffled[0], shuffled[1]];
@@ -194,7 +235,6 @@
             let pAtk = getCheckedValues('atk');
             let pBlk = getCheckedValues('blk');
 
-            // Проверка: выбрано ли ровно по 2 зоны
             if (pAtk.length !== 2 || pBlk.length !== 2) {
                 tg.showAlert("Выберите ровно 2 зоны для удара и 2 зоны для блока!");
                 return;
@@ -202,15 +242,13 @@
 
             let eAtk = getRandomZones();
             let eBlk = getRandomZones();
-
             let turnLog = `<b>--- Обмен ударами ---</b><br>`;
 
-            // 1. ВАША АТАКА (обрабатываем оба удара)
+            // АТАКА
             pAtk.forEach(zone => {
                 if (eBlk.includes(zone)) {
                     turnLog += `🛡 Враг заблокировал ваш удар в ${zoneNames[zone]}!<br>`;
                 } else {
-                    // Урон немного снижен для баланса двойных ударов
                     let pDmg = Math.floor(stats.str / 1.5) + Math.floor(Math.random() * 4);
                     enemy.hp -= pDmg;
                     turnLog += `⚔️ Вы пробили ${zoneNames[zone]} на ${pDmg} урона!<br>`;
@@ -225,10 +263,9 @@
                 return;
             }
 
-            // 2. АТАКА ВРАГА (обрабатываем оба удара)
+            // ЗАЩИТА
             eAtk.forEach(zone => {
                 let dodgeChance = stats.agi * 1.5; 
-                
                 if (Math.random() * 100 <= dodgeChance) {
                     turnLog += `💨 Вы ловко уклонились от удара в ${zoneNames[zone]}!<br>`;
                 } 
