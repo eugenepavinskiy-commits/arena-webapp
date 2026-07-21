@@ -114,7 +114,7 @@
         .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
 
         /* Магазин */
-        .shop-container { max-height: 350px; overflow-y: auto; padding-right: 2px; }
+        .shop-container { max-height: 320px; overflow-y: auto; padding-right: 2px; }
         .shop-category { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin: 8px 0 4px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 3px; }
         .shop-item { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -131,9 +131,15 @@
         }
         .btn-buy:disabled { background: #2e2e3e; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
-        /* Исправленный контейнер врага на арене (больше не ломается) */
-        .enemy-visual-container { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 2px solid var(--accent-gold); box-shadow: 0 8px 20px rgba(0,0,0,0.6); position: relative; background: #000; min-height: 140px; }
-        .enemy-img { width: 100%; height: 140px; object-fit: cover; display: block; filter: contrast(1.1); }
+        /* Надежный графический визуализатор противника (без битых картинок) */
+        .enemy-visual-container { 
+            margin-bottom: 10px; border-radius: 12px; overflow: hidden; 
+            border: 2px solid var(--accent-gold); box-shadow: 0 8px 20px rgba(0,0,0,0.6); 
+            background: linear-gradient(135deg, #181824, #0a0a0f); 
+            height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+        }
+        .enemy-avatar-icon { font-size: 45px; text-shadow: 0 0 15px rgba(243, 156, 18, 0.5); margin-bottom: 4px; }
+        .enemy-name-glow { font-size: 13px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
 
         .health-box { 
             display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: bold; 
@@ -283,13 +289,12 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: ЛАВКА (ГЛУБОКОЕ РАЗДЕЛЕНИЕ ПО БИЛДАМ И СТАТАМ) -->
+        <!-- ВКЛАДКА 4: ЛАВКА (ПАРНЫЕ И ТРОЙНЫЕ СТАТЫ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 
                 <!-- ОРУЖИЕ -->
                 <div class="shop-category">⚔️ Оружие (Билды)</div>
-                <!-- Воин -->
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Меч Потрошителя (Воин)</b><br><span style="color:var(--text-muted);">+6 Сила, +10 HP</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 100, 'str', 6, 'weapon', '🗡️', 'human', 'hp', 10)">100 🪙</button>
@@ -303,7 +308,6 @@
                     <button class="btn-buy" id="buy-human_w3" onclick="buyItem('human_w3', 250, 'str', 8, 'weapon', '✨', 'human', 'agi', 6)">250 🪙</button>
                 </div>
 
-                <!-- Берсерк -->
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка (Орк)</b><br><span style="color:var(--text-muted);">+9 Сила, -10 HP</span></div></div>
                     <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 100, 'str', 9, 'weapon', '🪓', 'orc', 'hp', -10)">100 🪙</button>
@@ -313,7 +317,6 @@
                     <button class="btn-buy" id="buy-orc_w2" onclick="buyItem('orc_w2', 220, 'str', 12, 'weapon', '⚒️', 'orc', 'hp', 50)">220 🪙</button>
                 </div>
 
-                <!-- Следопыт -->
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Ветра (Эльф)</b><br><span style="color:var(--text-muted);">+8 Ловк, +2 Сила</span></div></div>
                     <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 8, 'weapon', '🏹', 'elf', 'str', 2)">100 🪙</button>
@@ -388,9 +391,10 @@
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
-        <!-- Надежный контейнер противника с фоном, чтобы картинка никогда не казалась битой -->
+        <!-- Надежный графический блок противника (гарантированно отображает иконку и имя без битых картинок) -->
         <div class="enemy-visual-container">
-            <img id="enemy-image" src="" alt="Противник" class="enemy-img" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=60'">
+            <div class="enemy-avatar-icon" id="enemy-icon-display">🦅</div>
+            <div class="enemy-name-glow" id="enemy-name-display">Грифон</div>
         </div>
 
         <div class="health-box">
@@ -445,20 +449,19 @@
         let equipped = { weapon: null, armor: null, boots: null };
         
         let opponents = {
-            wolf: { name: 'Дикий Волк (PvE)', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 20, img: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=600&auto=format&fit=crop&q=60' },
-            griffin: { name: 'Грифон (PvE)', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 50, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=60' },
-            dragon: { name: 'Черный Дракон (PvE Босс)', hp: 110, maxHp: 110, str: 14, gold: 120, exp: 120, img: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60' },
+            wolf: { name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 20, icon: '🐺' },
+            griffin: { name: 'Грифон', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 50, icon: '🦅' },
+            dragon: { name: 'Черный Дракон (Босс)', hp: 110, maxHp: 110, str: 14, gold: 120, exp: 120, icon: '🐉' },
             
-            pvp_warrior: { name: 'Гладиатор Марк (PvP Воин)', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=60' },
-            pvp_berserk: { name: 'Орк-Головорез (PvP Берсерк)', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60' },
-            pvp_ranger: { name: 'Эльф-Ассасин (PvP Дуэлянт)', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=60' }
+            pvp_warrior: { name: 'Гладиатор Марк', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, icon: '🛡️' },
+            pvp_berserk: { name: 'Орк-Головорез', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, icon: '🪓' },
+            pvp_ranger: { name: 'Эльф-Ассасин', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, icon: '🏹' }
         };
         let currentEnemy = {};
 
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
-        // Полная база с парными и тройными статами для уникальных билдов
         const itemsDB = {
             human_w1: { name: 'Меч Потрошителя', type: 'weapon', stat: 'str', val: 6, stat2: 'hp', val2: 10, icon: '🗡️', classReq: 'human' },
             human_w2: { name: 'Клинок Стража', type: 'weapon', stat: 'str', val: 3, stat2: 'agi', val2: 4, stat3: 'hp', val3: 30, icon: '⚔️', classReq: 'human' },
@@ -487,7 +490,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v19', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v20', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -500,7 +503,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v19', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v20', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -672,13 +675,16 @@
             
             currentEnemy = { 
                 name: template.name, hp: template.hp, maxHp: template.maxHp, 
-                str: template.str, gold: template.gold, exp: template.exp, img: template.img 
+                str: template.str, gold: template.gold, exp: template.exp, icon: template.icon 
             };
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
             document.getElementById('arena-title').innerText = (mode === 'pve' ? "PvE Арена: " : "PvP Дуэль: ") + currentEnemy.name;
-            document.getElementById('enemy-image').src = currentEnemy.img;
+            
+            // Устанавливаем иконку и имя противника без битых картинок
+            document.getElementById('enemy-icon-display').innerText = currentEnemy.icon;
+            document.getElementById('enemy-name-display').innerText = currentEnemy.name;
             
             stats.hp = stats.maxHp; 
             
