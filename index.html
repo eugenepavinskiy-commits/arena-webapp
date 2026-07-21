@@ -33,12 +33,13 @@
         .currency-box { 
             display: flex; justify-content: space-around; 
             background: var(--panel-bg); 
-            padding: 10px; border-radius: 12px; margin-bottom: 10px; 
-            font-size: 14px; font-weight: bold; border: 1px solid var(--border-color);
+            padding: 10px; border-radius: 12px; margin-bottom: 8px; 
+            font-size: 13px; font-weight: bold; border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
         .gold-text { color: var(--accent-gold); text-shadow: 0 0 8px var(--accent-gold-glow); }
         .exp-text { color: #3498db; text-shadow: 0 0 8px rgba(52, 152, 219, 0.4); }
+        .lvl-text { color: #2ecc71; text-shadow: 0 0 8px rgba(46, 204, 113, 0.4); }
 
         /* Вкладки */
         .nav-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
@@ -60,7 +61,7 @@
 
         .stat-row { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--panel-bg); padding: 9px 12px; margin-bottom: 6px; 
+            background: var(--panel-bg); padding: 8px 12px; margin-bottom: 5px; 
             border-radius: 8px; font-size: 13px; border: 1px solid var(--border-color);
         }
         .stat-name { font-weight: bold; color: var(--text-muted); }
@@ -72,41 +73,45 @@
         }
 
         .game-image { 
-            width: 100%; max-height: 150px; object-fit: cover; border-radius: 10px; 
-            margin-bottom: 10px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.6); 
+            width: 100%; max-height: 140px; object-fit: cover; border-radius: 10px; 
+            margin-bottom: 8px; border: 1px solid var(--border-color); box-shadow: 0 6px 15px rgba(0,0,0,0.6); 
         }
 
         .class-banner {
             width: 100%; background: var(--panel-bg); border-radius: 12px;
-            padding: 15px 10px; margin-bottom: 10px; border: 2px solid var(--accent-gold);
+            padding: 12px 10px; margin-bottom: 8px; border: 2px solid var(--accent-gold);
             box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center;
         }
-        .class-banner-icon { font-size: 38px; margin-bottom: 5px; }
-        .class-banner-title { font-size: 13px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .class-banner-icon { font-size: 32px; margin-bottom: 4px; }
+        .class-banner-title { font-size: 12px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
 
-        .hero-layout { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        /* Расширенная кукла и статы */
+        .hero-layout { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
         .paper-doll { 
-            width: 110px; background: var(--panel-bg); border-radius: 10px; padding: 10px; 
-            display: flex; flex-direction: column; gap: 8px; align-items: center; border: 1px solid var(--border-color); 
+            width: 110px; background: var(--panel-bg); border-radius: 10px; padding: 8px; 
+            display: flex; flex-direction: column; gap: 6px; align-items: center; border: 1px solid var(--border-color); 
         }
         .doll-slot { 
-            width: 50px; height: 50px; background: #16161c; border: 2px dashed #3f3f59; 
-            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; 
+            width: 42px; height: 42px; background: #16161c; border: 2px dashed #3f3f59; 
+            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 18px; position: relative; 
             transition: 0.2s;
         }
-        .doll-slot.equipped { border-style: solid; border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 8px var(--accent-gold-glow); }
+        .doll-slot.equipped { border-style: solid; border-color: var(--accent-gold); background: #22222e; box-shadow: 0 0 6px var(--accent-gold-glow); }
         
         .hero-stats-side { 
-            flex: 1; background: var(--panel-bg); padding: 12px; border-radius: 10px; 
-            font-size: 13px; display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-color); 
+            flex: 1; background: var(--panel-bg); padding: 10px; border-radius: 10px; 
+            font-size: 12px; display: flex; flex-direction: column; gap: 5px; border: 1px solid var(--border-color); 
         }
 
+        /* Кнопки распределения очков характеристик */
+        .btn-plus { background: #27ae60; color: #fff; border: none; padding: 2px 6px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 5px; }
+
         /* Инвентарь */
-        .inventory-section { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-top: 8px; border: 1px solid var(--border-color); }
-        .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+        .inventory-section { background: var(--panel-bg); padding: 8px; border-radius: 10px; margin-top: 6px; border: 1px solid var(--border-color); }
+        .inventory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
         .inv-slot { 
-            height: 50px; background: #16161c; border: 1px solid var(--border-color); 
-            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 22px; position: relative; cursor: pointer; 
+            height: 45px; background: #16161c; border: 1px solid var(--border-color); 
+            border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 20px; position: relative; cursor: pointer; 
             transition: 0.2s;
         }
         .inv-slot:hover { border-color: var(--text-muted); }
@@ -114,57 +119,57 @@
         .item-badge { position: absolute; bottom: 2px; right: 3px; font-size: 8px; background: var(--accent-gold); color: #000; font-weight: bold; padding: 1px 3px; border-radius: 4px; }
 
         /* Магазин */
-        .shop-container { max-height: 320px; overflow-y: auto; padding-right: 2px; }
-        .shop-category { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin: 8px 0 4px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 3px; }
+        .shop-container { max-height: 280px; overflow-y: auto; padding-right: 2px; }
+        .shop-category { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin: 6px 0 3px 0; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 2px; }
         .shop-item { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--panel-bg); padding: 8px 10px; margin-bottom: 6px; 
+            background: var(--panel-bg); padding: 6px 8px; margin-bottom: 4px; 
             border-radius: 8px; font-size: 11px; border: 1px solid var(--border-color); 
         }
         .shop-item-info { display: flex; align-items: center; gap: 8px; text-align: left; }
-        .shop-icon { font-size: 20px; width: 28px; text-align: center; background: #16161c; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .shop-icon { font-size: 18px; width: 24px; text-align: center; background: #16161c; padding: 3px; border-radius: 6px; border: 1px solid var(--border-color); }
         
         .btn-buy { 
             background: linear-gradient(135deg, #f39c12, #d35400); color: #fff; border: none; 
-            padding: 6px 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 10px; white-space: nowrap; 
+            padding: 5px 8px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 10px; white-space: nowrap; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.3); text-transform: uppercase;
         }
         .btn-buy:disabled { background: #2e2e3e; color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
-        /* Надежный графический визуализатор противника (без битых картинок) */
+        /* Арена */
         .enemy-visual-container { 
-            margin-bottom: 10px; border-radius: 12px; overflow: hidden; 
+            margin-bottom: 8px; border-radius: 12px; overflow: hidden; 
             border: 2px solid var(--accent-gold); box-shadow: 0 8px 20px rgba(0,0,0,0.6); 
             background: linear-gradient(135deg, #181824, #0a0a0f); 
-            height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; 
         }
-        .enemy-avatar-icon { font-size: 45px; text-shadow: 0 0 15px rgba(243, 156, 18, 0.5); margin-bottom: 4px; }
-        .enemy-name-glow { font-size: 13px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .enemy-avatar-icon { font-size: 40px; text-shadow: 0 0 15px rgba(243, 156, 18, 0.5); margin-bottom: 2px; }
+        .enemy-name-glow { font-size: 12px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
 
         .health-box { 
-            display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: bold; 
-            color: #ff5252; background: var(--panel-bg); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); 
+            display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; font-weight: bold; 
+            color: #ff5252; background: var(--panel-bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); 
         }
         #battle-log { 
-            background: #0d0d10; padding: 10px; height: 100px; overflow-y: scroll; 
-            border-radius: 10px; text-align: left; margin-bottom: 10px; font-family: monospace; font-size: 11px; line-height: 1.4; 
+            background: #0d0d10; padding: 8px; height: 90px; overflow-y: scroll; 
+            border-radius: 10px; text-align: left; margin-bottom: 8px; font-family: monospace; font-size: 11px; line-height: 1.4; 
             border: 1px solid var(--border-color); color: #c0c5d0; 
         }
         
         /* Силуэт боя */
-        .battle-controls { background: var(--panel-bg); padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
-        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 8px; }
+        .battle-controls { background: var(--panel-bg); padding: 8px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
+        .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 6px; }
         
         .combat-figure { display: flex; flex-direction: column; align-items: center; }
-        .figure-title { font-size: 11px; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .figure-title { font-size: 10px; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .atk-title { color: #ff5252; text-shadow: 0 0 6px rgba(255, 82, 82, 0.4); }
         .blk-title { color: #3498db; text-shadow: 0 0 6px rgba(52, 152, 219, 0.4); }
 
         .body-grid {
             display: grid;
-            grid-template-columns: 26px 34px 26px;
-            grid-template-rows: 26px 26px 26px 26px;
-            gap: 3px;
+            grid-template-columns: 24px 32px 24px;
+            grid-template-rows: 24px 24px 24px 24px;
+            gap: 2px;
         }
 
         .cell-head { grid-column: 2; grid-row: 1; }
@@ -182,11 +187,11 @@
         .atk-figure .zone-cb input:checked + span { background: #e74c3c; border-color: #ff9999; box-shadow: 0 0 8px #e74c3c; }
         .blk-figure .zone-cb input:checked + span { background: #2980b9; border-color: #85c1e9; box-shadow: 0 0 8px #2980b9; }
 
-        .error-msg { color: #ff5252; font-size: 11px; font-weight: bold; margin-bottom: 6px; min-height: 14px; text-align: center; }
+        .error-msg { color: #ff5252; font-size: 10px; font-weight: bold; margin-bottom: 4px; min-height: 12px; text-align: center; }
 
         .btn-action { 
             background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; 
-            padding: 12px; font-size: 14px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; 
+            padding: 10px; font-size: 13px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3); transition: 0.2s; 
         }
         .btn-action:active { transform: scale(0.98); }
@@ -194,8 +199,8 @@
         
         .btn-donate {
             background: linear-gradient(135deg, #8e44ad, #9b59b6); color: #fff; border: none;
-            padding: 8px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            margin-top: 8px; width: 100%; box-shadow: 0 3px 10px rgba(142, 68, 173, 0.4); text-transform: uppercase;
+            padding: 6px 10px; font-size: 11px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            margin-top: 6px; width: 100%; box-shadow: 0 3px 10px rgba(142, 68, 173, 0.4); text-transform: uppercase;
         }
     </style>
 </head>
@@ -207,7 +212,8 @@
         
         <div class="currency-box">
             <span>🪙 Золото: <span id="gold-val" class="gold-text">100</span></span>
-            <span>⭐ Опыт: <span id="exp-val" class="exp-text">0</span></span>
+            <span>⭐ Опыт: <span id="exp-val" class="exp-text">0</span>/<span id="exp-max-val">100</span></span>
+            <span>🏆 Ранг: <span id="rating-val" style="color: #9b59b6;">0</span></span>
         </div>
 
         <!-- НАВИГАЦИЯ -->
@@ -223,12 +229,13 @@
         <div id="tab-camp" class="tab-content active">
             <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
             
+            <div class="stat-row"><span class="stat-name">🎖️ Уровень героя:</span><span id="val-lvl" class="lvl-text" style="font-weight:bold;">1</span></div>
             <div class="stat-row"><span class="stat-name">⚔️ Сила атаки:</span><span id="val-str" style="font-weight:bold; color:#ff5252;">10</span></div>
             <div class="stat-row"><span class="stat-name">🏃 Ловкость (уворот):</span><span id="val-agi" style="font-weight:bold; color:#3498db;">10</span></div>
             <div class="stat-row"><span class="stat-name">❤️ Макс. здоровье:</span><span id="val-hp" style="font-weight:bold; color:#e74c3c;">100</span></div>
 
             <div class="box-panel">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">🎯 Выберите монстра (PvE):</label>
+                <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">🎯 Выберите монстра (PvE):</label>
                 <select id="enemy-select">
                     <option value="wolf">🐺 Дикий Волк (Легкий)</option>
                     <option value="griffin" selected>🦅 Грифон (Средний)</option>
@@ -243,13 +250,13 @@
         <div id="tab-pvp" class="tab-content">
             <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=60" alt="PvP Арена" class="game-image">
             
-            <div class="box-panel" style="font-size: 12px; line-height: 1.4; color: var(--text-muted);">
+            <div class="box-panel" style="font-size: 11px; line-height: 1.3; color: var(--text-muted);">
                 <b style="color: var(--accent-gold);">⚔️ PvP Дуэли на Арене</b><br>
-                Сразитесь с гладиаторами других классов! Награды вдвое выше, но противники опаснее.
+                Повышайте свой рейтинг Славы в боях с другими гладиаторами!
             </div>
 
             <div class="box-panel">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">⚔️ Выберите соперника на арене:</label>
+                <label style="font-size: 11px; font-weight: bold; color: var(--text-muted);">⚔️ Выберите соперника на арене:</label>
                 <select id="pvp-select">
                     <option value="pvp_warrior">🛡️ Гладиатор-Воин (Сбалансированный)</option>
                     <option value="pvp_berserk" selected>🪓 Кровавый Берсерк (Тяжелый урон)</option>
@@ -260,7 +267,7 @@
             <button class="btn-action" style="background: linear-gradient(135deg, #c0392b, #e74c3c);" onclick="startBattle('pvp')">ВЫЗВАТЬ НА ДУЭЛЬ (PvP) 🔥</button>
         </div>
 
-        <!-- ВКЛАДКА 3: ПЕРСОНАЖ -->
+        <!-- ВКЛАДКА 3: ПЕРСОНАЖ С РАСПРЕДЕЛЕНИЕМ ОЧКОВ И РАСШИРЕННЫМИ СЛОТАМИ -->
         <div id="tab-hero" class="tab-content">
             <div class="class-banner">
                 <div class="class-banner-icon" id="banner-icon">🛡️⚔️</div>
@@ -268,94 +275,105 @@
             </div>
 
             <div class="hero-layout">
+                <!-- Расширенная бумажная кукла с новыми слотами (Шлем, Амулет, Кольцо) -->
                 <div class="paper-doll">
-                    <div style="font-size: 9px; font-weight: bold; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase;">Экипировка</div>
+                    <div style="font-size: 8px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Экипировка</div>
+                    <div class="doll-slot" id="slot-helm" title="Шлем">🪖</div>
+                    <div class="doll-slot" id="slot-amulet" title="Амулет">📿</div>
                     <div class="doll-slot" id="slot-weapon" title="Оружие">⚔️</div>
                     <div class="doll-slot" id="slot-armor" title="Броня">🛡️</div>
+                    <div class="doll-slot" id="slot-ring" title="Кольцо">💍</div>
                     <div class="doll-slot" id="slot-boots" title="Обувь">🥾</div>
                 </div>
+
                 <div class="hero-stats-side">
+                    <div><b>Уровень:</b> <span id="hero-lvl-text" style="color: #2ecc71;">1</span></div>
                     <div><b>Класс:</b> <span id="hero-class-text" style="color: var(--accent-gold);">Воин</span></div>
                     <div><b>Раса:</b> <span id="hero-race-text">Человек</span></div>
-                    <div>⚔️ Сила: <span id="doll-str" style="color:#ff5252;">10</span></div>
-                    <div>🏃 Ловк: <span id="doll-agi" style="color:#3498db;">10</span></div>
-                    <div>❤️ HP: <span id="doll-hp" style="color:#e74c3c;">100</span></div>
+                    <div style="margin-top: 2px; border-top: 1px solid var(--border-color); padding-top: 4px;">
+                        ⚔️ Сила: <span id="doll-str" style="color:#ff5252;">10</span> <button class="btn-plus" onclick="addStat('str')" id="btn-plus-str" style="display:none;">+</button>
+                    </div>
+                    <div>
+                        🏃 Ловк: <span id="doll-agi" style="color:#3498db;">10</span> <button class="btn-plus" onclick="addStat('agi')" id="btn-plus-agi" style="display:none;">+</button>
+                    </div>
+                    <div>
+                        ❤️ HP: <span id="doll-hp" style="color:#e74c3c;">100</span> <button class="btn-plus" onclick="addStat('hp')" id="btn-plus-hp" style="display:none;">+</button>
+                    </div>
+                    <div id="stat-points-info" style="font-size: 10px; color: var(--accent-gold); margin-top: 2px; display:none;">Очков: <span id="free-points">0</span></div>
                 </div>
             </div>
 
             <div class="inventory-section">
-                <div style="font-size: 11px; font-weight: bold; color: var(--accent-gold); text-align: left; text-transform: uppercase;">🎒 Сумка инвентаря</div>
+                <div style="font-size: 10px; font-weight: bold; color: var(--accent-gold); text-align: left; text-transform: uppercase;">🎒 Сумка инвентаря</div>
                 <div class="inventory-grid" id="inventory-grid"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 4: ЛАВКА (ПАРНЫЕ И ТРОЙНЫЕ СТАТЫ) -->
+        <!-- ВКЛАДКА 4: ЛАВКА С УНИКАЛЬНЫМИ БИЛДАМИ НА ВСЕ СЛОТЫ -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 
-                <!-- ОРУЖИЕ -->
-                <div class="shop-category">⚔️ Оружие (Билды)</div>
+                <!-- ШЛЕМЫ -->
+                <div class="shop-category">🪖 Шлемы</div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Меч Потрошителя (Воин)</b><br><span style="color:var(--text-muted);">+6 Сила, +10 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b>Шлем Стража</b><br><span style="color:var(--text-muted);">+25 HP, +2 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-helm1" onclick="buyItem('helm1', 80, 'hp', 25, 'helm', '🪖', 'human', 'str', 2)">80 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">👑</div><div><b>Шлем Берсерка</b><br><span style="color:var(--text-muted);">+4 Сила, +5 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-helm2" onclick="buyItem('helm2', 120, 'str', 4, 'helm', '👑', 'orc', 'agi', 5)">120 🪙</button>
+                </div>
+
+                <!-- АМУЛЕТЫ -->
+                <div class="shop-category">📿 Амулеты</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">📿</div><div><b>Амулет Ветра</b><br><span style="color:var(--text-muted);">+6 Ловк, +10 HP</span></div></div>
+                    <button class="btn-buy" id="buy-amulet1" onclick="buyItem('amulet1', 90, 'agi', 6, 'amulet', '📿', 'elf', 'hp', 10)">90 🪙</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b>Оберег Титана</b><br><span style="color:var(--text-muted);">+40 HP, +3 Сила</span></div></div>
+                    <button class="btn-buy" id="buy-amulet2" onclick="buyItem('amulet2', 130, 'hp', 40, 'amulet', '🔮', 'human', 'str', 3)">130 🪙</button>
+                </div>
+
+                <!-- ОРУЖИЕ -->
+                <div class="shop-category">⚔️ Оружие</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b>Меч Потрошителя</b><br><span style="color:var(--text-muted);">+6 Сила, +10 HP</span></div></div>
                     <button class="btn-buy" id="buy-human_w1" onclick="buyItem('human_w1', 100, 'str', 6, 'weapon', '🗡️', 'human', 'hp', 10)">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b>Клинок Стража (Воин)</b><br><span style="color:var(--text-muted);">+3 Сила, +4 Ловк, +30 HP</span></div></div>
-                    <button class="btn-buy" id="buy-human_w2" onclick="buyItem('human_w2', 150, 'str', 3, 'weapon', '⚔️', 'human', 'agi', 4, 'hp', 30)">150 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">✨</div><div><b>Адамантовый меч (Воин)</b><br><span style="color:var(--text-muted);">+8 Сила, +6 Ловк</span></div></div>
-                    <button class="btn-buy" id="buy-human_w3" onclick="buyItem('human_w3', 250, 'str', 8, 'weapon', '✨', 'human', 'agi', 6)">250 🪙</button>
-                </div>
-
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка (Орк)</b><br><span style="color:var(--text-muted);">+9 Сила, -10 HP</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b>Топор Берсерка</b><br><span style="color:var(--text-muted);">+9 Сила, -10 HP</span></div></div>
                     <button class="btn-buy" id="buy-orc_w1" onclick="buyItem('orc_w1', 100, 'str', 9, 'weapon', '🪓', 'orc', 'hp', -10)">100 🪙</button>
                 </div>
                 <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">⚒️</div><div><b>Молот Титана (Орк)</b><br><span style="color:var(--text-muted);">+12 Сила, +50 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_w2" onclick="buyItem('orc_w2', 220, 'str', 12, 'weapon', '⚒️', 'orc', 'hp', 50)">220 🪙</button>
-                </div>
-
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Ветра (Эльф)</b><br><span style="color:var(--text-muted);">+8 Ловк, +2 Сила</span></div></div>
+                    <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b>Лук Ветра</b><br><span style="color:var(--text-muted);">+8 Ловк, +2 Сила</span></div></div>
                     <button class="btn-buy" id="buy-elf_w1" onclick="buyItem('elf_w1', 100, 'agi', 8, 'weapon', '🏹', 'elf', 'str', 2)">100 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🎯</div><div><b>Кинжалы Тени (Эльф)</b><br><span style="color:var(--text-muted);">+12 Ловк, +20 HP</span></div></div>
-                    <button class="btn-buy" id="buy-elf_w2" onclick="buyItem('elf_w2', 200, 'agi', 12, 'weapon', '🎯', 'elf', 'hp', 20)">200 🪙</button>
                 </div>
 
                 <!-- БРОНЯ -->
-                <div class="shop-category">🛡️ Броня (Билды)</div>
+                <div class="shop-category">🛡️ Броня</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b>Латы Джаггернаута</b><br><span style="color:var(--text-muted);">+60 HP, +2 Сила</span></div></div>
                     <button class="btn-buy" id="buy-human_a1" onclick="buyItem('human_a1', 120, 'hp', 60, 'armor', '🛡️', 'human', 'str', 2)">120 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥋</div><div><b>Шкуры Берсерка</b><br><span style="color:var(--text-muted);">+80 HP, +4 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-orc_a1" onclick="buyItem('orc_a1', 130, 'hp', 80, 'armor', '🥋', 'orc', 'str', 4)">130 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🧥</div><div><b>Мантия Уклонения</b><br><span style="color:var(--text-muted);">+40 HP, +8 Ловк</span></div></div>
                     <button class="btn-buy" id="buy-elf_a1" onclick="buyItem('elf_a1', 120, 'hp', 40, 'armor', '🧥', 'elf', 'agi', 8)">120 🪙</button>
                 </div>
 
+                <!-- КОЛЬЦА -->
+                <div class="shop-category">💍 Кольца</div>
+                <div class="shop-item">
+                    <div class="shop-item-info"><div class="shop-icon">💍</div><div><b>Кольцо Силы</b><br><span style="color:var(--text-muted);">+4 Сила, +5 Ловк</span></div></div>
+                    <button class="btn-buy" id="buy-ring1" onclick="buyItem('ring1', 110, 'str', 4, 'ring', '💍', 'human', 'agi', 5)">110 🪙</button>
+                </div>
+
                 <!-- ОБУВЬ -->
-                <div class="shop-category">🥾 Обувь (Билды)</div>
+                <div class="shop-category">🥾 Обувь</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сапоги Спринтера</b><br><span style="color:var(--text-muted);">+6 Ловк, +15 HP</span></div></div>
                     <button class="btn-buy" id="buy-human_b1" onclick="buyItem('human_b1', 90, 'agi', 6, 'boots', '🥿', 'human', 'hp', 15)">90 🪙</button>
                 </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Тяжелые Поножи</b><br><span style="color:var(--text-muted);">+4 Сила, +30 HP</span></div></div>
-                    <button class="btn-buy" id="buy-orc_b1" onclick="buyItem('orc_b1', 95, 'str', 4, 'boots', '🥿', 'orc', 'hp', 30)">95 🪙</button>
-                </div>
-                <div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-icon">🥿</div><div><b>Сандалии Ветра</b><br><span style="color:var(--text-muted);">+10 Ловк, +2 Сила</span></div></div>
-                    <button class="btn-buy" id="buy-elf_b1" onclick="buyItem('elf_b1', 110, 'agi', 10, 'boots', '🥿', 'elf', 'str', 2)">110 🪙</button>
-                </div>
-
             </div>
         </div>
 
@@ -391,7 +409,6 @@
     <div id="battle-screen" class="screen">
         <h2 id="arena-title">Арена</h2>
         
-        <!-- Надежный графический блок противника (гарантированно отображает иконку и имя без битых картинок) -->
         <div class="enemy-visual-container">
             <div class="enemy-avatar-icon" id="enemy-icon-display">🦅</div>
             <div class="enemy-name-glow" id="enemy-name-display">Грифон</div>
@@ -444,42 +461,49 @@
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        let stats = { str: 10, agi: 10, hp: 100, maxHp: 100, gold: 100, exp: 0, race: 'human', raceChosen: false };
+        let stats = { 
+            str: 10, agi: 10, hp: 100, maxHp: 100, 
+            gold: 100, exp: 0, expMax: 100, lvl: 1, freePoints: 0, 
+            rating: 0, race: 'human', raceChosen: false 
+        };
         let inventory = {}; 
-        let equipped = { weapon: null, armor: null, boots: null };
+        let equipped = { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
         
         let opponents = {
-            wolf: { name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 20, icon: '🐺' },
-            griffin: { name: 'Грифон', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 50, icon: '🦅' },
+            wolf: { name: 'Дикий Волк', hp: 35, maxHp: 35, str: 6, gold: 25, exp: 35, icon: '🐺' },
+            griffin: { name: 'Грифон', hp: 60, maxHp: 60, str: 9, gold: 50, exp: 60, icon: '🦅' },
             dragon: { name: 'Черный Дракон (Босс)', hp: 110, maxHp: 110, str: 14, gold: 120, exp: 120, icon: '🐉' },
             
-            pvp_warrior: { name: 'Гладиатор Марк', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, icon: '🛡️' },
-            pvp_berserk: { name: 'Орк-Головорез', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, icon: '🪓' },
-            pvp_ranger: { name: 'Эльф-Ассасин', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, icon: '🏹' }
+            pvp_warrior: { name: 'Гладиатор Марк', hp: 90, maxHp: 90, str: 11, gold: 80, exp: 90, ratingGain: 15, icon: '🛡️' },
+            pvp_berserk: { name: 'Орк-Головорез', hp: 120, maxHp: 120, str: 15, gold: 110, exp: 130, ratingGain: 25, icon: '🪓' },
+            pvp_ranger: { name: 'Эльф-Ассасин', hp: 80, maxHp: 80, str: 13, gold: 100, exp: 110, ratingGain: 20, icon: '🏹' }
         };
         let currentEnemy = {};
 
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
+        // База вещей с глубоким разделением статов для билдов
         const itemsDB = {
+            helm1: { name: 'Шлем Стража', type: 'helm', stat: 'hp', val: 25, stat2: 'str', val2: 2, icon: '🪖' },
+            helm2: { name: 'Шлем Берсерка', type: 'helm', stat: 'str', val: 4, stat2: 'agi', val2: 5, icon: '👑' },
+
+            amulet1: { name: 'Амулет Ветра', type: 'amulet', stat: 'agi', val: 6, stat2: 'hp', val2: 10, icon: '📿' },
+            amulet2: { name: 'Оберег Титана', type: 'amulet', stat: 'hp', val: 40, stat2: 'str', val2: 3, icon: '🔮' },
+
             human_w1: { name: 'Меч Потрошителя', type: 'weapon', stat: 'str', val: 6, stat2: 'hp', val2: 10, icon: '🗡️', classReq: 'human' },
             human_w2: { name: 'Клинок Стража', type: 'weapon', stat: 'str', val: 3, stat2: 'agi', val2: 4, stat3: 'hp', val3: 30, icon: '⚔️', classReq: 'human' },
-            human_w3: { name: 'Адамантовый меч', type: 'weapon', stat: 'str', val: 8, stat2: 'agi', val2: 6, icon: '✨', classReq: 'human' },
 
             orc_w1: { name: 'Топор Берсерка', type: 'weapon', stat: 'str', val: 9, stat2: 'hp', val2: -10, icon: '🪓', classReq: 'orc' },
-            orc_w2: { name: 'Молот Титана', type: 'weapon', stat: 'str', val: 12, stat2: 'hp', val2: 50, icon: '⚒️', classReq: 'orc' },
 
             elf_w1: { name: 'Лук Ветра', type: 'weapon', stat: 'agi', val: 8, stat2: 'str', val2: 2, icon: '🏹', classReq: 'elf' },
-            elf_w2: { name: 'Кинжалы Тени', type: 'weapon', stat: 'agi', val: 12, stat2: 'hp', val2: 20, icon: '🎯', classReq: 'elf' },
 
-            human_a1: { name: 'Латы Джаггернаута', type: 'armor', stat: 'hp', val: 60, stat2: 'str', val2: 2, icon: '🛡️', classReq: 'human' },
-            orc_a1: { name: 'Шкуры Берсерка', type: 'armor', stat: 'hp', val: 80, stat2: 'str', val2: 4, icon: '🥋', classReq: 'orc' },
-            elf_a1: { name: 'Мантия Уклонения', type: 'armor', stat: 'hp', val: 40, stat2: 'agi', val2: 8, icon: '🧥', classReq: 'elf' },
+            human_a1: { name: 'Латы Джаггернаута', type: 'armor', stat: 'hp', val: 60, stat2: 'str', val2: 2, icon: '🛡️' },
+            elf_a1: { name: 'Мантия Уклонения', type: 'armor', stat: 'hp', val: 40, stat2: 'agi', val2: 8, icon: '🧥' },
 
-            human_b1: { name: 'Сапоги Спринтера', type: 'boots', stat: 'agi', val: 6, stat2: 'hp', val2: 15, icon: '🥿', classReq: 'human' },
-            orc_b1: { name: 'Тяжелые Поножи', type: 'boots', stat: 'str', val: 4, stat2: 'hp', val2: 30, icon: '🥿', classReq: 'orc' },
-            elf_b1: { name: 'Сандалии Ветра', type: 'boots', stat: 'agi', val: 10, stat2: 'str', val2: 2, icon: '🥿', classReq: 'elf' }
+            ring1: { name: 'Кольцо Силы', type: 'ring', stat: 'str', val: 4, stat2: 'agi', val2: 5, icon: '💍' },
+
+            human_b1: { name: 'Сапоги Спринтера', type: 'boots', stat: 'agi', val: 6, stat2: 'hp', val2: 15, icon: '🥿' }
         };
 
         function switchTab(tabId) {
@@ -490,12 +514,12 @@
             event.currentTarget.classList.add('active');
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v20', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v21', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
                 inventory = data.inventory || {};
-                equipped = data.equipped || { weapon: null, armor: null, boots: null };
+                equipped = data.equipped || { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
             }
             recalculateStats();
             updateSetupUI();
@@ -503,7 +527,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped };
-            tg.CloudStorage.setItem('arenaRPGData_v20', JSON.stringify(data));
+            tg.CloudStorage.setItem('arenaRPGData_v21', JSON.stringify(data));
         }
 
         function confirmRace() {
@@ -519,7 +543,7 @@
             if (stats.gold >= 200) {
                 stats.gold -= 200;
                 stats.raceChosen = false;
-                equipped = { weapon: null, armor: null, boots: null };
+                equipped = { helm: null, amulet: null, weapon: null, armor: null, ring: null, boots: null };
                 updateSetupUI();
                 saveGame();
                 tg.showAlert("Класс сброшен! Выберите новый путь.");
@@ -528,10 +552,38 @@
             }
         }
 
+        // Система прокачки уровней и распределения статов
+        function addStat(statName) {
+            if (stats.freePoints > 0) {
+                stats.freePoints--;
+                if (statName === 'str') stats.str += 2;
+                if (statName === 'agi') stats.agi += 2;
+                if (statName === 'hp') { stats.maxHp += 15; stats.hp += 15; }
+                updateSetupUI();
+                saveGame();
+            }
+        }
+
+        function addExp(amount) {
+            stats.exp += amount;
+            if (stats.exp >= stats.expMax) {
+                stats.exp -= stats.expMax;
+                stats.lvl++;
+                stats.expMax = Math.floor(stats.expMax * 1.4);
+                stats.freePoints += 3; // дает 3 очка за уровень
+                tg.showAlert(`🎉 ПОЗДРАВЛЯЕМ! Новый ${stats.lvl} уровень! Получено 3 очка характеристик.`);
+            }
+        }
+
         function recalculateStats() {
-            if (stats.race === 'human') { stats.str = 10; stats.agi = 10; stats.maxHp = 100; }
-            else if (stats.race === 'orc') { stats.str = 14; stats.agi = 7; stats.maxHp = 115; }
-            else if (stats.race === 'elf') { stats.str = 7; stats.agi = 15; stats.maxHp = 90; }
+            let baseStr = 10, baseAgi = 10, baseHp = 100;
+            if (stats.race === 'orc') { baseStr = 14; baseAgi = 7; baseHp = 115; }
+            else if (stats.race === 'elf') { baseStr = 7; baseAgi = 15; baseHp = 90; }
+
+            // Базовые + очки прокачки
+            stats.str = baseStr + (stats.lvl - 1) * 2; 
+            stats.agi = baseAgi + (stats.lvl - 1) * 2;
+            stats.maxHp = baseHp + (stats.lvl - 1) * 20;
 
             for (let slot in equipped) {
                 let itemKey = equipped[slot];
@@ -553,9 +605,9 @@
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
-        function buyItem(itemKey, cost, statType, statAmount, itemType, icon, classReq, stat2, val2, stat3, val3) {
+        function buyItem(itemKey, cost, statType, statAmount, itemType, icon, classReq, stat2, val2) {
             let itm = itemsDB[itemKey];
-            if (itm.classReq !== stats.race) {
+            if (itm.classReq && itm.classReq !== stats.race) {
                 tg.showAlert("Этот предмет лавки предназначен только для класса вашего героя!");
                 return;
             }
@@ -578,11 +630,6 @@
             let itm = itemsDB[itemKey];
             if (!itm) return;
 
-            if (itm.classReq && itm.classReq !== stats.race) {
-                tg.showAlert("Этот предмет подходит только для класса вашей расы!");
-                return;
-            }
-
             if (equipped[itm.type] === itemKey) {
                 equipped[itm.type] = null;
             } else {
@@ -594,20 +641,36 @@
         }
 
         function updateSetupUI() {
+            document.getElementById('val-lvl').innerText = stats.lvl;
             document.getElementById('val-str').innerText = stats.str;
             document.getElementById('val-agi').innerText = stats.agi;
             document.getElementById('val-hp').innerText = stats.maxHp;
             document.getElementById('gold-val').innerText = stats.gold;
             document.getElementById('exp-val').innerText = stats.exp;
+            document.getElementById('exp-max-val').innerText = stats.expMax;
+            document.getElementById('rating-val').innerText = stats.rating || 0;
 
+            document.getElementById('hero-lvl-text').innerText = stats.lvl;
             document.getElementById('doll-str').innerText = stats.str;
             document.getElementById('doll-agi').innerText = stats.agi;
             document.getElementById('doll-hp').innerText = stats.maxHp;
+
+            // Управление кнопками распределения очков
+            if (stats.freePoints > 0) {
+                document.getElementById('btn-plus-str').style.display = 'inline-block';
+                document.getElementById('btn-plus-agi').style.display = 'inline-block';
+                document.getElementById('btn-plus-hp').style.display = 'inline-block';
+                document.getElementById('stat-points-info').style.display = 'block';
+                document.getElementById('free-points').innerText = stats.freePoints;
+            } else {
+                document.getElementById('btn-plus-str').style.display = 'none';
+                document.getElementById('btn-plus-agi').style.display = 'none';
+                document.getElementById('btn-plus-hp').style.display = 'none';
+                document.getElementById('stat-points-info').style.display = 'none';
+            }
             
             let raceNames = { human: 'Человек', orc: 'Орк', elf: 'Эльф' };
-            let classNames = { human: 'Воин', orc: 'Берсерк', elf: 'Следопыт' };
             document.getElementById('hero-race-text').innerText = raceNames[stats.race] || 'Человек';
-            document.getElementById('hero-class-text').innerText = classNames[stats.race] || 'Воин';
 
             if (stats.raceChosen) {
                 document.getElementById('race-selection-box').style.display = 'none';
@@ -627,14 +690,17 @@
             document.getElementById('banner-icon').innerText = banner.icon;
             document.getElementById('banner-title').innerText = banner.title;
 
-            ['weapon', 'armor', 'boots'].forEach(slot => {
+            // Обновление всех слотов экипировки (включая новые)
+            ['helm', 'amulet', 'weapon', 'armor', 'ring', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
+                if (!slotEl) return;
                 let eqKey = equipped[slot];
                 if (eqKey && itemsDB[eqKey]) {
                     slotEl.innerHTML = itemsDB[eqKey].icon;
                     slotEl.classList.add('equipped');
                 } else {
-                    slotEl.innerHTML = (slot === 'weapon' ? '⚔️' : slot === 'armor' ? '🛡️' : '🥾');
+                    let defaultIcons = { helm: '🪖', amulet: '📿', weapon: '⚔️', armor: '🛡️', ring: '💍', boots: '🥾' };
+                    slotEl.innerHTML = defaultIcons[slot];
                     slotEl.classList.remove('equipped');
                 }
             });
@@ -675,14 +741,14 @@
             
             currentEnemy = { 
                 name: template.name, hp: template.hp, maxHp: template.maxHp, 
-                str: template.str, gold: template.gold, exp: template.exp, icon: template.icon 
+                str: template.str, gold: template.gold, exp: template.exp, 
+                ratingGain: template.ratingGain || 0, icon: template.icon 
             };
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('battle-screen').style.display = 'block';
             document.getElementById('arena-title').innerText = (mode === 'pve' ? "PvE Арена: " : "PvP Дуэль: ") + currentEnemy.name;
             
-            // Устанавливаем иконку и имя противника без битых картинок
             document.getElementById('enemy-icon-display').innerText = currentEnemy.icon;
             document.getElementById('enemy-name-display').innerText = currentEnemy.name;
             
@@ -768,9 +834,11 @@
             if (currentEnemy.hp <= 0) {
                 currentEnemy.hp = 0;
                 stats.gold += currentEnemy.gold;
-                stats.exp += currentEnemy.exp;
+                addExp(currentEnemy.exp);
+                if (currentEnemy.ratingGain) stats.rating += currentEnemy.ratingGain;
+                
                 updateBattleUI();
-                logMessage(turnLog + `🏆 <b>ПОБЕДА!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}`);
+                logMessage(turnLog + `🏆 <b>ПОБЕДА!</b><br>💰 Золото: +${currentEnemy.gold} | ⭐ Опыт: +${currentEnemy.exp}` + (currentEnemy.ratingGain ? ` | 🏆 Славы: +${currentEnemy.ratingGain}` : ''));
                 endBattle();
                 saveGame();
                 return;
