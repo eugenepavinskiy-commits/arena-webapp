@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena RPG - Ultimate Edition</title>
+    <title>Arena RPG - Fixed Inventory</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -314,7 +314,7 @@
             <button class="tab-btn" onclick="switchTab('hall')">🏆 Зал</button>
         </div>
 
-        <!-- ВКЛАДКА 1: PvE БОЙ С ВЫБОРОМ УРОВНЯ МОБА И ИНФОЙ ДРОПА -->
+        <!-- ВКЛАДКА 1: PvE БОЙ -->
         <div id="tab-camp" class="tab-content active">
             <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=60" alt="Рыцарь" class="game-image">
             
@@ -440,7 +440,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 5: ЛАВКА (ЭКИПИРОВКА ПО УРОВНЯМ С ПРОГРЕССИВНОЙ ЦЕНОЙ) -->
+        <!-- ВКЛАДКА 5: ЛАВКА (ПОКУПКА ПРЕДМЕТОВ В СУМКУ) -->
         <div id="tab-shop" class="tab-content">
             <div class="shop-container">
                 <div class="shop-category">🧪 Алхимия</div>
@@ -456,51 +456,51 @@
                 <div class="shop-category">🛡️ Экипировка [Уровень 10]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪖</div><div><b class="rarity-common">Шлем Стража [Lvl 10]</b><br><span style="color:var(--text-muted);">+35 HP, +5 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-t1_helm" onclick="buyItem('t1_helm', 150, 'hp', 35, 'helm', '🪖', 'human', 'def', 5)">150 🪙</button>
+                    <button class="btn-buy" id="buy-t1_helm" onclick="buyItem('t1_helm', 150)">150 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-common">Клинок Новичка [Lvl 10]</b><br><span style="color:var(--text-muted);">+12 Сила, +5% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-t1_wep" onclick="buyItem('t1_wep', 180, 'str', 12, 'weapon', '🗡️', 'human', 'critBonus', 5)">180 🪙</button>
+                    <button class="btn-buy" id="buy-t1_wep" onclick="buyItem('t1_wep', 180)">180 🪙</button>
                 </div>
 
                 <div class="shop-category">🛡️ Экипировка [Уровень 20]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-rare">Шлем Ветерана [Lvl 20]</b><br><span style="color:var(--text-muted);">+75 HP, +12 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-t2_helm" onclick="buyItem('t2_helm', 450, 'hp', 75, 'helm', '👑', 'human', 'def', 12)">450 🪙</button>
+                    <button class="btn-buy" id="buy-t2_helm" onclick="buyItem('t2_helm', 450)">450 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">⚔️</div><div><b class="rarity-rare">Меч Гладиатора [Lvl 20]</b><br><span style="color:var(--text-muted);">+24 Сила, +12% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-t2_wep" onclick="buyItem('t2_wep', 520, 'str', 24, 'weapon', '⚔️', 'human', 'critBonus', 12)">520 🪙</button>
+                    <button class="btn-buy" id="buy-t2_wep" onclick="buyItem('t2_wep', 520)">520 🪙</button>
                 </div>
 
                 <div class="shop-category">🛡️ Экипировка [Уровень 30]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🛡️</div><div><b class="rarity-rare">Латы Героя [Lvl 30]</b><br><span style="color:var(--text-muted);">+160 HP, +25 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-t3_armor" onclick="buyItem('t3_armor', 1200, 'hp', 160, 'armor', '🛡️', 'human', 'def', 25)">1200 🪙</button>
+                    <button class="btn-buy" id="buy-t3_armor" onclick="buyItem('t3_armor', 1200)">1200 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🪓</div><div><b class="rarity-rare">Топор Палача [Lvl 30]</b><br><span style="color:var(--text-muted);">+45 Сила, +20% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-t3_wep" onclick="buyItem('t3_wep', 1400, 'str', 45, 'weapon', '🪓', 'orc', 'critBonus', 20)">1400 🪙</button>
+                    <button class="btn-buy" id="buy-t3_wep" onclick="buyItem('t3_wep', 1400)">1400 🪙</button>
                 </div>
 
                 <div class="shop-category">🛡️ Экипировка [Уровень 40]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🔮</div><div><b class="rarity-epic">Амулет Повелителя [Lvl 40]</b><br><span style="color:var(--text-muted);">+30 Ловк, +250 HP</span></div></div>
-                    <button class="btn-buy" id="buy-t4_amulet" onclick="buyItem('t4_amulet', 3200, 'agi', 30, 'amulet', '🔮', 'elf', 'hp', 250)">3200 🪙</button>
+                    <button class="btn-buy" id="buy-t4_amulet" onclick="buyItem('t4_amulet', 3200)">3200 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🏹</div><div><b class="rarity-epic">Лук Бури [Lvl 40]</b><br><span style="color:var(--text-muted);">+40 Ловк, +30% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-t4_wep" onclick="buyItem('t4_wep', 3500, 'agi', 40, 'weapon', '🏹', 'elf', 'critBonus', 30)">3500 🪙</button>
+                    <button class="btn-buy" id="buy-t4_wep" onclick="buyItem('t4_wep', 3500)">3500 🪙</button>
                 </div>
 
                 <div class="shop-category">🛡️ Экипировка [Уровень 50]</div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">👑</div><div><b class="rarity-epic">Шлем Полубога [Lvl 50]</b><br><span style="color:var(--text-muted);">+500 HP, +50 Броня</span></div></div>
-                    <button class="btn-buy" id="buy-t5_helm" onclick="buyItem('t5_helm', 8000, 'hp', 500, 'helm', '👑', 'human', 'def', 50)">8000 🪙</button>
+                    <button class="btn-buy" id="buy-t5_helm" onclick="buyItem('t5_helm', 8000)">8000 🪙</button>
                 </div>
                 <div class="shop-item">
                     <div class="shop-item-info"><div class="shop-icon">🗡️</div><div><b class="rarity-epic">Меч Бессмертных [Lvl 50]</b><br><span style="color:var(--text-muted);">+90 Сила, +40% Крит</span></div></div>
-                    <button class="btn-buy" id="buy-t5_wep" onclick="buyItem('t5_wep', 9500, 'str', 90, 'weapon', '🗡️', 'human', 'critBonus', 40)">9500 🪙</button>
+                    <button class="btn-buy" id="buy-t5_wep" onclick="buyItem('t5_wep', 9500)">9500 🪙</button>
                 </div>
             </div>
         </div>
@@ -825,7 +825,7 @@
             if(tabId === 'auction') updateAuctionUI();
         }
 
-        tg.CloudStorage.getItem('arenaRPGData_v140', function(error, value) {
+        tg.CloudStorage.getItem('arenaRPGData_v150', function(error, value) {
             if (!error && value) {
                 let data = JSON.parse(value);
                 stats = data.stats;
@@ -841,7 +841,7 @@
 
         function saveGame() {
             let data = { stats: stats, inventory: inventory, equipped: equipped, auctionList: auctionList };
-            tg.CloudStorage.setItem('arenaRPGData_v140', JSON.stringify(data), function() {
+            tg.CloudStorage.setItem('arenaRPGData_v150', JSON.stringify(data), function() {
                 let indicator = document.getElementById('save-status');
                 if(indicator) {
                     indicator.innerText = '💾 Сохранено';
@@ -1190,9 +1190,11 @@
             if(stats.hp > stats.maxHp) stats.hp = stats.maxHp;
         }
 
-        // Покупка вещи отправляет ее в инвентарь сумки (а не сразу надевает)
+        // Исправленная покупка: вещь гарантированно падает в инвентарь (сумку)
         function buyItem(itemKey, cost) {
             let itm = itemsDB[itemKey];
+            if (!itm) return;
+
             if (itm.classReq && itm.classReq !== stats.race) {
                 tg.showAlert("Этот предмет лавки предназначен только для класса вашего героя!");
                 return;
@@ -1200,14 +1202,11 @@
 
             if (stats.gold >= cost) {
                 stats.gold -= cost;
-                inventory[itemKey] = true; // добавляем в инвентарь
-
-                let btn = document.getElementById(`buy-${itemKey}`);
-                if (btn) { btn.innerText = "КУПЛЕНО"; btn.disabled = true; }
+                inventory[itemKey] = true; // отправляем в инвентарь сумки
                 
                 updateSetupUI();
                 saveGame();
-                tg.showAlert(`📦 Предмет "${itm.name}" куплен и добавлен в инвентарь!`);
+                tg.showAlert(`📦 Предмет "${itm.name}" успешно куплен и добавлен в инвентарь!`);
             } else {
                 tg.showAlert("Недостаточно золота!");
             }
@@ -1221,15 +1220,12 @@
             let currentEquipped = equipped[targetSlot];
 
             if (currentEquipped === itemKey) {
-                // Снимаем предмет обратно в инвентарь
                 equipped[targetSlot] = null;
                 inventory[itemKey] = true;
             } else {
-                // Если в слоте уже что-то надето, возвращаем старое в инвентарь
                 if (currentEquipped) {
                     inventory[currentEquipped] = true;
                 }
-                // Надеваем новый предмет из инвентаря
                 equipped[targetSlot] = itemKey;
                 delete inventory[itemKey];
             }
@@ -1311,7 +1307,6 @@
             document.getElementById('banner-icon').innerText = banner.icon;
             document.getElementById('banner-title').innerText = banner.title;
 
-            // Отображение экипировки с кликом для кузнеца
             ['helm', 'amulet', 'weapon', 'armor', 'ring', 'boots'].forEach(slot => {
                 let slotEl = document.getElementById(`slot-${slot}`);
                 if (!slotEl) return;
@@ -1336,7 +1331,6 @@
                 }
             });
 
-            // Отображение инвентаря
             let invGrid = document.getElementById('inventory-grid');
             invGrid.innerHTML = '';
             
@@ -1359,11 +1353,6 @@
                     }
                 }
                 invGrid.appendChild(slotDiv);
-            }
-
-            for (let key in inventory) {
-                let btn = document.getElementById(`buy-${key}`);
-                if (btn) { btn.innerText = "КУПЛЕНО"; btn.disabled = true; }
             }
         }
 
