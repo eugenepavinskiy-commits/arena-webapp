@@ -1,5 +1,5 @@
+import json
 import os
-import sqlite3
 import telebot
 from flask import Flask, jsonify, render_template, request
 from telebot.types import WebAppInfo
@@ -8,31 +8,27 @@ TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__, template_folder="templates")
 
-
-# Инициализация базы данных SQLite
-def init_db():
-  conn = sqlite3.connect("game_database.db")
-  cursor = conn.cursor()
-  cursor.execute("""
-        CREATE TABLE IF NOT EXISTS players (
-            user_id INTEGER PRIMARY KEY,
-            username TEXT,
-            lvl INTEGER,
-            str INTEGER,
-            agi INTEGER,
-            hp INTEGER,
-            rating INTEGER,
-            wins INTEGER
-        )
-    """)
-  conn.commit()
-  conn.close()
+DATA_FILE = "players_data.json"
 
 
-init_db()
+# Загрузка игроков из JSON-файла
+def load_players():
+  if not os.path.exists(DATA_FILE):
+    return {}
+  try:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+      return json.load(f)
+  except:
+    return {}
 
 
-# Главная страница игры
+# Сохранение игроков в JSON-файл
+def save_players_to_file(data):
+  with open(DATA_FILE, "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=4)
+
+
+# Главная страница игры (отдает index.html из папки templates)
 @app.route("/")
 def index():
   return render_template("index.html")
@@ -41,7 +37,9 @@ def index():
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
   markup = telebot.types.InlineKeyboardMarkup()
-  web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/?v=105")
+  web_app = WebAppInfo(
+      url="https://arena-webapp-production.up.railway.app/?v=107"
+  )
   markup.add(
       telebot.types.InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app)
   )
@@ -62,87 +60,71 @@ def save_player():
   if not data or "user_id" not in data:
     return jsonify({"status": "error"}), 400
 
-  conn = sqlite3.connect("game_database.db")
-  cursor = conn.cursor()
-  cursor.execute(
-      """
-        INSERT INTO players (user_id, username, lvl, str, agi, hp, rating, wins)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(user_id) DO UPDATE SET
-            username=excluded.username,
-            lvl=excluded.lvl,
-            str=excluded.str,
-            agi=excluded.agi,
-            hp=excluded.hp,
-            rating=excluded.rating,
-            wins=excluded.wins
-    """,
-      (
-          data["user_id"],
-          data.get("username", "Гладиатор"),
-          data["lvl"],
-          data["str"],
-          data["agi"],
-          data["hp"],
-          data["rating"],
-          data["wins"],
-      ),
-  )
-  conn.commit()
-  conn.close()
+  players = load_players()
+  user_id_str = str(data["user_id"])
+
+  players[user_id_str] = {
+      "user_id": data["user_id"],
+      "username": data.get("username", "Гладиатор"),
+      "lvl": data.get("lvl", 1),
+      "str": data.get("str", 10),
+      "agi": data.get("agi", 10),
+      "hp": data.get("hp", 100),
+      "rating": data.get("rating", 0),
+      "wins": data.get("wins", 0),
+  }
+
+  save_players_to_file(players)
   return jsonify({"status": "ok"})
 
 
-# API для поиска реального соперника для PvP
+# API для поиска реального соперника для PvP (из очереди/базы)
 @app.route("/api/pvp/find", methods=["POST"])
 def find_pvp_opponent():
   data = request.json
-  my_id = data.get("user_id")
+  my_id = str(data.get("user_id"))
 
-  conn = sqlite3.connect("game_database.db")
-  cursor = conn.cursor()
-  cursor.execute(
-      "SELECT user_id, username, lvl, str, agi, hp, rating FROM players WHERE user_id != ? ORDER"
-      " BY RANDOM() LIMIT 1",
-      (my_id,),
-  )
-  row = cursor.fetchone()
-  conn.close()
+  players = load_players()
+  other_players = [
+      p for uid, p in players.items() if str(uid) != str(my_id)
+  ]
 
-  if not row:
+  if not other_players:
     return jsonify({"found": False})
 
-  opp = {
-      "user_id": row[0],
-      "name": row[1] if row[1] else "Гладиатор",
-      "lvl": row[2],
-      "str": row[3],
-      "agi": row[4],
-      "hp": row[5],
-      "maxHp": row[5],
+  import random
+
+  opp = random.choice(other_players)
+  formatted_opp = {
+      "user_id": opp["user_id"],
+      "name": opp["username"],
+      "lvl": opp["lvl"],
+      "str": opp["str"],
+      "agi": opp["agi"],
+      "hp": opp["hp"],
+      "maxHp": opp["hp"],
       "gold": 150,
       "ratingGain": 30,
       "icon": "⚔️",
   }
-  return jsonify({"found": True, "opponent": opp})
+  return jsonify({"found": True, "opponent": formatted_opp})
 
 
 # API для Глобального рейтинга (Топ-10)
 @app.route("/api/leaderboard", methods=["GET"])
 def get_leaderboard():
-  conn = sqlite3.connect("game_database.db")
-  cursor = conn.cursor()
-  cursor.execute(
-      "SELECT username, rating, lvl FROM players ORDER BY rating DESC LIMIT 10"
+  players = load_players()
+  sorted_players = sorted(
+      players.values(), key=lambda x: x.get("rating", 0), reverse=True
   )
-  rows = cursor.fetchall()
-  conn.close()
 
   leaders = []
-  for r in rows:
-    leaders.append(
-        {"name": r[0] if r[0] else "Гладиатор", "rating": r[1], "lvl": r[2]}
-    )
+  for p in sorted_players[:10]:
+    leaders.append({
+        "name": p.get("username", "Гладиатор"),
+        "rating": p.get("rating", 0),
+        "lvl": p.get("lvl", 1),
+    })
   return jsonify(leaders)
 
 
@@ -157,18 +139,10 @@ def receive_feedback():
   username = data.get("username", "Гладиатор")
   text = data.get("message", "")
 
-  admin_msg = (
-      f"🐛 <b>Новый баг / Отзыв от игрока!</b>\n\n"
-      f"👤 <b>Имя:</b> {username} (ID: <code>{user_id}</code>)\n"
-      f"💬 <b>Сообщение:</b> {text}"
-  )
-
   try:
     bot.send_message(
         user_id, f"✅ Спасибо! Ваш отчет об ошибке отправлен разработчику."
     )
-    # Если хотите получать уведомления лично, раскомментируйте строку ниже и вставьте ваш Telegram ID:
-    # bot.send_message(ВАШ_TELEGRAM_ID, admin_msg, parse_mode="HTML")
   except Exception as e:
     print("Ошибка отправки сообщения:", e)
 
