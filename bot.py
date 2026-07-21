@@ -20,7 +20,7 @@ def run_web_server():
 def send_welcome(message):
     markup = InlineKeyboardMarkup()
     # Ссылка на ваше веб-приложение в Railway
-    web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/") 
+    web_app = WebAppInfo(url="https://arena-webapp-production.up.railway.app/?v=2") 
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=web_app))
     
     bot.send_message(
