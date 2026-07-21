@@ -6,7 +6,9 @@ from telebot.types import WebAppInfo
 
 TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__)
+
+# Явно указываем Flask искать шаблоны в папке templates
+app = Flask(__name__, template_folder="templates")
 
 
 # Инициализация базы данных SQLite
@@ -32,6 +34,7 @@ def init_db():
 init_db()
 
 
+# Главная страница игры (отдает index.html из папки templates)
 @app.route("/")
 def index():
   return render_template("index.html")
@@ -51,6 +54,7 @@ def send_welcome(message):
   )
 
 
+# API для сохранения прогресса игрока
 @app.route("/api/save", methods=["POST"])
 def save_player():
   data = request.json
@@ -88,6 +92,7 @@ def save_player():
   return jsonify({"status": "ok"})
 
 
+# API для поиска реального соперника для PvP
 @app.route("/api/pvp/find", methods=["POST"])
 def find_pvp_opponent():
   data = request.json
@@ -134,6 +139,7 @@ def find_pvp_opponent():
   return jsonify({"found": True, "opponent": opp})
 
 
+# API для Глобального рейтинга (Топ-10)
 @app.route("/api/leaderboard", methods=["GET"])
 def get_leaderboard():
   conn = sqlite3.connect("game_database.db")
