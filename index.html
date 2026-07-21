@@ -27,7 +27,7 @@
         .health-box { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; font-weight: bold; color: #ff5252; background: #2a2a2a; padding: 15px; border-radius: 10px; }
         #battle-log { background: #111; padding: 10px; height: 140px; overflow-y: scroll; border-radius: 10px; text-align: left; margin-bottom: 15px; font-family: monospace; font-size: 12px; line-height: 1.4; border: 1px solid #333; }
         
-        /* === НОВЫЙ ИНТЕРФЕЙС БОЯ === */
+        /* === ИНТЕРФЕЙС БОЯ С СИЛУЭТАМИ === */
         .battle-controls { background: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
         .figures-container { display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 15px; }
         
@@ -119,7 +119,7 @@
         
         <div id="battle-log"></div>
         
-        <!-- НОВАЯ ПАНЕЛЬ С СИЛУЭТАМИ -->
+        <!-- ПАНЕЛЬ С СИЛУЭТАМИ -->
         <div id="battle-ui" class="battle-controls">
             <div class="figures-container">
                 
@@ -164,7 +164,6 @@
         let stats = { points: 5, str: 10, agi: 10, hp: 100, maxHp: 100 };
         let enemy = { name: 'Грифон', hp: 50, maxHp: 50, str: 8 };
 
-        // Добавлены новые зоны (руки)
         const zoneNames = { 'head': 'голову', 'chest': 'грудь', 'stomach': 'живот', 'legs': 'ноги', 'l_arm': 'левую руку', 'r_arm': 'правую руку' };
         const zones = ['head', 'chest', 'stomach', 'legs', 'l_arm', 'r_arm'];
 
