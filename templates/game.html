@@ -6,167 +6,188 @@
     <title>Game - Лагерь героя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f0f11;
+            color: #f0f0f0;
             margin: 0;
             padding: 10px;
-            font-size: 14px;
+            font-size: 13px;
         }
         .header-stats {
-            background: #1e1e1e;
-            padding: 10px;
+            background: #18181b;
+            padding: 8px 10px;
             border-radius: 8px;
             text-align: center;
             margin-bottom: 10px;
-            font-size: 13px;
-            border: 1px solid #333;
+            font-size: 12px;
+            border: 1px solid #27272a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
+            gap: 5px;
             margin-bottom: 10px;
         }
         .nav-btn {
-            background: #2c2c2c;
-            color: #fff;
-            border: none;
+            background: #27272a;
+            color: #a1a1aa;
+            border: 1px solid #3f3f46;
             padding: 8px 2px;
             font-size: 11px;
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
+            transition: all 0.1s ease;
         }
         .nav-btn:active {
             transform: scale(0.95);
         }
         .nav-btn.active {
-            background: #f39c12;
-            color: #121212;
+            background: #f59e0b;
+            color: #0f0f11;
+            border-color: #f59e0b;
             font-weight: bold;
         }
         .class-banner {
-            background: #1e1e1e;
-            border: 2px solid #f39c12;
+            background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
+            border: 2px solid #f59e0b;
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 15px;
-            color: #f39c12;
+            margin-bottom: 12px;
+            color: #f59e0b;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
         }
         
-        /* Визуализация Героя */
+        /* Сетка Героя */
         .hero-layout {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            padding: 0 5px;
         }
         .equip-col {
             display: flex;
             flex-direction: column;
             gap: 8px;
+            width: 50px;
         }
         .equip-slot {
-            width: 45px;
-            height: 45px;
-            background: #252525;
-            border: 1px solid #444;
-            border-radius: 6px;
+            width: 48px;
+            height: 48px;
+            background: #18181b;
+            border: 1px dashed #3f3f46;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
             position: relative;
         }
-        /* Если вещь не надета — скрываем слот */
-        .equip-slot.empty {
-            display: none;
-        }
+        /* Если слот пустой по логике, но базовый — он просто пустой с рамкой */
         .equip-slot.filled {
-            border-color: #f39c12;
-            background: #2c2c2c;
+            border-style: solid;
+            border-color: #f59e0b;
+            background: #27272a;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.2);
+        }
+        /* Динамические слоты (например, кольца 2-4), если не заполнены — скрываются */
+        .equip-slot.dynamic-hidden {
+            display: none;
         }
         .slot-label {
             position: absolute;
-            bottom: -12px;
-            font-size: 9px;
-            color: #888;
+            bottom: -11px;
+            font-size: 8px;
+            color: #71717a;
             text-align: center;
             width: 100%;
+            text-transform: uppercase;
+            font-weight: bold;
         }
         .hero-avatar-box {
             flex-grow: 1;
             text-align: center;
-            padding: 0 5px;
+            padding: 0 8px;
         }
         .hero-avatar {
             width: 100%;
-            max-width: 210px; /* Увеличено */
+            max-width: 170px;
             height: auto;
-            border-radius: 8px;
-            border: 2px solid #f39c12;
-            box-shadow: 0 0 12px rgba(243, 156, 18, 0.4);
+            border-radius: 10px;
+            border: 2px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+            display: block;
+            margin: 0 auto;
         }
         .weapons-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 18px;
         }
         
-        /* Блок детальных статов */
+        /* Статистика */
         .stats-panel {
-            background: #1e1e1e;
+            background: #18181b;
             border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #333;
+            padding: 12px;
+            border: 1px solid #27272a;
         }
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 12px;
         }
         .stat-item {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px dotted #444;
+            border-bottom: 1px dotted #27272a;
             padding-bottom: 4px;
+            color: #d4d4d8;
         }
         .stat-group-title {
             grid-column: span 2;
-            color: #f39c12;
+            color: #f59e0b;
             font-weight: bold;
             text-align: center;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #f39c12;
-            padding-bottom: 5px;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #3f3f46;
+            padding-bottom: 4px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .potion-bar {
-            background: #1e1e1e;
-            border: 1px solid #333;
+            background: #18181b;
+            border: 1px solid #27272a;
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 12px;
         }
         .potion-btn {
-            background: #e74c3c;
+            background: #dc2626;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
         }
         .potion-btn:active {
             transform: scale(0.95);
@@ -175,14 +196,14 @@
 </head>
 <body>
 
-    <h2 style="text-align: center; color: #f39c12; margin: 5px 0 10px 0; font-size: 18px;">ЛАГЕРЬ ГЕРОЯ</h2>
+    <h2 style="text-align: center; color: #f59e0b; margin: 4px 0 8px 0; font-size: 16px; letter-spacing: 1px;">⚔️ ЛАГЕРЬ ГЕРОЯ ⚔️</h2>
 
     <div class="header-stats" id="header-stats">
         🟡 Золото: 500 | 💎 Камни: 12 | ⭐ Опыт: 450/1000 | 🏆 Ранг: 3
     </div>
 
     <div class="potion-bar">
-        <span>🧪 Зелья в сумке: <b id="potion-count">1</b> шт.</span>
+        <span>🧪 Зелья: <b id="potion-count">1</b> шт.</span>
         <button class="potion-btn" onclick="drinkPotion()">ВЫПИТЬ (+50 HP)</button>
     </div>
 
@@ -197,38 +218,38 @@
         <button class="nav-btn" onclick="openSection('КЛАСС')">📜 КЛАСС</button>
     </div>
 
-    <!-- Понятный баннер с иконкой, классом и ником -->
+    <!-- Информативный баннер персонажа -->
     <div class="class-banner" id="ui-class-name">
         ЗАГРУЗКА...
     </div>
 
     <div class="hero-layout">
-        <!-- Левая колонка (Броня) -->
+        <!-- Левая колонка (Броня) - все базовые слоты всегда видны каркасом -->
         <div class="equip-col">
-            <div class="equip-slot" id="slot-head"><span class="slot-label">ШЛЕМ</span></div>
-            <div class="equip-slot" id="slot-chest"><span class="slot-label">БРОНЯ</span></div>
-            <div class="equip-slot" id="slot-belt"><span class="slot-label">ПОЯС</span></div>
-            <div class="equip-slot" id="slot-boots"><span class="slot-label">ОБУВЬ</span></div>
+            <div class="equip-slot" id="slot-head"><span class="slot-label">Шлем</span></div>
+            <div class="equip-slot" id="slot-chest"><span class="slot-label">Броня</span></div>
+            <div class="equip-slot" id="slot-belt"><span class="slot-label">Пояс</span></div>
+            <div class="equip-slot" id="slot-boots"><span class="slot-label">Обувь</span></div>
         </div>
 
-        <!-- Увеличенный аватар по центру -->
+        <!-- Увеличенный и пропорциональный аватар -->
         <div class="hero-avatar-box">
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
         </div>
 
-        <!-- Правая колонка (Кольца) -->
+        <!-- Правая колонка (Кольца) - первое кольцо видно всегда, остальные динамические -->
         <div class="equip-col">
-            <div class="equip-slot" id="slot-ring1"><span class="slot-label">КОЛЬЦО 1</span></div>
-            <div class="equip-slot" id="slot-ring2"><span class="slot-label">КОЛЬЦО 2</span></div>
-            <div class="equip-slot" id="slot-ring3"><span class="slot-label">КОЛЬЦО 3</span></div>
-            <div class="equip-slot" id="slot-ring4"><span class="slot-label">КОЛЬЦО 4</span></div>
+            <div class="equip-slot" id="slot-ring1"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot dynamic-hidden" id="slot-ring2"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot dynamic-hidden" id="slot-ring3"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot dynamic-hidden" id="slot-ring4"><span class="slot-label">Кольцо</span></div>
         </div>
     </div>
 
-    <!-- Нижний ряд: Оружие -->
+    <!-- Нижний ряд: Оружие (Правая рука всегда видна, левая/щит динамическая если пустая) -->
     <div class="weapons-row">
-        <div class="equip-slot" id="slot-weapon1" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ПРАВАЯ</span></div>
-        <div class="equip-slot" id="slot-weapon2" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ЛЕВАЯ</span></div>
+        <div class="equip-slot" id="slot-weapon1" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Оружие</span></div>
+        <div class="equip-slot" id="slot-weapon2" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Щит/Рука</span></div>
     </div>
 
     <div class="stats-panel">
@@ -239,7 +260,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Данные персонажа и классов с четкими иконками
         const CLASSES = {
             knight: { name: "Рыцарь", icon: "🛡️⚔️", armorMult: 1.15, critDmgMult: 1.5, dodgeMult: 1.0 },
             berserk: { name: "Берсерк", icon: "🪓🔥", armorMult: 0.9, critDmgMult: 1.8, dodgeMult: 1.0 },
@@ -281,7 +301,6 @@
             finalStats: {}
         };
 
-        // Если передан ник от Телеграма, подставим его
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         }
@@ -334,24 +353,27 @@
             let subName = SUBCLASSES[hero.subClass].name;
             let classTitle = subName ? subName : cls.name;
             
-            // Красивый баннер: Иконка + Ник + Класс + Уровень
             document.getElementById("ui-class-name").innerHTML = 
-                `${cls.icon} ${hero.name} <span style="font-size:12px; color:#aaa;">[${classTitle} • Ур. ${hero.level}]</span>`;
+                `${cls.icon} ${hero.name} <span style="font-size:11px; color:#d4d4d8; font-weight:normal;">[${classTitle} • Ур. ${hero.level}]</span>`;
 
-            // Логика скрытия пустых слотов экипировки
+            // Умное отображение экипировки: базовые слоты видны всегда, дополнительные кольца/оружие — только если надеты
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
             slots.forEach(slot => {
                 let el = document.getElementById("slot-" + slot);
                 if (el) {
                     if (hero.equipment[slot]) {
                         el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${getSlotName(slot)}</span>`;
-                        el.classList.remove("empty");
+                        el.classList.remove("dynamic-hidden");
                         el.classList.add("filled");
                     } else {
-                        // Если вещь не надета — скрываем элемент полностью
-                        el.innerHTML = "";
-                        el.classList.add("empty");
+                        el.innerHTML = `<span class="slot-label">${getSlotName(slot)}</span>`;
                         el.classList.remove("filled");
+                        // Скрываем дополнительные пустые слоты (кольца 2-4 и вторую руку, если там пусто)
+                        if (slot === 'ring2' || slot === 'ring3' || slot === 'ring4' || slot === 'weapon2') {
+                            el.classList.add("dynamic-hidden");
+                        } else {
+                            el.classList.remove("dynamic-hidden"); // Основные слоты всегда на месте каркаса
+                        }
                     }
                 }
             });
@@ -360,23 +382,23 @@
             if (potionEl) potionEl.innerText = hero.potions;
 
             const statsHtml = `
-                <div class="stat-group-title">БАзовые Характеристики</div>
-                <div class="stat-item"><span>⚔️ Сила (Урон/Вес)</span> <b>${hero.finalStats.str}</b></div>
-                <div class="stat-item"><span>🏃 Ловкость (Уворот/Крит)</span> <b>${hero.finalStats.agi}</b></div>
+                <div class="stat-group-title">Базовые характеристики</div>
+                <div class="stat-item"><span>⚔️ Сила (Урон)</span> <b>${hero.finalStats.str}</b></div>
+                <div class="stat-item"><span>🏃 Ловкость (Крит/Уворот)</span> <b>${hero.finalStats.agi}</b></div>
                 <div class="stat-item"><span>❤️ Выносливость (HP)</span> <b>${hero.finalStats.end}</b></div>
-                <div class="stat-item"><span>🧠 Интеллект (Магия)</span> <b>${hero.finalStats.int}</b></div>
-                <div class="stat-item"><span>🍀 Удача (Дроп/Крит)</span> <b>${hero.finalStats.luk}</b></div>
+                <div class="stat-item"><span>🧠 Интеллект</span> <b>${hero.finalStats.int}</b></div>
+                <div class="stat-item"><span>🍀 Удача (Дроп)</span> <b>${hero.finalStats.luk}</b></div>
                 
-                <div class="stat-group-title">Боевые Характеристики</div>
-                <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#e74c3c;">${hero.hp} / ${hero.finalStats.hp}</b></div>
+                <div class="stat-group-title">Боевые параметры</div>
+                <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b></div>
                 <div class="stat-item"><span>🗡️ Физ. Урон</span> <b>${hero.finalStats.damage}</b></div>
                 <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
                 <div class="stat-item"><span>⚡ Шанс Крита</span> <b>${hero.finalStats.critChance}%</b></div>
                 <div class="stat-item"><span>💥 Урон Крита</span> <b>${hero.finalStats.critDmg}%</b></div>
-                <div class="stat-item"><span>💨 Шанс Уклонения</span> <b>${hero.finalStats.dodge}%</b></div>
-                <div class="stat-item"><span>🔰 Шанс Блока</span> <b>${hero.finalStats.blockChance}%</b></div>
+                <div class="stat-item"><span>💨 Уклонение</span> <b>${hero.finalStats.dodge}%</b></div>
+                <div class="stat-item"><span>🔰 Блок</span> <b>${hero.finalStats.blockChance}%</b></div>
                 
-                <div class="stat-group-title">Глобальные Эффекты</div>
+                <div class="stat-group-title">Бонусы</div>
                 <div class="stat-item"><span>🎁 Множитель лута</span> <b>x${hero.finalStats.dropMult}</b></div>
             `;
             let grid = document.getElementById("ui-stats-grid");
@@ -385,9 +407,9 @@
 
         function getSlotName(slotId) {
             const names = {
-                head: "ШЛЕМ", chest: "БРОНЯ", belt: "ПОЯС", boots: "ОБУВЬ",
-                weapon1: "ПРАВАЯ", weapon2: "ЛЕВАЯ",
-                ring1: "КОЛЬЦО", ring2: "КОЛЬЦО", ring3: "КОЛЬЦО", ring4: "КОЛЬЦО"
+                head: "Шлем", chest: "Броня", belt: "Пояс", boots: "Обувь",
+                weapon1: "Рука", weapon2: "Щит",
+                ring1: "Кольцо", ring2: "Кольцо", ring3: "Кольцо", ring4: "Кольцо"
             };
             return names[slotId];
         }
