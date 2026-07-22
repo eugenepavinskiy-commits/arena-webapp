@@ -32,7 +32,7 @@ def save_players_to_file(data):
 @app.route("/")
 def index():
     # Отдаем нашу крутую страницу с героем!
-    return render_template("index.html")
+    return render_template("game.html")
 
 @app.route("/api/save", methods=["POST"])
 def save_player():
