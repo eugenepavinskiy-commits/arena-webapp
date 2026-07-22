@@ -42,7 +42,6 @@
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
-            transition: all 0.1s ease;
         }
         .nav-btn:active {
             transform: scale(0.95);
@@ -92,9 +91,9 @@
             font-size: 20px;
             position: relative;
         }
-        /* Пустой слот: аккуратный контурный силуэт */
+        /* Пустой слот: строгий контурный силуэт */
         .equip-slot.empty {
-            opacity: 0.35;
+            opacity: 0.3;
             border-style: dashed;
             border-color: #52525b;
         }
@@ -226,7 +225,7 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Левая колонка: Броня (у каждого слота свой строгий силуэт) -->
+        <!-- Левая колонка: Броня -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"><span class="slot-label">Шлем</span></div>
             <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"><span class="slot-label">Броня</span></div>
@@ -292,13 +291,15 @@
             baseStats: { str: 15, agi: 10, end: 20, int: 5, luk: 5 },
             equipment: {
                 head: null,
-                chest: ITEMS_DB["armor_01"], // Надета только броня
+                chest: ITEMS_DB["armor_01"],
                 belt: null,
                 boots: null,
-                weapon1: ITEMS_DB["sword_01"], // Меч
-                weapon2: ITEMS_DB["shield_01"], // Щит
-                ring1: ITEMS_DB["ring_luck"],  // Одно кольцо
-                ring2: null, ring3: null, ring4: null
+                weapon1: ITEMS_DB["sword_01"],
+                weapon2: ITEMS_DB["shield_01"],
+                ring1: ITEMS_DB["ring_luck"],
+                ring2: null,
+                ring3: null,
+                ring4: null
             },
             finalStats: {}
         };
@@ -358,24 +359,26 @@
             document.getElementById("ui-class-name").innerHTML = 
                 `${cls.icon} ${hero.name} <span style="font-size:11px; color:#d4d4d8; font-weight:normal;">[${classTitle} • Ур. ${hero.level}]</span>`;
 
-            // Строгое разделение слотов по их ключам инвентаря
+            // ЖЕСТКАЯ ПРОВЕРКА СЛОТОВ: рендерим иконку ТОЛЬКО если элемент существует и имеет свойство icon
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
+            
             slots.forEach(slotKey => {
                 let el = document.getElementById("slot-" + slotKey);
                 if (el) {
                     let placeholderIcon = el.getAttribute("data-placeholder") || "";
                     let slotNameRu = getSlotName(slotKey);
-                    let equippedItem = hero.equipment[slotKey];
+                    let item = hero.equipment[slotKey];
 
-                    if (equippedItem) {
-                        // Если в ЭТОМ конкретном слоте есть вещь — показываем её иконку
-                        el.innerHTML = `${equippedItem.icon}<span class="slot-label">${slotNameRu}</span>`;
-                        el.classList.remove("empty");
+                    // Очищаем прошлые классы
+                    el.classList.remove("empty", "filled");
+
+                    if (item && item.icon) {
+                        // РЕЖИМ АКТИВНОЙ ВЕЩИ
+                        el.innerHTML = `${item.icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("filled");
                     } else {
-                        // Если слот пустой — строго контурный силуэт-подсказка
+                        // РЕЖИМ ПУСТОГО СЛОТА (СИЛУЭТ)
                         el.innerHTML = `<span style="font-size:16px;">${placeholderIcon}</span><span class="slot-label">${slotNameRu}</span>`;
-                        el.classList.remove("filled");
                         el.classList.add("empty");
                     }
                 }
