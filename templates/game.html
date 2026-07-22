@@ -39,6 +39,9 @@
             cursor: pointer;
             text-align: center;
         }
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
         .nav-btn.active {
             background: #f39c12;
             color: #121212;
@@ -141,26 +144,55 @@
             border-bottom: 1px solid #f39c12;
             padding-bottom: 5px;
         }
+        .potion-bar {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .potion-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .potion-btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
 
     <h2 style="text-align: center; color: #f39c12; margin: 5px 0 10px 0; font-size: 18px;">ЛАГЕРЬ ГЕРОЯ</h2>
 
-    <div class="header-stats">
+    <div class="header-stats" id="header-stats">
         🟡 Золото: 500 | 💎 Камни: 12 | ⭐ Опыт: 450/1000 | 🏆 Ранг: 3
     </div>
 
-    <!-- Навигация -->
+    <!-- Интерактивная панель зелий -->
+    <div class="potion-bar">
+        <span>🧪 Зелья в сумке: <b id="potion-count">1</b> шт.</span>
+        <button class="potion-btn" onclick="drinkPotion()">ВЫПИТЬ (+50 HP)</button>
+    </div>
+
+    <!-- Навигация с кликабельными кнопками -->
     <div class="nav-grid">
-        <button class="nav-btn">⚔️ PVE</button>
-        <button class="nav-btn">🦖 БОСС</button>
-        <button class="nav-btn">🛡️ PVP</button>
-        <button class="nav-btn active">👤 ГЕРОЙ</button>
-        <button class="nav-btn">🛒 ЛАВКА</button>
-        <button class="nav-btn">🏛️ АУКЦИОН</button>
-        <button class="nav-btn">⛏️ КУЗНЕЦ</button>
-        <button class="nav-btn">📜 КЛАСС</button>
+        <button class="nav-btn" onclick="openSection('PVE')">⚔️ PVE</button>
+        <button class="nav-btn" onclick="openSection('БОСС')">🦖 БОСС</button>
+        <button class="nav-btn" onclick="openSection('PVP')">🛡️ PVP</button>
+        <button class="nav-btn active" onclick="openSection('ГЕРОЙ')">👤 ГЕРОЙ</button>
+        <button class="nav-btn" onclick="openSection('ЛАВКА')">🛒 ЛАВКА</button>
+        <button class="nav-btn" onclick="openSection('АУКЦИОН')">🏛️ АУКЦИОН</button>
+        <button class="nav-btn" onclick="openSection('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
+        <button class="nav-btn" onclick="openSection('КЛАСС')">📜 КЛАСС</button>
     </div>
 
     <!-- Название класса генерируется скриптом -->
@@ -194,8 +226,8 @@
 
     <!-- Нижний ряд: Оружие -->
     <div class="weapons-row">
-        <div class="equip-slot" id="slot-weapon1" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ПРАВАЯ РУКА</span></div>
-        <div class="equip-slot" id="slot-weapon2" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ЛЕВАЯ РУКА</span></div>
+        <div class="equip-slot" id="slot-weapon1" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ПРАВАЯ</span></div>
+        <div class="equip-slot" id="slot-weapon2" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ЛЕВАЯ</span></div>
     </div>
 
     <!-- Детальная панель характеристик -->
@@ -222,7 +254,7 @@
             juggernaut: { name: "Джаггернаут", bonus: "+10% Урона Двуручным" }
         };
 
-        // 2. БАЗА ПРЕДМЕТОВ (Пример генерации)
+        // 2. БАЗА ПРЕДМЕТОВ
         const ITEMS_DB = {
             "sword_01": { id: "sword_01", name: "Стальной Меч", type: "weapon1", icon: "⚔️", stats: { atk: 15, str: 2 } },
             "shield_01": { id: "shield_01", name: "Тяжелый Щит", type: "weapon2", icon: "🛡️", stats: { armor: 20, blockChance: 15, end: 5 } },
@@ -235,6 +267,9 @@
             level: 5,
             baseClass: "knight",
             subClass: "dark_knight",
+            hp: 350,
+            maxHp: 350,
+            potions: 1,
             baseStats: {
                 str: 15, // Сила
                 agi: 10, // Ловкость
@@ -248,18 +283,17 @@
                 belt: null,
                 boots: null,
                 weapon1: ITEMS_DB["sword_01"],
-                weapon2: ITEMS_DB["shield_01"], // Щит или второе оружие
+                weapon2: ITEMS_DB["shield_01"],
                 ring1: ITEMS_DB["ring_luck"],
                 ring2: null,
                 ring3: null,
                 ring4: null
             },
-            finalStats: {} // Сюда запишутся расчеты
+            finalStats: {}
         };
 
         // 4. ДВИЖОК РАСЧЕТА ХАРАКТЕРИСТИК
         function calculateStats() {
-            // 4.1 Собираем сумму статов (База + Шмот)
             let total = {
                 str: hero.baseStats.str,
                 agi: hero.baseStats.agi,
@@ -268,14 +302,13 @@
                 luk: hero.baseStats.luk,
                 armor: 0,
                 atk: 0,
-                critChance: 5, // Базовый крит 5%
-                critDmg: 150,  // Базовый урон крита 150%
+                critChance: 5,
+                critDmg: 150,
                 dodge: 0,
                 blockChance: 0,
                 armorPen: 0
             };
 
-            // Прибавляем статы от каждой надетой вещи
             for (let key in hero.equipment) {
                 let item = hero.equipment[key];
                 if (item && item.stats) {
@@ -291,22 +324,18 @@
                 }
             }
 
-            // 4.2 Влияние Базовых статов на Боевые (Сложные формулы)
-            let hp = total.end * 10; // Выносливость дает ХП
-            let damage = total.str * 2 + total.atk; // Сила дает урон
-            total.critChance += (total.agi / 5) + (total.luk / 10); // Крит от Ловкости и Удачи
-            total.dodge += (total.agi / 4); // Уклонение от Ловкости
-            
-            // Влияние Удачи на глобальные механики
+            let hp = total.end * 10;
+            let damage = total.str * 2 + total.atk;
+            total.critChance += (total.agi / 5) + (total.luk / 10);
+            total.dodge += (total.agi / 4);
             let dropMultiplier = 1.0 + (total.luk / 100);
 
-            // 4.3 Применяем множители Класса
             let cls = CLASSES[hero.baseClass];
             total.armor = Math.floor(total.armor * cls.armorMult);
-            total.critDmg = Math.floor(total.critDmg * cls.critDmgMult / 1.5); // Нормализация к базе
+            total.critDmg = Math.floor(total.critDmg * cls.critDmgMult / 1.5);
             total.dodge = total.dodge * cls.dodgeMult;
 
-            // Сохраняем итог
+            hero.maxHp = hp;
             hero.finalStats = {
                 hp: hp,
                 damage: damage,
@@ -322,25 +351,28 @@
 
         // 5. ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
         function updateUI() {
-            // Обновляем баннер класса
             let clsName = CLASSES[hero.baseClass].name;
             let subName = SUBCLASSES[hero.subClass].name;
             document.getElementById("ui-class-name").innerHTML = `🛡️ ⚔️<br>${subName ? subName : clsName} (Ур. ${hero.level})`;
 
-            // Обновляем иконки экипировки
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
             slots.forEach(slot => {
                 let el = document.getElementById("slot-" + slot);
-                if (hero.equipment[slot]) {
-                    el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${getSlotName(slot)}</span>`;
-                    el.classList.add("filled");
-                } else {
-                    el.innerHTML = `<span style="color:#444;">?</span><span class="slot-label">${getSlotName(slot)}</span>`;
-                    el.classList.remove("filled");
+                if (el) {
+                    if (hero.equipment[slot]) {
+                        el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${getSlotName(slot)}</span>`;
+                        el.classList.add("filled");
+                    } else {
+                        el.innerHTML = `<span style="color:#444;">?</span><span class="slot-label">${getSlotName(slot)}</span>`;
+                        el.classList.remove("filled");
+                    }
                 }
             });
 
-            // Отрисовываем таблицу статов
+            // Обновляем счетчик зелий
+            let potionEl = document.getElementById("potion-count");
+            if (potionEl) potionEl.innerText = hero.potions;
+
             const statsHtml = `
                 <div class="stat-group-title">БАзовые Характеристики</div>
                 <div class="stat-item"><span>⚔️ Сила (Урон/Вес)</span> <b>${hero.finalStats.str}</b></div>
@@ -350,7 +382,7 @@
                 <div class="stat-item"><span>🍀 Удача (Дроп/Крит)</span> <b>${hero.finalStats.luk}</b></div>
                 
                 <div class="stat-group-title">Боевые Характеристики</div>
-                <div class="stat-item"><span>🩸 Макс. Здоровье</span> <b style="color:#e74c3c;">${hero.finalStats.hp}</b></div>
+                <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#e74c3c;">${hero.hp} / ${hero.finalStats.hp}</b></div>
                 <div class="stat-item"><span>🗡️ Физ. Урон</span> <b>${hero.finalStats.damage}</b></div>
                 <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
                 <div class="stat-item"><span>⚡ Шанс Крита</span> <b>${hero.finalStats.critChance}%</b></div>
@@ -361,7 +393,8 @@
                 <div class="stat-group-title">Глобальные Эффекты</div>
                 <div class="stat-item"><span>🎁 Множитель лута</span> <b>x${hero.finalStats.dropMult}</b></div>
             `;
-            document.getElementById("ui-stats-grid").innerHTML = statsHtml;
+            let grid = document.getElementById("ui-stats-grid");
+            if (grid) grid.innerHTML = statsHtml;
         }
 
         function getSlotName(slotId) {
@@ -373,11 +406,40 @@
             return names[slotId];
         }
 
-        // Запускаем расчет и отрисовку при загрузке
+        // 6. ЛОГИКА ИНТЕРАКТИВА (Кнопки и Зелья)
+        function openSection(sectionName) {
+            if (sectionName === 'ГЕРОЙ') {
+                return; // мы уже здесь
+            }
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+            alert("Раздел '" + sectionName + "' в разработке!");
+        }
+
+        function drinkPotion() {
+            if (hero.potions > 0) {
+                if (hero.hp >= hero.finalStats.hp) {
+                    alert("Здоровье уже максимальное!");
+                    return;
+                }
+                hero.potions--;
+                hero.hp = Math.min(hero.finalStats.hp, hero.hp + 50);
+                updateUI();
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            } else {
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+                alert("У вас нет зелий в сумке!");
+            }
+        }
+
+        // Запуск при старте
         calculateStats();
         updateUI();
-
     </script>
-
 </body>
 </html>
