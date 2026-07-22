@@ -92,13 +92,13 @@
             font-size: 20px;
             position: relative;
         }
-        /* Пустой слот: силуэт-подсказка (неброский, интуитивный) */
+        /* Пустой слот: полупрозрачный силуэт-подсказка */
         .equip-slot.empty {
-            opacity: 0.35;
+            opacity: 0.3;
             border-style: dashed;
             border-color: #52525b;
         }
-        /* Заполненный слот: яркая моделька и золотая рамка */
+        /* Заполненный слот: яркий предмет с золотой рамкой */
         .equip-slot.filled {
             border-style: solid;
             border-color: #f59e0b;
@@ -226,7 +226,7 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Левая колонка: Броня (силуэты для пустых слотов) -->
+        <!-- Левая колонка: Броня -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"></div>
             <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"></div>
@@ -239,7 +239,7 @@
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
         </div>
 
-        <!-- Правая колонка: Кольца (силуэты для пустых слотов) -->
+        <!-- Правая колонка: Кольца -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-ring1" data-placeholder="💍"></div>
             <div class="equip-slot empty" id="slot-ring2" data-placeholder="💍"></div>
@@ -366,12 +366,12 @@
                     let slotNameRu = getSlotName(slot);
 
                     if (hero.equipment[slot]) {
-                        // Если вещь надета: яркий цвет, иконка предмета, золотая рамка
+                        // РЕЖИМ: Вещь надета (яркий значок предмета и золотая рамка)
                         el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.remove("empty");
                         el.classList.add("filled");
                     } else {
-                        // Если пусто: неброский силуэт-подсказка
+                        // РЕЖИМ: Слот пустой (только аккуратный силуэт-подсказка)
                         el.innerHTML = `<span style="font-size:16px;">${placeholderIcon}</span><span class="slot-label">${slotNameRu}</span>`;
                         el.classList.remove("filled");
                         el.classList.add("empty");
