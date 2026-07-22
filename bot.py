@@ -11,7 +11,7 @@ bot = telebot.TeleBot(TOKEN)
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
     # URL вашего Web App (убедитесь, что он правильный)
-    webapp_url = "https://arena-webapp-production.up.railway.app/?v=110"
+    webapp_url = "https://arena-webapp-production.up.railway.app/?v=108"
     
     # Создаем клавиатуру с кнопкой
     markup = InlineKeyboardMarkup()
@@ -64,4 +64,3 @@ def send_welcome(message):
 if __name__ == "__main__":
     # Запуск бота
     bot.infinity_polling()
-
