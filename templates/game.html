@@ -51,13 +51,12 @@
             background: #1e1e1e;
             border: 2px solid #f39c12;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             margin-bottom: 15px;
             color: #f39c12;
             font-weight: bold;
-            font-size: 14px;
-            text-transform: uppercase;
+            font-size: 15px;
         }
         
         /* Визуализация Героя */
@@ -84,6 +83,10 @@
             font-size: 20px;
             position: relative;
         }
+        /* Если вещь не надета — скрываем слот */
+        .equip-slot.empty {
+            display: none;
+        }
         .equip-slot.filled {
             border-color: #f39c12;
             background: #2c2c2c;
@@ -99,14 +102,15 @@
         .hero-avatar-box {
             flex-grow: 1;
             text-align: center;
-            padding: 0 10px;
+            padding: 0 5px;
         }
         .hero-avatar {
             width: 100%;
-            max-width: 180px;
+            max-width: 210px; /* Увеличено */
+            height: auto;
             border-radius: 8px;
             border: 2px solid #f39c12;
-            box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+            box-shadow: 0 0 12px rgba(243, 156, 18, 0.4);
         }
         .weapons-row {
             display: flex;
@@ -177,13 +181,11 @@
         🟡 Золото: 500 | 💎 Камни: 12 | ⭐ Опыт: 450/1000 | 🏆 Ранг: 3
     </div>
 
-    <!-- Интерактивная панель зелий -->
     <div class="potion-bar">
         <span>🧪 Зелья в сумке: <b id="potion-count">1</b> шт.</span>
         <button class="potion-btn" onclick="drinkPotion()">ВЫПИТЬ (+50 HP)</button>
     </div>
 
-    <!-- Навигация с кликабельными кнопками -->
     <div class="nav-grid">
         <button class="nav-btn" onclick="openSection('PVE')">⚔️ PVE</button>
         <button class="nav-btn" onclick="openSection('БОСС')">🦖 БОСС</button>
@@ -195,12 +197,11 @@
         <button class="nav-btn" onclick="openSection('КЛАСС')">📜 КЛАСС</button>
     </div>
 
-    <!-- Название класса генерируется скриптом -->
+    <!-- Понятный баннер с иконкой, классом и ником -->
     <div class="class-banner" id="ui-class-name">
-        ЗАГРУЗКА КЛАССА...
+        ЗАГРУЗКА...
     </div>
 
-    <!-- Центральный блок: Экипировка и Аватар -->
     <div class="hero-layout">
         <!-- Левая колонка (Броня) -->
         <div class="equip-col">
@@ -210,7 +211,7 @@
             <div class="equip-slot" id="slot-boots"><span class="slot-label">ОБУВЬ</span></div>
         </div>
 
-        <!-- Аватар по центру -->
+        <!-- Увеличенный аватар по центру -->
         <div class="hero-avatar-box">
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
         </div>
@@ -230,31 +231,27 @@
         <div class="equip-slot" id="slot-weapon2" style="width: 55px; height: 55px; font-size: 24px;"><span class="slot-label">ЛЕВАЯ</span></div>
     </div>
 
-    <!-- Детальная панель характеристик -->
     <div class="stats-panel">
-        <div class="stats-grid" id="ui-stats-grid">
-            <!-- Заполняется JavaScript'ом -->
-        </div>
+        <div class="stats-grid" id="ui-stats-grid"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 1. БАЗА КЛАССОВ И САБКЛАССОВ
+        // Данные персонажа и классов с четкими иконками
         const CLASSES = {
-            knight: { name: "Рыцарь", armorMult: 1.15, critDmgMult: 1.5, dodgeMult: 1.0 },
-            berserk: { name: "Берсерк", armorMult: 0.9, critDmgMult: 1.8, dodgeMult: 1.0 },
-            shadow: { name: "Тень", armorMult: 1.0, critDmgMult: 2.0, dodgeMult: 1.2 }
+            knight: { name: "Рыцарь", icon: "🛡️⚔️", armorMult: 1.15, critDmgMult: 1.5, dodgeMult: 1.0 },
+            berserk: { name: "Берсерк", icon: "🪓🔥", armorMult: 0.9, critDmgMult: 1.8, dodgeMult: 1.0 },
+            shadow: { name: "Тень", icon: "🗡️🌑", armorMult: 1.0, critDmgMult: 2.0, dodgeMult: 1.2 }
         };
 
         const SUBCLASSES = {
-            none: { name: "", bonus: null },
-            dark_knight: { name: "Тёмный Рыцарь", bonus: "Вампиризм 5%" },
-            juggernaut: { name: "Джаггернаут", bonus: "+10% Урона Двуручным" }
+            none: { name: "" },
+            dark_knight: { name: "Тёмный Рыцарь" },
+            juggernaut: { name: "Джаггернаут" }
         };
 
-        // 2. БАЗА ПРЕДМЕТОВ
         const ITEMS_DB = {
             "sword_01": { id: "sword_01", name: "Стальной Меч", type: "weapon1", icon: "⚔️", stats: { atk: 15, str: 2 } },
             "shield_01": { id: "shield_01", name: "Тяжелый Щит", type: "weapon2", icon: "🛡️", stats: { armor: 20, blockChance: 15, end: 5 } },
@@ -262,21 +259,15 @@
             "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", stats: { armor: 35, end: 10, str: 3 } }
         };
 
-        // 3. СОСТОЯНИЕ ГЕРОЯ
         let hero = {
+            name: "Гладиатор",
             level: 5,
             baseClass: "knight",
             subClass: "dark_knight",
             hp: 350,
             maxHp: 350,
             potions: 1,
-            baseStats: {
-                str: 15, // Сила
-                agi: 10, // Ловкость
-                end: 20, // Выносливость
-                int: 5,  // Интеллект
-                luk: 5   // Удача
-            },
+            baseStats: { str: 15, agi: 10, end: 20, int: 5, luk: 5 },
             equipment: {
                 head: null,
                 chest: ITEMS_DB["armor_01"],
@@ -285,28 +276,21 @@
                 weapon1: ITEMS_DB["sword_01"],
                 weapon2: ITEMS_DB["shield_01"],
                 ring1: ITEMS_DB["ring_luck"],
-                ring2: null,
-                ring3: null,
-                ring4: null
+                ring2: null, ring3: null, ring4: null
             },
             finalStats: {}
         };
 
-        // 4. ДВИЖОК РАСЧЕТА ХАРАКТЕРИСТИК
+        // Если передан ник от Телеграма, подставим его
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
+        }
+
         function calculateStats() {
             let total = {
-                str: hero.baseStats.str,
-                agi: hero.baseStats.agi,
-                end: hero.baseStats.end,
-                int: hero.baseStats.int,
-                luk: hero.baseStats.luk,
-                armor: 0,
-                atk: 0,
-                critChance: 5,
-                critDmg: 150,
-                dodge: 0,
-                blockChance: 0,
-                armorPen: 0
+                str: hero.baseStats.str, agi: hero.baseStats.agi, end: hero.baseStats.end,
+                int: hero.baseStats.int, luk: hero.baseStats.luk,
+                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0
             };
 
             for (let key in hero.equipment) {
@@ -337,39 +321,41 @@
 
             hero.maxHp = hp;
             hero.finalStats = {
-                hp: hp,
-                damage: damage,
-                armor: total.armor,
-                critChance: total.critChance.toFixed(1),
-                critDmg: total.critDmg,
-                dodge: total.dodge.toFixed(1),
-                blockChance: total.blockChance,
+                hp: hp, damage: damage, armor: total.armor,
+                critChance: total.critChance.toFixed(1), critDmg: total.critDmg,
+                dodge: total.dodge.toFixed(1), blockChance: total.blockChance,
                 dropMult: dropMultiplier.toFixed(2),
                 str: total.str, agi: total.agi, end: total.end, int: total.int, luk: total.luk
             };
         }
 
-        // 5. ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
         function updateUI() {
-            let clsName = CLASSES[hero.baseClass].name;
+            let cls = CLASSES[hero.baseClass];
             let subName = SUBCLASSES[hero.subClass].name;
-            document.getElementById("ui-class-name").innerHTML = `🛡️ ⚔️<br>${subName ? subName : clsName} (Ур. ${hero.level})`;
+            let classTitle = subName ? subName : cls.name;
+            
+            // Красивый баннер: Иконка + Ник + Класс + Уровень
+            document.getElementById("ui-class-name").innerHTML = 
+                `${cls.icon} ${hero.name} <span style="font-size:12px; color:#aaa;">[${classTitle} • Ур. ${hero.level}]</span>`;
 
+            // Логика скрытия пустых слотов экипировки
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
             slots.forEach(slot => {
                 let el = document.getElementById("slot-" + slot);
                 if (el) {
                     if (hero.equipment[slot]) {
                         el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${getSlotName(slot)}</span>`;
+                        el.classList.remove("empty");
                         el.classList.add("filled");
                     } else {
-                        el.innerHTML = `<span style="color:#444;">?</span><span class="slot-label">${getSlotName(slot)}</span>`;
+                        // Если вещь не надета — скрываем элемент полностью
+                        el.innerHTML = "";
+                        el.classList.add("empty");
                         el.classList.remove("filled");
                     }
                 }
             });
 
-            // Обновляем счетчик зелий
             let potionEl = document.getElementById("potion-count");
             if (potionEl) potionEl.innerText = hero.potions;
 
@@ -401,19 +387,14 @@
             const names = {
                 head: "ШЛЕМ", chest: "БРОНЯ", belt: "ПОЯС", boots: "ОБУВЬ",
                 weapon1: "ПРАВАЯ", weapon2: "ЛЕВАЯ",
-                ring1: "КОЛЬЦО 1", ring2: "КОЛЬЦО 2", ring3: "КОЛЬЦО 3", ring4: "КОЛЬЦО 4"
+                ring1: "КОЛЬЦО", ring2: "КОЛЬЦО", ring3: "КОЛЬЦО", ring4: "КОЛЬЦО"
             };
             return names[slotId];
         }
 
-        // 6. ЛОГИКА ИНТЕРАКТИВА (Кнопки и Зелья)
         function openSection(sectionName) {
-            if (sectionName === 'ГЕРОЙ') {
-                return; // мы уже здесь
-            }
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
+            if (sectionName === 'ГЕРОЙ') return;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             alert("Раздел '" + sectionName + "' в разработке!");
         }
 
@@ -426,18 +407,13 @@
                 hero.potions--;
                 hero.hp = Math.min(hero.finalStats.hp, hero.hp + 50);
                 updateUI();
-                if (tg && tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                if (tg && tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 alert("У вас нет зелий в сумке!");
             }
         }
 
-        // Запуск при старте
         calculateStats();
         updateUI();
     </script>
