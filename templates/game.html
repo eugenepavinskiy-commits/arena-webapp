@@ -92,13 +92,13 @@
             font-size: 20px;
             position: relative;
         }
-        /* Пустой слот: полупрозрачный силуэт-подсказка */
+        /* Пустой слот: аккуратный контурный силуэт */
         .equip-slot.empty {
-            opacity: 0.3;
+            opacity: 0.35;
             border-style: dashed;
             border-color: #52525b;
         }
-        /* Заполненный слот: яркий предмет с золотой рамкой */
+        /* Заполненный слот: реальный предмет */
         .equip-slot.filled {
             border-style: solid;
             border-color: #f59e0b;
@@ -226,12 +226,12 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Левая колонка: Броня -->
+        <!-- Левая колонка: Броня (у каждого слота свой строгий силуэт) -->
         <div class="equip-col">
-            <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"></div>
-            <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"></div>
-            <div class="equip-slot empty" id="slot-belt" data-placeholder="🥋"></div>
-            <div class="equip-slot empty" id="slot-boots" data-placeholder="🥾"></div>
+            <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"><span class="slot-label">Шлем</span></div>
+            <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"><span class="slot-label">Броня</span></div>
+            <div class="equip-slot empty" id="slot-belt" data-placeholder="🥋"><span class="slot-label">Пояс</span></div>
+            <div class="equip-slot empty" id="slot-boots" data-placeholder="🥾"><span class="slot-label">Обувь</span></div>
         </div>
 
         <!-- Аватар -->
@@ -241,17 +241,17 @@
 
         <!-- Правая колонка: Кольца -->
         <div class="equip-col">
-            <div class="equip-slot empty" id="slot-ring1" data-placeholder="💍"></div>
-            <div class="equip-slot empty" id="slot-ring2" data-placeholder="💍"></div>
-            <div class="equip-slot empty" id="slot-ring3" data-placeholder="💍"></div>
-            <div class="equip-slot empty" id="slot-ring4" data-placeholder="💍"></div>
+            <div class="equip-slot empty" id="slot-ring1" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot empty" id="slot-ring2" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot empty" id="slot-ring3" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot empty" id="slot-ring4" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
         </div>
     </div>
 
     <!-- Нижний ряд: Оружие -->
     <div class="weapons-row">
-        <div class="equip-slot empty" id="slot-weapon1" data-placeholder="⚔️" style="width: 52px; height: 52px; font-size: 22px;"></div>
-        <div class="equip-slot empty" id="slot-weapon2" data-placeholder="🛡️" style="width: 52px; height: 52px; font-size: 22px;"></div>
+        <div class="equip-slot empty" id="slot-weapon1" data-placeholder="⚔️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Оружие</span></div>
+        <div class="equip-slot empty" id="slot-weapon2" data-placeholder="🛡️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Щит</span></div>
     </div>
 
     <div class="stats-panel">
@@ -292,12 +292,12 @@
             baseStats: { str: 15, agi: 10, end: 20, int: 5, luk: 5 },
             equipment: {
                 head: null,
-                chest: ITEMS_DB["armor_01"],
+                chest: ITEMS_DB["armor_01"], // Надета только броня
                 belt: null,
                 boots: null,
-                weapon1: ITEMS_DB["sword_01"],
-                weapon2: ITEMS_DB["shield_01"],
-                ring1: ITEMS_DB["ring_luck"],
+                weapon1: ITEMS_DB["sword_01"], // Меч
+                weapon2: ITEMS_DB["shield_01"], // Щит
+                ring1: ITEMS_DB["ring_luck"],  // Одно кольцо
                 ring2: null, ring3: null, ring4: null
             },
             finalStats: {}
@@ -358,20 +358,22 @@
             document.getElementById("ui-class-name").innerHTML = 
                 `${cls.icon} ${hero.name} <span style="font-size:11px; color:#d4d4d8; font-weight:normal;">[${classTitle} • Ур. ${hero.level}]</span>`;
 
+            // Строгое разделение слотов по их ключам инвентаря
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
-            slots.forEach(slot => {
-                let el = document.getElementById("slot-" + slot);
+            slots.forEach(slotKey => {
+                let el = document.getElementById("slot-" + slotKey);
                 if (el) {
                     let placeholderIcon = el.getAttribute("data-placeholder") || "";
-                    let slotNameRu = getSlotName(slot);
+                    let slotNameRu = getSlotName(slotKey);
+                    let equippedItem = hero.equipment[slotKey];
 
-                    if (hero.equipment[slot]) {
-                        // РЕЖИМ: Вещь надета (яркий значок предмета и золотая рамка)
-                        el.innerHTML = `${hero.equipment[slot].icon}<span class="slot-label">${slotNameRu}</span>`;
+                    if (equippedItem) {
+                        // Если в ЭТОМ конкретном слоте есть вещь — показываем её иконку
+                        el.innerHTML = `${equippedItem.icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.remove("empty");
                         el.classList.add("filled");
                     } else {
-                        // РЕЖИМ: Слот пустой (только аккуратный силуэт-подсказка)
+                        // Если слот пустой — строго контурный силуэт-подсказка
                         el.innerHTML = `<span style="font-size:16px;">${placeholderIcon}</span><span class="slot-label">${slotNameRu}</span>`;
                         el.classList.remove("filled");
                         el.classList.add("empty");
