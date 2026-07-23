@@ -69,7 +69,7 @@
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
         
         /* ========================================= */
-        /* МАГИЯ АВТО-ОБРЕЗКИ И УДАЛЕНИЯ ФОНА (V3.0) */
+        /* МАГИЯ АВТО-ОБРЕЗКИ И УДАЛЕНИЯ ФОНА (ФИНАЛ)*/
         /* ========================================= */
         .item-img-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -77,11 +77,11 @@
             pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1;
         }
         .item-img { 
-            width: 90%; height: 90%; /* Оставляем легкий отступ от краев ячейки */
-            object-fit: contain; /* ПОЛНОСТЬЮ ВМЕЩАЕТ картинку, не обрезая лезвия мечей */
-            transform: scale(1.15); /* Легкий зум, чтобы вещь смотрелась крупно, но не ломалась */
+            width: 100%; height: 100%; 
+            object-fit: cover; /* Заполняем ячейку целиком */
+            transform: scale(1.45); /* Золотая середина зума: срезает пустоту, но не режет лезвия */
             mix-blend-mode: screen; /* Растворяет чистый черный цвет */
-            filter: contrast(1.2) brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.8)); /* Делает текстуры сочными */
+            filter: contrast(1.3) brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.8)); 
         }
         /* ========================================= */
         
