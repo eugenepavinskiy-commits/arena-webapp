@@ -92,7 +92,7 @@
             font-size: 20px;
             position: relative;
         }
-        /* Пустой слот: аккуратный контурный силуэт */
+        /* Пустой слот: строгий контурный силуэт */
         .equip-slot.empty {
             opacity: 0.35;
             border-style: dashed;
@@ -173,7 +173,6 @@
             text-transform: uppercase;
         }
         
-        /* Кнопка добавления статов */
         .add-stat-btn {
             background: #f59e0b;
             color: #000;
@@ -262,12 +261,12 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Уникальные, интуитивные плейсхолдеры, которые не спутать с вещами -->
+        <!-- Чистые плейсхолдеры, строго отличающиеся от надетых вещей -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"><span class="slot-label">Шлем</span></div>
-            <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"><span class="slot-label">Броня</span></div>
-            <div class="equip-slot empty" id="slot-belt" data-placeholder="🪢"><span class="slot-label">Пояс</span></div>
-            <div class="equip-slot empty" id="slot-boots" data-placeholder="🥾"><span class="slot-label">Обувь</span></div>
+            <div class="equip-slot empty" id="slot-chest" data-placeholder="🦺"><span class="slot-label">Броня</span></div>
+            <div class="equip-slot empty" id="slot-belt" data-placeholder="➰"><span class="slot-label">Пояс</span></div>
+            <div class="equip-slot empty" id="slot-boots" data-placeholder="👢"><span class="slot-label">Обувь</span></div>
         </div>
 
         <div class="hero-avatar-box">
@@ -314,17 +313,16 @@
             "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", stats: { armor: 35, end: 10, str: 3 } }
         };
 
-        // Состояние героя
         let hero = {
             name: "Гладиатор",
             level: 5,
-            unspentPoints: 15, // 3 на старте + 12 за уровни
+            unspentPoints: 15,
             baseClass: "knight",
             subClass: "dark_knight",
             hp: 350,
             maxHp: 350,
             potions: 1,
-            baseStats: { str: 10, agi: 10, end: 10, int: 5, luk: 5 },
+            baseStats: { str: 10, agi: 10, end: 10, int: 10, luk: 5 },
             equipment: {
                 head: null,
                 chest: ITEMS_DB["armor_01"],
@@ -342,7 +340,6 @@
             hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         }
 
-        // Логика добавления статов
         function addStat(statKey) {
             if (hero.unspentPoints > 0) {
                 hero.baseStats[statKey]++;
@@ -355,9 +352,12 @@
 
         function calculateStats() {
             let total = {
-                str: hero.baseStats.str, agi: hero.baseStats.agi, end: hero.baseStats.end,
-                int: hero.baseStats.int, luk: hero.baseStats.luk,
-                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0
+                str: hero.baseStats.str, 
+                agi: hero.baseStats.agi, 
+                end: hero.baseStats.end,
+                int: hero.baseStats.int, 
+                luk: hero.baseStats.luk,
+                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, magicDef: 0
             };
 
             for (let key in hero.equipment) {
@@ -379,6 +379,11 @@
             let damage = total.str * 2 + total.atk;
             total.critChance += (total.agi / 5) + (total.luk / 10);
             total.dodge += (total.agi / 4);
+            
+            // ИНТЕЛЛЕКТ ТЕПЕРЬ РАБОТАЕТ: дает Маг. Защиту и бонус к урону крита
+            total.magicDef = total.int * 3;
+            total.critDmg += total.int * 2; // Каждое очко интеллекта усиливает силу критического удара
+
             let dropMultiplier = 1.0 + (total.luk / 100);
 
             let cls = CLASSES[hero.baseClass];
@@ -389,6 +394,7 @@
             hero.maxHp = hp;
             hero.finalStats = {
                 hp: hp, damage: damage, armor: total.armor,
+                magicDef: total.magicDef,
                 critChance: total.critChance.toFixed(1), critDmg: total.critDmg,
                 dodge: total.dodge.toFixed(1), blockChance: total.blockChance,
                 dropMult: dropMultiplier.toFixed(2),
@@ -428,7 +434,6 @@
             let potionEl = document.getElementById("potion-count");
             if (potionEl) potionEl.innerText = hero.potions;
 
-            // Генерация кнопок плюса, если есть свободные очки
             let btnStr = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('str')">+</button>` : ``;
             let btnAgi = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('agi')">+</button>` : ``;
             let btnEnd = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('end')">+</button>` : ``;
@@ -445,13 +450,14 @@
                 <div class="stat-item"><span>⚔️ Сила (Урон)</span> <div><b>${hero.finalStats.str}</b>${btnStr}</div></div>
                 <div class="stat-item"><span>🏃 Ловкость (Крит/Уворот)</span> <div><b>${hero.finalStats.agi}</b>${btnAgi}</div></div>
                 <div class="stat-item"><span>❤️ Выносливость (HP)</span> <div><b>${hero.finalStats.end}</b>${btnEnd}</div></div>
-                <div class="stat-item"><span>🧠 Интеллект</span> <div><b>${hero.finalStats.int}</b>${btnInt}</div></div>
+                <div class="stat-item"><span>🧠 Интеллект (Маг.Защита)</span> <div><b>${hero.finalStats.int}</b>${btnInt}</div></div>
                 <div class="stat-item"><span>🍀 Удача (Дроп)</span> <div><b>${hero.finalStats.luk}</b>${btnLuk}</div></div>
                 
                 <div class="stat-group-title">Боевые параметры</div>
                 <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b></div>
                 <div class="stat-item"><span>🗡️ Физ. Урон</span> <b>${hero.finalStats.damage}</b></div>
-                <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
+                <div class="stat-item"><span>🛡️ Физ. Броня</span> <b>${hero.finalStats.armor}</b></div>
+                <div class="stat-item"><span>🔮 Маг. Защита</span> <b>${hero.finalStats.magicDef}</b></div>
                 <div class="stat-item"><span>⚡ Шанс Крита</span> <b>${hero.finalStats.critChance}%</b></div>
                 <div class="stat-item"><span>💥 Урон Крита</span> <b>${hero.finalStats.critDmg}%</b></div>
                 <div class="stat-item"><span>💨 Уклонение</span> <b>${hero.finalStats.dodge}%</b></div>
