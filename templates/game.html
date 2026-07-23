@@ -52,7 +52,7 @@
         .equip-slot {
             width: 48px; height: 48px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
-            background: #000000; border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95);
+            background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95);
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { background: #050505; border: 1px solid #1c1c1f; }
@@ -67,9 +67,9 @@
             pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1;
         }
         .item-img { 
-            width: 95%; height: 95%; 
+            width: 90%; height: 90%; 
             object-fit: contain; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
+            filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); 
         }
         
         .rarity-common { border-color: #3f3f46; }
@@ -87,7 +87,7 @@
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         
-        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: #000000; border: 1px solid #27272a;}
+        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: #050505; border: 1px solid #1c1c1f; cursor: default; }
         
@@ -313,74 +313,66 @@
         };
 
         // ==========================================
-        // ИДЕАЛЬНАЯ БАЗА ПРЕДМЕТОВ (Интеграция новых щитов и лучших вещей)
+        // БАЗА ДАННЫХ ПРЕДМЕТОВ (Полное соответствие файлам GitHub)
         // ==========================================
         const ITEMS_DB = {
             // УРОВЕНЬ 1
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5 } },
             "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, stats: { atk: 4, agi: 2 } },
             "64755": { id: "64755", name: "Синяя Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 8 } },
-            "shields_v2_26": { id: "shields_v2_26", name: "Простой Баклер", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 5, blockChance: 3 } },
-            "85934": { id: "85934", name: "Золотой Амулет", type: "ring", icon: "🧿", rarity: "common", lvl: 1, price: 60, stats: { luk: 3, end: 1 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 5, blockChance: 3 } },
 
             // УРОВЕНЬ 2
-            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight"], stats: { atk: 12, str: 2 } },
-            "62365": { id: "62365", name: "Темная Броня", type: "chest", icon: "🥋", rarity: "rare", lvl: 2, price: 150, stats: { armor: 15, str: 1 } },
-            "shields_v2_24": { id: "shields_v2_24", name: "Деревянный Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, blockChance: 5 } },
-            "56225": { id: "56225", name: "Малое Зелье Здоровья", type: "belt", icon: "🧪", rarity: "common", lvl: 2, price: 80, stats: { end: 5 }, desc: "Крепится на пояс. Повышает выносливость." },
-            "61738": { id: "61738", name: "Кровавый Гримуар", type: "weapon2", icon: "📕", rarity: "rare", lvl: 2, price: 160, allowedClasses: ["shadow", "ranger"], stats: { mst: 5, critChance: 3 }, desc: "Держится в левой руке. Дает тайные знания." },
+            "61669": { id: "61669", name: "Боевой Топор", type: "two_handed", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight"], stats: { atk: 15, str: 2, agi: -1 } },
+            "54873": { id: "54873", name: "Кожаная Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 2, price: 180, stats: { armor: 12, agi: 3 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Баклер Новичка", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, blockChance: 5 } },
+            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 14, mst: 3 } },
 
             // УРОВЕНЬ 3
-            "48535": { id: "48535", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 4 } },
-            "54873": { id: "54873", name: "Кожаная Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 3, price: 180, stats: { armor: 12, agi: 3 } },
-            "shields_v2_17": { id: "shields_v2_17", name: "Синий Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 3, price: 230, allowedClasses: ["knight"], stats: { armor: 18, blockChance: 8 } },
-            "51613": { id: "51613", name: "Светлая Броня", type: "chest", icon: "🥋", rarity: "rare", lvl: 3, price: 260, stats: { armor: 20, luk: 2 } },
-            "48186": { id: "48186", name: "Зелье Ярости", type: "belt", icon: "🩸", rarity: "rare", lvl: 3, price: 250, stats: { str: 5, end: -2 }, desc: "Жертвует здоровьем ради силы." },
+            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 22, critChance: 4 } },
+            "61409": { id: "61409", name: "Укрепленная Кираса", type: "chest", icon: "🧥", rarity: "rare", lvl: 3, price: 250, stats: { armor: 22 } },
+            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 2 } },
+            "52433": { id: "52433", name: "Красная Кираса", type: "chest", icon: "🦺", rarity: "rare", lvl: 3, price: 270, stats: { armor: 25, str: 2 } },
 
             // УРОВЕНЬ 4
-            "47612": { id: "47612", name: "Кузнечный Молот", type: "weapon1", icon: "🔨", rarity: "epic", lvl: 4, price: 450, stats: { atk: 28, armorPen: 5 } },
-            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 550, allowedClasses: ["knight", "berserk"], stats: { armor: 40, agi: -2 } },
-            "shields_v2_03": { id: "shields_v2_03", name: "Щит Наемника", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25, blockChance: 10, str: 2 } },
-            "shields_v2_14": { id: "shields_v2_14", name: "Лесной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 350, allowedClasses: ["ranger", "knight"], stats: { armor: 20, dodgeChance: 4 } },
-            "40624": { id: "40624", name: "Зелье Ловкости", type: "belt", icon: "🧪", rarity: "rare", lvl: 4, price: 320, stats: { agi: 5, dodgeChance: 2 } },
+            "23564": { id: "23564", name: "Двуручная Кирка", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 35, armorPen: 5 } },
+            "52995": { id: "52995", name: "Серая Броня", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, stats: { armor: 35, mst: 4 } },
+            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25, blockChance: 8, str: 2 } },
+            "24393": { id: "24393", name: "Зелье Крови", type: "belt", icon: "🩸", rarity: "epic", lvl: 4, price: 400, stats: { atk: 10, end: -3 }, desc: "Крепится на пояс. Жертвует здоровьем ради силы." },
 
             // УРОВЕНЬ 5
-            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 35, str: 5 } },
-            "44778": { id: "44778", name: "Фиолетовая Броня", type: "chest", icon: "👾", rarity: "epic", lvl: 5, price: 850, stats: { armor: 45, mst: 4 } },
-            "shields_v2_01": { id: "shields_v2_01", name: "Щит Льва", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 900, allowedClasses: ["knight"], stats: { armor: 40, blockChance: 12, str: 4 }, desc: "Символ королевской стражи." },
-            "shields_v2_11": { id: "shields_v2_11", name: "Щит Совы", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 5, price: 750, allowedClasses: ["knight"], stats: { armor: 32, mst: 5, luk: 3 } },
-            "39545": { id: "39545", name: "Флакон с Ядом", type: "belt", icon: "☠️", rarity: "epic", lvl: 5, price: 600, allowedClasses: ["shadow"], stats: { atk: 10, critChance: 5 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 45, str: 5 } },
+            "51613": { id: "51613", name: "Светлая Броня", type: "chest", icon: "🥋", rarity: "epic", lvl: 5, price: 750, stats: { armor: 45, luk: 4 } },
+            "42540": { id: "42540", name: "Темный Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 40, blockChance: 12 } },
+            "60697": { id: "60697", name: "Темный Плащ", type: "chest", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 38, agi: 8 } },
 
             // УРОВЕНЬ 6
-            "33616": { id: "33616", name: "Меч Инквизитора", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 6, price: 1500, allowedClasses: ["knight", "berserk"], stats: { atk: 50, str: 8, critDmg: 20 } },
-            "38344": { id: "38344", name: "Серебряный Доспех", type: "chest", icon: "🛡️", rarity: "legendary", lvl: 6, price: 1600, stats: { armor: 65, luk: 5, mst: 5 } },
-            "shields_v2_08": { id: "shields_v2_08", name: "Щит Бездны", type: "weapon2", icon: "🛡️", rarity: "epic", premium: true, lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 55, atk: 15, end: -5 }, desc: "Шипы наносят урон врагам." },
-            "shields_v2_12": { id: "shields_v2_12", name: "Щит Волка", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { armor: 45, str: 6 } },
-            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 900, stats: { agi: 6, luk: 4 } },
+            "47612": { id: "47612", name: "Кузнечный Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { atk: 60, armorPen: 10 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], stats: { armor: 60, agi: -2 } },
+            "shields_v2_37": { id: "shields_v2_37", name: "Щит Стража", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 55, atk: 5, end: 5 } },
+            "19204": { id: "19204", name: "Рубиновое Кольцо", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, stats: { str: 8, atk: 12 } },
 
             // УРОВЕНЬ 7
-            "23564": { id: "23564", name: "Двуручная Кирка", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 75, armorPen: 10 } },
-            "24119": { id: "24119", name: "Ветеранский Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 70, str: 6 } },
-            "shields_v2_06": { id: "shields_v2_06", name: "Святой Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 65, blockChance: 15, end: 8 } },
-            "shields_v2_20": { id: "shields_v2_20", name: "Демонический Щит", type: "weapon2", icon: "🛡️", rarity: "epic", premium: true, lvl: 7, price: 2400, allowedClasses: ["knight"], stats: { armor: 60, str: 12, agi: -3 } },
-            "22937": { id: "22937", name: "Амулет Природы", type: "ring", icon: "🍀", rarity: "epic", lvl: 7, price: 1200, stats: { end: 8, luk: 5 } },
+            "20152": { id: "20152", name: "Шипастая Палица", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85, str: 10, agi: -3 } },
+            "41139": { id: "41139", name: "Кожаная Куртка", type: "chest", icon: "🧥", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 55, dodgeChance: 6 } },
+            "24119": { id: "24119", name: "Ветеранский Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 75, str: 6 } },
+            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 80, blockChance: 15, end: 8 } },
 
             // УРОВЕНЬ 8
-            "17271": { id: "17271", name: "Боевой Молот", type: "two_handed", icon: "🔨", rarity: "legendary", lvl: 8, price: 3500, allowedClasses: ["knight", "berserk"], stats: { atk: 110, armorPen: 20 } },
-            "17556": { id: "17556", name: "Коричневый Плащ", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2600, allowedClasses: ["ranger", "shadow"], stats: { armor: 65, dodgeChance: 8 } },
-            "shields_v2_02": { id: "shields_v2_02", name: "Щит Некроманта", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 8, price: 3800, allowedClasses: ["knight"], stats: { armor: 85, mst: 15, blockChance: 18 } },
-            "19204": { id: "19204", name: "Рубиновое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 8, price: 2800, stats: { str: 12, atk: 20 } },
+            "33616": { id: "33616", name: "Меч Инквизитора", type: "weapon1", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], stats: { atk: 90, str: 12, critDmg: 20 } },
+            "34215": { id: "34215", name: "Нагрудник Гладиатора", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 85, end: 10 } },
+            "17556": { id: "17556", name: "Коричневый Плащ", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], stats: { armor: 70, dodgeChance: 10 } },
+            "50560": { id: "50560", name: "Бордовая Мантия", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 75, mst: 12 } },
 
             // УРОВЕНЬ 9
-            "20152": { id: "20152", name: "Шипастая Палица", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 9, price: 4800, allowedClasses: ["berserk"], stats: { atk: 130, str: 15, agi: -5 } },
-            "50113": { id: "50113", name: "Черная Мантия", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 4500, allowedClasses: ["shadow"], stats: { armor: 80, dodgeChance: 12, agi: 20 } },
-            "shields_v2_05": { id: "shields_v2_05", name: "Щит Стихий", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 9, price: 5200, allowedClasses: ["knight"], stats: { armor: 100, mst: 20, end: 10 } },
-            "shields_v2_31": { id: "shields_v2_31", name: "Зеркальный Щит", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 5500, allowedClasses: ["knight"], stats: { armor: 90, dodgeChance: 10, blockChance: 20 } },
+            "17271": { id: "17271", name: "Боевой Молот", type: "two_handed", icon: "🔨", rarity: "legendary", lvl: 9, price: 3500, allowedClasses: ["knight", "berserk"], stats: { atk: 120, armorPen: 20 } },
+            "18824": { id: "18824", name: "Сапфировый Кулон", type: "ring", icon: "💎", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 110, atk: 25, end: -10 }, desc: "Шипы наносят урон, но щит тяжел." },
+            "50113": { id: "50113", name: "Черная Мантия", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 90, dodgeChance: 15, agi: 20 } },
 
             // УРОВЕНЬ 10
-            "18824": { id: "18824", name: "Сапфировый Кулон", type: "ring", icon: "💎", rarity: "legendary", lvl: 10, price: 6000, stats: { mst: 25, critChance: 12 } },
-            "shields_v2_09": { id: "shields_v2_09", name: "Око Наблюдателя", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 10, price: 7500, allowedClasses: ["knight"], stats: { armor: 130, luk: 20, mst: 20 }, desc: "Ни одна атака не пройдет незамеченной." },
-            "shields_v2_36": { id: "shields_v2_36", name: "Щит Валькирии", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 8000, allowedClasses: ["knight"], stats: { armor: 150, end: 30, blockChance: 25 } }
+            "23579": { id: "23579", name: "Теневая Броня", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], stats: { armor: 105, agi: 25, dodgeChance: 18 } },
+            "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], stats: { armor: 140, end: 25, blockChance: 25 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
 
