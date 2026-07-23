@@ -17,11 +17,11 @@
         .top-dashboard {
             display: flex; justify-content: space-between; align-items: center;
             background: #18181b; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid #27272a; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            border: 1px solid #27272a; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 12px; }
         .resources span { color: #fff; margin-right: 10px; }
-        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px; }
+        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
         .nav-btn {
             background: #27272a; color: #a1a1aa; border: 1px solid #3f3f46;
             padding: 8px 0; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.1s ease; font-weight: bold; text-transform: uppercase;
@@ -34,27 +34,25 @@
 
         /* ГЕРОЙ И ЭКИПИРОВКА */
         .class-banner {
-            background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%); border: 1px solid #f59e0b; border-radius: 6px; padding: 6px; text-align: center; margin-bottom: 12px; color: #f59e0b; font-weight: bold; font-size: 13px; letter-spacing: 0.5px; cursor: pointer;
+            background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%); border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; text-align: center; margin-bottom: 12px; color: #f59e0b; font-weight: bold; font-size: 13px; letter-spacing: 0.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        .hero-layout { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; /* Добавили воздух снизу */ }
         
-        /* Увеличили gap, чтобы подписи не слипались со слотами */
+        /* Плотная компоновка куклы героя */
+        .hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 16px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; }
         
+        /* Эффект глубокого сокета для слотов */
         .equip-slot {
             width: 48px; height: 48px; background: #18181b; border-radius: 8px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
-        
-        /* НОВЫЙ ДИЗАЙН ПУСТЫХ СЛОТОВ (Эффект "Сокета") */
         .equip-slot.empty { 
-            border: 1px solid rgba(63, 63, 70, 0.6); /* Сплошная полупрозрачная рамка вместо пунктира */
-            background: #121214; 
-            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); /* Внутренняя тень создает объем */
+            border: 1px solid rgba(63, 63, 70, 0.6); background: #121214; 
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.8); 
         }
-        .equip-slot.blocked { border: 1px solid #ef4444; background: #450a0a; cursor: not-allowed; box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); }
-        .silhouette { font-size: 24px; opacity: 0.2; filter: grayscale(100%); }
+        .equip-slot.blocked { border: 1px solid #ef4444; background: #450a0a; cursor: not-allowed; box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.8); }
+        .silhouette { font-size: 24px; opacity: 0.15; filter: grayscale(100%); }
         .item-icon { font-size: 24px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
         
         .rarity-common { border: 1px solid #71717a; background: #27272a; }
@@ -62,119 +60,118 @@
         .rarity-epic { border: 1px solid #a855f7; background: #2e1065; box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .rarity-legendary { border: 1px solid #f59e0b; background: #451a03; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
         
-        /* Улучшенная типографика подписей */
-        .slot-label { 
-            position: absolute; bottom: -14px; /* Отодвинули от слота */
-            font-size: 8px; /* Чуть крупнее */
-            color: #a1a1aa; /* Более светлый и читаемый цвет */
-            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.3px;
-        }
+        .slot-label { position: absolute; bottom: -14px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.3px;}
         
-        .hero-avatar-box { flex-grow: 1; padding: 0 10px; text-align: center; }
-        .hero-avatar { width: 100%; max-width: 230px; border-radius: 10px; display: block; margin: 0 auto; transition: all 0.3s ease; object-fit: cover; aspect-ratio: 4/5; }
+        /* Аватар Героя (Умное кадрирование) */
+        .hero-avatar-box { flex-shrink: 0; width: 200px; text-align: center; position: relative; border-radius: 10px; overflow: hidden; }
+        .hero-avatar { 
+            width: 100%; height: 260px; object-fit: cover; object-position: top center; 
+            transform: scale(1.05); /* Срезает артефакты по краям */
+            display: block; transition: all 0.3s ease; 
+        }
+        /* Внутренняя тень, чтобы края картинки плавно уходили в UI */
+        .hero-avatar-box::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8); pointer-events: none; border-radius: 10px;
+        }
+
         .aura-knight { border: 2px solid #fbbf24; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
         .aura-berserk { border: 2px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
         .aura-shadow { border: 2px solid #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
         .aura-ranger { border: 2px solid #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
 
-        .weapons-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 24px; }
+        .weapons-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
 
         /* ИНВЕНТАРЬ И СТАТЫ */
         .inventory-panel { 
-            background: linear-gradient(180deg, #18181b 0%, #121214 100%); /* Легкий градиент */
-            border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 12px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
+            border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #f59e0b; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 6px; margin-bottom: 10px; }
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; transition: transform 0.1s; position: relative;}
         .inv-item:active { transform: scale(0.88); }
+        .inv-item.empty { background: #121214; border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); cursor: default; }
         
-        /* Применили "Сокет" стиль к пустым слотам инвентаря */
-        .inv-item.empty { 
-            background: #121214; 
-            border: 1px solid rgba(63, 63, 70, 0.5); 
-            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6);
-            cursor: default; 
-        }
-        
-        .levelup-container { margin-bottom: 10px; }
-        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; }
-        .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        .levelup-dropdown { background: #27272a; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; margin-top: 6px; display: none; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .levelup-container { margin-bottom: 12px; }
+        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
+        .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2); }
+        .levelup-dropdown { background: #27272a; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; margin-top: 6px; display: none; grid-template-columns: 1fr 1fr; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .levelup-dropdown.show { display: grid; }
         .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
         .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 20px; height: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
-        .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        
-        /* Улучшенные панели статов */
-        .stats-card { 
-            background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
-            border-radius: 8px; padding: 12px; border: 1px solid #27272a;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; margin-bottom: 8px; }
+        .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stats-card { background: linear-gradient(180deg, #18181b 0%, #121214 100%); border-radius: 8px; padding: 12px; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; margin-bottom: 8px; letter-spacing: 0.5px;}
         .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 4px; margin-bottom: 4px; font-size: 10px; color: #a1a1aa; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .stat-item b { font-size: 11px; color: #fff; }
-        .hp-bar-bg { width: 100%; height: 5px; background: #27272a; border-radius: 3px; overflow: hidden; margin-top:4px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);}
+        .hp-bar-bg { width: 100%; height: 5px; background: #27272a; border-radius: 3px; overflow: hidden; margin-top: 4px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); }
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s; }
 
-        /* ЛАВКА */
+        /* ЛАВКА И ФИЛЬТРЫ */
         .shop-controls { display: flex; gap: 10px; margin-bottom: 8px; }
-        .shop-tab { flex: 1; padding: 8px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; }
-        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; }
-        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; }
-        .shop-filters { display: flex; gap: 8px; margin-bottom: 12px; }
-        .shop-select { flex: 1; background: #27272a; color: #fff; border: 1px solid #3f3f46; border-radius: 6px; padding: 6px; font-size: 11px; outline: none; }
-        .shop-list { display: flex; flex-direction: column; gap: 8px; }
-        .shop-item-card { display: flex; background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 8px; align-items: center; gap: 10px; }
-        .shop-item-icon { width: 44px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 2px; }
-        .shop-item-name { font-weight: bold; font-size: 12px; color: #fff; display:flex; justify-content:space-between; }
-        .shop-item-lvl { font-size: 9px; color: #a1a1aa; background: #27272a; padding: 2px 4px; border-radius: 4px; }
-        .shop-class-tag { font-size: 8px; padding: 2px 4px; border-radius: 3px; display: inline-block; width: fit-content; margin-top: 2px; }
+        .shop-tab { flex: 1; padding: 10px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; text-transform: uppercase;}
+        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4); }
+        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
+        
+        .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .shop-select { flex: 1; background: #27272a; color: #fff; border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; font-size: 11px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+        
+        .shop-list { display: flex; flex-direction: column; gap: 10px; }
+        .shop-item-card { display: flex; background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 10px; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .shop-item-icon { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 3px; }
+        .shop-item-name { font-weight: bold; font-size: 13px; color: #fff; display:flex; justify-content:space-between; }
+        .shop-item-lvl { font-size: 9px; color: #a1a1aa; background: #27272a; padding: 2px 5px; border-radius: 4px; border: 1px solid #3f3f46; }
+        .shop-class-tag { font-size: 8px; padding: 2px 5px; border-radius: 3px; display: inline-block; width: fit-content; margin-top: 2px; font-weight: bold; }
         .tag-uni { background: #3f3f46; color: #d4d4d8; }
         .tag-class { background: #064e3b; color: #34d399; border: 1px solid #059669; }
         .tag-twohand { background: #7f1d1d; color: #fca5a5; border: 1px solid #b91c1c; }
-        .shop-item-stats { font-size: 10px; color: #10b981; margin-top: 2px;}
-        .shop-item-desc { font-size: 9px; color: #71717a; font-style: italic; margin-top: 2px; }
-        .shop-btn { padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; border: none; flex-shrink: 0; }
-        .btn-buy { background: #10b981; color: #000; }
-        .btn-buy:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; }
-        .btn-sell { background: #ef4444; color: #fff; }
+        .shop-item-stats { font-size: 11px; color: #10b981; margin-top: 2px;}
+        .shop-item-desc { font-size: 10px; color: #71717a; font-style: italic; margin-top: 2px; line-height: 1.3;}
+        .shop-btn { padding: 10px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s;}
+        .shop-btn:active { transform: scale(0.95); }
+        .btn-buy { background: #10b981; color: #000; box-shadow: 0 2px 6px rgba(16,185,129,0.3); }
+        .btn-buy:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; box-shadow: none; }
+        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
 
-        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ */
+        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ (КИНЕМАТОГРАФИЧНЫЙ ПОСТЕР) */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
         .class-icon-btn {
-            background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 8px 0;
-            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: all 0.2s;
+            background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px 0;
+            display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
         }
-        .class-icon-btn .icon { font-size: 22px; }
-        .class-icon-btn .name { font-size: 8px; font-weight: bold; color: #a1a1aa; text-transform: uppercase; }
-        .class-icon-btn.selected { background: #27272a; border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+        .class-icon-btn .icon { font-size: 24px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.8)); }
+        .class-icon-btn .name { font-size: 9px; font-weight: bold; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px;}
+        .class-icon-btn.selected { background: #27272a; border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
         .class-icon-btn.selected .name { color: #f59e0b; }
 
-        .class-detail-card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .class-preview-container { position: relative; width: 100%; height: 200px; }
-        .class-preview-img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-        .class-preview-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; background: linear-gradient(to top, #18181b 10%, transparent 100%); }
-        .class-detail-title-box { position: absolute; bottom: 8px; width: 100%; text-align: center; z-index: 2; }
-        .class-detail-title { font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 5px #000, 0 0 10px rgba(0,0,0,0.8); }
-        .class-detail-content { padding: 12px; }
-        .class-detail-growth { text-align: center; font-size: 10px; color: #a1a1aa; margin-bottom: 12px; }
-        .class-detail-lore { font-size: 11px; color: #d4d4d8; line-height: 1.4; font-style: italic; margin-bottom: 12px; text-align: center; }
+        .class-detail-card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
-        .class-bars { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; background: #121214; padding: 10px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
-        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: bold; color: #d4d4d8; }
+        .class-preview-container { position: relative; width: 100%; height: 220px; overflow: hidden; }
+        .class-preview-img { 
+            width: 100%; height: 100%; object-fit: cover; object-position: top center; 
+            transform: scale(1.05); /* Убираем рамки нейросетей */
+        }
+        .class-preview-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(to top, #18181b 15%, transparent 100%); }
+        .class-detail-title-box { position: absolute; bottom: 12px; width: 100%; text-align: center; z-index: 2; }
+        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 4px 8px #000, 0 0 15px rgba(0,0,0,0.9); }
+        
+        .class-detail-content { padding: 16px; }
+        .class-detail-growth { text-align: center; font-size: 11px; color: #a1a1aa; margin-bottom: 14px; }
+        .class-detail-lore { font-size: 12px; color: #d4d4d8; line-height: 1.5; font-style: italic; margin-bottom: 16px; text-align: center; }
+        
+        .class-bars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; background: #121214; padding: 12px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #d4d4d8; }
         .c-bar-wrap { width: 65%; height: 6px; background: #27272a; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); }
-        .c-bar-fill { height: 100%; border-radius: 3px; }
+        .c-bar-fill { height: 100%; border-radius: 3px; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
         
-        .class-subclasses { font-size: 10px; padding: 10px; border-radius: 8px; border: 1px solid; margin-bottom: 12px; }
-        .class-subclasses b { display: block; margin-bottom: 4px; text-transform: uppercase; font-size: 11px; }
+        .class-subclasses { font-size: 11px; padding: 12px; border-radius: 8px; border: 1px solid; margin-bottom: 16px; line-height: 1.4; }
+        .class-subclasses b { display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
         
-        .select-class-btn { width: 100%; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); transition: transform 0.1s; }
+        .select-class-btn { width: 100%; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); transition: transform 0.1s; letter-spacing: 1px;}
         .select-class-btn:active { transform: scale(0.98); }
         .select-class-btn:disabled { background: #27272a !important; color: #71717a !important; cursor: default; box-shadow: none !important; }
     </style>
@@ -208,7 +205,7 @@
                 <div class="equip-slot empty" id="slot-belt" data-sil="➰" onclick="unequipSlot('belt')"></div>
                 <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
             </div>
-            <div class="hero-avatar-box">
+            <div class="hero-avatar-box" id="avatar-container">
                 <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
             </div>
             <div class="equip-col">
@@ -263,7 +260,7 @@
     <!-- ================= ЭКРАН 3: КЛАССЫ ================= -->
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div style="font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 10px; line-height: 1.3;">
+        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 14px; line-height: 1.4;">
             Смена специализации стоит <b style="color:#fbbf24;">5000 💰</b>.<br>Каждый класс обладает уникальным визуалом и стилем боя.
         </div>
         
@@ -271,7 +268,7 @@
         <div id="ui-class-detail"></div>
     </div>
 
-    <!-- ================= ЛОГИКА И БАЗЫ ДАННЫХ ================= -->
+    <!-- ================= ЛОГИКА ================= -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -543,9 +540,11 @@
                 let cls = CLASSES[hero.baseClass];
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
 
+                let avatarContainer = document.getElementById("avatar-container");
+                avatarContainer.className = "hero-avatar-box aura-" + hero.baseClass;
+                
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
-                avatarEl.className = "hero-avatar aura-" + hero.baseClass;
 
                 const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
                 slots.forEach(slotKey => {
@@ -633,6 +632,7 @@
 
                     SHOP_ASSORTMENT.forEach(itemId => {
                         let item = ITEMS_DB[itemId];
+                        
                         if (fType === 'weapon' && item.type !== 'weapon1' && item.type !== 'weapon2' && item.type !== 'two_handed') return;
                         if (fType === 'armor' && item.type !== 'chest' && item.type !== 'head' && item.type !== 'boots' && item.type !== 'belt') return;
                         if (fType === 'ring' && item.type !== 'ring') return;
