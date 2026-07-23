@@ -9,13 +9,8 @@
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d0d0f;
-            color: #e4e4e7;
-            margin: 0;
-            padding: 8px;
-            font-size: 12px;
-            padding-bottom: 24px;
-            user-select: none;
+            background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 8px;
+            font-size: 12px; padding-bottom: 24px; user-select: none;
         }
         
         /* 1. ВЕРХНЯЯ СМАРТ-ПАНЕЛЬ */
@@ -24,261 +19,271 @@
             background: #18181b; padding: 8px 12px; border-radius: 8px;
             border: 1px solid #27272a; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
-        .resources { font-weight: bold; color: #fbbf24; font-size: 11px; }
-        .resources span { color: #fff; margin-right: 8px; }
-        .potion-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white; border: none; padding: 5px 10px; border-radius: 6px;
-            font-weight: bold; font-size: 10px; cursor: pointer;
-            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
-            transition: transform 0.1s;
-        }
-        .potion-btn:active { transform: scale(0.95); }
-
-        /* 2. НАВИГАЦИЯ */
+        .resources { font-weight: bold; color: #fbbf24; font-size: 12px; }
+        .resources span { color: #fff; margin-right: 10px; }
+        
+        /* 2. НАВИГАЦИЯ (Вкладки) */
         .nav-grid {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 8px;
         }
         .nav-btn {
             background: #27272a; color: #a1a1aa; border: 1px solid #3f3f46;
-            padding: 6px 0; font-size: 10px; border-radius: 6px; cursor: pointer;
-            transition: all 0.1s ease;
+            padding: 8px 0; font-size: 10px; border-radius: 6px; cursor: pointer;
+            transition: all 0.1s ease; font-weight: bold; text-transform: uppercase;
         }
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: #000; border-color: #f59e0b; font-weight: bold;
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+            color: #000; border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
         }
 
-        /* 3. БАННЕР КЛАССА */
+        /* 3. СИСТЕМА ЭКРАНОВ (SPA) */
+        .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
+        .app-screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- СТИЛИ ГЕРОЯ --- */
         .class-banner {
             background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%);
-            border: 1px solid #f59e0b; border-radius: 6px;
-            padding: 6px; text-align: center; margin-bottom: 12px;
-            color: #f59e0b; font-weight: bold; font-size: 13px;
-            letter-spacing: 0.5px;
+            border: 1px solid #f59e0b; border-radius: 6px; padding: 6px; text-align: center; margin-bottom: 12px;
+            color: #f59e0b; font-weight: bold; font-size: 13px; letter-spacing: 0.5px;
         }
-
-        /* 4. БЛОК ГЕРОЯ И СИЛУЭТЫ */
-        .hero-layout {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-        }
+        .hero-layout { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .equip-col { display: flex; flex-direction: column; gap: 8px; width: 48px; }
         .equip-slot {
             width: 48px; height: 48px; background: #18181b; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            position: relative; cursor: pointer; transition: transform 0.1s;
+            display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { border: 1px dashed #3f3f46; background: #121214; }
         .silhouette { font-size: 24px; opacity: 0.15; filter: grayscale(100%); }
         .item-icon { font-size: 24px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
         
-        /* РЕДКОСТЬ ПРЕДМЕТОВ (Цветовые ауры) */
         .rarity-common { border: 1px solid #71717a; background: #27272a; }
         .rarity-rare { border: 1px solid #3b82f6; background: #1e293b; box-shadow: 0 0 6px rgba(59, 130, 246, 0.4); }
         .rarity-epic { border: 1px solid #a855f7; background: #2e1065; box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .rarity-legendary { border: 1px solid #f59e0b; background: #451a03; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
         
-        .slot-label {
-            position: absolute; bottom: -10px; font-size: 7px; color: #71717a;
-            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center;
-        }
+        .slot-label { position: absolute; bottom: -10px; font-size: 7px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; }
         .hero-avatar-box { flex-grow: 1; padding: 0 10px; text-align: center; }
-        .hero-avatar {
-            width: 100%; max-width: 230px; border-radius: 10px;
-            border: 2px solid #f59e0b; box-shadow: 0 0 18px rgba(245, 158, 11, 0.3);
-            display: block; margin: 0 auto;
-        }
+        .hero-avatar { width: 100%; max-width: 230px; border-radius: 10px; border: 2px solid #f59e0b; box-shadow: 0 0 18px rgba(245, 158, 11, 0.3); display: block; margin: 0 auto; }
         .weapons-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 18px; }
 
-        /* 5. ИНВЕНТАРЬ (СУМКА) */
-        .inventory-panel {
-            background: #18181b; border-radius: 8px; padding: 10px;
-            border: 1px solid #27272a; margin-bottom: 12px;
-        }
-        .inventory-header {
-            display: flex; justify-content: space-between; align-items: center;
-            color: #f59e0b; font-weight: bold; font-size: 11px; text-transform: uppercase;
-            border-bottom: 1px solid #27272a; padding-bottom: 4px; margin-bottom: 8px;
-        }
+        /* ИНВЕНТАРЬ */
+        .inventory-panel { background: #18181b; border-radius: 8px; padding: 10px; border: 1px solid #27272a; margin-bottom: 12px; }
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #f59e0b; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 4px; margin-bottom: 8px; }
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-        .inv-item {
-            aspect-ratio: 1; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; cursor: pointer; transition: transform 0.1s;
-        }
+        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; transition: transform 0.1s; position: relative;}
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: #121214; border: 1px dashed #3f3f46; cursor: default; }
 
-        /* 6. ПАНЕЛЬ ПРОКАЧКИ */
+        /* ПРОКАЧКА И СТАТЫ */
         .levelup-container { margin-bottom: 10px; }
-        .btn-toggle-levelup {
-            width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981;
-            border: 1px solid #10b981; padding: 8px; border-radius: 6px;
-            text-align: center; font-weight: bold; font-size: 11px; cursor: pointer;
-            transition: all 0.2s; animation: pulseGlow 2s infinite;
-        }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); }
-            50% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
-            100% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        .btn-toggle-levelup.active {
-            background: #f59e0b; color: #000; border-color: #f59e0b; animation: none;
-        }
-        .levelup-dropdown {
-            background: #27272a; border: 1px solid #f59e0b; border-radius: 6px;
-            padding: 8px; margin-top: 6px; display: none;
-            grid-template-columns: 1fr 1fr; gap: 6px; animation: slideDown 0.15s ease-out;
-        }
+        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; }
+        .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
+        .levelup-dropdown { background: #27272a; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; margin-top: 6px; display: none; grid-template-columns: 1fr 1fr; gap: 6px; }
         .levelup-dropdown.show { display: grid; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
+        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 20px; height: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
-        .lvl-stat-row {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #18181b; padding: 4px 8px; border-radius: 4px; font-size: 11px;
-        }
-        .add-stat-btn {
-            background: #f59e0b; color: #000; border: none; border-radius: 4px;
-            width: 20px; height: 20px; font-weight: bold; cursor: pointer; font-size: 13px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .add-stat-btn:active { transform: scale(0.85); }
-
-        /* 7. ДВУХКОЛОНОЧНЫЕ СТАТЫ И ХП-БАР */
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .stats-card { background: #18181b; border-radius: 8px; padding: 10px; border: 1px solid #27272a; }
-        .stat-group-title {
-            color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px;
-            text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 4px; margin-bottom: 6px;
-        }
-        .stat-item {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px dotted #27272a; padding-bottom: 3px; margin-bottom: 3px; font-size: 10px; color: #a1a1aa;
-        }
+        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 4px; margin-bottom: 6px; }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 3px; margin-bottom: 3px; font-size: 10px; color: #a1a1aa; }
         .stat-item b { font-size: 11px; color: #fff; }
-        
-        /* Полоса здоровья (HP Bar) */
-        .hp-bar-box { width: 100%; margin-top: 2px; }
-        .hp-bar-bg { width: 100%; height: 5px; background: #27272a; border-radius: 3px; overflow: hidden; }
-        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s ease; }
+        .hp-bar-bg { width: 100%; height: 5px; background: #27272a; border-radius: 3px; overflow: hidden; margin-top:2px; }
+        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s; }
+
+        /* --- СТИЛИ ЛАВКИ --- */
+        .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
+        .shop-tab { flex: 1; padding: 8px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; transition: 0.2s; }
+        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; box-shadow: 0 0 8px rgba(168,85,247,0.4); }
+        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.4); }
+
+        .shop-list { display: flex; flex-direction: column; gap: 8px; }
+        .shop-item-card { display: flex; background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 8px; align-items: center; gap: 10px; }
+        .shop-item-icon { width: 44px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 2px; }
+        .shop-item-name { font-weight: bold; font-size: 12px; color: #fff; display:flex; justify-content:space-between; }
+        .shop-item-lvl { font-size: 9px; color: #a1a1aa; background: #27272a; padding: 2px 4px; border-radius: 4px; }
+        .shop-item-stats { font-size: 10px; color: #10b981; }
+        .shop-btn { padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; border: none; flex-shrink: 0; }
+        .btn-buy { background: #10b981; color: #000; box-shadow: 0 0 5px rgba(16,185,129,0.3); }
+        .btn-buy:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; box-shadow: none; }
+        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 0 5px rgba(239,68,68,0.3); }
     </style>
 </head>
 <body>
 
-    <!-- Шапка -->
+    <!-- Умная Шапка -->
     <div class="top-dashboard">
-        <div class="resources">💰 <span>500</span> 💎 <span>12</span> 🏆 <span>3</span></div>
-        <button class="potion-btn" onclick="drinkPotion()">🧪 <span id="potion-count">1</span> (+50 HP)</button>
+        <div class="resources">💰 <span id="ui-gold">1500</span> 💎 <span>12</span> 🏆 <span>3</span></div>
+        <div style="font-size:11px; color:#a1a1aa;">Ур. <span id="ui-top-lvl" style="color:#fff; font-weight:bold;">5</span></div>
     </div>
 
-    <!-- Меню навигации -->
+    <!-- Меню навигации (SPA) -->
     <div class="nav-grid">
-        <button class="nav-btn" onclick="openSection('PVE')">⚔️ PVE</button>
-        <button class="nav-btn" onclick="openSection('БОСС')">🦖 БОСС</button>
-        <button class="nav-btn" onclick="openSection('PVP')">🛡️ PVP</button>
-        <button class="nav-btn active" onclick="openSection('ГЕРОЙ')">👤 ГЕРОЙ</button>
-        <button class="nav-btn" onclick="openSection('ЛАВКА')">🛒 ЛАВКА</button>
-        <button class="nav-btn" onclick="openSection('АУКЦИОН')">🏛️ АУКЦИОН</button>
-        <button class="nav-btn" onclick="openSection('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
-        <button class="nav-btn" onclick="openSection('КЛАСС')">📜 КЛАСС</button>
+        <button class="nav-btn" onclick="openScreen('PVE')">⚔️ PVE</button>
+        <button class="nav-btn" onclick="openScreen('БОСС')">🦖 БОСС</button>
+        <button class="nav-btn" onclick="openScreen('PVP')">🛡️ PVP</button>
+        <button class="nav-btn active" id="nav-hero" onclick="openScreen('hero')">👤 ГЕРОЙ</button>
+        <button class="nav-btn" id="nav-shop" onclick="openScreen('shop')">🛒 ЛАВКА</button>
+        <button class="nav-btn" onclick="openScreen('АУКЦИОН')">🏛️ АУКЦИОН</button>
+        <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
+        <button class="nav-btn" onclick="openScreen('КЛАСС')">📜 КЛАСС</button>
     </div>
 
-    <div class="class-banner" id="ui-class-name">ЗАГРУЗКА...</div>
+    <!-- ================= ЭКРАН 1: ГЕРОЙ ================= -->
+    <div id="screen-hero" class="app-screen active">
+        <div class="class-banner" id="ui-class-name">ЗАГРУЗКА...</div>
 
-    <!-- Аватар и Слоты экипировки -->
-    <div class="hero-layout">
-        <div class="equip-col">
-            <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
-            <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
-            <div class="equip-slot empty" id="slot-belt" data-sil="➰" onclick="unequipSlot('belt')"></div>
-            <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
+        <div class="hero-layout">
+            <div class="equip-col">
+                <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
+                <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
+                <div class="equip-slot empty" id="slot-belt" data-sil="➰" onclick="unequipSlot('belt')"></div>
+                <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
+            </div>
+            <div class="hero-avatar-box">
+                <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
+            </div>
+            <div class="equip-col">
+                <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
+                <div class="equip-slot empty" id="slot-ring2" data-sil="💍" onclick="unequipSlot('ring2')"></div>
+                <div class="equip-slot empty" id="slot-ring3" data-sil="💍" onclick="unequipSlot('ring3')"></div>
+                <div class="equip-slot empty" id="slot-ring4" data-sil="💍" onclick="unequipSlot('ring4')"></div>
+            </div>
         </div>
 
-        <div class="hero-avatar-box">
-            <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
+        <div class="weapons-row">
+            <div class="equip-slot empty" id="slot-weapon1" data-sil="⚔️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon1')"></div>
+            <div class="equip-slot empty" id="slot-weapon2" data-sil="🛡️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon2')"></div>
         </div>
 
-        <div class="equip-col">
-            <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
-            <div class="equip-slot empty" id="slot-ring2" data-sil="💍" onclick="unequipSlot('ring2')"></div>
-            <div class="equip-slot empty" id="slot-ring3" data-sil="💍" onclick="unequipSlot('ring3')"></div>
-            <div class="equip-slot empty" id="slot-ring4" data-sil="💍" onclick="unequipSlot('ring4')"></div>
+        <div class="inventory-panel">
+            <div class="inventory-header">
+                <span>🎒 Сумка (Нажми чтобы надеть)</span>
+                <span id="ui-bag-capacity" style="color:#a1a1aa;">0/10</span>
+            </div>
+            <div class="inventory-grid" id="ui-inventory-grid"></div>
+        </div>
+
+        <div class="levelup-container" id="ui-levelup-container"></div>
+        <div class="stats-two-column" id="ui-stats-container"></div>
+    </div>
+
+    <!-- ================= ЭКРАН 2: ЛАВКА ТОРГОВЦА ================= -->
+    <div id="screen-shop" class="app-screen">
+        <div class="class-banner" style="border-color:#a855f7; color:#a855f7;">
+            🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ
+        </div>
+        
+        <div class="shop-controls">
+            <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">🛒 КУПИТЬ</div>
+            <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">💰 ПРОДАТЬ</div>
+        </div>
+
+        <!-- Контейнер для списков Лавки -->
+        <div class="shop-list" id="ui-shop-list">
+            <!-- Генерируется через JS -->
         </div>
     </div>
 
-    <div class="weapons-row">
-        <div class="equip-slot empty" id="slot-weapon1" data-sil="⚔️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon1')"></div>
-        <div class="equip-slot empty" id="slot-weapon2" data-sil="🛡️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon2')"></div>
-    </div>
-
-    <!-- Инвентарь с индикатором вместимости -->
-    <div class="inventory-panel">
-        <div class="inventory-header">
-            <span>🎒 Сумка</span>
-            <span id="ui-bag-capacity" style="color:#a1a1aa;">0/10</span>
-        </div>
-        <div class="inventory-grid" id="ui-inventory-grid"></div>
-    </div>
-
-    <!-- Панель прокачки -->
-    <div class="levelup-container" id="ui-levelup-container"></div>
-
-    <!-- Параллельные характеристики -->
-    <div class="stats-two-column" id="ui-stats-container"></div>
-
+    <!-- ================= ЛОГИКА ================= -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const CLASSES = {
-            knight: { name: "Рыцарь", icon: "🛡️⚔️", armorMult: 1.15, critDmgMult: 1.5, dodgeMult: 1.0 },
-            berserk: { name: "Берсерк", icon: "🪓🔥", armorMult: 0.9, critDmgMult: 1.8, dodgeMult: 1.0 },
-            shadow: { name: "Тень", icon: "🗡️🌑", armorMult: 1.0, critDmgMult: 2.0, dodgeMult: 1.2 }
-        };
+        const CLASSES = { knight: { name: "Рыцарь", icon: "🛡️", armorMult: 1.15, critDmgMult: 1.5, dodgeMult: 1.0 } };
+        const SUBCLASSES = { dark_knight: { name: "Тёмный Рыцарь" } };
 
-        const SUBCLASSES = { none: { name: "" }, dark_knight: { name: "Тёмный Рыцарь" }, juggernaut: { name: "Джаггернаут" } };
-
-        // База предметов с подсистемой редкости (rarity)
+        // 📦 ГЛУБОКАЯ БАЗА ПРЕДМЕТОВ (Уровни 1-10)
+        // stats keys: atk, str, agi, end, mst, luk, armor, critChance, blockChance
         const ITEMS_DB = {
-            "sword_01": { id: "sword_01", name: "Стальной Меч", type: "weapon1", icon: "🗡️", rarity: "rare", stats: { atk: 15, str: 2 } },
-            "shield_01": { id: "shield_01", name: "Тяжелый Щит", type: "weapon2", icon: "🛡️", rarity: "rare", stats: { armor: 20, blockChance: 15, end: 5 } },
-            "ring_luck": { id: "ring_luck", name: "Кольцо Фортуны", type: "ring", icon: "💍", rarity: "legendary", stats: { luk: 15, critChance: 2 } },
-            "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", stats: { armor: 35, end: 10, str: 3 } }
+            // Оружие
+            "w_01": { id: "w_01", name: "Ржавый Меч", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, stats: { atk: 5 } },
+            "w_02": { id: "w_02", name: "Кинжал Вора", type: "weapon1", icon: "🔪", rarity: "rare", lvl: 3, price: 200, stats: { atk: 12, agi: 4, critChance: 2 } },
+            "w_03": { id: "w_03", name: "Меч Гладиатора", type: "weapon1", icon: "⚔️", rarity: "rare", lvl: 5, price: 450, stats: { atk: 25, str: 5 } },
+            "w_04": { id: "w_04", name: "Топор Палача", type: "weapon1", icon: "🪓", rarity: "epic", lvl: 8, price: 900, stats: { atk: 45, str: 10, mst: 5 } },
+            "w_05": { id: "w_05", name: "Клинок Безмолвия", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 10, price: 2500, stats: { atk: 70, mst: 15, agi: 10, critChance: 5 } },
+            // Щиты
+            "sh_01": { id: "sh_01", name: "Сломанный Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 80, stats: { armor: 10, blockChance: 5 } },
+            "sh_02": { id: "sh_02", name: "Башенный Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 600, stats: { armor: 35, end: 8, blockChance: 15 } },
+            // Броня
+            "ar_01": { id: "ar_01", name: "Рваная Рубаха", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 40, stats: { armor: 5 } },
+            "ar_02": { id: "ar_02", name: "Кожаная Куртка", type: "chest", icon: "🧥", rarity: "rare", lvl: 4, price: 300, stats: { armor: 20, agi: 5 } },
+            "ar_03": { id: "ar_03", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 850, stats: { armor: 45, end: 12, str: 4 } },
+            "ar_04": { id: "ar_04", name: "Броня Дракона", type: "chest", icon: "🐉", rarity: "legendary", lvl: 10, price: 3000, stats: { armor: 80, str: 15, end: 15, mst: 5 } },
+            // Кольца
+            "r_01": { id: "r_01", name: "Медное Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 2, price: 100, stats: { end: 3 } },
+            "r_02": { id: "r_02", name: "Перстень Охотника", type: "ring", icon: "💍", rarity: "rare", lvl: 5, price: 400, stats: { agi: 6, mst: 4 } },
+            "r_03": { id: "r_03", name: "Кольцо Короля", type: "ring", icon: "👑", rarity: "legendary", lvl: 9, price: 2000, stats: { str: 10, end: 10, luk: 10 } }
         };
+
+        // Ассортимент магазина (ключи из ITEMS_DB)
+        const SHOP_ASSORTMENT = ["w_01", "w_02", "w_03", "w_04", "w_05", "sh_01", "sh_02", "ar_01", "ar_02", "ar_03", "ar_04", "r_01", "r_02", "r_03"];
+
+        // Состояние игры
+        let currentScreen = "hero";
+        let shopMode = "buy"; // "buy" или "sell"
+        let isLevelUpOpen = false;
 
         let hero = {
-            name: "Гладиатор", level: 5, unspentPoints: 15, baseClass: "knight", subClass: "dark_knight",
-            hp: 200, maxHp: 200, potions: 1,
+            name: "Гладиатор", level: 5, unspentPoints: 15, gold: 1500,
+            baseClass: "knight", subClass: "dark_knight", hp: 200, maxHp: 200,
             baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, weapon1: null, weapon2: null, ring1: null, ring2: null, ring3: null, ring4: null },
-            inventory: ["sword_01", "armor_01", "shield_01", "ring_luck"],
+            inventory: ["w_01", "ar_01"], // Стартовые простенькие вещи
             finalStats: {}
         };
 
-        let isLevelUpOpen = false;
-
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
-        function toggleLevelUp() {
-            isLevelUpOpen = !isLevelUpOpen;
+        // --- УПРАВЛЕНИЕ SPA ЭКРАНАМИ ---
+        function openScreen(screenName) {
+            if (screenName !== 'hero' && screenName !== 'shop') {
+                alert("Раздел '" + screenName + "' в разработке!"); return;
+            }
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            
+            document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('screen-' + screenName).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(screenName === 'hero') document.getElementById('nav-hero').classList.add('active');
+            if(screenName === 'shop') document.getElementById('nav-shop').classList.add('active');
+            
+            currentScreen = screenName;
             updateUI();
         }
+
+        function setShopMode(mode) {
+            shopMode = mode;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('tab-buy').className = "shop-tab" + (mode === 'buy' ? " active" : "");
+            document.getElementById('tab-sell').className = "shop-tab" + (mode === 'sell' ? " active-sell" : "");
+            updateUI();
+        }
+
+        // --- МЕХАНИКА ГЕРОЯ (Надеть/Снять/Прокачать) ---
+        function toggleLevelUp() { isLevelUpOpen = !isLevelUpOpen; updateUI(); }
 
         function equipItem(invIndex) {
             let itemId = hero.inventory[invIndex];
             if (!itemId) return;
             let item = ITEMS_DB[itemId];
-            let targetSlot = item.type;
+            
+            // Если вещь требует лвл больше, чем есть у героя
+            if (item.lvl > hero.level) {
+                alert(`Нужен Ур. ${item.lvl} для экипировки!`);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
 
+            let targetSlot = item.type;
             if (item.type === 'ring') {
-                if (!hero.equipment.ring1) targetSlot = 'ring1';
-                else if (!hero.equipment.ring2) targetSlot = 'ring2';
-                else if (!hero.equipment.ring3) targetSlot = 'ring3';
-                else if (!hero.equipment.ring4) targetSlot = 'ring4';
+                if (!hero.equipment.ring1) targetSlot = 'ring1'; else if (!hero.equipment.ring2) targetSlot = 'ring2';
+                else if (!hero.equipment.ring3) targetSlot = 'ring3'; else if (!hero.equipment.ring4) targetSlot = 'ring4';
                 else targetSlot = 'ring1';
             }
 
@@ -294,11 +299,8 @@
         function unequipSlot(slotKey) {
             let item = hero.equipment[slotKey];
             if (!item) return;
-            if (hero.inventory.length >= 10) {
-                alert("Сумка полна!"); return;
-            }
-            hero.inventory.push(item.id);
-            hero.equipment[slotKey] = null;
+            if (hero.inventory.length >= 10) return alert("Сумка полна!");
+            hero.inventory.push(item.id); hero.equipment[slotKey] = null;
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             calculateStats(); updateUI();
         }
@@ -311,12 +313,43 @@
             }
         }
 
+        // --- МЕХАНИКА ЛАВКИ (Купить/Продать) ---
+        function buyItem(itemId) {
+            let item = ITEMS_DB[itemId];
+            if (hero.gold < item.price) {
+                alert("Не хватает золота!"); 
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+            if (hero.inventory.length >= 10) {
+                alert("Освободите место в Сумке!");
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+            hero.gold -= item.price;
+            hero.inventory.push(itemId);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            updateUI();
+        }
+
+        function sellItem(invIndex) {
+            let itemId = hero.inventory[invIndex];
+            let item = ITEMS_DB[itemId];
+            let sellPrice = Math.floor(item.price * 0.5); // Продажа за 50% стоимости
+            
+            hero.gold += sellPrice;
+            hero.inventory.splice(invIndex, 1);
+            
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            updateUI();
+        }
+
+        // --- ДВИЖОК СТАТОВ ---
         function calculateStats() {
             let total = {
                 str: hero.baseStats.str, agi: hero.baseStats.agi, end: hero.baseStats.end, mst: hero.baseStats.mst, luk: hero.baseStats.luk,
                 armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0
             };
-
             for (let key in hero.equipment) {
                 let item = hero.equipment[key];
                 if (item && item.stats) {
@@ -331,12 +364,10 @@
                     if (item.stats.blockChance) total.blockChance += item.stats.blockChance;
                 }
             }
-
-            let hp = total.end * 10;
-            let damage = total.str * 2 + total.atk;
+            let hp = total.end * 10; let damage = total.str * 2 + total.atk;
             total.critChance += (total.luk / 5); total.dodge += (total.agi / 4);      
             total.armorPen = total.mst * 2; total.critDmg += total.mst * 3;      
-
+            
             let cls = CLASSES[hero.baseClass];
             total.armor = Math.floor(total.armor * cls.armorMult);
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult / 1.5);
@@ -352,110 +383,164 @@
             };
         }
 
+        // --- ГЕНЕРАЦИЯ ТЕКСТА СТАТОВ ДЛЯ ЛАВКИ ---
+        function formatStats(stats) {
+            let res = [];
+            if(stats.atk) res.push(`Урон +${stats.atk}`);
+            if(stats.armor) res.push(`Броня +${stats.armor}`);
+            if(stats.str) res.push(`СИЛ +${stats.str}`);
+            if(stats.agi) res.push(`ЛОВ +${stats.agi}`);
+            if(stats.end) res.push(`ВЫН +${stats.end}`);
+            if(stats.mst) res.push(`МСТ +${stats.mst}`);
+            if(stats.luk) res.push(`УДЧ +${stats.luk}`);
+            if(stats.critChance) res.push(`Крит +${stats.critChance}%`);
+            if(stats.blockChance) res.push(`Блок +${stats.blockChance}%`);
+            return res.join(' • ');
+        }
         function getSlotName(slotId) {
             const names = { head: "Шлем", chest: "Броня", belt: "Пояс", boots: "Обувь", weapon1: "Оружие", weapon2: "Щит", ring1: "Кольцо", ring2: "Кольцо", ring3: "Кольцо", ring4: "Кольцо" };
             return names[slotId];
         }
 
+        // --- ГЛОБАЛЬНЫЙ РЕНДЕР ---
         function updateUI() {
-            let cls = CLASSES[hero.baseClass];
-            let subName = SUBCLASSES[hero.subClass].name;
-            let classTitle = subName ? subName : cls.name;
-            
-            document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${classTitle} • Ур. ${hero.level}]</span>`;
-            document.getElementById("potion-count").innerText = hero.potions;
+            // Шапка
+            document.getElementById("ui-gold").innerText = hero.gold;
+            document.getElementById("ui-top-lvl").innerText = hero.level;
 
-            // Рендер экипировки с цветовой гаммой редкости
-            const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
-            slots.forEach(slotKey => {
-                let el = document.getElementById("slot-" + slotKey);
-                if (el) {
-                    let sil = el.getAttribute("data-sil") || "";
-                    let slotNameRu = getSlotName(slotKey);
-                    let item = hero.equipment[slotKey];
-                    
-                    el.className = "equip-slot"; // Сброс классов
-                    
-                    if (item && item.icon) {
-                        let rarityClass = "rarity-" + (item.rarity || "common");
-                        el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${slotNameRu}</span>`;
-                        el.classList.add("filled", rarityClass);
+            if (currentScreen === 'hero') {
+                let cls = CLASSES[hero.baseClass];
+                let subName = SUBCLASSES[hero.subClass].name;
+                document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${subName} • Ур. ${hero.level}]</span>`;
+
+                // Экипировка героя
+                const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
+                slots.forEach(slotKey => {
+                    let el = document.getElementById("slot-" + slotKey);
+                    if (el) {
+                        let sil = el.getAttribute("data-sil") || "";
+                        let slotNameRu = getSlotName(slotKey);
+                        let item = hero.equipment[slotKey];
+                        el.className = "equip-slot";
+                        if (item && item.icon) {
+                            el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${slotNameRu}</span>`;
+                            el.classList.add("filled", "rarity-" + (item.rarity || "common"));
+                        } else {
+                            el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${slotNameRu}</span>`;
+                            el.classList.add("empty");
+                        }
+                    }
+                });
+
+                // Сумка героя
+                document.getElementById("ui-bag-capacity").innerText = `${hero.inventory.length}/10`;
+                let invHtml = '';
+                for (let i = 0; i < 10; i++) {
+                    if (i < hero.inventory.length) {
+                        let item = ITEMS_DB[hero.inventory[i]];
+                        invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="equipItem(${i})">${item.icon}</div>`;
+                    } else { invHtml += `<div class="inv-item empty"></div>`; }
+                }
+                document.getElementById("ui-inventory-grid").innerHTML = invHtml;
+
+                // Прокачка и Статы
+                let levelUpHtml = '';
+                if (hero.unspentPoints > 0 || isLevelUpOpen) {
+                    if (!isLevelUpOpen) {
+                        levelUpHtml = `<div class="btn-toggle-levelup" onclick="toggleLevelUp()">✨ Доступно очков: ${hero.unspentPoints} (Нажми для прокачки) ✨</div>`;
                     } else {
-                        el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${slotNameRu}</span>`;
-                        el.classList.add("empty");
+                        levelUpHtml = `
+                            <div class="btn-toggle-levelup active" onclick="toggleLevelUp()">❌ Скрыть панель (Осталось: ${hero.unspentPoints})</div>
+                            <div class="levelup-dropdown show">
+                                <div class="lvl-stat-row"><span>⚔️ Сила (${hero.finalStats.str})</span> <button class="add-stat-btn" onclick="addStat('str')">+</button></div>
+                                <div class="lvl-stat-row"><span>🏃 Ловкость (${hero.finalStats.agi})</span> <button class="add-stat-btn" onclick="addStat('agi')">+</button></div>
+                                <div class="lvl-stat-row"><span>❤️ Выносл-ть (${hero.finalStats.end})</span> <button class="add-stat-btn" onclick="addStat('end')">+</button></div>
+                                <div class="lvl-stat-row"><span>🎯 Мастерство (${hero.finalStats.mst})</span> <button class="add-stat-btn" onclick="addStat('mst')">+</button></div>
+                                <div class="lvl-stat-row"><span>🍀 Удача (${hero.finalStats.luk})</span> <button class="add-stat-btn" onclick="addStat('luk')">+</button></div>
+                            </div>
+                        `;
                     }
                 }
-            });
+                document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
 
-            // Рендер Сумки и Индикатора вместимости
-            document.getElementById("ui-bag-capacity").innerText = `${hero.inventory.length}/10`;
-            let invHtml = '';
-            for (let i = 0; i < 10; i++) {
-                if (i < hero.inventory.length) {
-                    let item = ITEMS_DB[hero.inventory[i]];
-                    let rarityClass = "rarity-" + (item.rarity || "common");
-                    invHtml += `<div class="inv-item filled ${rarityClass}" onclick="equipItem(${i})">${item.icon}</div>`;
-                } else { invHtml += `<div class="inv-item empty"></div>`; }
-            }
-            document.getElementById("ui-inventory-grid").innerHTML = invHtml;
-
-            // Рендер Панели Прокачки
-            let levelUpHtml = '';
-            if (hero.unspentPoints > 0 || isLevelUpOpen) {
-                if (!isLevelUpOpen) {
-                    levelUpHtml = `<div class="btn-toggle-levelup" onclick="toggleLevelUp()">✨ Доступно очков: ${hero.unspentPoints} (Нажми для прокачки) ✨</div>`;
-                } else {
-                    levelUpHtml = `
-                        <div class="btn-toggle-levelup active" onclick="toggleLevelUp()">❌ Скрыть панель (Осталось: ${hero.unspentPoints})</div>
-                        <div class="levelup-dropdown show">
-                            <div class="lvl-stat-row"><span>⚔️ Сила (${hero.finalStats.str})</span> <button class="add-stat-btn" onclick="addStat('str')">+</button></div>
-                            <div class="lvl-stat-row"><span>🏃 Ловкость (${hero.finalStats.agi})</span> <button class="add-stat-btn" onclick="addStat('agi')">+</button></div>
-                            <div class="lvl-stat-row"><span>❤️ Выносл-ть (${hero.finalStats.end})</span> <button class="add-stat-btn" onclick="addStat('end')">+</button></div>
-                            <div class="lvl-stat-row"><span>🎯 Мастерство (${hero.finalStats.mst})</span> <button class="add-stat-btn" onclick="addStat('mst')">+</button></div>
-                            <div class="lvl-stat-row"><span>🍀 Удача (${hero.finalStats.luk})</span> <button class="add-stat-btn" onclick="addStat('luk')">+</button></div>
-                        </div>
-                    `;
-                }
-            }
-            document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
-
-            // Расчет % здоровья для полосы HP
-            let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
-
-            // Рендер Двухколоночных Статов и Полосы Здоровья
-            document.getElementById("ui-stats-container").innerHTML = `
-                <div class="stats-card">
-                    <div class="stat-group-title">Базовые параметры</div>
-                    <div class="stat-item"><span>⚔️ Сила (Урон)</span> <b>${hero.finalStats.str}</b></div>
-                    <div class="stat-item"><span>🏃 Ловкость (Уворот)</span> <b>${hero.finalStats.agi}</b></div>
-                    <div class="stat-item"><span>❤️ Выносл-ть (HP)</span> <b>${hero.finalStats.end}</b></div>
-                    <div class="stat-item"><span>🎯 Мастерство</span> <b>${hero.finalStats.mst}</b></div>
-                    <div class="stat-item"><span>🍀 Удача (Дроп)</span> <b>${hero.finalStats.luk}</b></div>
-                </div>
-                <div class="stats-card">
-                    <div class="stat-group-title">Боевые параметры</div>
-                    <div class="stat-item" style="flex-direction:column; align-items:stretch;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                            <span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b>
-                        </div>
-                        <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
+                let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
+                document.getElementById("ui-stats-container").innerHTML = `
+                    <div class="stats-card">
+                        <div class="stat-group-title">Базовые параметры</div>
+                        <div class="stat-item"><span>⚔️ Сила (Урон)</span> <b>${hero.finalStats.str}</b></div>
+                        <div class="stat-item"><span>🏃 Ловкость (Уворот)</span> <b>${hero.finalStats.agi}</b></div>
+                        <div class="stat-item"><span>❤️ Выносл-ть (HP)</span> <b>${hero.finalStats.end}</b></div>
+                        <div class="stat-item"><span>🎯 Мастерство</span> <b>${hero.finalStats.mst}</b></div>
+                        <div class="stat-item"><span>🍀 Удача (Дроп)</span> <b>${hero.finalStats.luk}</b></div>
                     </div>
-                    <div class="stat-item"><span>🗡️ Урон</span> <b>${hero.finalStats.damage}</b></div>
-                    <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
-                    <div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
-                    <div class="stat-item"><span>⚡ Крит</span> <b>${hero.finalStats.critChance}%</b></div>
-                </div>
-            `;
-        }
+                    <div class="stats-card">
+                        <div class="stat-group-title">Боевые параметры</div>
+                        <div class="stat-item" style="flex-direction:column; align-items:stretch;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                                <span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b>
+                            </div>
+                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
+                        </div>
+                        <div class="stat-item"><span>🗡️ Урон</span> <b>${hero.finalStats.damage}</b></div>
+                        <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
+                        <div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
+                        <div class="stat-item"><span>⚡ Крит</span> <b>${hero.finalStats.critChance}%</b></div>
+                    </div>
+                `;
+            }
 
-        function drinkPotion() {
-            if (hero.potions > 0) {
-                if (hero.hp >= hero.finalStats.hp) return alert("Здоровье полное!");
-                hero.potions--; hero.hp = Math.min(hero.finalStats.hp, hero.hp + 50); updateUI();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else { alert("Нет зелий!"); }
+            if (currentScreen === 'shop') {
+                let shopHtml = '';
+                if (shopMode === 'buy') {
+                    // Рендер Ассортимента магазина
+                    SHOP_ASSORTMENT.forEach(itemId => {
+                        let item = ITEMS_DB[itemId];
+                        let canAfford = hero.gold >= item.price;
+                        let meetLvl = hero.level >= item.lvl;
+                        let btnHtml = canAfford && meetLvl 
+                            ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${item.price}</button>` 
+                            : `<button class="shop-btn btn-buy" disabled>💰 ${item.price}</button>`;
+                        
+                        let lvlColor = meetLvl ? "#a1a1aa" : "#ef4444";
+
+                        shopHtml += `
+                            <div class="shop-item-card">
+                                <div class="shop-item-icon rarity-${item.rarity}">${item.icon}</div>
+                                <div class="shop-item-info">
+                                    <div class="shop-item-name">
+                                        <span>${item.name}</span>
+                                        <span class="shop-item-lvl" style="color:${lvlColor}">Ур. ${item.lvl}</span>
+                                    </div>
+                                    <div class="shop-item-stats">${formatStats(item.stats)}</div>
+                                </div>
+                                ${btnHtml}
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Рендер Продажи из Сумки
+                    if (hero.inventory.length === 0) {
+                        shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Ваша сумка пуста.</div>`;
+                    } else {
+                        hero.inventory.forEach((itemId, index) => {
+                            let item = ITEMS_DB[itemId];
+                            let sellPrice = Math.floor(item.price * 0.5);
+                            shopHtml += `
+                                <div class="shop-item-card">
+                                    <div class="shop-item-icon rarity-${item.rarity}">${item.icon}</div>
+                                    <div class="shop-item-info">
+                                        <div class="shop-item-name">${item.name} <span class="shop-item-lvl">Ур. ${item.lvl}</span></div>
+                                        <div class="shop-item-stats" style="color:#71717a;">Возврат: 50%</div>
+                                    </div>
+                                    <button class="shop-btn btn-sell" onclick="sellItem(${index})">Продать<br>💰 +${sellPrice}</button>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+                document.getElementById("ui-shop-list").innerHTML = shopHtml;
+            }
         }
-        function openSection(sn) { if (sn !== 'ГЕРОЙ') alert("Раздел '" + sn + "' в разработке!"); }
 
         calculateStats(); updateUI();
     </script>
