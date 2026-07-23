@@ -91,19 +91,26 @@
             justify-content: center;
             font-size: 20px;
             position: relative;
+            cursor: pointer;
         }
-        /* Пустой слот: строгий контурный силуэт */
+        /* Идеальный пустой слот: только пунктир и серый плюс */
         .equip-slot.empty {
-            opacity: 0.35;
             border-style: dashed;
-            border-color: #52525b;
+            border-color: #3f3f46;
+            background: #121214;
         }
+        .equip-slot.empty .empty-icon {
+            color: #3f3f46;
+            font-size: 22px;
+            font-weight: 300;
+            margin-bottom: 4px;
+        }
+        
         /* Заполненный слот: реальный предмет */
         .equip-slot.filled {
             border-style: solid;
             border-color: #f59e0b;
             background: #27272a;
-            opacity: 1;
             box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
         }
         .slot-label {
@@ -261,29 +268,30 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Чистые плейсхолдеры, строго отличающиеся от надетых вещей -->
+        <!-- Броня -->
         <div class="equip-col">
-            <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"><span class="slot-label">Шлем</span></div>
-            <div class="equip-slot empty" id="slot-chest" data-placeholder="🦺"><span class="slot-label">Броня</span></div>
-            <div class="equip-slot empty" id="slot-belt" data-placeholder="➰"><span class="slot-label">Пояс</span></div>
-            <div class="equip-slot empty" id="slot-boots" data-placeholder="👢"><span class="slot-label">Обувь</span></div>
+            <div class="equip-slot empty" id="slot-head"></div>
+            <div class="equip-slot empty" id="slot-chest"></div>
+            <div class="equip-slot empty" id="slot-belt"></div>
+            <div class="equip-slot empty" id="slot-boots"></div>
         </div>
 
         <div class="hero-avatar-box">
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
         </div>
 
+        <!-- Кольца -->
         <div class="equip-col">
-            <div class="equip-slot empty" id="slot-ring1" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
-            <div class="equip-slot empty" id="slot-ring2" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
-            <div class="equip-slot empty" id="slot-ring3" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
-            <div class="equip-slot empty" id="slot-ring4" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
+            <div class="equip-slot empty" id="slot-ring1"></div>
+            <div class="equip-slot empty" id="slot-ring2"></div>
+            <div class="equip-slot empty" id="slot-ring3"></div>
+            <div class="equip-slot empty" id="slot-ring4"></div>
         </div>
     </div>
 
     <div class="weapons-row">
-        <div class="equip-slot empty" id="slot-weapon1" data-placeholder="⚔️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Оружие</span></div>
-        <div class="equip-slot empty" id="slot-weapon2" data-placeholder="🛡️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Щит</span></div>
+        <div class="equip-slot empty" id="slot-weapon1" style="width: 52px; height: 52px; font-size: 22px;"></div>
+        <div class="equip-slot empty" id="slot-weapon2" style="width: 52px; height: 52px; font-size: 22px;"></div>
     </div>
 
     <div class="stats-panel">
@@ -313,24 +321,26 @@
             "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", stats: { armor: 35, end: 10, str: 3 } }
         };
 
+        // Состояние героя (mst заменил int)
         let hero = {
             name: "Гладиатор",
             level: 5,
             unspentPoints: 15,
             baseClass: "knight",
             subClass: "dark_knight",
-            hp: 350,
-            maxHp: 350,
+            hp: 200, // Стартовое ХП, пересчитается в calculateStats
+            maxHp: 200,
             potions: 1,
-            baseStats: { str: 10, agi: 10, end: 10, int: 10, luk: 5 },
+            // mst = Мастерство (Точность и качество удара)
+            baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
             equipment: {
                 head: null,
-                chest: ITEMS_DB["armor_01"],
+                chest: ITEMS_DB["armor_01"], // Оставим только броню и меч для примера
                 belt: null,
                 boots: null,
                 weapon1: ITEMS_DB["sword_01"],
-                weapon2: ITEMS_DB["shield_01"],
-                ring1: ITEMS_DB["ring_luck"],
+                weapon2: null,
+                ring1: null,
                 ring2: null, ring3: null, ring4: null
             },
             finalStats: {}
@@ -355,9 +365,9 @@
                 str: hero.baseStats.str, 
                 agi: hero.baseStats.agi, 
                 end: hero.baseStats.end,
-                int: hero.baseStats.int, 
+                mst: hero.baseStats.mst, // Мастерство
                 luk: hero.baseStats.luk,
-                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, magicDef: 0
+                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0
             };
 
             for (let key in hero.equipment) {
@@ -366,7 +376,7 @@
                     if (item.stats.str) total.str += item.stats.str;
                     if (item.stats.agi) total.agi += item.stats.agi;
                     if (item.stats.end) total.end += item.stats.end;
-                    if (item.stats.int) total.int += item.stats.int;
+                    if (item.stats.mst) total.mst += item.stats.mst;
                     if (item.stats.luk) total.luk += item.stats.luk;
                     if (item.stats.armor) total.armor += item.stats.armor;
                     if (item.stats.atk) total.atk += item.stats.atk;
@@ -375,14 +385,15 @@
                 }
             }
 
+            // Уникальный баланс
             let hp = total.end * 10;
             let damage = total.str * 2 + total.atk;
-            total.critChance += (total.agi / 5) + (total.luk / 10);
-            total.dodge += (total.agi / 4);
+            total.critChance += (total.luk / 5); // Удача дает шанс крита
+            total.dodge += (total.agi / 4);      // Ловкость дает уворот
             
-            // ИНТЕЛЛЕКТ ТЕПЕРЬ РАБОТАЕТ: дает Маг. Защиту и бонус к урону крита
-            total.magicDef = total.int * 3;
-            total.critDmg += total.int * 2; // Каждое очко интеллекта усиливает силу критического удара
+            // МАСТЕРСТВО (MST) в действии:
+            total.armorPen = total.mst * 2;      // Каждое очко мастерства игнорирует 2 брони врага
+            total.critDmg += total.mst * 3;      // Каждое очко мастерства увеличивает силу крита на 3%
 
             let dropMultiplier = 1.0 + (total.luk / 100);
 
@@ -392,13 +403,18 @@
             total.dodge = total.dodge * cls.dodgeMult;
 
             hero.maxHp = hp;
+            // Фикс бага с переполнением ХП
+            if (hero.hp > hero.maxHp) {
+                hero.hp = hero.maxHp;
+            }
+
             hero.finalStats = {
                 hp: hp, damage: damage, armor: total.armor,
-                magicDef: total.magicDef,
+                armorPen: total.armorPen,
                 critChance: total.critChance.toFixed(1), critDmg: total.critDmg,
                 dodge: total.dodge.toFixed(1), blockChance: total.blockChance,
                 dropMult: dropMultiplier.toFixed(2),
-                str: total.str, agi: total.agi, end: total.end, int: total.int, luk: total.luk
+                str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk
             };
         }
 
@@ -415,17 +431,18 @@
             slots.forEach(slotKey => {
                 let el = document.getElementById("slot-" + slotKey);
                 if (el) {
-                    let placeholderIcon = el.getAttribute("data-placeholder") || "";
                     let slotNameRu = getSlotName(slotKey);
                     let item = hero.equipment[slotKey];
 
                     el.classList.remove("empty", "filled");
 
                     if (item && item.icon) {
+                        // Вещь надета
                         el.innerHTML = `${item.icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("filled");
                     } else {
-                        el.innerHTML = `<span style="font-size:16px;">${placeholderIcon}</span><span class="slot-label">${slotNameRu}</span>`;
+                        // ИДЕАЛЬНАЯ ЗАГЛУШКА: Никаких иконок, только минималистичный знак "+"
+                        el.innerHTML = `<div class="empty-icon">+</div><span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("empty");
                     }
                 }
@@ -437,7 +454,7 @@
             let btnStr = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('str')">+</button>` : ``;
             let btnAgi = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('agi')">+</button>` : ``;
             let btnEnd = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('end')">+</button>` : ``;
-            let btnInt = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('int')">+</button>` : ``;
+            let btnMst = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('mst')">+</button>` : ``;
             let btnLuk = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('luk')">+</button>` : ``;
 
             let unspentHtml = hero.unspentPoints > 0 
@@ -447,17 +464,17 @@
             const statsHtml = `
                 <div class="stat-group-title">Базовые характеристики</div>
                 ${unspentHtml}
-                <div class="stat-item"><span>⚔️ Сила (Урон)</span> <div><b>${hero.finalStats.str}</b>${btnStr}</div></div>
-                <div class="stat-item"><span>🏃 Ловкость (Крит/Уворот)</span> <div><b>${hero.finalStats.agi}</b>${btnAgi}</div></div>
+                <div class="stat-item"><span>⚔️ Сила (Урон/Блок)</span> <div><b>${hero.finalStats.str}</b>${btnStr}</div></div>
+                <div class="stat-item"><span>🏃 Ловкость (Уворот)</span> <div><b>${hero.finalStats.agi}</b>${btnAgi}</div></div>
                 <div class="stat-item"><span>❤️ Выносливость (HP)</span> <div><b>${hero.finalStats.end}</b>${btnEnd}</div></div>
-                <div class="stat-item"><span>🧠 Интеллект (Маг.Защита)</span> <div><b>${hero.finalStats.int}</b>${btnInt}</div></div>
-                <div class="stat-item"><span>🍀 Удача (Дроп)</span> <div><b>${hero.finalStats.luk}</b>${btnLuk}</div></div>
+                <div class="stat-item"><span>🎯 Мастерство (Точность)</span> <div><b>${hero.finalStats.mst}</b>${btnMst}</div></div>
+                <div class="stat-item"><span>🍀 Удача (Крит/Дроп)</span> <div><b>${hero.finalStats.luk}</b>${btnLuk}</div></div>
                 
                 <div class="stat-group-title">Боевые параметры</div>
                 <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b></div>
                 <div class="stat-item"><span>🗡️ Физ. Урон</span> <b>${hero.finalStats.damage}</b></div>
-                <div class="stat-item"><span>🛡️ Физ. Броня</span> <b>${hero.finalStats.armor}</b></div>
-                <div class="stat-item"><span>🔮 Маг. Защита</span> <b>${hero.finalStats.magicDef}</b></div>
+                <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
+                <div class="stat-item"><span>⛏️ Пробитие брони</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
                 <div class="stat-item"><span>⚡ Шанс Крита</span> <b>${hero.finalStats.critChance}%</b></div>
                 <div class="stat-item"><span>💥 Урон Крита</span> <b>${hero.finalStats.critDmg}%</b></div>
                 <div class="stat-item"><span>💨 Уклонение</span> <b>${hero.finalStats.dodge}%</b></div>
