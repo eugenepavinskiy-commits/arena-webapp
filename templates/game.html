@@ -9,7 +9,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d0d0f; 
+            background-color: #09090b; 
             color: #e4e4e7; margin: 0; padding: 8px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
         }
@@ -29,7 +29,7 @@
             padding: 10px 0; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-weight: bold; text-transform: uppercase;
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.02), 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px;
         }
-        .nav-btn:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { 
             background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); 
             color: #e9d5ff; border-color: #9333ea; 
@@ -52,18 +52,16 @@
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 16px; width: 48px; }
         
-        /* ТАКТИЛЬНЫЕ СОКЕТЫ ЭКИПИРОВКИ */
         .equip-slot {
             width: 48px; height: 48px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { 
-            background: radial-gradient(circle, #121214 0%, #050505 100%);
-            border: 1px solid #1c1c1f; 
+            background: #050505; border: 1px solid #1c1c1f; 
             box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 1px 1px rgba(255,255,255,0.05); 
         }
-        .equip-slot.blocked { border: 1px solid #450a0a; background: radial-gradient(circle, #2f0808 0%, #1a0505 100%); cursor: not-allowed; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
+        .equip-slot.blocked { border: 1px solid #450a0a; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
         .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
         
@@ -74,12 +72,13 @@
         
         .slot-label { position: absolute; bottom: -18px; font-size: 9px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         
-        /* МОНОЛИТНЫЙ АВАТАР ГЕРОЯ */
+        /* ИДЕАЛЬНЫЙ АВАТАР ГЕРОЯ */
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
         .hero-avatar { 
             width: 100%; height: auto; display: block; border-radius: 4px;
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;
         }
+
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
 
         /* ИНВЕНТАРЬ И СТАТЫ */
@@ -90,47 +89,27 @@
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative;}
         .inv-item:active { transform: scale(0.88); }
-        
-        /* 3D СЛОТЫ ИНВЕНТАРЯ */
-        .inv-item.empty { 
-            background: radial-gradient(circle, #121214 0%, #050505 100%); 
-            border: 1px solid #1c1c1f; 
-            box-shadow: inset 0 8px 16px rgba(0,0,0,0.95), inset 0 0 4px rgba(0,0,0,0.8); 
-            cursor: default; 
-        }
+        .inv-item.empty { background: #050505; border: 1px solid #18181b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.9); cursor: default; }
         
         .levelup-container { margin-bottom: 16px; }
-        
-        /* 3D КНОПКИ ДЕЙСТВИЙ */
-        .btn-toggle-levelup { 
-            width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); 
-            color: #f59e0b; border: 1px solid #3f3f46; border-bottom: 3px solid #0d0d0f; /* Фаска кнопки */
-            padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;
-            transition: all 0.1s;
-        }
-        .btn-toggle-levelup:active { transform: translateY(2px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.6); margin-bottom: 2px;}
-        .btn-toggle-levelup.active { background: #451a03; color: #fbbf24; border-color: #92400e; border-bottom: 1px solid #450a0a; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); transform: translateY(2px); margin-bottom: 2px;}
-        
+        .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;}
+        .btn-toggle-levelup.active { background: #451a03; color: #fbbf24; border-color: #92400e; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); }
         .levelup-dropdown { background: #121214; border: 1px solid #3f3f46; border-radius: 8px; padding: 12px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
         .levelup-dropdown.show { display: grid; }
         .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #27272a; padding: 8px 12px; border-radius: 6px; font-size: 11px; color:#d4d4d8;}
-        .add-stat-btn { background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); border-bottom: 2px solid #78350f; color: #000; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .add-stat-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
+        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .add-stat-btn:active { transform: scale(0.9); }
         
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stats-card { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
         .stat-group-title { color: #71717a; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px;}
-        
-        /* ТИПОГРАФИКА СТАТОВ (Контраст) */
-        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #71717a; }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #a1a1aa; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .stat-item b { font-size: 13px; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); font-weight: 800;}
-        
-        .hp-bar-bg { width: 100%; height: 6px; background: #09090b; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
+        .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
+        .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
 
-        /* ЛАВКА */
+        /* ЛАВКА (НОВЫЙ ДИЗАЙН) */
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); letter-spacing: 0.5px;}
         .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
@@ -139,35 +118,35 @@
         .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
         .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 10px; font-size: 12px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
         
-        .shop-list { display: flex; flex-direction: column; gap: 14px; }
-        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.5); }
-        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);}
-        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
-        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
-        .shop-item-lvl { font-size: 10px; color: #71717a; background: #18181b; padding: 2px 6px; border-radius: 4px; border: 1px solid #27272a; }
+        .shop-list { display: flex; flex-direction: column; gap: 12px; }
+        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 6px 12px rgba(0,0,0,0.9); position: relative; z-index: 2;}
         
-        .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
+        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; text-shadow: 0 1px 3px #000; }
+        .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; letter-spacing: 0.5px;}
+        
+        .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; box-shadow: 0 0 5px rgba(16,185,129,0.2);}
+        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea; box-shadow: 0 0 5px rgba(147,51,234,0.3);}
         .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d; box-shadow: 0 0 5px rgba(239,68,68,0.2);}
         
-        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px;}
-        .shop-item-desc { font-size: 11px; color: #52525b; font-style: italic; line-height: 1.4;}
+        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; text-shadow: 0 1px 2px #000;}
+        .shop-item-desc { font-size: 10px; color: #71717a; font-style: italic; line-height: 1.4;}
         
-        /* 3D КНОПКИ В ЛАВКЕ */
-        .shop-btn { padding: 12px 16px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; flex-shrink: 0; transition: all 0.1s; text-transform: uppercase;}
-        .btn-buy { background: linear-gradient(180deg, #10b981 0%, #059669 100%); color: #000; border: none; border-bottom: 3px solid #022c22; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
-        .btn-buy:active { transform: translateY(2px); border-bottom-width: 1px; }
-        .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; cursor: not-allowed; box-shadow: none; transform: none; }
-        .btn-sell { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); color: #fff; border: none; border-bottom: 3px solid #450a0a; box-shadow: 0 4px 10px rgba(239,68,68,0.3); }
-        .btn-sell:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s; text-transform: uppercase; z-index: 2;}
+        .shop-btn:active { transform: translateY(2px); }
+        .btn-buy { background: #fbbf24; color: #000; box-shadow: 0 4px 10px rgba(251,191,36,0.3); border-bottom: 3px solid #b45309;}
+        .btn-buy:disabled { background: #18181b; color: #3f3f46; cursor: not-allowed; box-shadow: none; border: 1px solid #27272a; border-bottom: 1px solid #27272a;}
+        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); border-bottom: 3px solid #7f1d1d;}
 
         /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
         .class-icon-btn {
             background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0;
             display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;
-            opacity: 0.4; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5);
+            opacity: 0.4; filter: grayscale(100%); box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
         .class-icon-btn .icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
         .class-icon-btn .name { font-size: 10px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
@@ -178,24 +157,20 @@
         }
         .class-icon-btn.selected .name { color: #e4e4e7; }
 
-        .class-detail-wrapper { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-        
-        .class-preview-img { 
-            width: 100%; max-width: 340px; height: auto; display: block; border-radius: 8px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.05); 
-        }
-
         .class-detail-card { 
-            background: #121214; border: 1px solid #27272a; border-radius: 12px; 
-            width: 100%; padding: 24px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            position: relative;
+            background: #121214; border: 1px solid #27272a; border-radius: 8px; 
+            width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            overflow: hidden; display: flex; flex-direction: column;
         }
-        
-        .class-detail-header { text-align: center; margin-bottom: 16px; width: 100%; }
-        .class-detail-title { font-size: 30px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 8px rgba(0,0,0,0.9); margin-bottom: 8px;}
+        .class-detail-img-box { width: 100%; border-bottom: 1px solid #27272a; }
+        .class-preview-img { width: 100%; height: auto; display: block; }
+
+        .class-detail-content { padding: 20px; display: flex; flex-direction: column; }
+        .class-detail-header { text-align: center; margin-bottom: 16px; }
+        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 8px;}
         .class-detail-growth { font-size: 11px; color: #71717a; letter-spacing: 0.5px;}
         
-        .class-detail-lore { font-size: 13px; color: #a1a1aa; line-height: 1.6; font-style: italic; margin-bottom: 24px; text-align: center;}
+        .class-detail-lore { font-size: 12px; color: #a1a1aa; line-height: 1.6; font-style: italic; margin-bottom: 24px; text-align: center;}
         
         .class-bars { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; background: #09090b; padding: 16px; border-radius: 8px; border: 1px solid #18181b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.8); }
         .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
@@ -205,12 +180,7 @@
         .class-subclasses { width: 100%; font-size: 11px; padding: 16px; border-radius: 8px; border: 1px solid #27272a; background: #0d0d0f; margin-bottom: 20px; line-height: 1.5; color: #a1a1aa; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .class-subclasses b { display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #e4e4e7;}
         
-        /* 3D КНОПКА КЛАССА */
-        .select-class-btn { 
-            width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-bottom: 4px solid #0d0d0f;
-            padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.1s; letter-spacing: 1.5px;
-        }
+        .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-bottom: 4px solid #0d0d0f; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.1s; letter-spacing: 1.5px;}
         .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
         .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
     </style>
@@ -272,7 +242,7 @@
         <div class="stats-two-column" id="ui-stats-container"></div>
     </div>
 
-    <!-- ================= ЭКРАН 2: ЛАВКА ================= -->
+    <!-- ================= ЭКРАН 2: ЛАВКА (Расширенная) ================= -->
     <div id="screen-shop" class="app-screen">
         <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
         <div class="shop-controls">
@@ -300,14 +270,14 @@
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="margin-bottom: 16px;">📜 ПАЛАТА ГЕРОЕВ</div>
         <div style="font-size: 11px; color: #71717a; text-align: center; margin-bottom: 24px; line-height: 1.5;">
-            Смена специализации стоит <b style="color:#fbbf24; text-shadow: 0 1px 2px #000;">5000 💰</b>.<br>Класс определяет авто-рост характеристик и стиль боя.
+            Смена специализации стоит <b style="color:#fbbf24; text-shadow: 0 1px 2px #000;">5000 💰</b>.<br>Класс определяет авто-рост характеристик и доступную экипировку.
         </div>
         
         <div class="classes-gallery" id="ui-classes-gallery"></div>
         <div id="ui-class-detail"></div>
     </div>
 
-    <!-- ================= ЛОГИКА ================= -->
+    <!-- ================= ЛОГИКА И БАЗЫ ДАННЫХ ================= -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -354,25 +324,54 @@
             }
         };
 
+        // ГЛУБОКАЯ БАЗА ПРЕДМЕТОВ (УРОВНИ 1-10)
         const ITEMS_DB = {
+            // УРОВЕНЬ 1 (База)
             "uni_w1": { id: "uni_w1", name: "Ржавый Меч", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, stats: { atk: 5 } },
             "uni_2h1": { id: "uni_2h1", name: "Дубина Новичка", type: "two_handed", icon: "🏏", rarity: "common", lvl: 1, price: 60, stats: { atk: 12, agi: -2 } },
             "uni_ar1": { id: "uni_ar1", name: "Рваная Рубаха", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 40, stats: { armor: 5 } },
+            
+            // УРОВЕНЬ 2 (Первые классовые признаки)
             "uni_sh1": { id: "uni_sh1", name: "Деревянный Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 80, stats: { armor: 8, blockChance: 5 } },
             "uni_r1": { id: "uni_r1", name: "Кольцо Стажера", type: "ring", icon: "💍", rarity: "common", lvl: 2, price: 100, stats: { end: 3, luk: 1 } },
+            "kni_w1": { id: "kni_w1", name: "Железный Шип", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 2, price: 120, allowedClasses: ["knight", "berserk"], stats: { atk: 10, str: 2 } },
+            
+            // УРОВЕНЬ 3 (Специализация)
             "sha_w1": { id: "sha_w1", name: "Кинжал Вора", type: "weapon1", icon: "🔪", rarity: "rare", lvl: 3, price: 300, allowedClasses: ["shadow", "ranger"], stats: { atk: 15, agi: 5 } },
-            "ber_2h1": { id: "ber_2h1", name: "Топор Мясника", type: "two_handed", icon: "🪓", rarity: "rare", lvl: 3, price: 350, allowedClasses: ["berserk"], stats: { atk: 28, str: 5, armor: -5 } },
-            "sha_ar1": { id: "sha_ar1", name: "Кожаная Куртка", type: "chest", icon: "🧥", rarity: "rare", lvl: 4, price: 400, allowedClasses: ["shadow", "ranger"], stats: { armor: 15, agi: 8 } },
-            "rng_2h1": { id: "rng_2h1", name: "Лук Охотника", type: "two_handed", icon: "🏹", rarity: "rare", lvl: 4, price: 450, allowedClasses: ["ranger"], stats: { atk: 30, luk: 5, critChance: 5 } },
-            "kni_w1": { id: "kni_w1", name: "Меч Гладиатора", type: "weapon1", icon: "⚔️", rarity: "rare", lvl: 5, price: 600, allowedClasses: ["knight"], stats: { atk: 25, str: 8 } },
-            "joke_r1": { id: "joke_r1", name: "Кольцо Переработок", type: "ring", icon: "☕", rarity: "epic", lvl: 5, price: 800, stats: { atk: 40, end: -10 }, desc: "Урон растет, здоровье сгорает." },
-            "kni_sh1": { id: "kni_sh1", name: "Щит Бюрократа", type: "weapon2", icon: "🗄️", rarity: "epic", lvl: 6, price: 1000, allowedClasses: ["knight"], stats: { armor: 50, blockChance: 25, agi: -10 } },
+            "ber_2h1": { id: "ber_2h1", name: "Топор Дровосека", type: "two_handed", icon: "🪓", rarity: "rare", lvl: 3, price: 350, allowedClasses: ["berserk"], stats: { atk: 28, str: 5, armor: -5 } },
+            "uni_ar2": { id: "uni_ar2", name: "Стеганая Куртка", type: "chest", icon: "🧥", rarity: "common", lvl: 3, price: 200, stats: { armor: 10 } },
+            
+            // УРОВЕНЬ 4 (Развитие)
+            "sha_ar1": { id: "sha_ar1", name: "Кожаный Доспех", type: "chest", icon: "🧥", rarity: "rare", lvl: 4, price: 400, allowedClasses: ["shadow", "ranger"], stats: { armor: 15, agi: 8 } },
+            "rng_2h1": { id: "rng_2h1", name: "Длинный Лук", type: "two_handed", icon: "🏹", rarity: "rare", lvl: 4, price: 450, allowedClasses: ["ranger"], stats: { atk: 30, luk: 5, critChance: 5 } },
+            "kni_sh1": { id: "kni_sh1", name: "Тяжелый Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 400, allowedClasses: ["knight"], stats: { armor: 20, blockChance: 12 } },
+            
+            // УРОВЕНЬ 5 (Мид-гейм, появление премиум-предметов)
+            "kni_w2": { id: "kni_w2", name: "Меч Гладиатора", type: "weapon1", icon: "⚔️", rarity: "rare", lvl: 5, price: 600, allowedClasses: ["knight"], stats: { atk: 25, str: 8 } },
+            "uni_r2": { id: "uni_r2", name: "Перстень Силы", type: "ring", icon: "💍", rarity: "rare", lvl: 5, price: 500, stats: { str: 5, end: 5 } },
+            "premium_r1": { id: "premium_r1", name: "Амулет Штрафника", type: "ring", icon: "📜", rarity: "epic", premium: true, lvl: 5, price: 900, stats: { atk: 35, end: -15 }, desc: "Лишает здоровья, но заставляет бить в два раза сильнее." },
+            
+            // УРОВЕНЬ 6
+            "kni_sh2": { id: "kni_sh2", name: "Щит Бюрократа", type: "weapon2", icon: "🗄️", rarity: "epic", premium: true, lvl: 6, price: 1200, allowedClasses: ["knight"], stats: { armor: 50, blockChance: 25, agi: -10 }, desc: "Непробиваемая стена бумаг. Замедляет владельца." },
+            "sha_ar2": { id: "sha_ar2", name: "Мантия Теней", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1100, allowedClasses: ["shadow"], stats: { armor: 25, agi: 15, dodgeChance: 5 } },
+            
+            // УРОВЕНЬ 7
             "sha_w2": { id: "sha_w2", name: "Кинжал Правосудия", type: "weapon1", icon: "⚖️", rarity: "epic", lvl: 7, price: 1500, allowedClasses: ["shadow"], stats: { atk: 50, mst: 12, critChance: 8 } },
-            "kni_ar1": { id: "kni_ar1", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["knight", "berserk"], stats: { armor: 60, end: 15 } },
-            "ber_2h2": { id: "ber_2h2", name: "Топор Увольнения", type: "two_handed", icon: "🪓", rarity: "epic", lvl: 8, price: 2200, allowedClasses: ["berserk"], stats: { atk: 85, str: 20, agi: -5 } },
-            "joke_ar1": { id: "joke_ar1", name: "Пиджак Менеджера", type: "chest", icon: "👔", rarity: "legendary", lvl: 9, price: 3000, stats: { armor: 20, agi: 25, luk: 15 } },
-            "uni_r2": { id: "uni_r2", name: "Кольцо Дедлайна", type: "ring", icon: "🔥", rarity: "legendary", lvl: 10, price: 5000, stats: { atk: 120, mst: 30, end: -30 } },
-            "kni_w2": { id: "kni_w2", name: "Клинок Рассвета", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["knight"], stats: { atk: 90, str: 20, end: 20 } }
+            "kni_ar2": { id: "kni_ar2", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["knight", "berserk"], stats: { armor: 60, end: 15 } },
+            "rng_w2": { id: "rng_w2", name: "Охотничий Арбалет", type: "two_handed", icon: "🏹", rarity: "epic", lvl: 7, price: 1700, allowedClasses: ["ranger"], stats: { atk: 65, critChance: 12 } },
+            
+            // УРОВЕНЬ 8
+            "ber_2h2": { id: "ber_2h2", name: "Топор Увольнения", type: "two_handed", icon: "🪓", rarity: "epic", premium: true, lvl: 8, price: 2500, allowedClasses: ["berserk"], stats: { atk: 85, str: 25, agi: -5 }, desc: "Рубит с плеча окончательно и бесповоротно." },
+            "uni_ar3": { id: "uni_ar3", name: "Кираса Ветерана", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 45, str: 10, end: 10 } },
+            
+            // УРОВЕНЬ 9
+            "premium_ar1": { id: "premium_ar1", name: "Доспех Ночной Смены", type: "chest", icon: "👔", rarity: "legendary", premium: true, lvl: 9, price: 3500, stats: { armor: 80, end: 30, agi: -15 }, desc: "Выживаемость за счет полного истощения нервной системы." },
+            "sha_w3": { id: "sha_w3", name: "Ядовитый Коготь", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 9, price: 3200, allowedClasses: ["shadow"], stats: { atk: 70, agi: 20, mst: 15 } },
+            
+            // УРОВЕНЬ 10 (Кап)
+            "uni_r3": { id: "uni_r3", name: "Кольцо Дедлайна", type: "ring", icon: "🔥", rarity: "legendary", premium: true, lvl: 10, price: 6000, stats: { atk: 150, mst: 40, end: -40 }, desc: "Максимальная концентрация ценой полного выгорания." },
+            "kni_w3": { id: "kni_w3", name: "Клинок Рассвета", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["knight"], stats: { atk: 100, str: 25, end: 25 } },
+            "rng_2h3": { id: "rng_2h3", name: "Драконий Лук", type: "two_handed", icon: "🏹", rarity: "legendary", lvl: 10, price: 5800, allowedClasses: ["ranger"], stats: { atk: 110, luk: 30, critChance: 15 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
 
@@ -666,7 +665,15 @@
                     let fType = document.getElementById("filter-type").value;
                     let fClass = document.getElementById("filter-class").value;
 
-                    SHOP_ASSORTMENT.forEach(itemId => {
+                    // Добавлена сортировка: сначла доступные по уровню, затем по цене
+                    let sortedAssortment = [...SHOP_ASSORTMENT].sort((a, b) => {
+                        let itemA = ITEMS_DB[a], itemB = ITEMS_DB[b];
+                        if(itemA.lvl <= hero.level && itemB.lvl > hero.level) return -1;
+                        if(itemA.lvl > hero.level && itemB.lvl <= hero.level) return 1;
+                        return itemA.price - itemB.price;
+                    });
+
+                    sortedAssortment.forEach(itemId => {
                         let item = ITEMS_DB[itemId];
                         
                         if (fType === 'weapon' && item.type !== 'weapon1' && item.type !== 'weapon2' && item.type !== 'two_handed') return;
@@ -674,8 +681,9 @@
                         if (fType === 'ring' && item.type !== 'ring') return;
                         if (fClass === 'my_class') { if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return; }
 
-                        let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Классовое]</div>` : `<div class="shop-class-tag tag-uni">[Универсально]</div>`;
-                        let tagTwoHandHtml = item.type === 'two_handed' ? `<div class="shop-class-tag tag-twohand">[Двуручное]</div>` : '';
+                        let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
+                        let tagTwoHandHtml = item.type === 'two_handed' ? `<div class="shop-class-tag tag-twohand">[Двуруч]</div>` : '';
+                        let tagPremiumHtml = item.premium ? `<div class="shop-class-tag tag-premium">[Премиум]</div>` : '';
                         
                         let canAfford = hero.gold >= item.price;
                         let meetLvl = hero.level >= item.lvl;
@@ -692,7 +700,7 @@
                                 <div class="shop-item-icon rarity-${item.rarity}">${item.icon}</div>
                                 <div class="shop-item-info">
                                     <div class="shop-item-name"><span>${item.name}</span><span class="shop-item-lvl" style="color:${meetLvl?'#a1a1aa':'#ef4444'}">Ур. ${item.lvl}</span></div>
-                                    <div style="display:flex; gap:4px;">${tagClassHtml}${tagTwoHandHtml}</div>
+                                    <div style="display:flex; gap:4px; flex-wrap:wrap;">${tagClassHtml}${tagTwoHandHtml}${tagPremiumHtml}</div>
                                     <div class="shop-item-stats">${formatStats(item.stats)}</div>
                                     ${descHtml}
                                 </div>
