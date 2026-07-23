@@ -207,7 +207,6 @@
             </div>
             <div class="equip-col">
                 <div class="equip-slot empty" id="slot-amulet" data-sil="🧿" onclick="unequipSlot('amulet')"></div>
-                <div class="equip-slot empty" id="slot-gloves" data-sil="🧤" onclick="unequipSlot('gloves')"></div>
                 <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
                 <div class="equip-slot empty" id="slot-ring2" data-sil="💍" onclick="unequipSlot('ring2')"></div>
             </div>
@@ -248,7 +247,6 @@
                 <option value="belt">🧪 Пояса и Зелья</option>
                 <option value="boots">👢 Обувь</option>
                 <option value="jewelry">💍 Бижутерия (Кольца, Амулеты)</option>
-                <option value="gloves">🧤 Наручи и Перчатки</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
                 <option value="all">Для всех классов</option>
@@ -390,7 +388,7 @@
             name: "Гладиатор", level: 5, unspentPoints: 5, gold: 5000,
             baseClass: "knight", hp: 200, maxHp: 200,
             baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
-            equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, gloves: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
+            equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
             finalStats: {}
         };
@@ -579,7 +577,7 @@
         }
 
         function getSlotName(slotId) {
-            return {head:"Шлем", chest:"Броня", belt:"Пояс/Зелье", boots:"Обувь", amulet:"Амулет", gloves:"Наручи", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
+            return {head:"Шлем", chest:"Броня", belt:"Пояс/Зелье", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
         }
 
         function renderItemIcon(item) {
@@ -605,7 +603,9 @@
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
 
-                const slots = ["head", "chest", "belt", "boots", "amulet", "gloves", "ring1", "ring2"];
+                // Наручи убраны. Для симметрии: 4 слота слева (голова, тело, пояс, обувь) и 3 справа (амулет, кольцо1, кольцо2),
+                // выровненные по центру с помощью flex
+                const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2"];
                 slots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
@@ -725,7 +725,6 @@
                         if (fType === 'shields' && item.type !== 'weapon2') return;
                         if (fType === 'head' && item.type !== 'head') return;
                         if (fType === 'chest' && item.type !== 'chest') return;
-                        if (fType === 'gloves' && item.type !== 'gloves') return;
                         if (fType === 'boots' && item.type !== 'boots') return;
                         if (fType === 'belt' && item.type !== 'belt') return;
                         if (fType === 'jewelry' && item.type !== 'ring' && item.type !== 'amulet') return;
