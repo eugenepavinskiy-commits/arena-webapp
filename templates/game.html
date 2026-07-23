@@ -321,24 +321,23 @@
             "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", stats: { armor: 35, end: 10, str: 3 } }
         };
 
-        // Состояние героя (mst заменил int)
+        // Состояние героя - полностью чистый инвентарь!
         let hero = {
             name: "Гладиатор",
             level: 5,
             unspentPoints: 15,
             baseClass: "knight",
             subClass: "dark_knight",
-            hp: 200, // Стартовое ХП, пересчитается в calculateStats
+            hp: 200, 
             maxHp: 200,
             potions: 1,
-            // mst = Мастерство (Точность и качество удара)
             baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
             equipment: {
                 head: null,
-                chest: ITEMS_DB["armor_01"], // Оставим только броню и меч для примера
+                chest: null, // Убрали стартовую броню
                 belt: null,
                 boots: null,
-                weapon1: ITEMS_DB["sword_01"],
+                weapon1: null, // Убрали стартовый меч
                 weapon2: null,
                 ring1: null,
                 ring2: null, ring3: null, ring4: null
@@ -365,7 +364,7 @@
                 str: hero.baseStats.str, 
                 agi: hero.baseStats.agi, 
                 end: hero.baseStats.end,
-                mst: hero.baseStats.mst, // Мастерство
+                mst: hero.baseStats.mst, 
                 luk: hero.baseStats.luk,
                 armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0
             };
@@ -385,15 +384,13 @@
                 }
             }
 
-            // Уникальный баланс
             let hp = total.end * 10;
             let damage = total.str * 2 + total.atk;
-            total.critChance += (total.luk / 5); // Удача дает шанс крита
-            total.dodge += (total.agi / 4);      // Ловкость дает уворот
+            total.critChance += (total.luk / 5); 
+            total.dodge += (total.agi / 4);      
             
-            // МАСТЕРСТВО (MST) в действии:
-            total.armorPen = total.mst * 2;      // Каждое очко мастерства игнорирует 2 брони врага
-            total.critDmg += total.mst * 3;      // Каждое очко мастерства увеличивает силу крита на 3%
+            total.armorPen = total.mst * 2;      
+            total.critDmg += total.mst * 3;      
 
             let dropMultiplier = 1.0 + (total.luk / 100);
 
@@ -403,7 +400,6 @@
             total.dodge = total.dodge * cls.dodgeMult;
 
             hero.maxHp = hp;
-            // Фикс бага с переполнением ХП
             if (hero.hp > hero.maxHp) {
                 hero.hp = hero.maxHp;
             }
@@ -437,11 +433,9 @@
                     el.classList.remove("empty", "filled");
 
                     if (item && item.icon) {
-                        // Вещь надета
                         el.innerHTML = `${item.icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("filled");
                     } else {
-                        // ИДЕАЛЬНАЯ ЗАГЛУШКА: Никаких иконок, только минималистичный знак "+"
                         el.innerHTML = `<div class="empty-icon">+</div><span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("empty");
                     }
