@@ -24,7 +24,7 @@
         .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
         .nav-btn {
             background: #27272a; color: #a1a1aa; border: 1px solid #3f3f46;
-            padding: 8px 0; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.1s ease; font-weight: bold; text-transform: uppercase;
+            padding: 8px 0; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-weight: bold; text-transform: uppercase;
         }
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000; border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
@@ -32,148 +32,158 @@
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ГЕРОЙ И ЭКИПИРОВКА */
+        /* ОБЩИЕ БАННЕРЫ */
         .class-banner {
             background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%); border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; text-align: center; margin-bottom: 12px; color: #f59e0b; font-weight: bold; font-size: 13px; letter-spacing: 0.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
-        /* Плотная компоновка куклы героя */
+        /* ГЕРОЙ И ЭКИПИРОВКА */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 16px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; }
         
-        /* Эффект глубокого сокета для слотов */
+        /* ЭФФЕКТ ГЛУБОКИХ СОКЕТОВ */
         .equip-slot {
             width: 48px; height: 48px; background: #18181b; border-radius: 8px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { 
-            border: 1px solid rgba(63, 63, 70, 0.6); background: #121214; 
-            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.8); 
+            background: #09090b; /* Темнее фона */
+            border: 1px solid #27272a; 
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9); 
         }
-        .equip-slot.blocked { border: 1px solid #ef4444; background: #450a0a; cursor: not-allowed; box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.8); }
+        .equip-slot.blocked { border: 1px solid #ef4444; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9); }
         .silhouette { font-size: 24px; opacity: 0.15; filter: grayscale(100%); }
-        .item-icon { font-size: 24px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
+        .item-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
         
-        .rarity-common { border: 1px solid #71717a; background: #27272a; }
-        .rarity-rare { border: 1px solid #3b82f6; background: #1e293b; box-shadow: 0 0 6px rgba(59, 130, 246, 0.4); }
-        .rarity-epic { border: 1px solid #a855f7; background: #2e1065; box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
-        .rarity-legendary { border: 1px solid #f59e0b; background: #451a03; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        .rarity-common { border: 1px solid #52525b; background: #18181b; }
+        .rarity-rare { border: 1px solid #3b82f6; background: #0f172a; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
+        .rarity-epic { border: 1px solid #a855f7; background: #2e1065; box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.3); }
+        .rarity-legendary { border: 1px solid #f59e0b; background: #451a03; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.4); }
         
         .slot-label { position: absolute; bottom: -14px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.3px;}
         
         /* Аватар Героя (Умное кадрирование) */
-        .hero-avatar-box { flex-shrink: 0; width: 200px; text-align: center; position: relative; border-radius: 10px; overflow: hidden; }
+        .hero-avatar-box { flex-shrink: 0; width: 200px; text-align: center; position: relative; border-radius: 10px; overflow: hidden; background: #000;}
         .hero-avatar { 
             width: 100%; height: 260px; object-fit: cover; object-position: top center; 
-            transform: scale(1.05); /* Срезает артефакты по краям */
-            display: block; transition: all 0.3s ease; 
+            transform: scale(1.05); display: block; transition: all 0.3s ease; 
         }
         /* Внутренняя тень, чтобы края картинки плавно уходили в UI */
         .hero-avatar-box::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8); pointer-events: none; border-radius: 10px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9); pointer-events: none; border-radius: 10px;
         }
 
-        .aura-knight { border: 2px solid #fbbf24; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-        .aura-berserk { border: 2px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
-        .aura-shadow { border: 2px solid #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
-        .aura-ranger { border: 2px solid #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+        .aura-knight { border: 2px solid #fbbf24; box-shadow: 0 0 25px rgba(251, 191, 36, 0.25); }
+        .aura-berserk { border: 2px solid #ef4444; box-shadow: 0 0 25px rgba(239, 68, 68, 0.25); }
+        .aura-shadow { border: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.25); }
+        .aura-ranger { border: 2px solid #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
 
         .weapons-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
 
         /* ИНВЕНТАРЬ И СТАТЫ */
         .inventory-panel { 
-            background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
-            border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: #121214; border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
         }
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #f59e0b; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 6px; margin-bottom: 10px; }
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; transition: transform 0.1s; position: relative;}
         .inv-item:active { transform: scale(0.88); }
-        .inv-item.empty { background: #121214; border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); cursor: default; }
+        .inv-item.empty { background: #09090b; border: 1px solid #27272a; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); cursor: default; }
         
         .levelup-container { margin-bottom: 12px; }
-        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
+        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
         .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2); }
-        .levelup-dropdown { background: #27272a; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; margin-top: 6px; display: none; grid-template-columns: 1fr 1fr; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .levelup-dropdown { background: #18181b; border: 1px solid #f59e0b; border-radius: 8px; padding: 10px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 8px; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
         .levelup-dropdown.show { display: grid; }
-        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
-        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 20px; height: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #27272a; padding: 6px 10px; border-radius: 6px; font-size: 11px; }
+        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stats-card { background: linear-gradient(180deg, #18181b 0%, #121214 100%); border-radius: 8px; padding: 12px; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; margin-bottom: 8px; letter-spacing: 0.5px;}
-        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 4px; margin-bottom: 4px; font-size: 10px; color: #a1a1aa; }
+        .stats-card { background: #121214; border-radius: 8px; padding: 12px; border: 1px solid #27272a; box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
+        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; margin-bottom: 10px; letter-spacing: 0.5px;}
+        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 5px; margin-bottom: 5px; font-size: 10px; color: #a1a1aa; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .stat-item b { font-size: 11px; color: #fff; }
-        .hp-bar-bg { width: 100%; height: 5px; background: #27272a; border-radius: 3px; overflow: hidden; margin-top: 4px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); }
-        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s; }
+        .hp-bar-bg { width: 100%; height: 4px; background: #09090b; border-radius: 2px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);}
+        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s; box-shadow: 0 0 5px rgba(239,68,68,0.5);}
 
-        /* ЛАВКА И ФИЛЬТРЫ */
-        .shop-controls { display: flex; gap: 10px; margin-bottom: 8px; }
-        .shop-tab { flex: 1; padding: 10px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; text-transform: uppercase;}
-        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4); }
-        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
-        
+        /* ЛАВКА */
+        .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
+        .shop-tab { flex: 1; padding: 10px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
+        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3); }
+        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); }
         .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
-        .shop-select { flex: 1; background: #27272a; color: #fff; border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; font-size: 11px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-        
+        .shop-select { flex: 1; background: #18181b; color: #d4d4d8; border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; font-size: 11px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
         .shop-list { display: flex; flex-direction: column; gap: 10px; }
-        .shop-item-card { display: flex; background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 10px; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
-        .shop-item-icon { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);}
-        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 3px; }
+        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .shop-item-icon { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);}
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
         .shop-item-name { font-weight: bold; font-size: 13px; color: #fff; display:flex; justify-content:space-between; }
         .shop-item-lvl { font-size: 9px; color: #a1a1aa; background: #27272a; padding: 2px 5px; border-radius: 4px; border: 1px solid #3f3f46; }
-        .shop-class-tag { font-size: 8px; padding: 2px 5px; border-radius: 3px; display: inline-block; width: fit-content; margin-top: 2px; font-weight: bold; }
-        .tag-uni { background: #3f3f46; color: #d4d4d8; }
+        .shop-class-tag { font-size: 8px; padding: 2px 5px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; }
+        .tag-uni { background: #27272a; color: #a1a1aa; }
         .tag-class { background: #064e3b; color: #34d399; border: 1px solid #059669; }
         .tag-twohand { background: #7f1d1d; color: #fca5a5; border: 1px solid #b91c1c; }
-        .shop-item-stats { font-size: 11px; color: #10b981; margin-top: 2px;}
-        .shop-item-desc { font-size: 10px; color: #71717a; font-style: italic; margin-top: 2px; line-height: 1.3;}
+        .shop-item-stats { font-size: 11px; color: #10b981; }
+        .shop-item-desc { font-size: 10px; color: #71717a; font-style: italic; line-height: 1.3;}
         .shop-btn { padding: 10px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s;}
         .shop-btn:active { transform: scale(0.95); }
         .btn-buy { background: #10b981; color: #000; box-shadow: 0 2px 6px rgba(16,185,129,0.3); }
-        .btn-buy:disabled { background: #3f3f46; color: #71717a; cursor: not-allowed; box-shadow: none; }
+        .btn-buy:disabled { background: #27272a; color: #52525b; cursor: not-allowed; box-shadow: none; }
         .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
 
         /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ (КИНЕМАТОГРАФИЧНЫЙ ПОСТЕР) */
-        .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
         .class-icon-btn {
             background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px 0;
             display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
+            opacity: 0.5; filter: grayscale(80%); /* Затемняем невыбранные */
         }
-        .class-icon-btn .icon { font-size: 24px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.8)); }
+        .class-icon-btn .icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
         .class-icon-btn .name { font-size: 9px; font-weight: bold; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px;}
-        .class-icon-btn.selected { background: #27272a; border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        
+        /* Фокус на выбранном классе */
+        .class-icon-btn.selected { 
+            background: #27272a; border-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); 
+            opacity: 1; filter: grayscale(0%); transform: translateY(-2px);
+        }
         .class-icon-btn.selected .name { color: #f59e0b; }
 
-        .class-detail-card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 25px rgba(0,0,0,0.7); }
         
-        .class-preview-container { position: relative; width: 100%; height: 220px; overflow: hidden; }
+        .class-preview-container { position: relative; width: 100%; height: 240px; overflow: hidden; background: #000; }
         .class-preview-img { 
             width: 100%; height: 100%; object-fit: cover; object-position: top center; 
-            transform: scale(1.05); /* Убираем рамки нейросетей */
+            transform: scale(1.05); /* Скрываем ИИ-рамки */
         }
-        .class-preview-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(to top, #18181b 15%, transparent 100%); }
+        /* Двойная виньетка: скрывает все лишнее по краям и делает крутой градиент снизу */
+        .class-preview-container::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 30px #121214, inset 0 -80px 60px -10px #121214;
+            pointer-events: none;
+        }
+        
         .class-detail-title-box { position: absolute; bottom: 12px; width: 100%; text-align: center; z-index: 2; }
-        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 4px 8px #000, 0 0 15px rgba(0,0,0,0.9); }
+        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 10px #000, 0 0 20px rgba(0,0,0,0.9); }
         
-        .class-detail-content { padding: 16px; }
-        .class-detail-growth { text-align: center; font-size: 11px; color: #a1a1aa; margin-bottom: 14px; }
-        .class-detail-lore { font-size: 12px; color: #d4d4d8; line-height: 1.5; font-style: italic; margin-bottom: 16px; text-align: center; }
+        .class-detail-content { padding: 16px; position: relative; z-index: 3; }
+        .class-detail-growth { text-align: center; font-size: 11px; color: #a1a1aa; margin-bottom: 16px; }
+        .class-detail-lore { font-size: 12px; color: #d4d4d8; line-height: 1.5; font-style: italic; margin-bottom: 20px; text-align: center; text-shadow: 0 2px 4px #000;}
         
-        .class-bars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; background: #121214; padding: 12px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
-        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #d4d4d8; }
-        .c-bar-wrap { width: 65%; height: 6px; background: #27272a; border-radius: 3px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); }
-        .c-bar-fill { height: 100%; border-radius: 3px; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        /* Изящные полосы прогресса */
+        .class-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; background: #09090b; padding: 12px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 4px 8px rgba(0,0,0,0.8); }
+        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #a1a1aa; }
+        .c-bar-wrap { width: 65%; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); }
+        .c-bar-fill { height: 100%; border-radius: 2px; box-shadow: 0 0 8px currentColor; }
         
-        .class-subclasses { font-size: 11px; padding: 12px; border-radius: 8px; border: 1px solid; margin-bottom: 16px; line-height: 1.4; }
+        .class-subclasses { font-size: 11px; padding: 14px; border-radius: 8px; border: 1px solid; margin-bottom: 16px; line-height: 1.5; }
         .class-subclasses b { display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
         
-        .select-class-btn { width: 100%; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); transition: transform 0.1s; letter-spacing: 1px;}
+        .select-class-btn { width: 100%; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: transform 0.1s; letter-spacing: 1px;}
         .select-class-btn:active { transform: scale(0.98); }
-        .select-class-btn:disabled { background: #27272a !important; color: #71717a !important; cursor: default; box-shadow: none !important; }
+        .select-class-btn:disabled { background: #27272a !important; color: #52525b !important; cursor: default; box-shadow: none !important; }
     </style>
 </head>
 <body>
@@ -259,8 +269,8 @@
 
     <!-- ================= ЭКРАН 3: КЛАССЫ ================= -->
     <div id="screen-classes" class="app-screen">
-        <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 14px; line-height: 1.4;">
+        <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 12px;">📜 ПАЛАТА ГЕРОЕВ</div>
+        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 16px; line-height: 1.4;">
             Смена специализации стоит <b style="color:#fbbf24;">5000 💰</b>.<br>Каждый класс обладает уникальным визуалом и стилем боя.
         </div>
         
@@ -326,7 +336,7 @@
             "sha_ar1": { id: "sha_ar1", name: "Кожаная Куртка", type: "chest", icon: "🧥", rarity: "rare", lvl: 4, price: 400, allowedClasses: ["shadow", "ranger"], stats: { armor: 15, agi: 8 } },
             "rng_2h1": { id: "rng_2h1", name: "Лук Охотника", type: "two_handed", icon: "🏹", rarity: "rare", lvl: 4, price: 450, allowedClasses: ["ranger"], stats: { atk: 30, luk: 5, critChance: 5 } },
             "kni_w1": { id: "kni_w1", name: "Меч Гладиатора", type: "weapon1", icon: "⚔️", rarity: "rare", lvl: 5, price: 600, allowedClasses: ["knight"], stats: { atk: 25, str: 8 } },
-            "joke_r1": { id: "joke_r1", name: "Кольцо Переработок", type: "ring", icon: "☕", rarity: "epic", lvl: 5, price: 800, stats: { atk: 40, end: -10 }, desc: "Урон растет, здоровье сгорает. Всё как в жизни." },
+            "joke_r1": { id: "joke_r1", name: "Кольцо Переработок", type: "ring", icon: "☕", rarity: "epic", lvl: 5, price: 800, stats: { atk: 40, end: -10 }, desc: "Урон растет, здоровье сгорает." },
             "kni_sh1": { id: "kni_sh1", name: "Щит Бюрократа", type: "weapon2", icon: "🗄️", rarity: "epic", lvl: 6, price: 1000, allowedClasses: ["knight"], stats: { armor: 50, blockChance: 25, agi: -10 } },
             "sha_w2": { id: "sha_w2", name: "Кинжал Правосудия", type: "weapon1", icon: "⚖️", rarity: "epic", lvl: 7, price: 1500, allowedClasses: ["shadow"], stats: { atk: 50, mst: 12, critChance: 8 } },
             "kni_ar1": { id: "kni_ar1", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["knight", "berserk"], stats: { armor: 60, end: 15 } },
@@ -412,7 +422,7 @@
                 if (hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked") hero.inventory.push(hero.equipment.weapon2.id);
                 
                 hero.equipment.weapon1 = item;
-                hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято двуручным", type: "weapon2", rarity: "common", stats: {} };
+                hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
                 
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
                 calculateStats(); updateUI();
@@ -556,7 +566,7 @@
                         el.className = "equip-slot";
                         
                         if (item && item.id === "blocked") {
-                            el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${slotNameRu}</span>`;
+                            el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label" style="color:#ef4444;">${slotNameRu}</span>`;
                             el.classList.add("blocked");
                         } else if (item && item.icon) {
                             el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${slotNameRu}</span>`;
@@ -613,7 +623,7 @@
                             <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                                 <span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b>
                             </div>
-                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
+                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%; color:${CLASSES[hero.baseClass].color}"></div></div>
                         </div>
                         <div class="stat-item"><span>🗡️ Урон</span> <b>${hero.finalStats.damage}</b></div>
                         <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
@@ -707,10 +717,9 @@
                 let subInfo = selCls.subclasses[10];
 
                 let detailHtml = `
-                    <div class="class-detail-card" style="border-color:${selCls.color}; box-shadow: 0 0 15px ${selCls.color}20;">
+                    <div class="class-detail-card" style="border-color:${selCls.color}; box-shadow: 0 4px 15px ${selCls.color}30;">
                         <div class="class-preview-container">
                             <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
-                            <div class="class-preview-overlay"></div>
                             <div class="class-detail-title-box">
                                 <div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div>
                             </div>
