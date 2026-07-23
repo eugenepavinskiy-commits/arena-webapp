@@ -63,7 +63,7 @@ def save_player():
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
     # Добавил параметр ?v=777 чтобы 100% сбить кэш Telegram при запуске!
-    webapp_url = "https://arena-webapp-production.up.railway.app/?v=978"
+    webapp_url = "https://arena-webapp-production.up.railway.app/?v=928"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
