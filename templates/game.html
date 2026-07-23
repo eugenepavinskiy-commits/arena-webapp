@@ -72,10 +72,12 @@
             filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); 
         }
         
+        /* ВИЗУАЛЬНЫЕ ЭФФЕКТЫ РЕДКОСТИ */
         .rarity-common { border-color: #3f3f46; }
         .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
-        .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2); }
-        .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.2); }
+        .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4); }
+        .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.5); animation: pulse-leg 2s infinite; }
+        @keyframes pulse-leg { 0% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } 50% { box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.6); } 100% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } }
         
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         
@@ -108,6 +110,9 @@
         .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
         .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
+        
+        .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .heal-btn:active { transform: scale(0.9); }
 
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); letter-spacing: 0.5px;}
@@ -131,7 +136,11 @@
         .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea; box-shadow: 0 0 5px rgba(147,51,234,0.3);}
         .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d; box-shadow: 0 0 5px rgba(239,68,68,0.2);}
         
+        /* СТИЛИ СРАВНЕНИЯ СТАТОВ */
         .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; text-shadow: 0 1px 2px #000;}
+        .stat-diff-pos { color: #34d399; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
+        .stat-diff-neg { color: #f87171; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
+        
         .shop-item-desc { font-size: 11px; color: #52525b; font-style: italic; line-height: 1.4;}
         
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s; text-transform: uppercase; z-index: 2;}
@@ -200,7 +209,6 @@
                 <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
                 <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
                 <div class="equip-slot empty" id="slot-belt" data-sil="🧪" onclick="unequipSlot('belt')"></div>
-                <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
             </div>
             <div class="hero-avatar-box">
                 <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
@@ -245,7 +253,6 @@
                 <option value="head">🪖 Шлемы</option>
                 <option value="chest">🦺 Броня и Мантии</option>
                 <option value="belt">🧪 Пояса и Зелья</option>
-                <option value="boots">👢 Обувь</option>
                 <option value="jewelry">💍 Бижутерия (Кольца, Амулеты)</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
@@ -315,9 +322,6 @@
             }
         };
 
-        // ==========================================
-        // БАЗА ДАННЫХ ПРЕДМЕТОВ
-        // ==========================================
         const ITEMS_DB = {
             // УРОВЕНЬ 1
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
@@ -345,7 +349,6 @@
 
             // УРОВЕНЬ 5
             "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 42, str: 5 } },
-            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], stats: { armor: 15, end: 5 } },
             "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 38, blockChance: 12 } },
             "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 12, agi: 6, dodgeChance: 4 } },
 
@@ -388,7 +391,7 @@
             name: "Гладиатор", level: 5, unspentPoints: 5, gold: 5000,
             baseClass: "knight", hp: 200, maxHp: 200,
             baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
-            equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
+            equipment: { head: null, chest: null, belt: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
             finalStats: {}
         };
@@ -516,6 +519,17 @@
             updateUI();
         }
 
+        function healHero() {
+            if (hero.gold >= 10) {
+                hero.gold -= 10;
+                hero.hp = hero.finalStats.hp;
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                updateUI();
+            } else {
+                alert("Нужно 10 золота для лечения!");
+            }
+        }
+
         function calculateStats() {
             let cls = CLASSES[hero.baseClass];
             let lvlBonus = hero.level - 1; 
@@ -549,6 +563,10 @@
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult);
             total.dodge = Math.floor(total.dodge * cls.dodgeMult);
 
+            // HARD CAPS (Лимиты на уклонение и блок)
+            total.dodge = Math.min(75, total.dodge);
+            total.blockChance = Math.min(60, total.blockChance);
+
             hero.maxHp = hp; if (hero.hp > hero.maxHp) hero.hp = hero.maxHp;
 
             hero.finalStats = {
@@ -559,25 +577,45 @@
             };
         }
 
-        function formatStats(stats) {
+        // Новая функция для сравнения статов в магазине (Tooltip Logic)
+        function getEquippedItemFor(shopItem) {
+            if (shopItem.type === 'two_handed') return hero.equipment.weapon1; 
+            if (shopItem.type === 'ring') return hero.equipment.ring1 || hero.equipment.ring2; 
+            return hero.equipment[shopItem.type];
+        }
+
+        function formatShopStats(shopItem) {
+            let equipped = getEquippedItemFor(shopItem);
+            let eStats = equipped && equipped.stats ? equipped.stats : {};
+            let sStats = shopItem.stats || {};
+            
             let res = [];
-            if(stats.atk) res.push(`Урон ${stats.atk>0?'+':''}${stats.atk}`);
-            if(stats.armor) res.push(`Броня ${stats.armor>0?'+':''}${stats.armor}`);
-            if(stats.str) res.push(`СИЛ ${stats.str>0?'+':''}${stats.str}`);
-            if(stats.agi) res.push(`ЛОВ ${stats.agi>0?'+':''}${stats.agi}`);
-            if(stats.end) res.push(`ВЫН ${stats.end>0?'+':''}${stats.end}`);
-            if(stats.mst) res.push(`МСТ ${stats.mst>0?'+':''}${stats.mst}`);
-            if(stats.luk) res.push(`УДЧ ${stats.luk>0?'+':''}${stats.luk}`);
-            if(stats.critChance) res.push(`Крит ${stats.critChance>0?'+':''}${stats.critChance}%`);
-            if(stats.dodgeChance) res.push(`Уворот ${stats.dodgeChance>0?'+':''}${stats.dodgeChance}%`);
-            if(stats.blockChance) res.push(`Блок ${stats.blockChance>0?'+':''}${stats.blockChance}%`);
-            if(stats.armorPen) res.push(`Пробитие ${stats.armorPen>0?'+':''}${stats.armorPen}`);
-            if(stats.critDmg) res.push(`Крит. Урон ${stats.critDmg>0?'+':''}${stats.critDmg}%`);
+            const statMap = [
+                {k: 'atk', n: 'Урон'}, {k: 'armor', n: 'Броня'}, {k: 'str', n: 'СИЛ'}, {k: 'agi', n: 'ЛОВ'},
+                {k: 'end', n: 'ВЫН'}, {k: 'mst', n: 'МСТ'}, {k: 'luk', n: 'УДЧ'}, 
+                {k: 'critChance', n: 'Крит'}, {k: 'dodgeChance', n: 'Уворот'}, 
+                {k: 'blockChance', n: 'Блок'}, {k: 'armorPen', n: 'Пробитие'}, {k: 'critDmg', n: 'Крит. Урон'}
+            ];
+
+            statMap.forEach(s => {
+                let sVal = sStats[s.k] || 0;
+                let eVal = eStats[s.k] || 0;
+                if (sVal !== 0) {
+                    let diff = sVal - eVal;
+                    let diffHtml = '';
+                    if (equipped && diff !== 0) {
+                        if (diff > 0) diffHtml = `<span class="stat-diff-pos">(+${diff})</span>`;
+                        else diffHtml = `<span class="stat-diff-neg">(${diff})</span>`;
+                    }
+                    let isPct = ['critChance', 'dodgeChance', 'blockChance', 'critDmg'].includes(s.k) ? '%' : '';
+                    res.push(`${s.n} ${sVal>0?'+':''}${sVal}${isPct}${diffHtml}`);
+                }
+            });
             return res.join(' • ');
         }
 
         function getSlotName(slotId) {
-            return {head:"Шлем", chest:"Броня", belt:"Пояс/Зелье", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
+            return {head:"Шлем", chest:"Броня", belt:"Пояс/Зелье", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
         }
 
         function renderItemIcon(item) {
@@ -603,9 +641,7 @@
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
 
-                // Наручи убраны. Для симметрии: 4 слота слева (голова, тело, пояс, обувь) и 3 справа (амулет, кольцо1, кольцо2),
-                // выровненные по центру с помощью flex
-                const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2"];
+                const slots = ["head", "chest", "belt", "amulet", "ring1", "ring2"];
                 slots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
@@ -679,6 +715,11 @@
                 document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
 
                 let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
+                
+                let healBtnHtml = hero.hp < hero.finalStats.hp 
+                    ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-10💰)</button>` 
+                    : ``;
+
                 document.getElementById("ui-stats-container").innerHTML = `
                     <div class="stats-card">
                         <div class="stat-group-title">Базовые параметры</div>
@@ -691,8 +732,9 @@
                     <div class="stats-card">
                         <div class="stat-group-title">Боевые параметры</div>
                         <div class="stat-item" style="flex-direction:column; align-items:stretch;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                                <span>🩸 Здоровье</span> <b>${hero.hp} / ${hero.finalStats.hp}</b>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
+                                <span>🩸 Здоровье <b>${hero.hp} / ${hero.finalStats.hp}</b></span>
+                                ${healBtnHtml}
                             </div>
                             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
                         </div>
@@ -725,7 +767,6 @@
                         if (fType === 'shields' && item.type !== 'weapon2') return;
                         if (fType === 'head' && item.type !== 'head') return;
                         if (fType === 'chest' && item.type !== 'chest') return;
-                        if (fType === 'boots' && item.type !== 'boots') return;
                         if (fType === 'belt' && item.type !== 'belt') return;
                         if (fType === 'jewelry' && item.type !== 'ring' && item.type !== 'amulet') return;
                         
@@ -751,7 +792,7 @@
                                 <div class="shop-item-info">
                                     <div class="shop-item-name"><span>${item.name}</span><span class="shop-item-lvl" style="color:${meetLvl?'#a1a1aa':'#ef4444'}">Ур. ${item.lvl}</span></div>
                                     <div style="display:flex; gap:4px; flex-wrap:wrap;">${tagClassHtml}${tagTwoHandHtml}${tagPremiumHtml}</div>
-                                    <div class="shop-item-stats">${formatStats(item.stats)}</div>
+                                    <div class="shop-item-stats">${formatShopStats(item)}</div>
                                     ${descHtml}
                                 </div>
                                 ${btnHtml}
