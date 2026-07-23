@@ -46,9 +46,9 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
         
+        /* === ИНВЕНТАРЬ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
-        
         .equip-slot {
             width: 48px; height: 48px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
@@ -57,22 +57,17 @@
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { background: #050505; border: 1px solid #1c1c1f; }
         .equip-slot.blocked { border: 1px solid #450a0a; background: #1a0505; cursor: not-allowed; }
-        
         .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
-        
         .item-img-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: inherit; overflow: hidden; 
             pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1;
         }
         .item-img { 
-            width: 90%; height: 90%; 
-            object-fit: contain; 
-            filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); 
+            width: 90%; height: 90%; object-fit: contain; filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); 
         }
         
-        /* ВИЗУАЛЬНЫЕ ЭФФЕКТЫ РЕДКОСТИ */
         .rarity-common { border-color: #3f3f46; }
         .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
         .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4); }
@@ -80,19 +75,17 @@
         @keyframes pulse-leg { 0% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } 50% { box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.6); } 100% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } }
         
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
-        
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
         .hero-avatar { width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;}
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
-
         .inventory-panel { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: #050505; border: 1px solid #1c1c1f; cursor: default; }
-        
+
+        /* === СТАТЫ === */
         .levelup-container { margin-bottom: 16px; }
         .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;}
         .btn-toggle-levelup.active { background: #451a03; color: #fbbf24; border-color: #92400e; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); }
@@ -101,7 +94,6 @@
         .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #27272a; padding: 8px 12px; border-radius: 6px; font-size: 11px; color:#d4d4d8;}
         .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         .add-stat-btn:active { transform: scale(0.9); }
-        
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stats-card { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
         .stat-group-title { color: #71717a; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px;}
@@ -110,52 +102,44 @@
         .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
         .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
-        
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .heal-btn:active { transform: scale(0.9); }
 
+        /* === МАГАЗИН === */
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); letter-spacing: 0.5px;}
         .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
         .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
-        
         .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
         .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 10px; font-size: 12px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
-        
         .shop-list { display: flex; flex-direction: column; gap: 12px; }
         .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
-        
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
         .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; text-shadow: 0 1px 3px #000; }
         .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; letter-spacing: 0.5px;}
-        
         .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; box-shadow: 0 0 5px rgba(16,185,129,0.2);}
         .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea; box-shadow: 0 0 5px rgba(147,51,234,0.3);}
         .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d; box-shadow: 0 0 5px rgba(239,68,68,0.2);}
-        
-        /* СТИЛИ СРАВНЕНИЯ СТАТОВ */
         .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; text-shadow: 0 1px 2px #000;}
         .stat-diff-pos { color: #34d399; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
         .stat-diff-neg { color: #f87171; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
-        
         .shop-item-desc { font-size: 11px; color: #52525b; font-style: italic; line-height: 1.4;}
-        
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s; text-transform: uppercase; z-index: 2;}
         .shop-btn:active { transform: translateY(2px); }
         .btn-buy { background: #fbbf24; color: #000; box-shadow: 0 4px 10px rgba(251,191,36,0.3); border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; box-shadow: none;}
         .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); border-bottom: 3px solid #7f1d1d;}
 
+        /* === КЛАССЫ === */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; opacity: 0.4; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
         .class-icon-btn .name { font-size: 10px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
         .class-icon-btn.selected { background: #18181b; border-color: #52525b; box-shadow: 0 6px 15px rgba(0,0,0,0.8); opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
         .class-icon-btn.selected .name { color: #e4e4e7; }
-
         .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 8px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; }
         .class-detail-img-box { width: 100%; border-bottom: 1px solid #27272a; }
         .class-preview-img { width: 100%; height: auto; display: block; }
@@ -164,18 +148,52 @@
         .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 8px;}
         .class-detail-growth { font-size: 11px; color: #71717a; letter-spacing: 0.5px;}
         .class-detail-lore { font-size: 12px; color: #a1a1aa; line-height: 1.6; font-style: italic; margin-bottom: 24px; text-align: center;}
-        
         .class-bars { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; background: #09090b; padding: 16px; border-radius: 8px; border: 1px solid #18181b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.8); }
         .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
         .c-bar-wrap { width: 65%; height: 4px; background: #18181b; border-radius: 2px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); }
         .c-bar-fill { height: 100%; border-radius: 2px; box-shadow: 0 0 10px currentColor; }
-        
         .class-subclasses { width: 100%; font-size: 11px; padding: 16px; border-radius: 8px; border: 1px solid #27272a; background: #0d0d0f; margin-bottom: 20px; line-height: 1.5; color: #a1a1aa; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .class-subclasses b { display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #e4e4e7;}
-        
         .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-bottom: 4px solid #0d0d0f; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.1s; letter-spacing: 1.5px;}
         .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
         .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
+
+        /* === PVE БОЕВКА === */
+        .combat-arena { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
+        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;}
+        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .combat-entity { width: 45%; text-align: center; }
+        .combat-avatar { font-size: 40px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 10px;}
+        .combat-name { font-weight: bold; font-size: 12px; margin-bottom: 4px; color: #e4e4e7; }
+        .combat-lvl { font-size: 10px; color: #71717a; margin-bottom: 8px; }
+        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+        .combat-hp-bg { width: 100%; height: 8px; background: #050505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; }
+        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
+        .combat-vs { font-size: 20px; font-weight: 900; color: #52525b; }
+        
+        .combat-log-box { background: #09090b; border: 1px solid #18181b; border-radius: 6px; padding: 10px; height: 120px; overflow-y: auto; margin-bottom: 20px; font-size: 11px; line-height: 1.5; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 4px;}
+        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 4px; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-dmg { color: #f87171; font-weight: bold; }
+        .log-crit { color: #fbbf24; font-weight: bold; text-shadow: 0 0 5px rgba(251,191,36,0.5); }
+        .log-dodge { color: #60a5fa; font-weight: bold; }
+        .log-block { color: #a78bfa; font-weight: bold; }
+        .log-sys { color: #34d399; font-weight: bold; }
+
+        .combat-controls-title { text-align: center; font-size: 10px; font-weight: bold; color: #71717a; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;}
+        .zone-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; }
+        .zone-btn { flex: 1; padding: 12px 0; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.1s; background: #18181b; color: #71717a; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .zone-btn:active { transform: scale(0.95); }
+        
+        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.3); }
+        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.3); }
+        
+        .action-btn { width: 100%; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 16px; border-radius: 8px; font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 15px rgba(0,0,0,0.8); letter-spacing: 2px;}
+        .action-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none; transform: none;}
+
+        .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
+        .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
     </style>
 </head>
 <body>
@@ -184,13 +202,17 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
     </script>
 
-    <div class="top-dashboard">
-        <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span> 🏆 <span>3</span></div>
-        <div style="font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase;">Уровень <span id="ui-top-lvl" style="color:#ffffff; text-shadow: 0 1px 3px #000;">5</span></div>
+    <div class="top-dashboard" style="position:relative; overflow:hidden;">
+        <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
+        <div style="font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2;">
+            Ур. <span id="ui-top-lvl" style="color:#ffffff; text-shadow: 0 1px 3px #000; font-size:14px;">1</span>
+            <span style="font-size:9px; margin-left:4px;" id="ui-top-exp">0/100</span>
+        </div>
+        <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
     </div>
 
     <div class="nav-grid">
-        <button class="nav-btn" onclick="openScreen('PVE')">⚔️ PVE</button>
+        <button class="nav-btn" id="nav-PVE" onclick="openScreen('PVE')">⚔️ PVE</button>
         <button class="nav-btn" onclick="openScreen('БОСС')">🦖 БОСС</button>
         <button class="nav-btn" onclick="openScreen('PVP')">🛡️ PVP</button>
         <button class="nav-btn active" id="nav-hero" onclick="openScreen('hero')">👤 ГЕРОЙ</button>
@@ -198,6 +220,55 @@
         <button class="nav-btn" id="nav-class" onclick="openScreen('classes')">📜 КЛАСС</button>
         <button class="nav-btn" onclick="openScreen('АУКЦИОН')">🏛️ АУКЦИОН</button>
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
+    </div>
+
+    <!-- ЭКРАН 0: PVE (БОЕВКА) -->
+    <div id="screen-PVE" class="app-screen">
+        <div class="class-banner">ТЕМНЫЕ ПОДЗЕМЕЛЬЯ</div>
+        
+        <div class="combat-arena">
+            <div class="combat-header" id="combat-stage-name">УРОВЕНЬ 1: ТЕМНЫЙ КОРИДОР</div>
+            
+            <div class="combat-entities">
+                <div class="combat-entity">
+                    <div class="combat-avatar" id="combat-hero-avatar">🛡️</div>
+                    <div class="combat-name" id="combat-hero-name">Герой</div>
+                    <div class="combat-lvl">Ур. <span id="combat-hero-lvl">1</span></div>
+                    <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
+                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+                </div>
+                
+                <div class="combat-vs">VS</div>
+                
+                <div class="combat-entity">
+                    <div class="combat-avatar" id="combat-enemy-avatar">🧟</div>
+                    <div class="combat-name" id="combat-enemy-name">Монстр</div>
+                    <div class="combat-lvl">Ур. <span id="combat-enemy-lvl">1</span></div>
+                    <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
+                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                </div>
+            </div>
+
+            <div class="combat-log-box" id="combat-log">
+                <div class="log-entry log-sys">Встречен новый противник! Бой начинается.</div>
+            </div>
+
+            <div class="combat-controls-title">⚔️ Куда бить?</div>
+            <div class="zone-row">
+                <div class="zone-btn atk" id="btn-atk-head" onclick="selectZone('atk', 'head')">Голова</div>
+                <div class="zone-btn atk" id="btn-atk-chest" onclick="selectZone('atk', 'chest')">Торс</div>
+                <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
+            </div>
+
+            <div class="combat-controls-title">🛡️ Что защищать?</div>
+            <div class="zone-row">
+                <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова</div>
+                <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс</div>
+                <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги</div>
+            </div>
+
+            <button class="action-btn" id="btn-execute-turn" onclick="executeTurn()" disabled>СОВЕРШИТЬ ХОД</button>
+        </div>
     </div>
 
     <!-- ЭКРАН 1: ГЕРОЙ -->
@@ -209,6 +280,7 @@
                 <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
                 <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
                 <div class="equip-slot empty" id="slot-belt" data-sil="🧪" onclick="unequipSlot('belt')"></div>
+                <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
             </div>
             <div class="hero-avatar-box">
                 <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
@@ -249,10 +321,11 @@
             <select class="shop-select" id="filter-type" onchange="updateUI()">
                 <option value="all">📜 Все предметы</option>
                 <option value="weapons">⚔️ Оружие (1H/2H)</option>
-                <option value="shields">🛡️ Щиты и Левая рука</option>
+                <option value="shields">🛡️ Щиты</option>
                 <option value="head">🪖 Шлемы</option>
                 <option value="chest">🦺 Броня и Мантии</option>
                 <option value="belt">🧪 Пояса и Зелья</option>
+                <option value="boots">👢 Обувь</option>
                 <option value="jewelry">💍 Бижутерия (Кольца, Амулеты)</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
@@ -323,60 +396,42 @@
         };
 
         const ITEMS_DB = {
-            // УРОВЕНЬ 1
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
             "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
             "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10, dodgeChance: -1 } },
             "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 6, blockChance: 5 } },
-
-            // УРОВЕНЬ 2
             "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12, str: 2 } },
             "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8, mst: 5, luk: 2 } },
             "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, str: 2 } },
             "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12, blockChance: 6 } },
-
-            // УРОВЕНЬ 3
             "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 6, armorPen: 3 } },
             "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, stats: { armor: 15, str: 3 } },
             "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
             "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 10, str: 3 } },
-
-            // УРОВЕНЬ 4
             "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 38, armorPen: 10, agi: -2 } },
             "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, stats: { armor: 18, mst: 8, end: 3 } },
             "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25, blockChance: 10 } },
             "24393": { id: "24393", name: "Шляпа Колдуна", type: "head", icon: "🧙‍♂️", rarity: "epic", lvl: 4, price: 400, allowedClasses: ["shadow"], stats: { armor: 8, mst: 15 } },
-
-            // УРОВЕНЬ 5
             "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 42, str: 5 } },
+            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], stats: { armor: 15, end: 5 } },
             "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 38, blockChance: 12 } },
             "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 12, agi: 6, dodgeChance: 4 } },
-
-            // УРОВЕНЬ 6
             "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { atk: 55, str: 8, armorPen: 15 } },
             "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], stats: { armor: 55, end: 5, dodgeChance: -4 } },
             "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 45, mst: 5, blockChance: 14 } },
             "19204": { id: "19204", name: "Рубиновый Перстень", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, stats: { str: 8, atk: 15, critDmg: 10 } },
-
-            // УРОВЕНЬ 7
             "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
             "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 25, agi: 8, dodgeChance: 4 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 65, end: 8, str: 4 } },
             "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 60, blockChance: 18, end: 6 } },
-
-            // УРОВЕНЬ 8
             "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], stats: { atk: 100, str: 15, critDmg: 25 } },
             "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 75, str: 10 } },
             "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], stats: { armor: 50, agi: 12, mst: 6 } },
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 55, mst: 15, luk: 5 } },
-
-            // УРОВЕНЬ 9
             "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
             "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 90, atk: 25, blockChance: 20, end: -5 }, desc: "Шипы наносят урон, но щит тяжел." },
             "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 65, mst: 25, critChance: 8 } },
-
-            // УРОВЕНЬ 10
             "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
         };
@@ -388,10 +443,10 @@
         let previewClassId = "knight";
 
         let hero = {
-            name: "Гладиатор", level: 5, unspentPoints: 5, gold: 5000,
-            baseClass: "knight", hp: 200, maxHp: 200,
-            baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
-            equipment: { head: null, chest: null, belt: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
+            name: "Гладиатор", level: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
+            baseClass: "knight", hp: 100, maxHp: 100,
+            baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
+            equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
             finalStats: {}
         };
@@ -399,8 +454,124 @@
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         previewClassId = hero.baseClass;
 
+        // PVE STATE
+        let enemy = null;
+        let combatState = { atkZone: null, defZone: null };
+        const ENEMY_NAMES = ["Оживший Стажер", "Гоблин-Курьер", "Токсичный Менеджер", "Орк-Бухгалтер", "HR-Демон"];
+
+        function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.5, lvl - 1)); }
+
+        function generateEnemy(lvl) {
+            let name = ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)];
+            let hp = 30 + (lvl * 20) + Math.floor(Math.random() * 15);
+            let atk = 5 + (lvl * 4);
+            let armor = lvl * 3;
+            return { name: name, level: lvl, hp: hp, maxHp: hp, stats: { atk: atk, armor: armor, critChance: 5, dodge: 5, armorPen: lvl } };
+        }
+
+        function initCombat() {
+            enemy = generateEnemy(hero.level);
+            logCombat(`<span class="log-sys">Вы спустились в подземелье. Навстречу выходит ${enemy.name} (Ур. ${enemy.level})!</span>`);
+            resetCombatZones();
+            updateUI();
+        }
+
+        function selectZone(type, zone) {
+            if(type === 'atk') combatState.atkZone = zone;
+            if(type === 'def') combatState.defZone = zone;
+            updateUI();
+        }
+
+        function resetCombatZones() {
+            combatState.atkZone = null; combatState.defZone = null;
+        }
+
+        function logCombat(text) {
+            let logBox = document.getElementById("combat-log");
+            logBox.innerHTML += `<div class="log-entry">${text}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function calcDmg(attacker, defender, zAtk, zDef) {
+            // Dodge
+            if (Math.random() * 100 < (defender.dodge || 0)) {
+                return { dmg: 0, text: `<span class="log-dodge">УВОРОТ</span>` };
+            }
+
+            let baseAtk = attacker.damage || attacker.atk || 5;
+            let isCrit = Math.random() * 100 < (attacker.critChance || 5);
+            if (isCrit) baseAtk = Math.floor(baseAtk * ((attacker.critDmg || 150) / 100));
+
+            let defArmor = Math.max(0, (defender.armor || 0) - (attacker.armorPen || 0));
+            let mitigation = defArmor;
+            let blockText = "";
+
+            if (zAtk === zDef) {
+                if (Math.random() * 100 < (defender.blockChance || 0)) {
+                    mitigation *= 2; // Успешный блок удваивает броню против этого удара
+                    blockText = ` <span class="log-block">[БЛОК]</span>`;
+                }
+            } else {
+                mitigation = Math.floor(defArmor * 0.7); // Если не угадал зону, броня работает слабее
+            }
+
+            let finalDmg = Math.max(1, baseAtk - mitigation);
+            
+            let resText = isCrit ? `<span class="log-crit">КРИТ -${finalDmg}</span>` : `<span class="log-dmg">-${finalDmg} HP</span>`;
+            return { dmg: finalDmg, text: resText + blockText };
+        }
+
+        function executeTurn() {
+            if (!combatState.atkZone || !combatState.defZone) return;
+
+            let zones = ["head", "chest", "legs"];
+            let eAtkZone = zones[Math.floor(Math.random()*3)];
+            let eDefZone = zones[Math.floor(Math.random()*3)];
+
+            let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги"};
+
+            // Hero Attacks
+            let hAtkRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone);
+            enemy.hp -= hAtkRes.dmg;
+            logCombat(`Вы бьете в ${zNameRu[combatState.atkZone]}: ${hAtkRes.text}`);
+
+            if (enemy.hp <= 0) {
+                enemy.hp = 0;
+                let goldGained = 20 + (enemy.level * 10);
+                let expGained = 30 + (enemy.level * 15);
+                logCombat(`<span class="log-sys">ПОБЕДА! Получено ${goldGained}💰 и ${expGained} EXP.</span>`);
+                hero.gold += goldGained;
+                hero.exp += expGained;
+                
+                if (hero.exp >= hero.expNext) {
+                    hero.exp -= hero.expNext;
+                    hero.level++;
+                    hero.unspentPoints += 3;
+                    hero.expNext = getExpReq(hero.level);
+                    logCombat(`<span class="log-sys">УРОВЕНЬ ПОВЫШЕН! Достигнут Ур. ${hero.level}!</span>`);
+                    calculateStats();
+                }
+                
+                setTimeout(() => { initCombat(); }, 1500);
+            } else {
+                // Enemy Attacks
+                let eAtkRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone);
+                hero.hp -= eAtkRes.dmg;
+                logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: ${eAtkRes.text}`);
+                
+                if (hero.hp <= 0) {
+                    hero.hp = 0;
+                    logCombat(`<span class="log-dmg">ВЫ ПОГИБЛИ. Вернитесь в Лагерь для лечения.</span>`);
+                }
+            }
+
+            resetCombatZones();
+            updateUI();
+        }
+
+
         function openScreen(screenName) {
-            if (!['hero', 'shop', 'classes'].includes(screenName)) return alert("В разработке!");
+            if (!['hero', 'shop', 'classes', 'PVE'].includes(screenName)) return alert("В разработке!");
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
             document.getElementById('screen-' + screenName).classList.add('active');
@@ -408,14 +579,12 @@
             document.getElementById('nav-' + (screenName === 'classes' ? 'class' : screenName)).classList.add('active');
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
+            if(screenName === 'PVE' && !enemy) initCombat();
             updateUI();
         }
+        
         function setShopMode(mode) { shopMode = mode; updateUI(); }
-        function selectPreviewClass(classId) {
-            previewClassId = classId;
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-            updateUI();
-        }
+        function selectPreviewClass(classId) { previewClassId = classId; if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
@@ -434,7 +603,7 @@
             }
             hero.gold -= 5000; hero.baseClass = classKey;
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            calculateStats(); openScreen('hero');
+            calculateStats(); updateUI();
         }
 
         function toggleLevelUp() { isLevelUpOpen = !isLevelUpOpen; updateUI(); }
@@ -474,9 +643,7 @@
                 return;
             }
 
-            if (item.type === 'ring') {
-                targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
-            }
+            if (item.type === 'ring') { targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2'; }
             
             let oldItem = hero.equipment[targetSlot];
             hero.equipment[targetSlot] = item; hero.inventory.splice(invIndex, 1);
@@ -520,6 +687,7 @@
         }
 
         function healHero() {
+            if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!");
             if (hero.gold >= 10) {
                 hero.gold -= 10;
                 hero.hp = hero.finalStats.hp;
@@ -563,7 +731,7 @@
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult);
             total.dodge = Math.floor(total.dodge * cls.dodgeMult);
 
-            // HARD CAPS (Лимиты на уклонение и блок)
+            // HARD CAPS
             total.dodge = Math.min(75, total.dodge);
             total.blockChance = Math.min(60, total.blockChance);
 
@@ -577,7 +745,23 @@
             };
         }
 
-        // Новая функция для сравнения статов в магазине (Tooltip Logic)
+        function formatStats(stats) {
+            let res = [];
+            if(stats.atk) res.push(`Урон ${stats.atk>0?'+':''}${stats.atk}`);
+            if(stats.armor) res.push(`Броня ${stats.armor>0?'+':''}${stats.armor}`);
+            if(stats.str) res.push(`СИЛ ${stats.str>0?'+':''}${stats.str}`);
+            if(stats.agi) res.push(`ЛОВ ${stats.agi>0?'+':''}${stats.agi}`);
+            if(stats.end) res.push(`ВЫН ${stats.end>0?'+':''}${stats.end}`);
+            if(stats.mst) res.push(`МСТ ${stats.mst>0?'+':''}${stats.mst}`);
+            if(stats.luk) res.push(`УДЧ ${stats.luk>0?'+':''}${stats.luk}`);
+            if(stats.critChance) res.push(`Крит ${stats.critChance>0?'+':''}${stats.critChance}%`);
+            if(stats.dodgeChance) res.push(`Уворот ${stats.dodgeChance>0?'+':''}${stats.dodgeChance}%`);
+            if(stats.blockChance) res.push(`Блок ${stats.blockChance>0?'+':''}${stats.blockChance}%`);
+            if(stats.armorPen) res.push(`Пробитие ${stats.armorPen>0?'+':''}${stats.armorPen}`);
+            if(stats.critDmg) res.push(`Крит. Урон ${stats.critDmg>0?'+':''}${stats.critDmg}%`);
+            return res.join(' • ');
+        }
+        
         function getEquippedItemFor(shopItem) {
             if (shopItem.type === 'two_handed') return hero.equipment.weapon1; 
             if (shopItem.type === 'ring') return hero.equipment.ring1 || hero.equipment.ring2; 
@@ -615,17 +799,15 @@
         }
 
         function getSlotName(slotId) {
-            return {head:"Шлем", chest:"Броня", belt:"Пояс/Зелье", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
+            return {head:"Шлем", chest:"Броня", belt:"Пояс", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
         }
 
         function renderItemIcon(item) {
             if (!item) return "";
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
-            
-            const imgPath = `${STATIC_URL}items/${item.id}.png`;
             return `
                 <div class="item-img-wrapper">
-                    <img src="${imgPath}" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
+                    <img src="${STATIC_URL}items/${item.id}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
                 </div>
             `;
         }
@@ -633,55 +815,62 @@
         function updateUI() {
             document.getElementById("ui-gold").innerText = hero.gold;
             document.getElementById("ui-top-lvl").innerText = hero.level;
+            document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`;
+            document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
+
+            if (currentScreen === 'PVE' && enemy) {
+                document.getElementById("combat-hero-lvl").innerText = hero.level;
+                document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
+                document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
+                document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
+                
+                document.getElementById("combat-enemy-name").innerText = enemy.name;
+                document.getElementById("combat-enemy-lvl").innerText = enemy.level;
+                document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
+                document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
+                document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
+
+                // Update Button States
+                ['head', 'chest', 'legs'].forEach(z => {
+                    document.getElementById(`btn-atk-${z}`).className = `zone-btn atk ${combatState.atkZone === z ? 'selected' : ''}`;
+                    document.getElementById(`btn-def-${z}`).className = `zone-btn def ${combatState.defZone === z ? 'selected' : ''}`;
+                });
+                
+                let btnExe = document.getElementById("btn-execute-turn");
+                if(hero.hp <= 0) {
+                    btnExe.innerText = "ГЕРОЙ МЕРТВ (НУЖНО ЛЕЧЕНИЕ)";
+                    btnExe.disabled = true;
+                } else if (combatState.atkZone && combatState.defZone) {
+                    btnExe.innerText = "СОВЕРШИТЬ ХОД ⚔️";
+                    btnExe.disabled = false;
+                } else {
+                    btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ";
+                    btnExe.disabled = true;
+                }
+            }
 
             if (currentScreen === 'hero') {
                 let cls = CLASSES[hero.baseClass];
-                document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
+                document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
+                document.getElementById("main-hero-avatar").src = CLASS_AVATARS[hero.baseClass];
 
-                let avatarEl = document.getElementById("main-hero-avatar");
-                avatarEl.src = CLASS_AVATARS[hero.baseClass];
-
-                const slots = ["head", "chest", "belt", "amulet", "ring1", "ring2"];
+                const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2"];
                 slots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
-                        let sil = el.getAttribute("data-sil") || "";
-                        let slotNameRu = getSlotName(slotKey);
                         let item = hero.equipment[slotKey];
-                        el.className = "equip-slot";
-                        
-                        if (item && item.id === "blocked") {
-                            el.innerHTML = `${renderItemIcon(item)}<span class="slot-label" style="color:#ef4444;">${slotNameRu}</span>`;
-                            el.classList.add("blocked");
-                        } else if (item) {
-                            el.innerHTML = `${renderItemIcon(item)}<span class="slot-label">${slotNameRu}</span>`;
-                            el.classList.add("filled", "rarity-" + (item.rarity || "common"));
-                        } else {
-                            el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${slotNameRu}</span>`;
-                            el.classList.add("empty");
-                        }
+                        el.className = `equip-slot ${item ? (item.id === "blocked" ? "blocked" : "filled rarity-" + (item.rarity || "common")) : "empty"}`;
+                        el.innerHTML = item ? `${renderItemIcon(item)}<span class="slot-label" ${item.id==="blocked"?'style="color:#ef4444"':''}>${getSlotName(slotKey)}</span>` : `<div class="silhouette">${el.getAttribute("data-sil")}</div><span class="slot-label">${getSlotName(slotKey)}</span>`;
                     }
                 });
                 
-                const weaponSlots = ["weapon1", "weapon2"];
-                weaponSlots.forEach(slotKey => {
+                const wSlots = ["weapon1", "weapon2"];
+                wSlots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
-                        let sil = el.getAttribute("data-sil") || "";
-                        let slotNameRu = getSlotName(slotKey);
                         let item = hero.equipment[slotKey];
-                        el.className = "equip-slot";
-                        
-                        if (item && item.id === "blocked") {
-                            el.innerHTML = `${renderItemIcon(item)}<span class="slot-label" style="color:#ef4444;">${slotNameRu}</span>`;
-                            el.classList.add("blocked");
-                        } else if (item) {
-                            el.innerHTML = `${renderItemIcon(item)}<span class="slot-label">${slotNameRu}</span>`;
-                            el.classList.add("filled", "rarity-" + (item.rarity || "common"));
-                        } else {
-                            el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${slotNameRu}</span>`;
-                            el.classList.add("empty");
-                        }
+                        el.className = `equip-slot ${item ? (item.id === "blocked" ? "blocked" : "filled rarity-" + (item.rarity || "common")) : "empty"}`;
+                        el.innerHTML = item ? `${renderItemIcon(item)}<span class="slot-label" ${item.id==="blocked"?'style="color:#ef4444"':''}>${getSlotName(slotKey)}</span>` : `<div class="silhouette">${el.getAttribute("data-sil")}</div><span class="slot-label">${getSlotName(slotKey)}</span>`;
                     }
                 });
 
@@ -715,10 +904,7 @@
                 document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
 
                 let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
-                
-                let healBtnHtml = hero.hp < hero.finalStats.hp 
-                    ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-10💰)</button>` 
-                    : ``;
+                let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-10💰)</button>` : ``;
 
                 document.getElementById("ui-stats-container").innerHTML = `
                     <div class="stats-card">
@@ -733,7 +919,7 @@
                         <div class="stat-group-title">Боевые параметры</div>
                         <div class="stat-item" style="flex-direction:column; align-items:stretch;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
-                                <span>🩸 Здоровье <b>${hero.hp} / ${hero.finalStats.hp}</b></span>
+                                <span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>
                                 ${healBtnHtml}
                             </div>
                             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
@@ -767,10 +953,10 @@
                         if (fType === 'shields' && item.type !== 'weapon2') return;
                         if (fType === 'head' && item.type !== 'head') return;
                         if (fType === 'chest' && item.type !== 'chest') return;
+                        if (fType === 'boots' && item.type !== 'boots') return;
                         if (fType === 'belt' && item.type !== 'belt') return;
                         if (fType === 'jewelry' && item.type !== 'ring' && item.type !== 'amulet') return;
-                        
-                        if (fClass === 'my_class') { if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return; }
+                        if (fClass === 'my_class' && item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return;
 
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
                         let tagTwoHandHtml = item.type === 'two_handed' ? `<div class="shop-class-tag tag-twohand">[Двуруч]</div>` : '';
@@ -783,8 +969,6 @@
                         let btnHtml = (canAfford && meetLvl && classMatch)
                             ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${item.price}</button>` 
                             : `<button class="shop-btn btn-buy" disabled>💰 ${item.price}</button>`;
-                        
-                        let descHtml = item.desc ? `<div class="shop-item-desc">${item.desc}</div>` : '';
 
                         shopHtml += `
                             <div class="shop-item-card">
@@ -793,7 +977,7 @@
                                     <div class="shop-item-name"><span>${item.name}</span><span class="shop-item-lvl" style="color:${meetLvl?'#a1a1aa':'#ef4444'}">Ур. ${item.lvl}</span></div>
                                     <div style="display:flex; gap:4px; flex-wrap:wrap;">${tagClassHtml}${tagTwoHandHtml}${tagPremiumHtml}</div>
                                     <div class="shop-item-stats">${formatShopStats(item)}</div>
-                                    ${descHtml}
+                                    ${item.desc ? `<div class="shop-item-desc">${item.desc}</div>` : ''}
                                 </div>
                                 ${btnHtml}
                             </div>
@@ -806,7 +990,6 @@
                     } else {
                         hero.inventory.forEach((itemId, index) => {
                             let item = ITEMS_DB[itemId];
-                            let sellPrice = Math.floor(item.price * 0.5);
                             shopHtml += `
                                 <div class="shop-item-card">
                                     <div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div>
@@ -814,7 +997,7 @@
                                         <div class="shop-item-name">${item.name} <span class="shop-item-lvl">Ур. ${item.lvl}</span></div>
                                         <div class="shop-item-stats" style="color:#71717a;">Возврат: 50%</div>
                                     </div>
-                                    <button class="shop-btn btn-sell" onclick="sellItem(${index})">Продать<br>💰 +${sellPrice}</button>
+                                    <button class="shop-btn btn-sell" onclick="sellItem(${index})">Продать<br>💰 +${Math.floor(item.price * 0.5)}</button>
                                 </div>
                             `;
                         });
@@ -827,9 +1010,8 @@
                 let galleryHtml = '';
                 for (let key in CLASSES) {
                     let cls = CLASSES[key];
-                    let isSel = previewClassId === key;
                     galleryHtml += `
-                        <div class="class-icon-btn ${isSel ? 'selected' : ''}" onclick="selectPreviewClass('${key}')">
+                        <div class="class-icon-btn ${previewClassId === key ? 'selected' : ''}" onclick="selectPreviewClass('${key}')">
                             <div class="icon">${cls.icon}</div>
                             <div class="name">${cls.name}</div>
                         </div>
@@ -839,49 +1021,22 @@
 
                 let selCls = CLASSES[previewClassId];
                 let isCurrentHeroClass = hero.baseClass === previewClassId;
-                let subInfo = selCls.subclasses[10];
-
-                let detailHtml = `
+                
+                document.getElementById("ui-class-detail").innerHTML = `
                     <div class="class-detail-wrapper">
-                        <div class="class-detail-img-box">
-                            <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
-                        </div>
-                        
+                        <div class="class-detail-img-box"><img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img"></div>
                         <div class="class-detail-card">
                             <div class="class-detail-header">
                                 <div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div>
                                 <div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div>
                             </div>
-                            
                             <div class="class-detail-lore">"${selCls.lore}"</div>
-                            
-                            <div class="class-bars">
-                                <div class="c-bar-row">
-                                    <span>⚔️ Урон</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.dmg}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
-                                </div>
-                                <div class="c-bar-row">
-                                    <span>🛡️ Защита</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.def}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
-                                </div>
-                                <div class="c-bar-row">
-                                    <span>🎯 Сложность</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.diff}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
-                                </div>
-                            </div>
-
-                            <div class="class-subclasses" style="border-color:${selCls.color}50; background:${selCls.color}10;">
-                                <b style="color:${selCls.color};">Эволюция на 10 Ур: ${subInfo.name}</b>
-                                <span style="color:#a1a1aa;">${subInfo.desc}</span>
-                            </div>
-
                             <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 0 20px ${selCls.color}40; border-color: ${selCls.color};` : ''}">
                                 ${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}
                             </button>
                         </div>
                     </div>
                 `;
-                document.getElementById("ui-class-detail").innerHTML = detailHtml;
             }
         }
 
