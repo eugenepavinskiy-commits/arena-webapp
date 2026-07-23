@@ -242,13 +242,13 @@
             <select class="shop-select" id="filter-type" onchange="updateUI()">
                 <option value="all">📜 Все предметы</option>
                 <option value="weapons">⚔️ Оружие (1H/2H)</option>
-                <option value="shields">🛡️ Щиты</option>
-                <option value="head">🪖 Шлемы и Шапки</option>
+                <option value="shields">🛡️ Щиты и Левая рука</option>
+                <option value="head">🪖 Шлемы</option>
                 <option value="chest">🦺 Броня и Мантии</option>
-                <option value="gloves">🧤 Наручи и Перчатки</option>
-                <option value="boots">👢 Обувь</option>
-                <option value="jewelry">💍 Бижутерия (Кольца)</option>
                 <option value="belt">🧪 Пояса и Зелья</option>
+                <option value="boots">👢 Обувь</option>
+                <option value="jewelry">💍 Бижутерия (Кольца, Амулеты)</option>
+                <option value="gloves">🧤 Наручи и Перчатки</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
                 <option value="all">Для всех классов</option>
@@ -318,7 +318,7 @@
         };
 
         // ==========================================
-        // БАЗА ДАННЫХ ПРЕДМЕТОВ (Полное соответствие файлам и типам)
+        // БАЗА ДАННЫХ ПРЕДМЕТОВ
         // ==========================================
         const ITEMS_DB = {
             // УРОВЕНЬ 1
@@ -329,13 +329,13 @@
 
             // УРОВЕНЬ 2
             "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12, str: 2 } },
-            "54873": { id: "54873", name: "Доспех Наемника", type: "chest", icon: "🦺", rarity: "common", lvl: 2, price: 100, stats: { armor: 14, agi: 3 } },
-            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12, blockChance: 6 } },
             "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8, mst: 5, luk: 2 } },
+            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, str: 2 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12, blockChance: 6 } },
 
             // УРОВЕНЬ 3
             "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 6, armorPen: 3 } },
-            "61409": { id: "61409", name: "Кираса Пехотинца", type: "chest", icon: "🧥", rarity: "rare", lvl: 3, price: 250, stats: { armor: 22, str: 2 } },
+            "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, stats: { armor: 15, str: 3 } },
             "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
             "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 10, str: 3 } },
 
@@ -359,7 +359,7 @@
 
             // УРОВЕНЬ 7
             "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
-            "41139": { id: "41139", name: "Дублет Следопыта", type: "chest", icon: "🧥", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 45, agi: 10, dodgeChance: 8 } },
+            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 25, agi: 8, dodgeChance: 4 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 65, end: 8, str: 4 } },
             "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 60, blockChance: 18, end: 6 } },
 
@@ -370,7 +370,7 @@
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 55, mst: 15, luk: 5 } },
 
             // УРОВЕНЬ 9
-            "17271": { id: "17271", name: "Молот Рока", type: "two_handed", icon: "🔨", rarity: "legendary", lvl: 9, price: 3500, allowedClasses: ["knight", "berserk"], stats: { atk: 125, armorPen: 30, str: 18 } },
+            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
             "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 90, atk: 25, blockChance: 20, end: -5 }, desc: "Шипы наносят урон, но щит тяжел." },
             "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 65, mst: 25, critChance: 8 } },
