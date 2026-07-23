@@ -47,7 +47,7 @@
         }
         
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
-        .equip-col { display: flex; flex-direction: column; gap: 16px; width: 48px; }
+        .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
         
         .equip-slot {
             width: 48px; height: 48px; border-radius: 6px;
@@ -77,7 +77,7 @@
         .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2); }
         .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.2); }
         
-        .slot-label { position: absolute; bottom: -18px; font-size: 9px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
+        .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
         .hero-avatar { width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;}
@@ -119,7 +119,7 @@
         
         .shop-list { display: flex; flex-direction: column; gap: 12px; }
         .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative; background: #000000;}
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
         
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
         .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; text-shadow: 0 1px 3px #000; }
@@ -200,16 +200,14 @@
                 <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
                 <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
                 <div class="equip-slot empty" id="slot-belt" data-sil="➰" onclick="unequipSlot('belt')"></div>
-                <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
             </div>
             <div class="hero-avatar-box">
                 <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
             </div>
             <div class="equip-col">
+                <div class="equip-slot empty" id="slot-amulet" data-sil="🧿" onclick="unequipSlot('amulet')"></div>
                 <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
                 <div class="equip-slot empty" id="slot-ring2" data-sil="💍" onclick="unequipSlot('ring2')"></div>
-                <div class="equip-slot empty" id="slot-ring3" data-sil="💍" onclick="unequipSlot('ring3')"></div>
-                <div class="equip-slot empty" id="slot-ring4" data-sil="💍" onclick="unequipSlot('ring4')"></div>
             </div>
         </div>
 
@@ -242,8 +240,8 @@
             <select class="shop-select" id="filter-type" onchange="updateUI()">
                 <option value="all">Вся экипировка</option>
                 <option value="weapon">Оружие и Щиты</option>
-                <option value="armor">Доспехи и Одежда</option>
-                <option value="ring">Бижутерия и Аксессуары</option>
+                <option value="armor">Доспехи, Шлемы и Пояса</option>
+                <option value="ring">Бижутерия (Кольца, Амулеты)</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
                 <option value="all">Для всех классов</option>
@@ -313,26 +311,26 @@
         };
 
         // ==========================================
-        // БАЗА ДАННЫХ ПРЕДМЕТОВ (Полное соответствие файлам GitHub)
+        // БАЗА ДАННЫХ ПРЕДМЕТОВ (38 проверенных ассетов, учтен слот шлема head)
         // ==========================================
         const ITEMS_DB = {
             // УРОВЕНЬ 1
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5 } },
-            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, stats: { atk: 4, agi: 2 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, agi: 2 } },
             "64755": { id: "64755", name: "Синяя Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 8 } },
             "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 5, blockChance: 3 } },
 
             // УРОВЕНЬ 2
-            "61669": { id: "61669", name: "Боевой Топор", type: "two_handed", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight"], stats: { atk: 15, str: 2, agi: -1 } },
-            "54873": { id: "54873", name: "Кожаная Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 2, price: 180, stats: { armor: 12, agi: 3 } },
-            "shields_v2_33": { id: "shields_v2_33", name: "Баклер Новичка", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, blockChance: 5 } },
-            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 14, mst: 3 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12, str: 2 } },
+            "54873": { id: "54873", name: "Кожаная Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 2, price: 100, stats: { armor: 12, agi: 3 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Баклер Новичка", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 10, blockChance: 5 } },
+            "60684": { id: "60684", name: "Синий Шлем", type: "head", icon: "🪖", rarity: "rare", lvl: 2, price: 130, stats: { armor: 8, mst: 2 } },
 
             // УРОВЕНЬ 3
-            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 22, critChance: 4 } },
+            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 4 } },
             "61409": { id: "61409", name: "Укрепленная Кираса", type: "chest", icon: "🧥", rarity: "rare", lvl: 3, price: 250, stats: { armor: 22 } },
             "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 2 } },
-            "52433": { id: "52433", name: "Красная Кираса", type: "chest", icon: "🦺", rarity: "rare", lvl: 3, price: 270, stats: { armor: 25, str: 2 } },
+            "52433": { id: "52433", name: "Шлем Берсерка", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 12, str: 3 } },
 
             // УРОВЕНЬ 4
             "23564": { id: "23564", name: "Двуручная Кирка", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 35, armorPen: 5 } },
@@ -341,8 +339,8 @@
             "24393": { id: "24393", name: "Зелье Крови", type: "belt", icon: "🩸", rarity: "epic", lvl: 4, price: 400, stats: { atk: 10, end: -3 }, desc: "Крепится на пояс. Жертвует здоровьем ради силы." },
 
             // УРОВЕНЬ 5
-            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 45, str: 5 } },
-            "51613": { id: "51613", name: "Светлая Броня", type: "chest", icon: "🥋", rarity: "epic", lvl: 5, price: 750, stats: { armor: 45, luk: 4 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight", "ranger"], stats: { atk: 45, str: 5 } },
+            "51613": { id: "51613", name: "Шлем Стража", type: "head", icon: "🪖", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight"], stats: { armor: 25, end: 5 } },
             "42540": { id: "42540", name: "Темный Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 40, blockChance: 12 } },
             "60697": { id: "60697", name: "Темный Плащ", type: "chest", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 38, agi: 8 } },
 
@@ -366,7 +364,7 @@
 
             // УРОВЕНЬ 9
             "17271": { id: "17271", name: "Боевой Молот", type: "two_handed", icon: "🔨", rarity: "legendary", lvl: 9, price: 3500, allowedClasses: ["knight", "berserk"], stats: { atk: 120, armorPen: 20 } },
-            "18824": { id: "18824", name: "Сапфировый Кулон", type: "ring", icon: "💎", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10 } },
+            "18824": { id: "18824", name: "Сапфировый Кулон", type: "amulet", icon: "💎", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10 } },
             "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 110, atk: 25, end: -10 }, desc: "Шипы наносят урон, но щит тяжел." },
             "50113": { id: "50113", name: "Черная Мантия", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 90, dodgeChance: 15, agi: 20 } },
 
@@ -385,7 +383,7 @@
             name: "Гладиатор", level: 5, unspentPoints: 5, gold: 5000,
             baseClass: "knight", hp: 200, maxHp: 200,
             baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
-            equipment: { head: null, chest: null, belt: null, boots: null, weapon1: null, weapon2: null, ring1: null, ring2: null, ring3: null, ring4: null },
+            equipment: { head: null, chest: null, belt: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
             finalStats: {}
         };
@@ -469,7 +467,7 @@
             }
 
             if (item.type === 'ring') {
-                targetSlot = !hero.equipment.ring1 ? 'ring1' : !hero.equipment.ring2 ? 'ring2' : !hero.equipment.ring3 ? 'ring3' : !hero.equipment.ring4 ? 'ring4' : 'ring1';
+                targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
             }
             
             let oldItem = hero.equipment[targetSlot];
@@ -533,12 +531,14 @@
                     if (item.stats.atk) total.atk += item.stats.atk; if (item.stats.critChance) total.critChance += item.stats.critChance;
                     if (item.stats.blockChance) total.blockChance += item.stats.blockChance;
                     if (item.stats.dodgeChance) total.dodge += item.stats.dodgeChance;
+                    if (item.stats.armorPen) total.armorPen += item.stats.armorPen;
+                    if (item.stats.critDmg) total.critDmg += item.stats.critDmg;
                 }
             }
 
             let hp = total.end * 10; let damage = total.str * 2 + total.atk;
             total.critChance += (total.luk / 5); total.dodge += (total.agi / 4);      
-            total.armorPen = total.mst * 2; total.critDmg += total.mst * 3;      
+            total.armorPen += total.mst * 2; total.critDmg += total.mst * 3;      
             
             total.armor = Math.floor(total.armor * cls.armorMult);
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult);
@@ -566,11 +566,13 @@
             if(stats.critChance) res.push(`Крит ${stats.critChance>0?'+':''}${stats.critChance}%`);
             if(stats.dodgeChance) res.push(`Уворот ${stats.dodgeChance>0?'+':''}${stats.dodgeChance}%`);
             if(stats.blockChance) res.push(`Блок ${stats.blockChance>0?'+':''}${stats.blockChance}%`);
+            if(stats.armorPen) res.push(`Пробитие ${stats.armorPen>0?'+':''}${stats.armorPen}`);
+            if(stats.critDmg) res.push(`Крит. Урон ${stats.critDmg>0?'+':''}${stats.critDmg}%`);
             return res.join(' • ');
         }
 
         function getSlotName(slotId) {
-            return {head:"Шлем",chest:"Броня",belt:"Пояс",boots:"Обувь",weapon1:"Оружие",weapon2:"Щит",ring1:"Кольцо",ring2:"Кольцо",ring3:"Кольцо",ring4:"Кольцо"}[slotId];
+            return {head:"Шлем", chest:"Броня", belt:"Пояс", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
         }
 
         function renderItemIcon(item) {
@@ -596,7 +598,7 @@
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
 
-                const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
+                const slots = ["head", "chest", "belt", "amulet", "ring1", "ring2", "weapon1", "weapon2"];
                 slots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
@@ -691,8 +693,8 @@
                         let item = ITEMS_DB[itemId];
                         
                         if (fType === 'weapon' && item.type !== 'weapon1' && item.type !== 'weapon2' && item.type !== 'two_handed') return;
-                        if (fType === 'armor' && item.type !== 'chest' && item.type !== 'head' && item.type !== 'boots' && item.type !== 'belt') return;
-                        if (fType === 'ring' && item.type !== 'ring' && item.type !== 'belt') return;
+                        if (fType === 'armor' && item.type !== 'chest' && item.type !== 'head' && item.type !== 'belt') return;
+                        if (fType === 'ring' && item.type !== 'ring' && item.type !== 'amulet') return;
                         if (fClass === 'my_class') { if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return; }
 
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
