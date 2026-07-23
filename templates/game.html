@@ -49,31 +49,36 @@
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 16px; width: 48px; }
         
+        /* ЧИСТЫЙ ЧЕРНЫЙ ФОН СЛОТОВ ДЛЯ БЕСШОВНОГО СЛИЯНИЯ С АССЕТАМИ */
         .equip-slot {
             width: 48px; height: 48px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
+            background: #000000; border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95);
         }
         .equip-slot:active { transform: scale(0.9); }
-        .equip-slot.empty { background: radial-gradient(circle, #1a1a1e 0%, #050505 100%); border: 1px solid #1c1c1f; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 1px 1px rgba(255,255,255,0.05); }
-        .equip-slot.blocked { border: 1px solid #450a0a; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
+        .equip-slot.empty { background: #050505; border: 1px solid #1c1c1f; }
+        .equip-slot.blocked { border: 1px solid #450a0a; background: #1a0505; cursor: not-allowed; }
         
         .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
         
+        /* === ИДЕАЛЬНЫЙ РЕНДЕР БЕЗ ИСКАЖЕНИЙ === */
         .item-img-wrapper {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             border-radius: inherit; overflow: hidden; 
             pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1;
         }
         .item-img { 
-            width: 100%; height: 100%; object-fit: cover; transform: scale(1.45); 
-            mix-blend-mode: screen; filter: contrast(1.3) brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.8)); 
+            width: 95%; height: 95%; 
+            object-fit: contain; /* Картинка вписывается идеально без обрезки */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); /* Легкая тень, никаких кислотных фильтров */
         }
+        /* ======================================= */
         
-        .rarity-common { border: 1px solid #3f3f46; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.8); }
-        .rarity-rare { border: 1px solid #1e3a8a; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.1), 0 4px 8px rgba(0,0,0,0.8); }
-        .rarity-epic { border: 1px solid #581c87; background: linear-gradient(180deg, #3b0764 0%, #2e1065 100%); box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.15), 0 4px 8px rgba(0,0,0,0.8); }
-        .rarity-legendary { border: 1px solid #92400e; background: linear-gradient(180deg, #78350f 0%, #451a03 100%); box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.2), 0 4px 8px rgba(0,0,0,0.8); }
+        .rarity-common { border-color: #3f3f46; }
+        .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
+        .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.2); }
+        .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.2); }
         
         .slot-label { position: absolute; bottom: -18px; font-size: 9px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         
@@ -85,9 +90,10 @@
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         
-        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; }
+        /* ЧИСТЫЙ ЧЕРНЫЙ ФОН ИНВЕНТАРЯ */
+        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: #000000; border: 1px solid #27272a;}
         .inv-item:active { transform: scale(0.88); }
-        .inv-item.empty { background: radial-gradient(circle, #1a1a1e 0%, #050505 100%); border: 1px solid #1c1c1f; box-shadow: inset 0 6px 12px rgba(0,0,0,0.9); cursor: default; }
+        .inv-item.empty { background: #050505; border: 1px solid #1c1c1f; cursor: default; }
         
         .levelup-container { margin-bottom: 16px; }
         .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;}
@@ -117,7 +123,7 @@
         
         .shop-list { display: flex; flex-direction: column; gap: 12px; }
         .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative;}
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative; background: #000000;}
         
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
         .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; text-shadow: 0 1px 3px #000; }
@@ -241,7 +247,7 @@
                 <option value="all">Вся экипировка</option>
                 <option value="weapon">Оружие и Щиты</option>
                 <option value="armor">Доспехи и Одежда</option>
-                <option value="ring">Бижутерия</option>
+                <option value="ring">Бижутерия и Аксессуары</option>
             </select>
             <select class="shop-select" id="filter-class" onchange="updateUI()">
                 <option value="all">Для всех классов</option>
@@ -311,73 +317,69 @@
         };
 
         // ==========================================
-        // БАЗА ДАННЫХ ПРЕДМЕТОВ (Синхронизирована с файлами)
+        // ИДЕАЛЬНАЯ БАЗА ПРЕДМЕТОВ (Полное соответствие визуалу)
         // ==========================================
         const ITEMS_DB = {
             // УРОВЕНЬ 1
-            "90523": { id: "90523", name: "Кирка Стажера", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 50, stats: { atk: 6 } },
-            "86389": { id: "86389", name: "Заточка Курьера", type: "weapon1", icon: "🔪", rarity: "common", lvl: 1, price: 60, stats: { atk: 4, agi: 2 } },
-            "64755": { id: "64755", name: "Рубаха Сотрудника", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 40, stats: { armor: 5 } },
-            "65822": { id: "65822", name: "Щит Отмазок", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 55, stats: { armor: 4, blockChance: 3 } },
-            "85934": { id: "85934", name: "Кольцо Обещаний", type: "ring", icon: "💍", rarity: "common", lvl: 1, price: 80, stats: { luk: 3 } },
+            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, stats: { atk: 4, agi: 2 } },
+            "64755": { id: "64755", name: "Синяя Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 8 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, stats: { armor: 6, blockChance: 5 } },
+            "85934": { id: "85934", name: "Золотой Амулет", type: "ring", icon: "🧿", rarity: "common", lvl: 1, price: 60, stats: { luk: 3, end: 1 } },
 
             // УРОВЕНЬ 2
-            "61669": { id: "61669", name: "Топор Сокращения", type: "two_handed", icon: "🪓", rarity: "rare", lvl: 2, price: 150, allowedClasses: ["berserk"], stats: { atk: 18, str: 3, agi: -2 } },
-            "62365": { id: "62365", name: "Броня Выгорания", type: "chest", icon: "🦺", rarity: "rare", lvl: 2, price: 120, stats: { armor: 10, end: -2, atk: 4 } },
-            "61738": { id: "61738", name: "Папка с Отчетами", type: "weapon2", icon: "📁", rarity: "common", lvl: 2, price: 100, allowedClasses: ["knight"], stats: { armor: 12, blockChance: 5 } },
-            "56225": { id: "56225", name: "Кулон Энергетика", type: "ring", icon: "🩸", rarity: "rare", lvl: 2, price: 140, stats: { end: 5, str: 2 } },
-            "47289": { id: "47289", name: "Пояс Затяжного Кризиса", type: "belt", icon: "➰", rarity: "common", lvl: 2, price: 90, stats: { end: 4, armor: 2 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight"], stats: { atk: 12, str: 2 } },
+            "62365": { id: "62365", name: "Темная Броня", type: "chest", icon: "🥋", rarity: "rare", lvl: 2, price: 150, stats: { armor: 15, str: 1 } },
+            "61738": { id: "61738", name: "Башенный Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 2, price: 130, allowedClasses: ["knight"], stats: { armor: 12, blockChance: 8, agi: -1 } },
+            "56225": { id: "56225", name: "Малое Зелье Здоровья", type: "belt", icon: "🧪", rarity: "common", lvl: 2, price: 80, stats: { end: 5 }, desc: "Крепится на пояс. Повышает выносливость." },
+            "55315": { id: "55315", name: "Деревянный Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 70, stats: { armor: 8 } },
 
             // УРОВЕНЬ 3
-            "48535": { id: "48535", name: "Игла Микроменеджмента", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 250, allowedClasses: ["shadow", "ranger"], stats: { atk: 15, critChance: 5 } },
-            "61409": { id: "61409", name: "Кираса Среднего Звена", type: "chest", icon: "🧥", rarity: "rare", lvl: 3, price: 220, stats: { armor: 18 } },
-            "55315": { id: "55315", name: "Щит Прокрастинации", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 3, price: 200, stats: { armor: 15, agi: -3 } },
-            "48186": { id: "48186", name: "Камень Пропущенного Обеда", type: "ring", icon: "💎", rarity: "epic", premium: true, lvl: 3, price: 400, stats: { atk: 15, end: -5 }, desc: "Голод делает атаки яростнее." },
-            "24393": { id: "24393", name: "Колпак Дежурного", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 180, stats: { armor: 5, luk: 3 } },
+            "54873": { id: "54873", name: "Кожаная Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 3, price: 180, stats: { armor: 12, agi: 3 } },
+            "52995": { id: "52995", name: "Серая Броня", type: "chest", icon: "🥋", rarity: "rare", lvl: 3, price: 250, stats: { armor: 22 } },
+            "52433": { id: "52433", name: "Красная Кираса", type: "chest", icon: "🦺", rarity: "rare", lvl: 3, price: 270, stats: { armor: 25, str: 2 } },
+            "51613": { id: "51613", name: "Светлая Броня", type: "chest", icon: "🥋", rarity: "rare", lvl: 3, price: 260, stats: { armor: 20, luk: 2 } },
+            "48535": { id: "48535", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 4 } },
 
             // УРОВЕНЬ 4
-            "47612": { id: "47612", name: "Молот Дедлайна", type: "weapon1", icon: "🔨", rarity: "epic", lvl: 4, price: 450, stats: { atk: 28, str: 5 } },
-            "60597": { id: "60597", name: "Мантия Незаметности", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 420, allowedClasses: ["shadow", "ranger"], stats: { armor: 15, dodgeChance: 4 } },
-            "54873": { id: "54873", name: "Броня Ожидания Зарплаты", type: "chest", icon: "🦺", rarity: "rare", lvl: 4, price: 350, stats: { armor: 25 } },
-            "40624": { id: "40624", name: "Амулет Больничного", type: "ring", icon: "🧪", rarity: "rare", lvl: 4, price: 380, stats: { end: 10, str: -2 } },
-            "35056": { id: "35056", name: "Меч Офисного Клерка", type: "weapon1", icon: "⚔️", rarity: "rare", lvl: 4, price: 360, stats: { atk: 22, agi: 2 } },
+            "48186": { id: "48186", name: "Красное Зелье Силы", type: "belt", icon: "🩸", rarity: "rare", lvl: 4, price: 300, stats: { str: 5, end: 2 } },
+            "47612": { id: "47612", name: "Кузнечный Молот", type: "weapon1", icon: "🔨", rarity: "epic", lvl: 4, price: 450, stats: { atk: 28, armorPen: 5 } },
+            "44778": { id: "44778", name: "Фиолетовая Броня", type: "chest", icon: "👾", rarity: "epic", lvl: 4, price: 500, stats: { armor: 35, mst: 4 } },
+            "42540": { id: "42540", name: "Темный Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 4, price: 480, allowedClasses: ["knight"], stats: { armor: 28, blockChance: 12 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 550, allowedClasses: ["knight", "berserk"], stats: { armor: 40, agi: -2 } },
 
             // УРОВЕНЬ 5
-            "33616": { id: "33616", name: "Клинок Лишения Премии", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 5, price: 1200, allowedClasses: ["berserk", "knight"], stats: { atk: 55, critChance: 10 }, desc: "Рубит безжалостно." },
-            "52995": { id: "52995", name: "Свитер Токсичного Сисадмина", type: "chest", icon: "👕", rarity: "epic", lvl: 5, price: 700, stats: { armor: 30, luk: -5, mst: 5 } },
-            "42540": { id: "42540", name: "Эгида Токсичности", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 750, stats: { armor: 35, blockChance: 10, str: 3 } },
-            "39545": { id: "39545", name: "Оберег от Увольнения", type: "ring", icon: "🍀", rarity: "rare", lvl: 5, price: 600, stats: { luk: 10 } },
-            "44778": { id: "44778", name: "Доспех Слияния", type: "chest", icon: "🧥", rarity: "epic", lvl: 5, price: 800, stats: { armor: 32, end: 5 } },
+            "41139": { id: "41139", name: "Кожаная Куртка", type: "chest", icon: "🧥", rarity: "rare", lvl: 5, price: 350, allowedClasses: ["shadow", "ranger"], stats: { armor: 20, agi: 8 } },
+            "40624": { id: "40624", name: "Зеленое Зелье Ловкости", type: "belt", icon: "🧪", rarity: "rare", lvl: 5, price: 320, stats: { agi: 5, dodgeChance: 2 } },
+            "40613": { id: "40613", name: "Арбалет", type: "two_handed", icon: "🏹", rarity: "epic", lvl: 5, price: 650, allowedClasses: ["ranger"], stats: { atk: 45, critChance: 8 } },
+            "39545": { id: "39545", name: "Флакон с Ядом", type: "belt", icon: "☠️", rarity: "epic", lvl: 5, price: 600, allowedClasses: ["shadow"], stats: { atk: 10, critChance: 5 } },
+            "38344": { id: "38344", name: "Серебряный Доспех", type: "chest", icon: "🛡️", rarity: "legendary", lvl: 5, price: 1200, stats: { armor: 55, luk: 5, mst: 5 } },
 
             // УРОВЕНЬ 6
-            "23564": { id: "23564", name: "Топор Переработок", type: "weapon1", icon: "🪓", rarity: "epic", lvl: 6, price: 1100, stats: { atk: 38, str: 8 } },
-            "52433": { id: "52433", name: "Доспех Топ-Менеджера", type: "chest", icon: "🥋", rarity: "legendary", lvl: 6, price: 1500, allowedClasses: ["knight"], stats: { armor: 50, mst: 8 } },
-            "42069": { id: "42069", name: "Кольчуга Нейтралитета", type: "chest", icon: "🦺", rarity: "epic", lvl: 6, price: 1000, stats: { armor: 40 } },
-            "25186": { id: "25186", name: "Венец Лояльности", type: "ring", icon: "👑", rarity: "epic", lvl: 6, price: 1200, stats: { str: 5, end: 5, agi: 5 } },
-            "60584": { id: "60584", name: "Накидка Аврала", type: "chest", icon: "🧥", rarity: "epic", lvl: 6, price: 1050, stats: { armor: 35, agi: 10 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 6, price: 800, allowedClasses: ["knight"], stats: { atk: 35, str: 5 } },
+            "34215": { id: "34215", name: "Потертая Броня", type: "chest", icon: "🦺", rarity: "common", lvl: 6, price: 200, stats: { armor: 15 } },
+            "33616": { id: "33616", name: "Меч Инквизитора", type: "weapon1", icon: "🗡️", rarity: "legendary", lvl: 6, price: 1500, allowedClasses: ["knight", "berserk"], stats: { atk: 50, str: 8, critDmg: 20 } },
+            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 900, stats: { agi: 6, luk: 4 } },
+            "24393": { id: "24393", name: "Зелье Крови", type: "belt", icon: "🩸", rarity: "epic", lvl: 6, price: 850, stats: { atk: 15, end: -5 }, desc: "Отнимает здоровье, дает урон." },
 
             // УРОВЕНЬ 7
-            "20152": { id: "20152", name: "Секира Депрессии", type: "two_handed", icon: "🪓", rarity: "legendary", premium: true, lvl: 7, price: 2500, allowedClasses: ["berserk"], stats: { atk: 85, luk: -15, str: 10 }, desc: "Тяжелая ноша для сломленного духа." },
-            "51613": { id: "51613", name: "Броня Безупречного KPI", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1800, stats: { armor: 55, mst: 10 } },
-            "41139": { id: "41139", name: "Броня Игнора Сообщений", type: "chest", icon: "🦺", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 60, end: 10 } },
-            "19204": { id: "19204", name: "Кольцо Панической Атаки", type: "ring", icon: "💍", rarity: "legendary", premium: true, lvl: 7, price: 3000, stats: { atk: 50, end: -25 }, desc: "Адреналин за счет здоровья." },
+            "24119": { id: "24119", name: "Доспех Наемника", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1100, stats: { armor: 60, str: 4 } },
+            "23579": { id: "23579", name: "Теневая Броня", type: "chest", icon: "🧥", rarity: "legendary", lvl: 7, price: 2200, allowedClasses: ["shadow"], stats: { armor: 50, agi: 15, dodgeChance: 5 } },
+            "23564": { id: "23564", name: "Тяжелая Кирка", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 7, price: 1400, allowedClasses: ["berserk"], stats: { atk: 70, armorPen: 10 } },
+            "22937": { id: "22937", name: "Амулет Природы", type: "ring", icon: "🍀", rarity: "epic", lvl: 7, price: 1200, stats: { end: 8, luk: 5 } },
+            "20152": { id: "20152", name: "Шипастая Палица", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 2500, allowedClasses: ["berserk"], stats: { atk: 95, str: 10, agi: -5 } },
 
             // УРОВЕНЬ 8
-            "17271": { id: "17271", name: "Булава Правки", type: "weapon1", icon: "🔨", rarity: "epic", lvl: 8, price: 2800, stats: { atk: 65, str: 15 } },
-            "50560": { id: "50560", name: "Плащ Горящих Сроков", type: "chest", icon: "🥋", rarity: "legendary", lvl: 8, price: 3200, allowedClasses: ["shadow", "ranger"], stats: { armor: 50, agi: 20 } },
-            "40613": { id: "40613", name: "Костюм Согласования", type: "chest", icon: "👔", rarity: "epic", lvl: 8, price: 2500, stats: { armor: 65 } },
-            "34215": { id: "34215", name: "Пыльная Куртка Грузчика", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, stats: { armor: 70, str: 10 } },
-
-            // УРОВЕНЬ 9
-            "50113": { id: "50113", name: "Мантия Ночной Смены", type: "chest", icon: "🥋", rarity: "legendary", premium: true, lvl: 9, price: 4500, allowedClasses: ["shadow"], stats: { armor: 80, dodgeChance: 12 }, desc: "Сливается с мраком офиса." },
-            "38344": { id: "38344", name: "Латник Бесконечного Звонка", type: "chest", icon: "🦺", rarity: "legendary", lvl: 9, price: 4200, allowedClasses: ["knight"], stats: { armor: 90, blockChance: 15 } },
-            "24119": { id: "24119", name: "Доспех Стабильности", type: "chest", icon: "🥋", rarity: "epic", lvl: 9, price: 3800, stats: { armor: 95, end: 15 } },
-            "23579": { id: "23579", name: "Панцирь Интроверта", type: "chest", icon: "🐢", rarity: "legendary", lvl: 9, price: 4000, stats: { armor: 110, agi: -10 } },
-
-            // УРОВЕНЬ 10
-            "22937": { id: "22937", name: "Одеяние Эмоционального Срыва", type: "chest", icon: "🥋", rarity: "legendary", premium: true, lvl: 10, price: 6500, stats: { armor: 100, critChance: 15, end: -10 }, desc: "Нестабильная, но разрушительная аура." },
-            "18824": { id: "18824", name: "Доспех Идеального Резюме", type: "chest", icon: "✨", rarity: "legendary", premium: true, lvl: 10, price: 7000, allowedClasses: ["knight", "berserk"], stats: { armor: 130, luk: 20 }, desc: "Сияет так же ярко, как ложь на собеседовании." },
-            "17556": { id: "17556", name: "Броня «Я просто спросить»", type: "chest", icon: "🧥", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["shadow", "ranger"], stats: { armor: 95, dodgeChance: 25 } }
+            "19204": { id: "19204", name: "Рубиновое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 8, price: 2800, stats: { str: 12, atk: 20 } },
+            "18824": { id: "18824", name: "Сапфировый Кулон", type: "ring", icon: "💎", rarity: "legendary", lvl: 8, price: 3000, stats: { mst: 15, critChance: 8 } },
+            "17556": { id: "17556", name: "Коричневый Плащ", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 1800, allowedClasses: ["ranger", "shadow"], stats: { armor: 45, dodgeChance: 8 } },
+            "17271": { id: "17271", name: "Боевой Молот", type: "two_handed", icon: "🔨", rarity: "legendary", lvl: 8, price: 3500, allowedClasses: ["knight", "berserk"], stats: { atk: 110, armorPen: 20 } },
+            
+            // ПРОЧЕЕ УНИКАЛЬНОЕ СНАРЯЖЕНИЕ
+            "60597": { id: "60597", name: "Темный Плащ", type: "chest", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow"], stats: { armor: 25, agi: 10 } },
+            "60584": { id: "60584", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 4, price: 400, stats: { armor: 20, mst: 3 } },
+            "50560": { id: "50560", name: "Бордовая Мантия", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 950, stats: { armor: 35, mst: 8 } },
+            "50113": { id: "50113", name: "Черная Мантия", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 4500, allowedClasses: ["shadow"], stats: { armor: 70, dodgeChance: 12, agi: 20 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
 
@@ -578,15 +580,11 @@
             return {head:"Шлем",chest:"Броня",belt:"Пояс",boots:"Обувь",weapon1:"Оружие",weapon2:"Щит",ring1:"Кольцо",ring2:"Кольцо",ring3:"Кольцо",ring4:"Кольцо"}[slotId];
         }
 
-        // ==========================================
-        // ИДЕАЛЬНЫЙ РЕНДЕР ИКОНОК С АВТОПОДГРУЗКОЙ ПО ID
-        // ==========================================
         function renderItemIcon(item) {
             if (!item) return "";
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
             
-            // Запрашиваем картинку по ID (например: static/items/90523.png)
-            const imgPath = `${STATIC_URL}items/${item.id}.png`;
+            const imgPath = `${STATIC_URL}${item.id}.png`;
             return `
                 <div class="item-img-wrapper">
                     <img src="${imgPath}" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
@@ -701,7 +699,7 @@
                         
                         if (fType === 'weapon' && item.type !== 'weapon1' && item.type !== 'weapon2' && item.type !== 'two_handed') return;
                         if (fType === 'armor' && item.type !== 'chest' && item.type !== 'head' && item.type !== 'boots' && item.type !== 'belt') return;
-                        if (fType === 'ring' && item.type !== 'ring') return;
+                        if (fType === 'ring' && item.type !== 'ring' && item.type !== 'belt') return;
                         if (fClass === 'my_class') { if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return; }
 
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
