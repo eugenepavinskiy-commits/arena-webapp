@@ -206,16 +206,15 @@
         <div id="ui-classes-list"></div>
     </div>
 
-    <!-- ================= ЛОГИКА И БАЗЫ ДАННЫХ ================= -->
+    <!-- ================= ЛОГИКА ================= -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 🛡️ БАЗА КЛАССОВ И РОСТ СТАТОВ (Growth Matrix)
         const CLASSES = {
             knight: {
                 name: "Рыцарь", icon: "🛡️", desc: "Несокрушимый страж. Обладает повышенной защитой.",
-                growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, // Прирост за каждый уровень
+                growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 },
                 armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9,
                 subclasses: { 10: { name: "Джаггернаут", desc: "Щиты отражают 30% урона обратно." } }
             },
@@ -239,26 +238,20 @@
             }
         };
 
-        // 📦 БАЗА ПРЕДМЕТОВ (Универсальные и Классовые)
         const ITEMS_DB = {
-            // УНИВЕРСАЛЬНЫЕ (Lvl 1-3)
             "uni_w1": { id: "uni_w1", name: "Ржавый Меч", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, stats: { atk: 5 } },
             "uni_ar1": { id: "uni_ar1", name: "Рваная Рубаха", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 40, stats: { armor: 5 } },
             "uni_r1": { id: "uni_r1", name: "Медное Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 2, price: 100, stats: { end: 3 } },
             
-            // РЫЦАРЬ И БЕРСЕРК (Тяжелые)
             "kni_sh1": { id: "kni_sh1", name: "Щит Ополчения", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 3, price: 250, allowedClasses: ["knight", "berserk"], stats: { armor: 15, blockChance: 10 } },
             "kni_sh2": { id: "kni_sh2", name: "Щит Грифона", type: "weapon2", icon: "🦅", rarity: "epic", lvl: 6, price: 800, allowedClasses: ["knight"], stats: { armor: 40, end: 10, blockChance: 20 } },
             "ber_w1": { id: "ber_w1", name: "Топор Палача", type: "weapon1", icon: "🪓", rarity: "epic", lvl: 5, price: 700, allowedClasses: ["berserk"], stats: { atk: 35, str: 10 } },
             
-            // ТЕНЬ (Ассасин)
             "sha_w1": { id: "sha_w1", name: "Кинжал Вора", type: "weapon1", icon: "🔪", rarity: "rare", lvl: 3, price: 300, allowedClasses: ["shadow", "ranger"], stats: { atk: 15, agi: 5 } },
             "sha_w2": { id: "sha_w2", name: "Кинжал Правосудия", type: "weapon1", icon: "⚖️", rarity: "epic", lvl: 7, price: 1200, allowedClasses: ["shadow"], stats: { atk: 50, mst: 12, critChance: 5 } },
             
-            // СЛЕДОПЫТ
             "rng_w1": { id: "rng_w1", name: "Лук Охотника", type: "weapon1", icon: "🏹", rarity: "rare", lvl: 4, price: 450, allowedClasses: ["ranger"], stats: { atk: 25, luk: 5 } },
             
-            // ВЫСОКОУРОВНЕВЫЕ И ШУТОЧНЫЕ (Lvl 8-10)
             "uni_ar2": { id: "uni_ar2", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1500, stats: { armor: 50, end: 10 } },
             "uni_r2": { id: "uni_r2", name: "Кольцо Короля", type: "ring", icon: "👑", rarity: "legendary", lvl: 9, price: 3500, stats: { str: 15, end: 15, luk: 10 } },
             "joke_r1": { id: "joke_r1", name: "Кольцо Выговора", type: "ring", icon: "📜", rarity: "legendary", lvl: 8, price: 2000, stats: { atk: 100, mst: 20, end: -20 }, desc: "Урон как от премии, ХП как после вычета." }
@@ -272,7 +265,7 @@
         let hero = {
             name: "Гладиатор", level: 5, unspentPoints: 5, gold: 1500,
             baseClass: "knight", hp: 200, maxHp: 200,
-            baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 }, // Ручные очки
+            baseStats: { str: 10, agi: 10, end: 10, mst: 10, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, weapon1: null, weapon2: null, ring1: null, ring2: null, ring3: null, ring4: null },
             inventory: ["uni_w1", "uni_ar1"],
             finalStats: {}
@@ -280,7 +273,6 @@
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
-        // --- УПРАВЛЕНИЕ ЭКРАНАМИ ---
         function openScreen(screenName) {
             if (!['hero', 'shop', 'classes'].includes(screenName)) return alert("В разработке!");
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
@@ -293,12 +285,10 @@
         }
         function setShopMode(mode) { shopMode = mode; updateUI(); }
 
-        // --- СМЕНА КЛАССА ---
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
             if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
             
-            // Проверка экипировки: если вещь не подходит новому классу - снять в сумку
             for (let slot in hero.equipment) {
                 let item = hero.equipment[slot];
                 if (item && item.allowedClasses && !item.allowedClasses.includes(classKey)) {
@@ -314,7 +304,6 @@
             calculateStats(); openScreen('hero');
         }
 
-        // --- ЭКИПИРОВКА ---
         function toggleLevelUp() { isLevelUpOpen = !isLevelUpOpen; updateUI(); }
         function equipItem(invIndex) {
             let itemId = hero.inventory[invIndex];
@@ -344,7 +333,6 @@
             if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; calculateStats(); updateUI(); }
         }
 
-        // --- ЛАВКА ---
         function buyItem(itemId) {
             let item = ITEMS_DB[itemId];
             if (hero.gold < item.price) return alert("Мало золота!");
@@ -360,12 +348,10 @@
             updateUI();
         }
 
-        // --- ДВИЖОК СТАТОВ (АВТО-РОСТ + РУЧНЫЕ + ВЕЩИ) ---
         function calculateStats() {
             let cls = CLASSES[hero.baseClass];
-            let lvlBonus = hero.level - 1; // Бонус за уровни
+            let lvlBonus = hero.level - 1; 
 
-            // База = Ручные очки + Авто-прирост от класса
             let total = {
                 str: hero.baseStats.str + (cls.growth.str * lvlBonus),
                 agi: hero.baseStats.agi + (cls.growth.agi * lvlBonus),
@@ -420,12 +406,10 @@
             return res.join(' • ');
         }
 
-        // --- ГЛОБАЛЬНЫЙ РЕНДЕР ---
         function updateUI() {
             document.getElementById("ui-gold").innerText = hero.gold;
             document.getElementById("ui-top-lvl").innerText = hero.level;
 
-            // ЭКРАН 1: ГЕРОЙ
             if (currentScreen === 'hero') {
                 let cls = CLASSES[hero.baseClass];
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
@@ -435,13 +419,14 @@
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
                         let sil = el.getAttribute("data-sil") || "";
+                        let slotNameRu = {head:"Шлем",chest:"Броня",belt:"Пояс",boots:"Обувь",weapon1:"Оружие",weapon2:"Щит",ring1:"Кольцо",ring2:"Кольцо",ring3:"Кольцо",ring4:"Кольцо"}[slotKey];
                         let item = hero.equipment[slotKey];
                         el.className = "equip-slot";
                         if (item && item.icon) {
-                            el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${{head:"Шлем",chest:"Броня",belt:"Пояс",boots:"Обувь",weapon1:"Оружие",weapon2:"Щит",ring1:"Кольцо",ring2:"Кольцо",ring3:"Кольцо",ring4:"Кольцо"}[slotKey]}</span>`;
+                            el.innerHTML = `<div class="item-icon">${item.icon}</div><span class="slot-label">${slotNameRu}</span>`;
                             el.classList.add("filled", "rarity-" + (item.rarity || "common"));
                         } else {
-                            el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${{head:"Шлем",chest:"Броня",belt:"Пояс",boots:"Обувь",weapon1:"Оружие",weapon2:"Щит",ring1:"Кольцо",ring2:"Кольцо",ring3:"Кольцо",ring4:"Кольцо"}[slotKey]}</span>`;
+                            el.innerHTML = `<div class="silhouette">${sil}</div><span class="slot-label">${slotNameRu}</span>`;
                             el.classList.add("empty");
                         }
                     }
@@ -502,7 +487,6 @@
                 `;
             }
 
-            // ЭКРАН 2: ЛАВКА (С фильтрами)
             if (currentScreen === 'shop') {
                 let shopHtml = '';
                 if (shopMode === 'buy') {
@@ -513,14 +497,10 @@
                     SHOP_ASSORTMENT.forEach(itemId => {
                         let item = ITEMS_DB[itemId];
                         
-                        // Применение фильтров
                         if (fType === 'weapon' && item.type !== 'weapon1' && item.type !== 'weapon2') return;
                         if (fType === 'armor' && item.type !== 'chest' && item.type !== 'head' && item.type !== 'boots' && item.type !== 'belt') return;
                         if (fType === 'ring' && item.type !== 'ring') return;
-                        
-                        if (fClass === 'my_class') {
-                            if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return;
-                        }
+                        if (fClass === 'my_class') { if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return; }
 
                         let tagHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Классовое]</div>` : `<div class="shop-class-tag tag-uni">[Универсально]</div>`;
                         let canAfford = hero.gold >= item.price;
@@ -567,7 +547,6 @@
                 document.getElementById("ui-shop-list").innerHTML = shopHtml;
             }
 
-            // ЭКРАН 3: КЛАССЫ
             if (currentScreen === 'classes') {
                 let classHtml = '';
                 for (let key in CLASSES) {
