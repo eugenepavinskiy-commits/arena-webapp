@@ -42,6 +42,7 @@
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
+            transition: all 0.1s ease;
         }
         .nav-btn:active {
             transform: scale(0.95);
@@ -91,9 +92,9 @@
             font-size: 20px;
             position: relative;
         }
-        /* Пустой слот: строгий контурный силуэт */
+        /* Пустой слот: аккуратный контурный силуэт */
         .equip-slot.empty {
-            opacity: 0.3;
+            opacity: 0.35;
             border-style: dashed;
             border-color: #52525b;
         }
@@ -137,7 +138,7 @@
             margin-bottom: 18px;
         }
         
-        /* Статистика */
+        /* Статистика и Кнопки прокачки */
         .stats-panel {
             background: #18181b;
             border-radius: 8px;
@@ -147,12 +148,13 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
             font-size: 12px;
         }
         .stat-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             border-bottom: 1px dotted #27272a;
             padding-bottom: 4px;
             color: #d4d4d8;
@@ -170,6 +172,41 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
+        
+        /* Кнопка добавления статов */
+        .add-stat-btn {
+            background: #f59e0b;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            box-shadow: 0 0 5px rgba(245, 158, 11, 0.4);
+            transition: transform 0.1s;
+        }
+        .add-stat-btn:active {
+            transform: scale(0.85);
+        }
+        .unspent-points-banner {
+            grid-column: span 2;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
         .potion-bar {
             background: #18181b;
             border: 1px solid #27272a;
@@ -225,20 +262,18 @@
     </div>
 
     <div class="hero-layout">
-        <!-- Левая колонка: Броня -->
+        <!-- Уникальные, интуитивные плейсхолдеры, которые не спутать с вещами -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-head" data-placeholder="🪖"><span class="slot-label">Шлем</span></div>
             <div class="equip-slot empty" id="slot-chest" data-placeholder="🧥"><span class="slot-label">Броня</span></div>
-            <div class="equip-slot empty" id="slot-belt" data-placeholder="🥋"><span class="slot-label">Пояс</span></div>
+            <div class="equip-slot empty" id="slot-belt" data-placeholder="🪢"><span class="slot-label">Пояс</span></div>
             <div class="equip-slot empty" id="slot-boots" data-placeholder="🥾"><span class="slot-label">Обувь</span></div>
         </div>
 
-        <!-- Аватар -->
         <div class="hero-avatar-box">
             <img src="{{ url_for('static', filename='1784660262211.png') }}" alt="Герой" class="hero-avatar">
         </div>
 
-        <!-- Правая колонка: Кольца -->
         <div class="equip-col">
             <div class="equip-slot empty" id="slot-ring1" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
             <div class="equip-slot empty" id="slot-ring2" data-placeholder="💍"><span class="slot-label">Кольцо</span></div>
@@ -247,7 +282,6 @@
         </div>
     </div>
 
-    <!-- Нижний ряд: Оружие -->
     <div class="weapons-row">
         <div class="equip-slot empty" id="slot-weapon1" data-placeholder="⚔️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Оружие</span></div>
         <div class="equip-slot empty" id="slot-weapon2" data-placeholder="🛡️" style="width: 52px; height: 52px; font-size: 22px;"><span class="slot-label">Щит</span></div>
@@ -274,21 +308,23 @@
         };
 
         const ITEMS_DB = {
-            "sword_01": { id: "sword_01", name: "Стальной Меч", type: "weapon1", icon: "⚔️", stats: { atk: 15, str: 2 } },
+            "sword_01": { id: "sword_01", name: "Стальной Меч", type: "weapon1", icon: "🗡️", stats: { atk: 15, str: 2 } },
             "shield_01": { id: "shield_01", name: "Тяжелый Щит", type: "weapon2", icon: "🛡️", stats: { armor: 20, blockChance: 15, end: 5 } },
             "ring_luck": { id: "ring_luck", name: "Кольцо Фортуны", type: "ring", icon: "💍", stats: { luk: 15, critChance: 2 } },
             "armor_01": { id: "armor_01", name: "Латный Доспех", type: "chest", icon: "🥋", stats: { armor: 35, end: 10, str: 3 } }
         };
 
+        // Состояние героя
         let hero = {
             name: "Гладиатор",
             level: 5,
+            unspentPoints: 15, // 3 на старте + 12 за уровни
             baseClass: "knight",
             subClass: "dark_knight",
             hp: 350,
             maxHp: 350,
             potions: 1,
-            baseStats: { str: 15, agi: 10, end: 20, int: 5, luk: 5 },
+            baseStats: { str: 10, agi: 10, end: 10, int: 5, luk: 5 },
             equipment: {
                 head: null,
                 chest: ITEMS_DB["armor_01"],
@@ -297,15 +333,24 @@
                 weapon1: ITEMS_DB["sword_01"],
                 weapon2: ITEMS_DB["shield_01"],
                 ring1: ITEMS_DB["ring_luck"],
-                ring2: null,
-                ring3: null,
-                ring4: null
+                ring2: null, ring3: null, ring4: null
             },
             finalStats: {}
         };
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
+        }
+
+        // Логика добавления статов
+        function addStat(statKey) {
+            if (hero.unspentPoints > 0) {
+                hero.baseStats[statKey]++;
+                hero.unspentPoints--;
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                calculateStats();
+                updateUI();
+            }
         }
 
         function calculateStats() {
@@ -359,7 +404,6 @@
             document.getElementById("ui-class-name").innerHTML = 
                 `${cls.icon} ${hero.name} <span style="font-size:11px; color:#d4d4d8; font-weight:normal;">[${classTitle} • Ур. ${hero.level}]</span>`;
 
-            // ЖЕСТКАЯ ПРОВЕРКА СЛОТОВ: рендерим иконку ТОЛЬКО если элемент существует и имеет свойство icon
             const slots = ["head", "chest", "belt", "boots", "weapon1", "weapon2", "ring1", "ring2", "ring3", "ring4"];
             
             slots.forEach(slotKey => {
@@ -369,15 +413,12 @@
                     let slotNameRu = getSlotName(slotKey);
                     let item = hero.equipment[slotKey];
 
-                    // Очищаем прошлые классы
                     el.classList.remove("empty", "filled");
 
                     if (item && item.icon) {
-                        // РЕЖИМ АКТИВНОЙ ВЕЩИ
                         el.innerHTML = `${item.icon}<span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("filled");
                     } else {
-                        // РЕЖИМ ПУСТОГО СЛОТА (СИЛУЭТ)
                         el.innerHTML = `<span style="font-size:16px;">${placeholderIcon}</span><span class="slot-label">${slotNameRu}</span>`;
                         el.classList.add("empty");
                     }
@@ -387,13 +428,25 @@
             let potionEl = document.getElementById("potion-count");
             if (potionEl) potionEl.innerText = hero.potions;
 
+            // Генерация кнопок плюса, если есть свободные очки
+            let btnStr = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('str')">+</button>` : ``;
+            let btnAgi = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('agi')">+</button>` : ``;
+            let btnEnd = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('end')">+</button>` : ``;
+            let btnInt = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('int')">+</button>` : ``;
+            let btnLuk = hero.unspentPoints > 0 ? `<button class="add-stat-btn" onclick="addStat('luk')">+</button>` : ``;
+
+            let unspentHtml = hero.unspentPoints > 0 
+                ? `<div class="unspent-points-banner">✨ Свободных очков: ${hero.unspentPoints} ✨</div>` 
+                : ``;
+
             const statsHtml = `
                 <div class="stat-group-title">Базовые характеристики</div>
-                <div class="stat-item"><span>⚔️ Сила (Урон)</span> <b>${hero.finalStats.str}</b></div>
-                <div class="stat-item"><span>🏃 Ловкость (Крит/Уворот)</span> <b>${hero.finalStats.agi}</b></div>
-                <div class="stat-item"><span>❤️ Выносливость (HP)</span> <b>${hero.finalStats.end}</b></div>
-                <div class="stat-item"><span>🧠 Интеллект</span> <b>${hero.finalStats.int}</b></div>
-                <div class="stat-item"><span>🍀 Удача (Дроп)</span> <b>${hero.finalStats.luk}</b></div>
+                ${unspentHtml}
+                <div class="stat-item"><span>⚔️ Сила (Урон)</span> <div><b>${hero.finalStats.str}</b>${btnStr}</div></div>
+                <div class="stat-item"><span>🏃 Ловкость (Крит/Уворот)</span> <div><b>${hero.finalStats.agi}</b>${btnAgi}</div></div>
+                <div class="stat-item"><span>❤️ Выносливость (HP)</span> <div><b>${hero.finalStats.end}</b>${btnEnd}</div></div>
+                <div class="stat-item"><span>🧠 Интеллект</span> <div><b>${hero.finalStats.int}</b>${btnInt}</div></div>
+                <div class="stat-item"><span>🍀 Удача (Дроп)</span> <div><b>${hero.finalStats.luk}</b>${btnLuk}</div></div>
                 
                 <div class="stat-group-title">Боевые параметры</div>
                 <div class="stat-item"><span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b></div>
@@ -403,9 +456,6 @@
                 <div class="stat-item"><span>💥 Урон Крита</span> <b>${hero.finalStats.critDmg}%</b></div>
                 <div class="stat-item"><span>💨 Уклонение</span> <b>${hero.finalStats.dodge}%</b></div>
                 <div class="stat-item"><span>🔰 Блок</span> <b>${hero.finalStats.blockChance}%</b></div>
-                
-                <div class="stat-group-title">Бонусы</div>
-                <div class="stat-item"><span>🎁 Множитель лута</span> <b>x${hero.finalStats.dropMult}</b></div>
             `;
             let grid = document.getElementById("ui-stats-grid");
             if (grid) grid.innerHTML = statsHtml;
