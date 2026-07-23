@@ -16,171 +16,190 @@
         /* ШАПКА И НАВИГАЦИЯ */
         .top-dashboard {
             display: flex; justify-content: space-between; align-items: center;
-            background: #18181b; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid #27272a; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: #121214; padding: 8px 12px; border-radius: 8px;
+            border: 1px solid #27272a; margin-bottom: 8px; box-shadow: 0 6px 15px rgba(0,0,0,0.8);
         }
-        .resources { font-weight: bold; color: #fbbf24; font-size: 12px; }
+        .resources { font-weight: bold; color: #fbbf24; font-size: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .resources span { color: #fff; margin-right: 10px; }
-        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; }
+        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 12px; }
         .nav-btn {
-            background: #27272a; color: #a1a1aa; border: 1px solid #3f3f46;
+            background: #18181b; color: #a1a1aa; border: 1px solid #27272a;
             padding: 8px 0; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-weight: bold; text-transform: uppercase;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.02), 0 4px 6px rgba(0,0,0,0.5);
         }
         .nav-btn:active { transform: scale(0.95); }
-        .nav-btn.active { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000; border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+        .nav-btn.active { 
+            background: linear-gradient(180deg, #2e1065 0%, #18181b 100%); 
+            color: #d8b4fe; border-color: #7e22ce; 
+            box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); 
+        }
         .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ОБЩИЕ БАННЕРЫ */
         .class-banner {
-            background: linear-gradient(90deg, #18181b 0%, #27272a 50%, #18181b 100%); border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; text-align: center; margin-bottom: 12px; color: #f59e0b; font-weight: bold; font-size: 13px; letter-spacing: 0.5px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(90deg, #121214 0%, #18181b 50%, #121214 100%); 
+            border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; text-align: center; margin-bottom: 16px; 
+            color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 0.5px; cursor: pointer; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.6);
         }
         
         /* ГЕРОЙ И ЭКИПИРОВКА */
-        .hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; }
         
+        /* ЭФФЕКТ ГЛУБОКИХ СОКЕТОВ (Высечено в камне) */
         .equip-slot {
-            width: 48px; height: 48px; background: #18181b; border-radius: 8px;
+            width: 48px; height: 48px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { 
-            background: #09090b; border: 1px solid #27272a; 
-            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9); 
+            background: #09090b; border: 1px solid #18181b; 
+            box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 1px 1px rgba(255,255,255,0.05); 
         }
-        .equip-slot.blocked { border: 1px solid #ef4444; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9); }
-        .silhouette { font-size: 24px; opacity: 0.15; filter: grayscale(100%); }
-        .item-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+        .equip-slot.blocked { border: 1px solid #450a0a; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
+        .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
+        .item-icon { font-size: 24px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
         
-        .rarity-common { border: 1px solid #52525b; background: #18181b; }
-        .rarity-rare { border: 1px solid #3b82f6; background: #0f172a; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
-        .rarity-epic { border: 1px solid #a855f7; background: #2e1065; box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.3); }
-        .rarity-legendary { border: 1px solid #f59e0b; background: #451a03; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.4); }
+        .rarity-common { border: 1px solid #3f3f46; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.8); }
+        .rarity-rare { border: 1px solid #1e3a8a; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.1), 0 4px 8px rgba(0,0,0,0.8); }
+        .rarity-epic { border: 1px solid #581c87; background: linear-gradient(180deg, #3b0764 0%, #2e1065 100%); box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.15), 0 4px 8px rgba(0,0,0,0.8); }
+        .rarity-legendary { border: 1px solid #92400e; background: linear-gradient(180deg, #78350f 0%, #451a03 100%); box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.2), 0 4px 8px rgba(0,0,0,0.8); }
         
-        .slot-label { position: absolute; bottom: -14px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.3px;}
+        .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         
-        /* СТИЛЬНЫЙ АВАТАР ГЕРОЯ (Строгий темно-фэнтезийный стиль) */
+        /* СТИЛЬНЫЙ АВАТАР ГЕРОЯ (Эффект "Высечен в камне / Растворен во тьме") */
         .hero-avatar-box { 
             flex-shrink: 0; width: 200px; text-align: center; position: relative; 
-            border-radius: 10px; overflow: hidden; background: #121214; 
-            border: 1px solid #3f3f46;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.9);
+            border-radius: 12px; overflow: hidden; background: #000; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.95);
         }
         .hero-avatar { 
             width: 100%; height: 260px; object-fit: cover; object-position: top center; 
-            transform: scale(1.05); display: block; transition: all 0.3s ease; 
+            transform: scale(1.12); /* Срезает ИИ-рамки */
+            display: block; transition: all 0.3s ease; 
+        }
+        /* Глубокая виньетка, скрывающая края */
+        .hero-avatar-box::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 40px #0d0d0f, inset 0 0 15px #0d0d0f; 
+            border: 1px solid rgba(63, 63, 70, 0.4);
+            border-radius: 12px; pointer-events: none;
         }
 
-        .weapons-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
+        .weapons-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 30px; }
 
         /* ИНВЕНТАРЬ И СТАТЫ */
         .inventory-panel { 
-            background: #121214; border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            background: #121214; border-radius: 8px; padding: 12px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
-        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #f59e0b; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 6px; margin-bottom: 10px; }
-        .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; transition: transform 0.1s; position: relative;}
         .inv-item:active { transform: scale(0.88); }
-        .inv-item.empty { background: #09090b; border: 1px solid #27272a; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); cursor: default; }
+        .inv-item.empty { background: #09090b; border: 1px solid #18181b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.9); cursor: default; }
         
-        .levelup-container { margin-bottom: 12px; }
-        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
-        .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2); }
-        .levelup-dropdown { background: #18181b; border: 1px solid #f59e0b; border-radius: 8px; padding: 10px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 8px; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
+        .levelup-container { margin-bottom: 16px; }
+        .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 0.5px;}
+        .btn-toggle-levelup.active { background: #451a03; color: #fbbf24; border-color: #92400e; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); }
+        .levelup-dropdown { background: #121214; border: 1px solid #3f3f46; border-radius: 8px; padding: 12px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
         .levelup-dropdown.show { display: grid; }
-        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #27272a; padding: 6px 10px; border-radius: 6px; font-size: 11px; }
-        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #27272a; padding: 6px 10px; border-radius: 6px; font-size: 11px; color:#d4d4d8;}
+        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         
-        .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stats-card { background: #121214; border-radius: 8px; padding: 12px; border: 1px solid #27272a; box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
-        .stat-group-title { color: #f59e0b; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; margin-bottom: 10px; letter-spacing: 0.5px;}
-        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 5px; margin-bottom: 5px; font-size: 10px; color: #a1a1aa; }
+        .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stats-card { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
+        .stat-group-title { color: #a1a1aa; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
+        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #71717a; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .stat-item b { font-size: 11px; color: #fff; }
-        .hp-bar-bg { width: 100%; height: 4px; background: #09090b; border-radius: 2px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);}
-        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); transition: width 0.3s; box-shadow: 0 0 5px rgba(239,68,68,0.5);}
+        .stat-item b { font-size: 12px; color: #e4e4e7; }
+        .hp-bar-bg { width: 100%; height: 6px; background: #09090b; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
+        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
 
         /* ЛАВКА */
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
-        .shop-tab { flex: 1; padding: 10px; text-align: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; color: #a1a1aa; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
-        .shop-tab.active { background: #2e1065; color: #fff; border-color: #a855f7; box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3); }
-        .shop-tab.active-sell { background: #450a0a; color: #fff; border-color: #ef4444; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3); }
+        .shop-tab { flex: 1; padding: 10px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4);}
+        .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
+        .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
+        
         .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
-        .shop-select { flex: 1; background: #18181b; color: #d4d4d8; border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; font-size: 11px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-        .shop-list { display: flex; flex-direction: column; gap: 10px; }
-        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-        .shop-item-icon { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);}
+        .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 8px; font-size: 11px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
+        
+        .shop-list { display: flex; flex-direction: column; gap: 12px; }
+        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);}
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
-        .shop-item-name { font-weight: bold; font-size: 13px; color: #fff; display:flex; justify-content:space-between; }
-        .shop-item-lvl { font-size: 9px; color: #a1a1aa; background: #27272a; padding: 2px 5px; border-radius: 4px; border: 1px solid #3f3f46; }
-        .shop-class-tag { font-size: 8px; padding: 2px 5px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; }
-        .tag-uni { background: #27272a; color: #a1a1aa; }
-        .tag-class { background: #064e3b; color: #34d399; border: 1px solid #059669; }
-        .tag-twohand { background: #7f1d1d; color: #fca5a5; border: 1px solid #b91c1c; }
-        .shop-item-stats { font-size: 11px; color: #10b981; }
-        .shop-item-desc { font-size: 10px; color: #71717a; font-style: italic; line-height: 1.3;}
-        .shop-btn { padding: 10px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s;}
+        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
+        .shop-item-lvl { font-size: 9px; color: #71717a; background: #18181b; padding: 2px 6px; border-radius: 4px; border: 1px solid #27272a; }
+        .shop-class-tag { font-size: 8px; padding: 2px 5px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; text-transform: uppercase;}
+        .tag-uni { background: #18181b; color: #71717a; border: 1px solid #27272a; }
+        .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
+        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d; }
+        .shop-item-stats { font-size: 11px; color: #10b981; margin-top: 2px;}
+        .shop-item-desc { font-size: 10px; color: #52525b; font-style: italic; line-height: 1.4;}
+        .shop-btn { padding: 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s; text-transform: uppercase;}
         .shop-btn:active { transform: scale(0.95); }
-        .btn-buy { background: #10b981; color: #000; box-shadow: 0 2px 6px rgba(16,185,129,0.3); }
-        .btn-buy:disabled { background: #27272a; color: #52525b; cursor: not-allowed; box-shadow: none; }
-        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
+        .btn-buy { background: #10b981; color: #000; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
+        .btn-buy:disabled { background: #18181b; color: #3f3f46; cursor: not-allowed; box-shadow: none; border: 1px solid #27272a;}
+        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); }
 
-        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ */
+        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ (Эффект картины в рамке) */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
         .class-icon-btn {
-            background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px 0;
-            display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
-            opacity: 0.5; filter: grayscale(80%);
+            background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0;
+            display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;
+            opacity: 0.5; filter: grayscale(100%); box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
-        .class-icon-btn .icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
-        .class-icon-btn .name { font-size: 9px; font-weight: bold; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px;}
+        .class-icon-btn .icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
+        .class-icon-btn .name { font-size: 9px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
         
         .class-icon-btn.selected { 
-            background: #27272a; border-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); 
+            background: #18181b; border-color: #52525b; box-shadow: 0 6px 15px rgba(0,0,0,0.8); 
             opacity: 1; filter: grayscale(0%); transform: translateY(-2px);
         }
-        .class-icon-btn.selected .name { color: #f59e0b; }
+        .class-icon-btn.selected .name { color: #e4e4e7; }
 
-        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 25px rgba(0,0,0,0.7); }
+        .class-detail-card { background: #0d0d0f; border: 1px solid #27272a; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
         
-        .class-preview-container { position: relative; width: 100%; height: 240px; overflow: hidden; background: #000; }
+        .class-preview-container { position: relative; width: 100%; height: 260px; overflow: hidden; background: #000; border-radius: 12px 12px 0 0;}
         .class-preview-img { 
             width: 100%; height: 100%; object-fit: cover; object-position: top center; 
-            transform: scale(1.05);
+            transform: scale(1.12); /* Скрываем ИИ-рамки */
         }
+        /* Двойная виньетка: скрывает все лишнее по краям */
         .class-preview-container::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 30px #121214, inset 0 -80px 60px -10px #121214;
+            box-shadow: inset 0 0 50px #0d0d0f, inset 0 -80px 60px -10px #0d0d0f;
             pointer-events: none;
         }
         
-        .class-detail-title-box { position: absolute; bottom: 12px; width: 100%; text-align: center; z-index: 2; }
-        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 10px #000, 0 0 20px rgba(0,0,0,0.9); }
+        .class-detail-title-box { position: absolute; bottom: 16px; width: 100%; text-align: center; z-index: 2; }
+        .class-detail-title { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #e4e4e7; text-shadow: 0 4px 15px #000, 0 0 30px rgba(0,0,0,1); }
         
-        .class-detail-content { padding: 16px; position: relative; z-index: 3; }
-        .class-detail-growth { text-align: center; font-size: 11px; color: #a1a1aa; margin-bottom: 16px; }
-        .class-detail-lore { font-size: 12px; color: #d4d4d8; line-height: 1.5; font-style: italic; margin-bottom: 20px; text-align: center; text-shadow: 0 2px 4px #000;}
+        .class-detail-content { padding: 20px; position: relative; z-index: 3; }
+        .class-detail-growth { text-align: center; font-size: 11px; color: #71717a; margin-bottom: 20px; letter-spacing: 0.5px;}
+        .class-detail-lore { font-size: 12px; color: #a1a1aa; line-height: 1.6; font-style: italic; margin-bottom: 24px; text-align: center; text-shadow: 0 2px 4px #000;}
         
-        .class-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; background: #09090b; padding: 12px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 4px 8px rgba(0,0,0,0.8); }
-        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #a1a1aa; }
-        .c-bar-wrap { width: 65%; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); }
-        .c-bar-fill { height: 100%; border-radius: 2px; box-shadow: 0 0 8px currentColor; }
+        .class-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; background: #09090b; padding: 16px; border-radius: 8px; border: 1px solid #18181b; box-shadow: inset 0 6px 12px rgba(0,0,0,0.8); }
+        .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
+        .c-bar-wrap { width: 65%; height: 4px; background: #18181b; border-radius: 2px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); }
+        .c-bar-fill { height: 100%; border-radius: 2px; box-shadow: 0 0 10px currentColor; }
         
-        .class-subclasses { font-size: 11px; padding: 14px; border-radius: 8px; border: 1px solid; margin-bottom: 16px; line-height: 1.5; }
-        .class-subclasses b { display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
+        .class-subclasses { font-size: 11px; padding: 16px; border-radius: 8px; border: 1px solid #27272a; background: #121214; margin-bottom: 20px; line-height: 1.5; color: #a1a1aa; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .class-subclasses b { display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #e4e4e7;}
         
-        .select-class-btn { width: 100%; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: transform 0.1s; letter-spacing: 1px;}
+        .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.2s; letter-spacing: 1.5px;}
         .select-class-btn:active { transform: scale(0.98); }
-        .select-class-btn:disabled { background: #27272a !important; color: #52525b !important; cursor: default; box-shadow: none !important; }
+        .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-color: #18181b !important; }
     </style>
 </head>
 <body>
 
     <div class="top-dashboard">
         <div class="resources">💰 <span id="ui-gold">1500</span> 💎 <span>12</span> 🏆 <span>3</span></div>
-        <div style="font-size:11px; color:#a1a1aa;">Ур. <span id="ui-top-lvl" style="color:#fff; font-weight:bold;">5</span></div>
+        <div style="font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase;">Уровень <span id="ui-top-lvl" style="color:#e4e4e7;">5</span></div>
     </div>
 
     <div class="nav-grid">
@@ -224,7 +243,7 @@
         <div class="inventory-panel">
             <div class="inventory-header">
                 <span>🎒 Сумка (Нажми чтобы надеть)</span>
-                <span id="ui-bag-capacity" style="color:#a1a1aa;">0/10</span>
+                <span id="ui-bag-capacity" style="color:#71717a;">0/10</span>
             </div>
             <div class="inventory-grid" id="ui-inventory-grid"></div>
         </div>
@@ -235,7 +254,7 @@
 
     <!-- ================= ЭКРАН 2: ЛАВКА ================= -->
     <div id="screen-shop" class="app-screen">
-        <div class="class-banner" style="border-color:#a855f7; color:#a855f7;">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
+        <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
         <div class="shop-controls">
             <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">🛒 КУПИТЬ</div>
             <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">💰 ПРОДАТЬ</div>
@@ -259,9 +278,9 @@
 
     <!-- ================= ЭКРАН 3: КЛАССЫ ================= -->
     <div id="screen-classes" class="app-screen">
-        <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 14px; line-height: 1.4;">
-            Смена специализации стоит <b style="color:#fbbf24;">5000 💰</b>.<br>Каждый класс обладает уникальным визуалом и стилем боя.
+        <div class="class-banner" style="margin-bottom: 12px;">📜 ПАЛАТА ГЕРОЕВ</div>
+        <div style="font-size: 11px; color: #71717a; text-align: center; margin-bottom: 20px; line-height: 1.5;">
+            Смена специализации стоит <b style="color:#fbbf24;">5000 💰</b>.<br>Класс определяет авто-рост характеристик и стиль боя.
         </div>
         
         <div class="classes-gallery" id="ui-classes-gallery"></div>
@@ -538,8 +557,9 @@
 
             if (currentScreen === 'hero') {
                 let cls = CLASSES[hero.baseClass];
-                document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
+                document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
 
+                let avatarContainer = document.getElementById("avatar-container");
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
 
@@ -704,10 +724,9 @@
                 let subInfo = selCls.subclasses[10];
 
                 let detailHtml = `
-                    <div class="class-detail-card" style="border-color:${selCls.color}; box-shadow: 0 4px 20px ${selCls.color}25;">
+                    <div class="class-detail-card">
                         <div class="class-preview-container">
                             <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
-                            <div class="class-preview-overlay"></div>
                             <div class="class-detail-title-box">
                                 <div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div>
                             </div>
@@ -721,24 +740,24 @@
                             <div class="class-bars">
                                 <div class="c-bar-row">
                                     <span>⚔️ Урон</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.dmg}%; background:${selCls.color}; color:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.dmg}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
                                 </div>
                                 <div class="c-bar-row">
                                     <span>🛡️ Защита</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.def}%; background:${selCls.color}; color:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.def}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
                                 </div>
                                 <div class="c-bar-row">
                                     <span>🎯 Сложность</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.diff}%; background:${selCls.color}; color:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.diff}%; background:${selCls.color}; box-shadow: 0 0 10px ${selCls.color}80;"></div></div>
                                 </div>
                             </div>
 
-                            <div class="class-subclasses" style="border-color:${selCls.color}50; background:${selCls.color}10;">
+                            <div class="class-subclasses">
                                 <b style="color:${selCls.color};">Эволюция на 10 Ур: ${subInfo.name}</b>
-                                <span style="color:#d4d4d8;">${subInfo.desc}</span>
+                                <span style="color:#a1a1aa;">${subInfo.desc}</span>
                             </div>
 
-                            <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `background: linear-gradient(135deg, ${selCls.color} 0%, #d97706 100%);` : ''}">
+                            <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')">
                                 ${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}
                             </button>
                         </div>
