@@ -41,15 +41,13 @@
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 16px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; }
         
-        /* ЭФФЕКТ ГЛУБОКИХ СОКЕТОВ */
         .equip-slot {
             width: 48px; height: 48px; background: #18181b; border-radius: 8px;
             display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { 
-            background: #09090b; /* Темнее фона */
-            border: 1px solid #27272a; 
+            background: #09090b; border: 1px solid #27272a; 
             box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.9); 
         }
         .equip-slot.blocked { border: 1px solid #ef4444; background: #2f0808; cursor: not-allowed; box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.9); }
@@ -63,22 +61,17 @@
         
         .slot-label { position: absolute; bottom: -14px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.3px;}
         
-        /* Аватар Героя (Умное кадрирование) */
-        .hero-avatar-box { flex-shrink: 0; width: 200px; text-align: center; position: relative; border-radius: 10px; overflow: hidden; background: #000;}
+        /* СТИЛЬНЫЙ АВАТАР ГЕРОЯ (Строгий темно-фэнтезийный стиль) */
+        .hero-avatar-box { 
+            flex-shrink: 0; width: 200px; text-align: center; position: relative; 
+            border-radius: 10px; overflow: hidden; background: #121214; 
+            border: 1px solid #3f3f46;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.9);
+        }
         .hero-avatar { 
             width: 100%; height: 260px; object-fit: cover; object-position: top center; 
             transform: scale(1.05); display: block; transition: all 0.3s ease; 
         }
-        /* Внутренняя тень, чтобы края картинки плавно уходили в UI */
-        .hero-avatar-box::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9); pointer-events: none; border-radius: 10px;
-        }
-
-        .aura-knight { border: 2px solid #fbbf24; box-shadow: 0 0 25px rgba(251, 191, 36, 0.25); }
-        .aura-berserk { border: 2px solid #ef4444; box-shadow: 0 0 25px rgba(239, 68, 68, 0.25); }
-        .aura-shadow { border: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.25); }
-        .aura-ranger { border: 2px solid #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
 
         .weapons-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
 
@@ -93,7 +86,7 @@
         .inv-item.empty { background: #09090b; border: 1px solid #27272a; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); cursor: default; }
         
         .levelup-container { margin-bottom: 12px; }
-        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
+        .btn-toggle-levelup { width: 100%; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);}
         .btn-toggle-levelup.active { background: #f59e0b; color: #000; border-color: #f59e0b; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2); }
         .levelup-dropdown { background: #18181b; border: 1px solid #f59e0b; border-radius: 8px; padding: 10px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 8px; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
         .levelup-dropdown.show { display: grid; }
@@ -134,17 +127,16 @@
         .btn-buy:disabled { background: #27272a; color: #52525b; cursor: not-allowed; box-shadow: none; }
         .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
 
-        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ (КИНЕМАТОГРАФИЧНЫЙ ПОСТЕР) */
+        /* ИНТЕРФЕЙС ВЫБОРА КЛАССОВ */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
         .class-icon-btn {
             background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 10px 0;
             display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
-            opacity: 0.5; filter: grayscale(80%); /* Затемняем невыбранные */
+            opacity: 0.5; filter: grayscale(80%);
         }
         .class-icon-btn .icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
         .class-icon-btn .name { font-size: 9px; font-weight: bold; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px;}
         
-        /* Фокус на выбранном классе */
         .class-icon-btn.selected { 
             background: #27272a; border-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); 
             opacity: 1; filter: grayscale(0%); transform: translateY(-2px);
@@ -156,9 +148,8 @@
         .class-preview-container { position: relative; width: 100%; height: 240px; overflow: hidden; background: #000; }
         .class-preview-img { 
             width: 100%; height: 100%; object-fit: cover; object-position: top center; 
-            transform: scale(1.05); /* Скрываем ИИ-рамки */
+            transform: scale(1.05);
         }
-        /* Двойная виньетка: скрывает все лишнее по краям и делает крутой градиент снизу */
         .class-preview-container::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             box-shadow: inset 0 0 30px #121214, inset 0 -80px 60px -10px #121214;
@@ -172,7 +163,6 @@
         .class-detail-growth { text-align: center; font-size: 11px; color: #a1a1aa; margin-bottom: 16px; }
         .class-detail-lore { font-size: 12px; color: #d4d4d8; line-height: 1.5; font-style: italic; margin-bottom: 20px; text-align: center; text-shadow: 0 2px 4px #000;}
         
-        /* Изящные полосы прогресса */
         .class-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; background: #09090b; padding: 12px; border-radius: 8px; border: 1px solid #27272a; box-shadow: inset 0 4px 8px rgba(0,0,0,0.8); }
         .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #a1a1aa; }
         .c-bar-wrap { width: 65%; height: 4px; background: #27272a; border-radius: 2px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); }
@@ -269,8 +259,8 @@
 
     <!-- ================= ЭКРАН 3: КЛАССЫ ================= -->
     <div id="screen-classes" class="app-screen">
-        <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 12px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 16px; line-height: 1.4;">
+        <div class="class-banner" style="border-color:#38bdf8; color:#38bdf8; margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
+        <div style="font-size: 11px; color: #a1a1aa; text-align: center; margin-bottom: 14px; line-height: 1.4;">
             Смена специализации стоит <b style="color:#fbbf24;">5000 💰</b>.<br>Каждый класс обладает уникальным визуалом и стилем боя.
         </div>
         
@@ -550,9 +540,6 @@
                 let cls = CLASSES[hero.baseClass];
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#a1a1aa; font-weight:normal;">[${cls.name} • Ур. ${hero.level}]</span>`;
 
-                let avatarContainer = document.getElementById("avatar-container");
-                avatarContainer.className = "hero-avatar-box aura-" + hero.baseClass;
-                
                 let avatarEl = document.getElementById("main-hero-avatar");
                 avatarEl.src = CLASS_AVATARS[hero.baseClass];
 
@@ -623,7 +610,7 @@
                             <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                                 <span>🩸 Здоровье</span> <b style="color:#ef4444;">${hero.hp} / ${hero.finalStats.hp}</b>
                             </div>
-                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%; color:${CLASSES[hero.baseClass].color}"></div></div>
+                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
                         </div>
                         <div class="stat-item"><span>🗡️ Урон</span> <b>${hero.finalStats.damage}</b></div>
                         <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
@@ -717,9 +704,10 @@
                 let subInfo = selCls.subclasses[10];
 
                 let detailHtml = `
-                    <div class="class-detail-card" style="border-color:${selCls.color}; box-shadow: 0 4px 15px ${selCls.color}30;">
+                    <div class="class-detail-card" style="border-color:${selCls.color}; box-shadow: 0 4px 20px ${selCls.color}25;">
                         <div class="class-preview-container">
                             <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
+                            <div class="class-preview-overlay"></div>
                             <div class="class-detail-title-box">
                                 <div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div>
                             </div>
@@ -733,15 +721,15 @@
                             <div class="class-bars">
                                 <div class="c-bar-row">
                                     <span>⚔️ Урон</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.dmg}%; background:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.dmg}%; background:${selCls.color}; color:${selCls.color};"></div></div>
                                 </div>
                                 <div class="c-bar-row">
                                     <span>🛡️ Защита</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.def}%; background:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.def}%; background:${selCls.color}; color:${selCls.color};"></div></div>
                                 </div>
                                 <div class="c-bar-row">
                                     <span>🎯 Сложность</span>
-                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.diff}%; background:${selCls.color};"></div></div>
+                                    <div class="c-bar-wrap"><div class="c-bar-fill" style="width:${selCls.bars.diff}%; background:${selCls.color}; color:${selCls.color};"></div></div>
                                 </div>
                             </div>
 
