@@ -12,22 +12,6 @@
             background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 6px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
         }
-
-        /* === ГЛОБАЛЬНЫЙ ЭФФЕКТ РАНЕНИЯ === */
-        .blood-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999; display: none;
-            box-shadow: inset 0 0 50px rgba(220, 38, 38, 0);
-            transition: all 0.5s ease;
-        }
-        .blood-overlay.active {
-            display: block;
-            animation: blood-pulse 2.5s infinite alternate ease-in-out;
-        }
-        @keyframes blood-pulse {
-            0% { box-shadow: inset 0 0 20px rgba(220, 38, 38, 0.2); background: rgba(220, 38, 38, 0.01); }
-            100% { box-shadow: inset 0 0 70px rgba(220, 38, 38, 0.4); background: rgba(220, 38, 38, 0.05); }
-        }
         
         /* === ТОП ПАНЕЛЬ === */
         .top-dashboard {
@@ -37,7 +21,7 @@
             margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
-        .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none; box-shadow: 0 0 8px rgba(239,68,68,0.5);}
+        .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
         .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
@@ -110,66 +94,58 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА 20.1 === */
+        /* === PVE БОЕВКА 20.2 (ФИКС УГЛОВ И ПУСТОТ) === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; transition: background-image 0.5s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
-            background-color: #0f172a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a;
         }
 
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
-        
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ */
+        /* АЛТАРЬ ДЛЯ КАРТОЧЕК */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; position: relative; gap: 8px;
             background: linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.8) 100%);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
-            border-radius: 12px; padding: 15px 8px 12px 8px;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
+            border-radius: 12px; padding: 15px 10px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
         }
         
-        /* ВРАППЕРЫ ДЛЯ РАЗДЕЛЕНИЯ ТЕКСТА И КАРТИНКИ */
-        .combat-entity-wrapper {
-            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 50%;
-        }
+        .combat-entity-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 50%; }
 
-        /* ИМЯ + УРОВЕНЬ НАД КАРТОЧКОЙ */
         .entity-name-plate {
-            font-weight: 900; font-size: 13px; color: #e4e4e7; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
+            font-weight: 900; font-size: 12px; color: #e4e4e7; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
             text-transform: uppercase; letter-spacing: 0.5px; text-align: center;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
         }
-        .entity-lvl {
-            color: #fbbf24; font-size: 10px; margin-left: 4px; padding: 1px 4px;
-            background: rgba(0,0,0,0.6); border-radius: 4px; border: 1px solid #b45309;
-        }
 
-        /* 🃏 СТИЛИ КАРТОЧКИ (ТЕПЕРЬ ТУТ ТОЛЬКО АРТ) */
+        /* 🃏 СТИЛИ САМОЙ КАРТОЧКИ (ТЕПЕРЬ ТУТ ТОЛЬКО АРТ) */
         .combat-card {
-            width: 100%; max-width: 145px; height: 145px; 
+            width: 100%; max-width: 135px; height: 135px; 
             background: #000; border: 2px solid #3f3f46; 
-            border-radius: 10px; position: relative; 
+            border-radius: 12px; position: relative; 
             box-shadow: 0 6px 15px rgba(0,0,0,0.8); display: flex;
         }
         .combat-card.hero { border-color: #71717a; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
-        .card-avatar-wrap { width: 100%; height: 100%; border-radius: inherit; position: relative; overflow: hidden; }
-        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
+        /* БАГФИКС: Жесткие углы (вместо inherit) для идеального обрезания картинок */
+        .card-avatar-wrap { width: 100%; height: 100%; border-radius: 10px; position: relative; overflow: hidden; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s; border-radius: 10px;}
+        
+        .entity-tags { position: absolute; top: -8px; left: -8px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
+        .e-tag { background: #09090b; color: #e4e4e7; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.9);}
+        .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
         
         .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
         /* ПАНЕЛЬ ХП ВНИЗУ */
-        .entity-hp-plate { width: 100%; max-width: 140px; text-align: center; }
+        .entity-hp-plate { width: 100%; max-width: 135px; text-align: center; }
         .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; }
-        .hp-bar-outer { width: 100%; height: 8px; background: #1a0505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
-        
+        .hp-bar-outer { width: 100%; height: 8px; background: #050505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
         .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
         .hero-hp-fill { background: linear-gradient(90deg, #dc2626 0%, #fca5a5 100%); }
         .enemy-hp-fill { background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); }
@@ -187,8 +163,8 @@
         @keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
         .spark-anim { animation: spark-boom 0.4s ease-out; }
 
-        @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(15px) rotate(3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(20px) rotate(3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
-        @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-15px) rotate(-3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(-20px) rotate(-3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
+        @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(20px) rotate(3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(25px) rotate(3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
+        @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-20px) rotate(-3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(-25px) rotate(-3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
         .clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .clash-enemy-anim { animation: clash-enemy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
@@ -298,10 +274,8 @@
 
     <script>
         const STATIC_URL = "{{ url_for('static', filename='') }}";
+        const GOD_MODE = true; // РЕЖИМ БОГА ДЛЯ ТЕСТОВ (Бесконечное ХП у Героя)
     </script>
-    
-    <!-- Пелена штрафа смерти -->
-    <div id="blood-screen" class="blood-overlay"></div>
 
     <div class="top-dashboard">
         <div class="resources">
@@ -326,6 +300,7 @@
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
     </div>
 
+    <!-- ИНСПЕКЦИЯ ПРЕДМЕТА -->
     <div class="modal-overlay" id="item-inspect-modal">
         <div class="vic-title" style="font-size:18px;" id="inspect-title">Осмотр Предмета</div>
         <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px; width:80px; height:80px;"></div>
@@ -335,7 +310,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 20.2 - КРИСТАЛЬНАЯ ЧИСТОТА) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -358,7 +333,7 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК -->
+            <!-- ЗОНА КАРТОЧЕК НА ПРОЗРАЧНОМ ПЬЕДЕСТАЛЕ -->
             <div class="combat-entities">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
@@ -608,18 +583,15 @@
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
         setInterval(() => {
-            let bloodScreen = document.getElementById('blood-screen');
             if (hero.deathDebuffEnd > Date.now()) {
                 let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000);
                 let m = Math.floor(left/60); let s = left%60;
                 let el = document.getElementById('ui-debuff-timer');
                 if(el) { el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`; el.style.display = 'block'; }
-                if(bloodScreen) bloodScreen.classList.add('active');
             } else {
                 let el = document.getElementById('ui-debuff-timer');
                 if(el && hero.deathDebuffEnd !== 0) {
                     el.style.display = 'none'; hero.deathDebuffEnd = 0;
-                    if(bloodScreen) bloodScreen.classList.remove('active');
                     calculateStats(); updateUI();
                 }
             }
@@ -981,7 +953,7 @@
                             if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
                         }
 
-                        hero.hp -= eRes.dmg;
+                        if (!GOD_MODE) hero.hp -= eRes.dmg;
                         triggerHitAnim("entity-hero-box");
 
                         if (eRes.dmg > 0) {
@@ -1011,7 +983,7 @@
 
                         if (eAtkZone !== 'ULTIMATUM') logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
                         
-                        if (hero.hp <= 0) {
+                        if (hero.hp <= 0 && !GOD_MODE) {
                             hero.hp = 0; 
                             hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
                             if(hero.floor > 1) hero.floor--;
@@ -1022,7 +994,7 @@
                     }
                 }
                 resetCombatZones(); saveGame(); updateUI();
-            }, 150); 
+            }, 250); 
         }
 
         function openInspectModal(invIndex) {
@@ -1195,7 +1167,10 @@
                 }
             }
 
-            let hp = total.end * 10; let damage = total.str * 2 + total.atk;
+            let hp = total.end * 10; 
+            if (GOD_MODE) hp = 999999; // БЕСКОНЕЧНОЕ ХП ДЛЯ ТЕСТОВ
+            
+            let damage = total.str * 2 + total.atk;
             total.critChance += (total.luk / 5); total.dodge += (total.agi / 4);      
             total.armorPen += total.mst * 2; total.critDmg += total.mst * 3;      
             
@@ -1313,9 +1288,15 @@
                 else document.getElementById("entity-enemy-box").className = "combat-card";
 
                 // === СОЧНЫЕ ХП-БАРЫ ===
-                let isHeroDead = hero.hp <= 0;
-                document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
-                document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; 
+                let isHeroDead = hero.hp <= 0 && !GOD_MODE;
+                if (GOD_MODE) {
+                    document.getElementById("combat-hero-hp").innerText = "GOD MODE";
+                    document.getElementById("combat-hero-maxhp").innerText = "999K";
+                } else {
+                    document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
+                    document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; 
+                }
+                
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.combatStats.hp)*100)}%`;
                 
                 let heroHpOuter = document.getElementById("combat-hero-hp-bar").parentElement;
@@ -1334,7 +1315,7 @@
                 } else { 
                     let cls = CLASSES[hero.baseClass];
                     btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; 
-                    btnSkill.disabled = hero.hp <= 0; 
+                    btnSkill.disabled = hero.hp <= 0 && !GOD_MODE; 
                     btnSkill.style.filter = "none";
                 }
 
@@ -1350,7 +1331,7 @@
                 });
                 
                 let btnExe = document.getElementById("btn-execute-turn");
-                if(hero.hp <= 0) { btnExe.innerText = "ГЕРОЙ МЕРТВ"; btnExe.disabled = true; } 
+                if(hero.hp <= 0 && !GOD_MODE) { btnExe.innerText = "ГЕРОЙ МЕРТВ"; btnExe.disabled = true; } 
                 else if (combatState.atkZone && combatState.defZone) { btnExe.innerText = "УДАРИТЬ ⚔️"; btnExe.disabled = false; } 
                 else { btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ"; btnExe.disabled = true; }
             }
