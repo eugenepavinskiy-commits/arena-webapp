@@ -99,8 +99,8 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА (НОВАЯ КАРТОЧНАЯ СИСТЕМА) === */
-        .combat-arena { border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative; overflow: hidden; transition: background 0.5s ease;}
+        /* === PVE БОЕВКА 16.0 (КАМЕННЫЙ ПЬЕДЕСТАЛ И КЛЭШ-АНИМАЦИИ) === */
+        .combat-arena { border: 1px solid #3f3f46; border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative; overflow: hidden; transition: background 0.5s ease;}
         .biome-1 { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); } 
         .biome-2 { background: radial-gradient(circle at top, #3f1010 0%, #1a0505 100%); } 
         .biome-3 { background: radial-gradient(circle at top, #064e3b 0%, #022c22 100%); } 
@@ -111,32 +111,41 @@
         .intent-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: #450a0a; border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative; gap: 10px;}
+        /* МОНОЛИТНЫЙ КАМЕННЫЙ ПЬЕДЕСТАЛ ДЛЯ КАРТ */
+        .combat-entities { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 14px; position: relative; gap: 10px;
+            background: radial-gradient(circle at 50% 100%, #27272a 0%, #09090b 100%);
+            border: 2px solid #18181b; border-bottom: 4px solid #050505;
+            border-radius: 16px; padding: 25px 12px 15px 12px;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.9);
+        }
         
-        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (ENTITY CARDS) */
+        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (БЕЗ OVERFLOW: HIDDEN НА ГЛАВНОМ КОНТЕЙНЕРЕ) */
         .combat-card {
             flex: 1; max-width: 140px; background: #121214; border: 2px solid #3f3f46; 
-            border-radius: 12px; overflow: hidden; position: relative; 
+            border-radius: 12px; position: relative; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column;
         }
         .combat-card.hero { border-color: #d97706; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(217,119,6,0.2); }
         .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
-        .card-avatar-wrap { width: 100%; height: 130px; position: relative; overflow: hidden; background: #000; }
+        /* ОГРАНИЧИВАЕМ ТОЛЬКО КАРТИНКУ */
+        .card-avatar-wrap { width: 100%; height: 130px; position: relative; overflow: hidden; background: #000; border-radius: 10px 10px 0 0; }
         .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
         
-        /* ТЕГИ ПОВЕРХ АРТА */
-        .entity-tags { position: absolute; top: 6px; left: 6px; display: flex; flex-direction: column; gap: 4px; z-index: 5; align-items: flex-start;}
-        .e-tag { background: rgba(9, 9, 11, 0.85); color: #e4e4e7; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(2px);}
+        /* ТЕГИ ТЕПЕРЬ ВЫСТУПАЮТ ЗА РАМКИ */
+        .entity-tags { position: absolute; top: -10px; left: -10px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
+        .e-tag { background: #09090b; color: #e4e4e7; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.9);}
         .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
         .e-tag.class { color: #34d399; border-color: #059669; }
-        .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: rgba(69, 26, 3, 0.9);}
-        .e-tag.boss { color: #fca5a5; border-color: #ef4444; background: rgba(69, 10, 10, 0.9); animation: pulse-relic 1.5s infinite;}
+        .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: #451a03;}
+        .e-tag.boss { color: #fca5a5; border-color: #ef4444; background: #450a0a; animation: pulse-relic 1.5s infinite;}
         
-        .status-icon { position: absolute; top: 6px; right: 6px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 5;}
+        .status-icon { position: absolute; top: 6px; right: 6px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
         /* ФУТЕР КАРТОЧКИ (ИНФО И ХП) */
-        .card-footer { padding: 8px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2;}
+        .card-footer { padding: 8px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2; border-radius: 0 0 10px 10px;}
         .card-name { font-weight: 900; font-size: 11px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
         .card-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 4px; color: #d4d4d8;}
         .card-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px;}
@@ -146,23 +155,44 @@
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
         .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-        .combat-vs { font-size: 24px; font-weight: 900; color: #71717a; margin: 0 5px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); font-style: italic;}
+        .combat-vs { font-size: 24px; font-weight: 900; color: #3f3f46; margin: 0 5px; text-shadow: 0 2px 2px #000, 0 -1px 1px #27272a; font-style: italic;}
         
-        .combo-meter { position: absolute; top: -10px; left: 0; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+        .combo-meter { position: absolute; top: 5px; right: 15px; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
         .combo-meter.show { opacity: 1; }
 
+        /* ИСКРА ПРИ СТОЛКНОВЕНИИ */
+        .clash-spark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; background: radial-gradient(circle, #fbbf24 0%, #ef4444 20%, transparent 60%); opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; }
+        @keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+        .spark-anim { animation: spark-boom 0.4s ease-out; }
+
+        /* АНИМАЦИИ СТОЛКНОВЕНИЯ КАРТОЧЕК */
+        @keyframes clash-hero {
+            0% { transform: translateX(0) rotate(0deg); }
+            30% { transform: translateX(30px) rotate(5deg) scale(1.05); z-index: 10;}
+            50% { transform: translateX(35px) rotate(5deg) scale(1.05); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes clash-enemy {
+            0% { transform: translateX(0) rotate(0deg); }
+            30% { transform: translateX(-30px) rotate(-5deg) scale(1.05); z-index: 10;}
+            50% { transform: translateX(-35px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        .clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .clash-enemy-anim { animation: clash-enemy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
         @keyframes hit-shake { 
-            0% { transform: translateX(0) scale(1); filter: brightness(1); } 
-            25% { transform: translateX(-5px) scale(0.98); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 
-            50% { transform: translateX(5px) scale(1.02); } 
-            75% { transform: translateX(-5px) scale(0.98); } 
-            100% { transform: translateX(0) scale(1); filter: brightness(0.9); } 
+            0% { filter: brightness(1); } 
+            25% { transform: translateX(-3px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 
+            50% { transform: translateX(3px); } 
+            75% { transform: translateX(-3px); } 
+            100% { filter: brightness(1); } 
         }
         .hit-anim { animation: hit-shake 0.3s ease-out; }
         
         .slash-fx { position: absolute; top: 50%; left: 50%; width: 100px; height: 6px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
         @keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
-        .dmg-popup { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 15; text-shadow: 0 2px 4px #000;}
+        .dmg-popup { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -35px) scale(1.3); } }
 
         .combat-log-box { background: rgba(9, 9, 11, 0.8); border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
@@ -276,7 +306,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (КАРТОЧНЫЙ UI 15.0) -->
+    <!-- PVE БОЕВКА (КАРТОЧНЫЙ UI 16.0) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -299,9 +329,10 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК -->
+            <!-- ЗОНА КАРТОЧЕК С КАМЕННЫМ ПЬЕДЕСТАЛОМ -->
             <div class="combat-entities">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
+                <div class="clash-spark" id="clash-spark-fx"></div>
                 
                 <!-- КАРТОЧКА ГЕРОЯ -->
                 <div class="combat-card hero" id="entity-hero-box">
@@ -326,7 +357,6 @@
                 <div class="combat-card" id="entity-enemy-box">
                     <div class="entity-tags" id="enemy-tags-container">
                         <span class="e-tag lvl" id="enemy-tag-lvl">УР. 1</span>
-                        <!-- Тег босса добавляется через JS -->
                     </div>
                     <div class="card-avatar-wrap">
                         <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
@@ -573,9 +603,6 @@
             let name = mobData.name;
             let mobImgUrl = `${STATIC_URL}mobs/B_${mobData.id}_high_resolution.png`;
 
-            if (isMegaBoss) { name = "👑 " + name; }
-            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; }
-
             let statMult = 1 + (floorLevel * 0.04);
             let hp = Math.floor((30 + floorLevel * 12) * statMult);
             let atk = Math.floor((6 + floorLevel * 3) * statMult);
@@ -640,11 +667,6 @@
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
             calculateStats(true); 
             
-            let title = document.getElementById("combat-stage-name");
-            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";}
-            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "none";}
-            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; document.getElementById("enemy-rage-bg").style.display = "none";}
-            
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`;
             planEnemyTurn();
             updateUI();
@@ -669,6 +691,23 @@
             } else {
                 el.innerHTML = `🗡️ <span style="color:#a1a1aa;">Враг выжидает и готовится к удару...</span>`;
                 el.className = "intent-box";
+            }
+        }
+
+        // АНИМАЦИИ СТОЛКНОВЕНИЯ КАРТОЧЕК
+        function triggerClashAnim(isHero, isEnemy) {
+            if (isHero) {
+                let hc = document.getElementById("entity-hero-box");
+                if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); }
+            }
+            if (isEnemy) {
+                let ec = document.getElementById("entity-enemy-box");
+                if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); }
+            }
+            // Если бьют оба, создаем искру между ними
+            if (isHero && isEnemy) {
+                let sp = document.getElementById("clash-spark-fx");
+                if(sp) { sp.classList.remove("spark-anim"); void sp.offsetWidth; sp.classList.add("spark-anim"); }
             }
         }
 
@@ -859,81 +898,87 @@
 
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
-            let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone);
-            enemy.hp -= hRes.dmg;
-            
-            triggerHitAnim("entity-enemy-box");
-            if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge");
-            else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
-            else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
+            // Запускаем анимацию столкновения
+            let isEnemyStunned = combatState.enemyStunned;
+            triggerClashAnim(true, !isEnemyStunned);
 
-            let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
-            logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP${comboTxt}.`);
+            setTimeout(() => {
+                let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone);
+                enemy.hp -= hRes.dmg;
+                
+                triggerHitAnim("entity-enemy-box");
+                if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge");
+                else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
+                else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
 
-            if (enemy.hp <= 0) {
-                handleCombatWin();
-            } else {
-                if (combatState.enemyStunned) {
-                    logCombat(`<span class="log-sys">${enemy.name} оглушен! Он пропускает ход.</span>`);
-                    combatState.enemyStunned = false;
+                let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
+                logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP${comboTxt}.`);
+
+                if (enemy.hp <= 0) {
+                    handleCombatWin();
                 } else {
-                    let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1);
-                    let eRes;
-
-                    if (eAtkZone === 'ULTIMATUM') {
-                        let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5);
-                        if (forceDodge) { eRes = { dmg: 0, type: "dodge" }; } 
-                        else {
-                            let mitigation = Math.floor(hero.combatStats.armor * 0.2); 
-                            let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation);
-                            eRes = { dmg: finalDmg, type: "crit" };
-                        }
+                    if (isEnemyStunned) {
+                        logCombat(`<span class="log-sys">${enemy.name} оглушен! Он пропускает ход.</span>`);
+                        combatState.enemyStunned = false;
                     } else {
-                        eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, combatState.defZone);
-                        if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
-                    }
+                        let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1);
+                        let eRes;
 
-                    hero.hp -= eRes.dmg;
-                    triggerHitAnim("entity-hero-box");
+                        if (eAtkZone === 'ULTIMATUM') {
+                            let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5);
+                            if (forceDodge) { eRes = { dmg: 0, type: "dodge" }; } 
+                            else {
+                                let mitigation = Math.floor(hero.combatStats.armor * 0.2); 
+                                let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation);
+                                eRes = { dmg: finalDmg, type: "crit" };
+                            }
+                        } else {
+                            eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, combatState.defZone);
+                            if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
+                        }
 
-                    if (eRes.dmg > 0) {
-                        combatState.combo = 0; 
-                        if (eAtkZone !== 'ULTIMATUM' && eRes.type !== "perfect_block" && combatState.zoneHealth[eAtkZone] > 0) {
-                            combatState.zoneHealth[eAtkZone]--;
-                            if (combatState.zoneHealth[eAtkZone] === 0) {
-                                logCombat(`<span class="log-dmg">⚠️ БРОНЯ В ЗОНЕ '${zNameRu[eAtkZone].toUpperCase()}' ПОЛНОСТЬЮ РАЗРУШЕНА!</span>`);
-                                showDmgPopup("entity-hero-box", "СЛОМАНО!", "log-crit");
-                                calculateStats(true); 
+                        hero.hp -= eRes.dmg;
+                        triggerHitAnim("entity-hero-box");
+
+                        if (eRes.dmg > 0) {
+                            combatState.combo = 0; 
+                            if (eAtkZone !== 'ULTIMATUM' && eRes.type !== "perfect_block" && combatState.zoneHealth[eAtkZone] > 0) {
+                                combatState.zoneHealth[eAtkZone]--;
+                                if (combatState.zoneHealth[eAtkZone] === 0) {
+                                    logCombat(`<span class="log-dmg">⚠️ БРОНЯ В ЗОНЕ '${zNameRu[eAtkZone].toUpperCase()}' ПОЛНОСТЬЮ РАЗРУШЕНА!</span>`);
+                                    showDmgPopup("entity-hero-box", "СЛОМАНО!", "log-crit");
+                                    calculateStats(true); 
+                                }
                             }
                         }
-                    }
 
-                    if (eRes.type === "dodge") {
-                        showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
-                    } else if (eRes.type === "perfect_block") {
-                        showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block");
-                        logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! +1 КОМБО!</span>`);
-                        combatState.combo++;
-                        if (combatState.skillCooldown > 0) combatState.skillCooldown--;
-                    } else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") {
-                        showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit");
-                    } else {
-                        showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
-                    }
+                        if (eRes.type === "dodge") {
+                            showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
+                        } else if (eRes.type === "perfect_block") {
+                            showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block");
+                            logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! +1 КОМБО!</span>`);
+                            combatState.combo++;
+                            if (combatState.skillCooldown > 0) combatState.skillCooldown--;
+                        } else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") {
+                            showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit");
+                        } else {
+                            showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
+                        }
 
-                    if (eAtkZone !== 'ULTIMATUM') logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
-                    
-                    if (hero.hp <= 0) {
-                        hero.hp = 0; 
-                        hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
-                        if(hero.floor > 1) hero.floor--;
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`);
-                        calculateStats(); 
+                        if (eAtkZone !== 'ULTIMATUM') logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
+                        
+                        if (hero.hp <= 0) {
+                            hero.hp = 0; 
+                            hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
+                            if(hero.floor > 1) hero.floor--;
+                            logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`);
+                            calculateStats(); 
+                        }
+                        planEnemyTurn();
                     }
-                    planEnemyTurn();
                 }
-            }
-            resetCombatZones(); saveGame(); updateUI();
+                resetCombatZones(); saveGame(); updateUI();
+            }, 150); // Задержка 150мс, чтобы дать карточкам столкнуться до вылета цифр
         }
 
         function openInspectModal(invIndex) {
@@ -1208,7 +1253,6 @@
                 document.getElementById("hero-tag-class").innerText = cls.name;
                 document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
                 
-                document.getElementById("enemy-tag-lvl").innerText = `УР. ${enemy.floor}`;
                 let enemyTagsContainer = document.getElementById("enemy-tags-container");
                 let bossTagHtml = '';
                 if(enemy.isBoss) bossTagHtml = `<span class="e-tag boss">МЕГА-БОСС</span>`;
