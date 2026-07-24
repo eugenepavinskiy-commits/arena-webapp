@@ -52,7 +52,7 @@
         .floor-nav-btn:active { transform: scale(0.9); }
         .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* === ИНВЕНТАРЬ И ГЕРОЙ === */
+        /* === ГЕРОЙ И ИНВЕНТАРЬ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
         .equip-slot { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
@@ -77,7 +77,6 @@
         .hero-avatar { width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;}
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
         
-        /* ИНВЕНТАРЬ */
         .inventory-panel { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
         .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -100,7 +99,7 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА И АВАТАРЫ 3D === */
+        /* === PVE БОЕВКА (НОВАЯ КАРТОЧНАЯ СИСТЕМА) === */
         .combat-arena { border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative; overflow: hidden; transition: background 0.5s ease;}
         .biome-1 { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); } 
         .biome-2 { background: radial-gradient(circle at top, #3f1010 0%, #1a0505 100%); } 
@@ -109,71 +108,62 @@
         .biome-boss { background: radial-gradient(circle at top, #7f1d1d 0%, #450a0a 100%); border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); } 
 
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
-        .intent-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; }
+        .intent-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: #450a0a; border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative;}
-        .combat-entity { width: 45%; text-align: center; position: relative;}
+        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative; gap: 10px;}
         
-        /* 💎 НОВАЯ 3D РАМКА АВАТАРА */
-        .combat-avatar { 
-            width: 100px; height: 100px; margin: 0 auto 10px auto; /* Увеличен размер */
-            border-radius: 12px; padding: 4px; /* Толщина рамки */
-            background: linear-gradient(135deg, #52525b, #18181b); /* Металл по умолчанию */
-            position: relative; z-index: 2;
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.1);
+        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (ENTITY CARDS) */
+        .combat-card {
+            flex: 1; max-width: 140px; background: #121214; border: 2px solid #3f3f46; 
+            border-radius: 12px; overflow: hidden; position: relative; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column;
         }
-        .combat-avatar.hero {
-            background: linear-gradient(135deg, #d97706, #78350f); /* Золото/Бронза для героя */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.9), 0 0 15px rgba(217, 119, 6, 0.3);
-        }
-        .combat-avatar.boss { 
-            width: 115px; height: 115px; /* Босс еще крупнее */
-            background: linear-gradient(135deg, #ef4444, #7f1d1d); /* Кровь для босса */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.9), 0 0 20px rgba(239, 68, 68, 0.5); 
-        }
-        .combat-avatar-img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            border-radius: 8px; /* Внутреннее скругление */
-            z-index: 1;
-        }
-        /* Внутренняя тень ПОВЕРХ картинки для эффекта вдавленности в рамку */
-        .combat-avatar::after {
-            content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
-            border-radius: 8px; box-shadow: inset 0 0 18px rgba(0,0,0,0.9);
-            pointer-events: none; z-index: 3;
-        }
+        .combat-card.hero { border-color: #d97706; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(217,119,6,0.2); }
+        .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
+        
+        .card-avatar-wrap { width: 100%; height: 130px; position: relative; overflow: hidden; background: #000; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
+        
+        /* ТЕГИ ПОВЕРХ АРТА */
+        .entity-tags { position: absolute; top: 6px; left: 6px; display: flex; flex-direction: column; gap: 4px; z-index: 5; align-items: flex-start;}
+        .e-tag { background: rgba(9, 9, 11, 0.85); color: #e4e4e7; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(2px);}
+        .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
+        .e-tag.class { color: #34d399; border-color: #059669; }
+        .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: rgba(69, 26, 3, 0.9);}
+        .e-tag.boss { color: #fca5a5; border-color: #ef4444; background: rgba(69, 10, 10, 0.9); animation: pulse-relic 1.5s infinite;}
+        
+        .status-icon { position: absolute; top: 6px; right: 6px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 5;}
 
-        .status-icon { position: absolute; top: -10px; right: -10px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 5;}
+        /* ФУТЕР КАРТОЧКИ (ИНФО И ХП) */
+        .card-footer { padding: 8px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2;}
+        .card-name { font-weight: 900; font-size: 11px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
+        .card-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 4px; color: #d4d4d8;}
+        .card-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px;}
+        .card-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
         
-        .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
-        .combat-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; margin-bottom: 4px;}
-        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
-        
-        .boss-rage-bg { width: 100%; height: 4px; background: #050505; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; display: none;}
+        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 3px;}
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
         .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-        .combat-vs { font-size: 20px; font-weight: 900; color: #52525b; margin: 0 10px; text-shadow: 0 2px 4px #000;}
+        .combat-vs { font-size: 24px; font-weight: 900; color: #71717a; margin: 0 5px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); font-style: italic;}
         
-        .combo-meter { position: absolute; top: -20px; left: 0; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; }
+        .combo-meter { position: absolute; top: -10px; left: 0; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 10; }
         .combo-meter.show { opacity: 1; }
 
         @keyframes hit-shake { 
-            0% { transform: translateX(0) scale(1); filter: drop-shadow(0 0 15px rgba(239,68,68,0.8)); } 
-            25% { transform: translateX(-5px) scale(0.95); } 
-            50% { transform: translateX(5px) scale(1.05); } 
-            75% { transform: translateX(-5px) scale(0.95); } 
-            100% { transform: translateX(0) scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); } 
+            0% { transform: translateX(0) scale(1); filter: brightness(1); } 
+            25% { transform: translateX(-5px) scale(0.98); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 
+            50% { transform: translateX(5px) scale(1.02); } 
+            75% { transform: translateX(-5px) scale(0.98); } 
+            100% { transform: translateX(0) scale(1); filter: brightness(0.9); } 
         }
         .hit-anim { animation: hit-shake 0.3s ease-out; }
         
-        .slash-fx { position: absolute; top: 50%; left: 50%; width: 80px; height: 4px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
+        .slash-fx { position: absolute; top: 50%; left: 50%; width: 100px; height: 6px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
         @keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
-        .dmg-popup { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 15; text-shadow: 0 2px 4px #000;}
-        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -25px) scale(1.3); } }
+        .dmg-popup { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 15; text-shadow: 0 2px 4px #000;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -35px) scale(1.3); } }
 
         .combat-log-box { background: rgba(9, 9, 11, 0.8); border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
         .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; }
@@ -286,7 +276,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА -->
+    <!-- PVE БОЕВКА (КАРТОЧНЫЙ UI 15.0) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -309,31 +299,46 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
+            <!-- ЗОНА КАРТОЧЕК -->
             <div class="combat-entities">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 
-                <div class="combat-entity" id="entity-hero-box">
-                    <div class="combat-avatar hero" id="combat-hero-avatar">
-                        <img src="" id="combat-hero-img" class="combat-avatar-img" alt="Герой">
+                <!-- КАРТОЧКА ГЕРОЯ -->
+                <div class="combat-card hero" id="entity-hero-box">
+                    <div class="entity-tags">
+                        <span class="e-tag lvl" id="hero-tag-lvl">УР. 1</span>
+                        <span class="e-tag class" id="hero-tag-class">КЛАСС</span>
+                    </div>
+                    <div class="card-avatar-wrap">
+                        <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
                         <div class="slash-fx" id="hero-slash"></div>
                     </div>
-                    <div class="combat-name" id="combat-hero-name">Герой</div>
-                    <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
-                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+                    <div class="card-footer">
+                        <div class="card-name" id="combat-hero-name">Герой</div>
+                        <div class="card-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
+                        <div class="card-hp-bg"><div class="card-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+                    </div>
                 </div>
                 
                 <div class="combat-vs">VS</div>
                 
-                <div class="combat-entity" id="entity-enemy-box">
-                    <div class="combat-avatar" id="combat-enemy-avatar">
-                        <img src="" id="combat-enemy-img" class="combat-avatar-img" alt="Монстр">
+                <!-- КАРТОЧКА МОНСТРА -->
+                <div class="combat-card" id="entity-enemy-box">
+                    <div class="entity-tags" id="enemy-tags-container">
+                        <span class="e-tag lvl" id="enemy-tag-lvl">УР. 1</span>
+                        <!-- Тег босса добавляется через JS -->
+                    </div>
+                    <div class="card-avatar-wrap">
+                        <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
                         <div class="status-icon" id="enemy-stun-icon">💫</div>
                         <div class="slash-fx" id="enemy-slash"></div>
                     </div>
-                    <div class="combat-name" id="combat-enemy-name">Монстр</div>
-                    <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
-                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
-                    <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
+                    <div class="card-footer">
+                        <div class="card-name" id="combat-enemy-name">Монстр</div>
+                        <div class="card-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
+                        <div class="card-hp-bg"><div class="card-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                        <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
+                    </div>
                 </div>
             </div>
 
@@ -670,7 +675,7 @@
         function triggerHitAnim(elementId) {
             let el = document.getElementById(elementId);
             if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); }
-            let slashId = elementId === "combat-hero-avatar" ? "hero-slash" : "enemy-slash";
+            let slashId = elementId === "entity-hero-box" ? "hero-slash" : "enemy-slash";
             let slash = document.getElementById(slashId);
             if(slash) { slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out'; }
         }
@@ -713,20 +718,20 @@
             } else if (hero.baseClass === 'berserk') {
                 let dmg = Math.floor(hero.combatStats.damage * 2.5);
                 enemy.hp -= dmg;
-                triggerHitAnim("combat-enemy-avatar");
+                triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! -${dmg} HP.</span>`);
             } else if (hero.baseClass === 'shadow') {
                 let dmg = Math.floor(hero.combatStats.damage * 1.8);
                 enemy.hp -= dmg;
-                triggerHitAnim("combat-enemy-avatar");
+                triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Уворот активен.</span>`);
             } else if (hero.baseClass === 'ranger') {
                 let dmg = Math.floor(hero.combatStats.damage * 1.5);
                 enemy.hp -= dmg;
                 combatState.enemyStunned = true;
-                triggerHitAnim("combat-enemy-avatar");
+                triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Враг оглушен.</span>`);
             }
@@ -857,7 +862,7 @@
             let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone);
             enemy.hp -= hRes.dmg;
             
-            triggerHitAnim("combat-enemy-avatar");
+            triggerHitAnim("entity-enemy-box");
             if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge");
             else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
             else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
@@ -889,7 +894,7 @@
                     }
 
                     hero.hp -= eRes.dmg;
-                    triggerHitAnim("combat-hero-avatar");
+                    triggerHitAnim("entity-hero-box");
 
                     if (eRes.dmg > 0) {
                         combatState.combo = 0; 
@@ -1198,19 +1203,31 @@
                 else stunIcon.style.display = "none";
 
                 // РЕНДЕР АВАТАРОВ БОЯ 
+                let cls = CLASSES[hero.baseClass];
+                document.getElementById("hero-tag-lvl").innerText = `УР. ${hero.level}`;
+                document.getElementById("hero-tag-class").innerText = cls.name;
                 document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
+                
+                document.getElementById("enemy-tag-lvl").innerText = `УР. ${enemy.floor}`;
+                let enemyTagsContainer = document.getElementById("enemy-tags-container");
+                let bossTagHtml = '';
+                if(enemy.isBoss) bossTagHtml = `<span class="e-tag boss">МЕГА-БОСС</span>`;
+                else if (enemy.isMiniBoss) bossTagHtml = `<span class="e-tag elite">ЭЛИТА</span>`;
+                enemyTagsContainer.innerHTML = `<span class="e-tag lvl" id="enemy-tag-lvl">УР. ${enemy.floor}</span>` + bossTagHtml;
+                
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
+                
                 if(enemy.isBoss) {
-                    document.getElementById("combat-enemy-avatar").classList.add("boss");
+                    document.getElementById("entity-enemy-box").classList.add("boss");
                 } else {
-                    document.getElementById("combat-enemy-avatar").classList.remove("boss");
+                    document.getElementById("entity-enemy-box").classList.remove("boss");
                 }
 
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; 
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.combatStats.hp)*100)}%`;
                 
-                document.getElementById("combat-enemy-name").innerText = enemy.name;
+                document.getElementById("combat-enemy-name").innerText = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", "");
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
