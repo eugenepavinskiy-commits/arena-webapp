@@ -19,9 +19,16 @@
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 10px 14px; border-radius: 8px;
             border: 1px solid #27272a; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
         }
-        .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2;}
         .resources span { color: #fff; margin-right: 12px; }
+        
+        .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
+        .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
+        .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
+        .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
+
         .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
         .nav-btn {
             background: #121214; color: #71717a; border: 1px solid #27272a;
@@ -46,7 +53,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
         
-        /* === ИНВЕНТАРЬ === */
+        /* === ИНВЕНТАРЬ И ГЕРОЙ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
         .equip-slot {
@@ -59,18 +66,16 @@
         .equip-slot.blocked { border: 1px solid #450a0a; background: #1a0505; cursor: not-allowed; }
         .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
-        .item-img-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: inherit; overflow: hidden; 
-            pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1;
-        }
+        .item-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
         .item-img { width: 90%; height: 90%; object-fit: contain; filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); }
         
         .rarity-common { border-color: #3f3f46; }
         .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
         .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4); }
         .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.5); animation: pulse-leg 2s infinite; }
+        .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.6); animation: pulse-relic 1.5s infinite; }
         @keyframes pulse-leg { 0% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } 50% { box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.6); } 100% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } }
+        @keyframes pulse-relic { 0% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.4); } 50% { box-shadow: inset 0 0 30px rgba(239, 68, 68, 0.8); } 100% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.4); } }
         
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
@@ -150,56 +155,70 @@
         .c-bar-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
         .c-bar-wrap { width: 65%; height: 4px; background: #18181b; border-radius: 2px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); }
         .c-bar-fill { height: 100%; border-radius: 2px; box-shadow: 0 0 10px currentColor; }
-        .class-subclasses { width: 100%; font-size: 11px; padding: 16px; border-radius: 8px; border: 1px solid #27272a; background: #0d0d0f; margin-bottom: 20px; line-height: 1.5; color: #a1a1aa; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
-        .class-subclasses b { display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #e4e4e7;}
         .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-bottom: 4px solid #0d0d0f; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.1s; letter-spacing: 1.5px;}
         .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
         .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
 
-        /* === PVE БОЕВКА (БК 2.0 С ТАКТИЧЕСКИМИ СКИЛЛАМИ) === */
-        .combat-arena { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
-        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;}
-        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .combat-entity { width: 45%; text-align: center; }
-        .combat-avatar { font-size: 36px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 6px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 8px;}
-        .combat-name { font-weight: bold; font-size: 12px; margin-bottom: 2px; color: #e4e4e7; }
-        .combat-lvl { font-size: 10px; color: #71717a; margin-bottom: 6px; }
-        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
-        .combat-hp-bg { width: 100%; height: 8px; background: #050505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; }
-        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
-        .combat-vs { font-size: 18px; font-weight: 900; color: #52525b; }
+        /* === PVE БОЕВКА 3.0 (ЭТАЖИ И БОССЫ) === */
+        .combat-arena { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative;}
+        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
+        .combat-header.boss { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); font-size: 16px; }
         
-        .combat-log-box { background: #09090b; border: 1px solid #18181b; border-radius: 6px; padding: 10px; height: 110px; overflow-y: auto; margin-bottom: 16px; font-size: 11px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 4px;}
-        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 3px; }
-        .log-entry:last-child { border-bottom: none; }
+        .intent-box {
+            background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center;
+            font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 12px; box-shadow: 0 0 10px rgba(99,102,241,0.2);
+        }
+        
+        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative;}
+        .combat-entity { width: 45%; text-align: center; position: relative;}
+        .combat-avatar { font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 4px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px;}
+        .combat-avatar.boss { border-color: #ef4444; box-shadow: inset 0 0 15px rgba(239,68,68,0.3); font-size: 45px;}
+        .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .combat-lvl { font-size: 9px; color: #71717a; margin-bottom: 6px; }
+        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+        .combat-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; }
+        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
+        .combat-vs { font-size: 16px; font-weight: 900; color: #52525b; }
+        
+        .dmg-popup { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 10; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -25px) scale(1.3); } }
+
+        .combat-log-box { background: #09090b; border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
+        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; }
         .log-dmg { color: #f87171; font-weight: bold; }
-        .log-crit { color: #fbbf24; font-weight: bold; text-shadow: 0 0 5px rgba(251,191,36,0.5); }
+        .log-crit { color: #fbbf24; font-weight: bold; }
         .log-dodge { color: #60a5fa; font-weight: bold; }
         .log-block { color: #a78bfa; font-weight: bold; }
         .log-sys { color: #34d399; font-weight: bold; }
-        .log-skill { color: #c084fc; font-weight: bold; }
 
-        .skill-box { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; }
-        .skill-info { display: flex; flex-direction: column; gap: 2px; }
-        .skill-title { font-weight: bold; font-size: 11px; color: #e9d5ff; }
-        .skill-desc { font-size: 9px; color: #a1a1aa; }
-        .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        .skill-btn:active { transform: scale(0.95); }
+        .skill-box { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; margin-bottom: 12px; }
+        .skill-title { font-weight: bold; font-size: 10px; color: #e9d5ff; }
+        .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; }
         .skill-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
 
-        .combat-controls-title { text-align: center; font-size: 10px; font-weight: bold; color: #71717a; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px;}
-        .zone-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
-        .zone-btn { flex: 1; padding: 10px 0; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.1s; background: #18181b; color: #71717a; border: 1px solid #27272a; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        .zone-btn:active { transform: scale(0.95); }
-        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.3); }
-        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.3); }
+        .combat-controls-title { text-align: center; font-size: 9px; font-weight: bold; color: #71717a; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;}
+        .zone-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
+        .zone-btn { flex: 1; padding: 10px 0; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.1s; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center;}
+        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; }
+        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
         
-        .action-btn { width: 100%; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 15px rgba(0,0,0,0.8); letter-spacing: 2px;}
-        .action-btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none; transform: none;}
+        .action-row { display: flex; gap: 8px; margin-top: 4px; }
+        .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
+        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
 
-        .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
-        .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
+        /* ПОП-АП ПОБЕДЫ */
+        .victory-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none;
+            flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 20;
+            animation: fadeIn 0.3s ease-out; text-align: center;
+        }
+        .victory-modal.show { display: flex; }
+        .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 6px; text-transform: uppercase;}
+        .vic-rewards { font-size: 12px; color: #e4e4e7; margin-bottom: 16px; font-weight: bold;}
+        .vic-loot-box { width: 64px; height: 64px; border-radius: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4); position: relative; overflow: hidden;}
+        .vic-loot-name { font-size: 10px; color: #fca5a5; font-weight: bold; margin-bottom: 16px; text-shadow: 0 1px 2px #000; text-transform: uppercase;}
+        .vic-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -208,11 +227,11 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
     </script>
 
-    <div class="top-dashboard" style="position:relative; overflow:hidden;">
+    <div class="top-dashboard">
         <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
-        <div style="font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2;">
-            Ур. <span id="ui-top-lvl" style="color:#ffffff; text-shadow: 0 1px 3px #000; font-size:14px;">1</span>
-            <span style="font-size:9px; margin-left:4px;" id="ui-top-exp">0/100</span>
+        <div class="progress-info">
+            УР. <span id="ui-top-lvl">1</span> | ЭТАЖ <span id="ui-top-floor" style="color:#f59e0b;">1</span>/100
+            <div style="font-size:9px; font-weight:normal; margin-top:2px;">EXP: <span id="ui-top-exp" style="font-size:9px;">0/100</span></div>
         </div>
         <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
     </div>
@@ -228,61 +247,70 @@
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
     </div>
 
-    <!-- ЭКРАН 0: PVE (БК 2.0 С ТАКТИЧЕСКИМИ СКИЛЛАМИ) -->
+    <!-- ЭКРАН 0: PVE БОЕВКА 3.0 -->
     <div id="screen-PVE" class="app-screen">
-        <div class="class-banner" id="combat-floor-title">ЭТАЖ 1: ПОДЗЕМЕЛЬЕ</div>
+        <div class="class-banner" id="combat-floor-title">БЕСКОНЕЧНАЯ БАШНЯ</div>
         
         <div class="combat-arena">
-            <div class="combat-header" id="combat-stage-name">ОХОТА НА МОНСТРОВ</div>
-            
+            <!-- ЭКРАН ПОБЕДЫ -->
+            <div class="victory-modal" id="vic-modal">
+                <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
+                <div class="vic-rewards" id="vic-rewards-text">Заработано: +50💰 | +40 EXP</div>
+                <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center;">
+                    <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:6px;">ВЫБИТА РЕЛИКВИЯ:</div>
+                    <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
+                    <div class="vic-loot-name" id="vic-loot-name">Название реликвии</div>
+                </div>
+                <button class="vic-btn" onclick="closeVictoryModal()">СЛЕДУЮЩИЙ ЭТАЖ ➔</button>
+            </div>
+
+            <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
+            <div class="intent-box" id="combat-intent">🔮 Враг готовит атаку...</div>
+
             <div class="combat-entities">
-                <div class="combat-entity">
+                <div class="combat-entity" id="entity-hero-box">
                     <div class="combat-avatar" id="combat-hero-avatar">🛡️</div>
                     <div class="combat-name" id="combat-hero-name">Герой</div>
-                    <div class="combat-lvl">Ур. <span id="combat-hero-lvl">1</span></div>
                     <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
                 </div>
                 
                 <div class="combat-vs">VS</div>
                 
-                <div class="combat-entity">
+                <div class="combat-entity" id="entity-enemy-box">
                     <div class="combat-avatar" id="combat-enemy-avatar">🧟</div>
                     <div class="combat-name" id="combat-enemy-name">Монстр</div>
-                    <div class="combat-lvl">Ур. <span id="combat-enemy-lvl">1</span></div>
                     <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
                 </div>
             </div>
 
             <div class="combat-log-box" id="combat-log">
-                <div class="log-entry log-sys">Вы вошли в подземелье. Враг замечен!</div>
+                <div class="log-entry log-sys">Двери открываются. Сражение начинается!</div>
             </div>
 
-            <!-- ТАКТИЧЕСКИЙ СКИЛЛ КЛАССА -->
             <div class="skill-box">
-                <div class="skill-info">
-                    <div class="skill-title" id="skill-name">Специальный прием</div>
-                    <div class="skill-desc" id="skill-desc">Описание приема</div>
-                </div>
-                <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ (<span id="skill-cd">0</span>)</button>
+                <div class="skill-title" id="skill-name">Прием: Скилл</div>
+                <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ</button>
             </div>
 
-            <div class="combat-controls-title">⚔️ Куда бить?</div>
+            <div class="combat-controls-title">⚔️ Ваша атака:</div>
             <div class="zone-row">
                 <div class="zone-btn atk" id="btn-atk-head" onclick="selectZone('atk', 'head')">Голова</div>
                 <div class="zone-btn atk" id="btn-atk-chest" onclick="selectZone('atk', 'chest')">Торс</div>
                 <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
             </div>
 
-            <div class="combat-controls-title">🛡️ Что защищать?</div>
+            <div class="combat-controls-title">🛡️ Ваш блок:</div>
             <div class="zone-row">
                 <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова</div>
                 <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс</div>
                 <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги</div>
             </div>
 
-            <button class="action-btn" id="btn-execute-turn" onclick="executeTurn()" disabled>СОВЕРШИТЬ ХОД</button>
+            <div class="action-row">
+                <button class="action-btn" id="btn-execute-turn" onclick="executeTurn()" disabled>УДАРИТЬ ⚔️</button>
+            </div>
         </div>
     </div>
 
@@ -363,7 +391,6 @@
         <div id="ui-class-detail"></div>
     </div>
 
-    <!-- ЛОГИКА -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -381,7 +408,7 @@
                 lore: "Держит удар лучше, чем корпоративный сервер в пятницу. Выживает там, где остальные уже пишут завещание.",
                 growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 },
                 armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9,
-                skill: { name: "🛡️ Щит Веры", desc: "Восстанавливает 20% здоровья и дает защиту от 2 атак.", cd: 4 },
+                skill: { name: "🛡️ Щит Веры", desc: "Исцеляет 25% HP.", cd: 3 },
                 bars: { dmg: 40, def: 100, diff: 20 }
             },
             berserk: {
@@ -389,7 +416,7 @@
                 lore: "Работает без выходных и инстинкта самосохранения. Машина для переработки врагов, презирающая любую защиту.",
                 growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 },
                 armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0,
-                skill: { name: "🔥 Жажда Крови", desc: "Наносит удар силой x2, игнорируя 50% брони врага.", cd: 3 },
+                skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 },
                 bars: { dmg: 100, def: 30, diff: 50 }
             },
             shadow: {
@@ -397,7 +424,7 @@
                 lore: "Специалист по внезапным сокращениям популяции. Убьет до того, как враг успеет поздороваться.",
                 growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 },
                 armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3,
-                skill: { name: "👤 Удар из Тени", desc: "Гарантированный критический удар со 100% уворотом на следующий ход.", cd: 4 },
+                skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит.", cd: 3 },
                 bars: { dmg: 85, def: 20, diff: 90 }
             },
             ranger: {
@@ -405,7 +432,7 @@
                 lore: "Эффективно делегирует стрелы прямо в уязвимые места. Любит, когда проблемы решаются еще на подходе.",
                 growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 },
                 armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15,
-                skill: { name: "🎯 Точный Выстрел", desc: "Наносит урон по уязвимой точке и оглушает врага на 1 ход.", cd: 4 },
+                skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага.", cd: 3 },
                 bars: { dmg: 70, def: 40, diff: 60 }
             }
         };
@@ -458,7 +485,7 @@
         let previewClassId = "knight";
 
         let hero = {
-            name: "Гладиатор", level: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
+            name: "Гладиатор", level: 1, floor: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
             baseClass: "knight", hp: 100, maxHp: 100,
             baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
@@ -469,30 +496,100 @@
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         previewClassId = hero.baseClass;
 
-        // PVE STATE (Этажи и Скиллы)
+        // PVE STATE
         let enemy = null;
-        let combatState = { atkZone: null, defZone: null, skillCooldown: 0, enemyStunned: false };
-        const ENEMY_NAMES = ["Оживший Стажер", "Гоблин-Курьер", "Токсичный Менеджер", "Орк-Бухгалтер", "HR-Демон"];
+        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
+        const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
+        const BOSS_NAMES = ["Хранитель Сервера", "Древний Инвестор", "HR-Демон", "Пожиратель Дедлайнов"];
 
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.5, lvl - 1)); }
 
-        function generateEnemy(lvl) {
+        function generateEnemy(floorLevel) {
+            let isMegaBoss = floorLevel % 10 === 0;
+            let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
+            
             let name = ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)];
-            let isBoss = lvl % 5 === 0;
-            if (isBoss) name = "👑 " + name + " [БОСС]";
-            let hp = isBoss ? (40 + (lvl * 35)) : (25 + (lvl * 18));
-            let atk = isBoss ? (8 + (lvl * 6)) : (4 + (lvl * 3));
-            let armor = lvl * 2;
-            return { name: name, level: lvl, isBoss: isBoss, hp: hp, maxHp: hp, stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: lvl } };
+            let avatar = "🧟";
+
+            if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; }
+            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; }
+
+            let hp = 20 + (floorLevel * 10);
+            let atk = 5 + (floorLevel * 2);
+            let armor = floorLevel;
+
+            if (isMiniBoss) { hp = 40 + (floorLevel * 15); atk = 10 + (floorLevel * 3); }
+            if (isMegaBoss) { hp = 100 + (floorLevel * 25); atk = 20 + (floorLevel * 5); armor = floorLevel * 2; }
+
+            let zones = ["head", "chest", "legs"];
+            return { 
+                name: name, floor: floorLevel, avatar: avatar, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
+                hp: hp, maxHp: hp, nextAtkZone: zones[Math.floor(Math.random()*3)],
+                stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } 
+            };
+        }
+
+        // ГЕНЕРАТОР РЕЛИКВИЙ С БОССОВ (Механика Raid: SL)
+        function generateBossDrop(floor) {
+            let maxLvl = Math.max(1, Math.ceil(floor / 10)); // Этаж 10 дает вещи 1-го тира, Этаж 20 - 2-го.
+            let pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl <= maxLvl);
+            if(pool.length === 0) pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl === 1);
+            
+            let baseId = pool[Math.floor(Math.random() * pool.length)];
+            let baseItem = ITEMS_DB[baseId];
+            
+            let newItem = JSON.parse(JSON.stringify(baseItem)); // deep clone
+            newItem.id = baseId + "_" + Date.now();
+            newItem.name = "✨ " + baseItem.name;
+            newItem.rarity = "relic";
+            newItem.premium = false; // Убираем бейдж магазина, если был
+            
+            // Буст основных статов на 30%
+            for (let s in newItem.stats) {
+                newItem.stats[s] = Math.ceil(newItem.stats[s] * 1.3);
+            }
+            
+            // Добавляем 1 случайный дополнительный стат
+            let possibleSubstats = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance'];
+            possibleSubstats = possibleSubstats.filter(s => !newItem.stats[s]); // Исключаем то, что уже есть
+            if(possibleSubstats.length > 0) {
+                let sub = possibleSubstats[Math.floor(Math.random() * possibleSubstats.length)];
+                newItem.stats[sub] = (sub.includes('Chance') || sub === 'critDmg') ? 5 : 3;
+            }
+            
+            newItem.desc = "Трофей с босса. Имеет уникальные характеристики.";
+            ITEMS_DB[newItem.id] = newItem; // Сохраняем в память
+            return newItem;
         }
 
         function initCombat() {
-            enemy = generateEnemy(hero.level);
+            enemy = generateEnemy(hero.floor);
             combatState.skillCooldown = 0;
             combatState.enemyStunned = false;
-            logCombat(`<span class="log-sys">Вход на этаж ${hero.level}: Появляется ${enemy.name}!</span>`);
+            let title = document.getElementById("combat-stage-name");
+            if (enemy.isBoss) { title.innerText = `ЭТАЖ ${hero.floor}: ВЕЛИКИЙ БОСС`; title.className = "combat-header boss"; }
+            else if (enemy.isMiniBoss) { title.innerText = `ЭТАЖ ${hero.floor}: ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; }
+            else { title.innerText = `ЭТАЖ ${hero.floor}`; title.className = "combat-header"; }
+            
+            logCombat(`<span class="log-sys">Вход на этаж ${hero.floor}: Вас встречает ${enemy.name}!</span>`);
+            updateIntentDisplay();
             resetCombatZones();
             updateUI();
+        }
+
+        function updateIntentDisplay() {
+            let zRu = {head: "Голову 🪖", chest: "Торс 🦺", legs: "Ноги 👢"};
+            document.getElementById("combat-intent").innerText = `🔮 Намерение врага: Атака в ${zRu[enemy.nextAtkZone]}!`;
+        }
+
+        function showDmgPopup(entityBoxId, text, colorClass) {
+            let box = document.getElementById(entityBoxId);
+            if (!box) return;
+            let pop = document.createElement("div");
+            pop.className = `dmg-popup ${colorClass}`;
+            pop.innerText = text;
+            box.appendChild(pop);
+            setTimeout(() => { pop.remove(); }, 800);
         }
 
         function selectZone(type, zone) {
@@ -501,9 +598,7 @@
             updateUI();
         }
 
-        function resetCombatZones() {
-            combatState.atkZone = null; combatState.defZone = null;
-        }
+        function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
 
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
@@ -517,32 +612,34 @@
             combatState.skillCooldown = cls.skill.cd;
 
             if (hero.baseClass === 'knight') {
-                let heal = Math.floor(hero.finalStats.hp * 0.2);
+                let heal = Math.floor(hero.finalStats.hp * 0.25);
                 hero.hp = Math.min(hero.finalStats.hp, hero.hp + heal);
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Восстановлено ${heal} HP.</span>`);
+                showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys");
+                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! +${heal} HP.</span>`);
             } else if (hero.baseClass === 'berserk') {
-                let dmg = Math.floor(hero.finalStats.damage * 2);
+                let dmg = Math.floor(hero.finalStats.damage * 2.5);
                 enemy.hp -= dmg;
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name} и нанесли сокрушительный удар на -${dmg} HP!</span>`);
+                showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
+                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! -${dmg} HP.</span>`);
             } else if (hero.baseClass === 'shadow') {
+                let dmg = Math.floor(hero.finalStats.damage * 1.8);
+                enemy.hp -= dmg;
+                showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
+                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Уворот активен.</span>`);
+            } else if (hero.baseClass === 'ranger') {
                 let dmg = Math.floor(hero.finalStats.damage * 1.5);
                 enemy.hp -= dmg;
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name} из тени на -${dmg} HP! Уворот на следующий ход 100%.</span>`);
-            } else if (hero.baseClass === 'ranger') {
-                let dmg = Math.floor(hero.finalStats.damage * 1.3);
-                enemy.hp -= dmg;
                 combatState.enemyStunned = true;
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name} (-${dmg} HP)! Враг оглушен и пропустит ход.</span>`);
+                showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block");
+                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Враг оглушен.</span>`);
             }
 
-            if (enemy.hp <= 0) checkCombatWin();
+            if (enemy.hp <= 0) handleCombatWin();
             updateUI();
         }
 
-        function calcDmg(attacker, defender, zAtk, zDef, forceDodgeZero = false) {
-            if (!forceDodgeZero && Math.random() * 100 < (defender.dodge || 0)) {
-                return { dmg: 0, text: `<span class="log-dodge">УВОРОТ</span>` };
-            }
+        function calcDmg(attacker, defender, zAtk, zDef) {
+            if (Math.random() * 100 < (defender.dodge || 0)) return { dmg: 0, type: "dodge" };
 
             let baseAtk = attacker.damage || attacker.atk || 5;
             let isCrit = Math.random() * 100 < (attacker.critChance || 5);
@@ -550,76 +647,122 @@
 
             let defArmor = Math.max(0, (defender.armor || 0) - (attacker.armorPen || 0));
             let mitigation = defArmor;
-            let blockText = "";
+            let isBlock = false;
 
             if (zAtk === zDef) {
                 if (Math.random() * 100 < (defender.blockChance || 0)) {
-                    mitigation *= 2;
-                    blockText = ` <span class="log-block">[БЛОК]</span>`;
+                    mitigation *= 2; isBlock = true;
                 }
             } else {
-                mitigation = Math.floor(defArmor * 0.7);
+                mitigation = Math.floor(defArmor * 0.6);
             }
 
             let finalDmg = Math.max(1, baseAtk - mitigation);
-            let resText = isCrit ? `<span class="log-crit">КРИТ -${finalDmg}</span>` : `<span class="log-dmg">-${finalDmg} HP</span>`;
-            return { dmg: finalDmg, text: resText + blockText };
+            return { dmg: finalDmg, type: isCrit ? "crit" : (isBlock ? "block" : "normal") };
         }
 
-        function checkCombatWin() {
+        function handleCombatWin() {
             enemy.hp = 0;
-            let goldGained = 30 + (enemy.level * 15);
-            let expGained = 40 + (enemy.level * 20);
-            logCombat(`<span class="log-sys">ПОБЕДА! Враг повержен. Добыто ${goldGained}💰 и ${expGained} EXP.</span>`);
+            let goldGained = 15 + (hero.floor * 5);
+            let expGained = 20 + (hero.floor * 10);
+            
+            if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; }
+            if (enemy.isBoss) { goldGained *= 5; expGained *= 5; }
+
             hero.gold += goldGained;
             hero.exp += expGained;
+
+            // ДРОП ЛУТА (Механика Raid: SL)
+            let droppedItem = null;
+            let dropChance = 0;
+            if (enemy.isBoss) dropChance = 100;
+            else if (enemy.isMiniBoss) dropChance = 25 + hero.finalStats.luk;
+
+            if (dropChance > 0 && Math.random() * 100 <= dropChance && hero.inventory.length < 10) {
+                droppedItem = generateBossDrop(hero.floor);
+                hero.inventory.push(droppedItem.id);
+            }
             
             if (hero.exp >= hero.expNext) {
                 hero.exp -= hero.expNext;
                 hero.level++;
                 hero.unspentPoints += 3;
                 hero.expNext = getExpReq(hero.level);
-                logCombat(`<span class="log-sys">🎉 УРОВЕНЬ ПОВЫШЕН! Достигнут Ур. ${hero.level}! (+3 очка характеристик)</span>`);
                 calculateStats();
             }
+
+            // Показываем экран победы
+            let vicText = `Заработан Этаж: +${goldGained}💰 | +${expGained} EXP`;
+            document.getElementById("vic-rewards-text").innerText = vicText;
             
-            setTimeout(() => { initCombat(); }, 2000);
+            let lootBox = document.getElementById("vic-loot-container");
+            if (droppedItem) {
+                lootBox.style.display = "flex";
+                document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem);
+                document.getElementById("vic-loot-name").innerText = droppedItem.name;
+            } else {
+                lootBox.style.display = "none";
+            }
+
+            // Прогрессируем этаж
+            if (hero.floor < 100) hero.floor++;
+            
+            document.getElementById("vic-modal").classList.add("show");
+            updateUI(); // чтобы обновить полоски под модалкой
+        }
+
+        function closeVictoryModal() {
+            document.getElementById("vic-modal").classList.remove("show");
+            initCombat();
         }
 
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
 
             let zones = ["head", "chest", "legs"];
-            let eAtkZone = zones[Math.floor(Math.random()*3)];
+            let eAtkZone = enemy.nextAtkZone;
             let eDefZone = zones[Math.floor(Math.random()*3)];
             let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги"};
 
-            // Уменьшаем кулдаун скилла
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
-            // Hero Attacks
-            let hAtkRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone);
-            enemy.hp -= hAtkRes.dmg;
-            logCombat(`Вы атакуете в ${zNameRu[combatState.atkZone]}: ${hAtkRes.text}`);
+            // Герой бьет
+            let hRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone);
+            enemy.hp -= hRes.dmg;
+            
+            if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge");
+            else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
+            else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
+
+            logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP.`);
 
             if (enemy.hp <= 0) {
-                checkCombatWin();
+                handleCombatWin();
             } else {
-                // Enemy Attacks (если не оглушен)
+                // Враг бьет
                 if (combatState.enemyStunned) {
-                    logCombat(`<span class="log-sys">${enemy.name} оглушен и пропускает ход!</span>`);
+                    logCombat(`<span class="log-sys">${enemy.name} оглушен!</span>`);
                     combatState.enemyStunned = false;
                 } else {
                     let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1);
-                    let eAtkRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone, forceDodge);
-                    hero.hp -= eAtkRes.dmg;
-                    logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: ${eAtkRes.text}`);
+                    let eRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone);
+                    if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
+
+                    hero.hp -= eRes.dmg;
+                    
+                    if (eRes.type === "dodge") showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
+                    else showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
+
+                    logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
                     
                     if (hero.hp <= 0) {
-                        hero.hp = 0;
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вернитесь в Лагерь для исцеления.</span>`);
+                        hero.hp = 0; 
+                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вылечитесь в Лагере. Этаж потерян.</span>`);
                     }
                 }
+                
+                enemy.nextAtkZone = zones[Math.floor(Math.random()*3)];
+                updateIntentDisplay();
             }
 
             resetCombatZones();
@@ -668,7 +811,7 @@
             let itemId = hero.inventory[invIndex];
             if (!itemId) return;
             let item = ITEMS_DB[itemId];
-            if (item.lvl > hero.level) return alert(`Нужен Ур. ${item.lvl}!`);
+            if (item.lvl > hero.level) return alert(`Нужен Ур. ${item.lvl}! Вы пока Ур. ${hero.level}.`);
             if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert(`Этот предмет не подходит для вашего класса!`);
 
             let targetSlot = item.type;
@@ -859,9 +1002,17 @@
         function renderItemIcon(item) {
             if (!item) return "";
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
+            // Для реликвий используем картинку базовой вещи (id до знака подчеркивания)
+            let imgId = item.id.split('_')[0]; 
+            // Обработка особых случаев вроде shields_v2_33, где подчеркивания есть в базовом имени
+            if (item.id.includes("shields_v2_")) {
+                let parts = item.id.split('_');
+                imgId = parts[0] + "_" + parts[1] + "_" + parts[2];
+            }
+            
             return `
                 <div class="item-img-wrapper">
-                    <img src="${STATIC_URL}items/${item.id}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
+                    <img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
                 </div>
             `;
         }
@@ -869,29 +1020,31 @@
         function updateUI() {
             document.getElementById("ui-gold").innerText = hero.gold;
             document.getElementById("ui-top-lvl").innerText = hero.level;
+            document.getElementById("ui-top-floor").innerText = hero.floor;
             document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`;
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                document.getElementById("combat-floor-title").innerText = `ЭТАЖ ${hero.level}: ПОДЗЕМЕЛЬЕ`;
                 document.getElementById("combat-hero-lvl").innerText = hero.level;
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
                 
                 document.getElementById("combat-enemy-name").innerText = enemy.name;
+                document.getElementById("combat-enemy-avatar").innerText = enemy.avatar;
+                if(enemy.isBoss) document.getElementById("combat-enemy-avatar").classList.add("boss");
+                else document.getElementById("combat-enemy-avatar").classList.remove("boss");
+
                 document.getElementById("combat-enemy-lvl").innerText = enemy.level;
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
 
-                // Skill UI
                 let cls = CLASSES[hero.baseClass];
                 document.getElementById("skill-name").innerText = cls.skill.name;
-                document.getElementById("skill-desc").innerText = cls.skill.desc;
                 let btnSkill = document.getElementById("btn-use-skill");
                 if (combatState.skillCooldown > 0) {
-                    btnSkill.innerText = `ЗАРЯД (${combatState.skillCooldown})`;
+                    btnSkill.innerText = `ПЕРЕЗАРЯДКА (${combatState.skillCooldown})`;
                     btnSkill.disabled = true;
                 } else {
                     btnSkill.innerText = `ПРИМЕНИТЬ`;
@@ -905,13 +1058,13 @@
                 
                 let btnExe = document.getElementById("btn-execute-turn");
                 if(hero.hp <= 0) {
-                    btnExe.innerText = "ГЕРОЙ МЕРТВ (ЛЕЧИТЕСЬ В ЛАГЕРЕ)";
+                    btnExe.innerText = "ГЕРОЙ МЕРТВ";
                     btnExe.disabled = true;
                 } else if (combatState.atkZone && combatState.defZone) {
-                    btnExe.innerText = "СОВЕРШИТЬ ХОД ⚔️";
+                    btnExe.innerText = "УДАРИТЬ ⚔️";
                     btnExe.disabled = false;
                 } else {
-                    btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ АТАКИ И ЗАЩИТЫ";
+                    btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ";
                     btnExe.disabled = true;
                 }
             }
