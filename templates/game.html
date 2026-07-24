@@ -40,16 +40,25 @@
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* === ФОН ДЛЯ ВКЛАДКИ ГЕРОЯ === */
+        /* === ИДЕАЛЬНЫЙ ФОН ДЛЯ ВКЛАДКИ ГЕРОЯ === */
         #screen-hero {
-            background-image: linear-gradient(to bottom, rgba(13, 13, 15, 0.4) 0%, rgba(13, 13, 15, 0.95) 80%), url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
+            position: relative;
             margin: -6px; 
             padding: 6px;
             min-height: 100vh;
             border-radius: 8px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        #screen-hero::before {
+            content: '';
+            position: absolute;
+            top: -30px; left: -30px; right: -30px; bottom: -30px;
+            background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
+            background-size: cover;
+            background-position: center;
+            filter: blur(15px) brightness(0.25);
+            z-index: -1;
         }
 
         .class-banner {
@@ -67,43 +76,43 @@
         /* === ГЕРОЙ И ИНВЕНТАРЬ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
-        .equip-slot { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
+        .equip-slot { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, rgba(39,39,42,0.9) 0%, rgba(9,9,11,0.9) 80%); border: 1px solid #3f3f46; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 4px 8px rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         .equip-slot:active { transform: scale(0.9); }
-        .equip-slot.empty { background: #050505; border: 1px solid #1c1c1f; }
-        .equip-slot.blocked { border: 1px solid #450a0a; background: #1a0505; cursor: not-allowed; }
-        .silhouette { font-size: 24px; opacity: 0.1; filter: grayscale(100%); }
+        .equip-slot.empty { background: rgba(5,5,5,0.7); border: 1px solid #1c1c1f; }
+        .equip-slot.blocked { border: 1px solid #450a0a; background: rgba(26,5,5,0.8); cursor: not-allowed; }
+        .silhouette { font-size: 24px; opacity: 0.2; filter: grayscale(100%); text-shadow: 0 2px 4px #000; }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
         .item-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
         .item-img { width: 90%; height: 90%; object-fit: contain; filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0,0,0,0.8)); }
         
-        .rarity-common { border-color: #3f3f46; }
-        .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
-        .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4); }
-        .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.5); animation: pulse-leg 2s infinite; }
-        .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.6); animation: pulse-relic 1.5s infinite; }
+        .rarity-common { border-color: #52525b; }
+        .rarity-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.3); }
+        .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.5); }
+        .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.6); animation: pulse-leg 2s infinite; }
+        .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.7); animation: pulse-relic 1.5s infinite; }
         
-        .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
+        .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 4px #000;}
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
-        .hero-avatar { width: 100%; height: auto; display: block; border-radius: 4px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;}
+        .hero-avatar { width: 100%; height: auto; display: block; border-radius: 6px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95); border: 2px solid #27272a;}
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
         
-        .inventory-panel { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(4px); border-radius: 8px; padding: 14px; border: 1px solid #27272a; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
-        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px;}
+        .inventory-panel { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #d4d4d8; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 0.5px; text-shadow: 0 1px 2px #000;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
+        .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: transform 0.1s; position: relative; background: radial-gradient(circle, rgba(39,39,42,0.8) 0%, rgba(9,9,11,0.9) 80%); border: 1px solid #3f3f46;}
         .inv-item:active { transform: scale(0.88); }
-        .inv-item.empty { background: rgba(5, 5, 5, 0.8); border: 1px solid #1c1c1f; cursor: default; }
+        .inv-item.empty { background: rgba(5,5,5,0.6); border: 1px solid #27272a; cursor: default; }
 
         /* СТАТЫ */
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stats-card { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(4px); border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); position: relative;}
-        .stat-group-title { color: #71717a; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px;}
-        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #a1a1aa; }
+        .stats-card { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative;}
+        .stat-group-title { color: #d4d4d8; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px; text-shadow: 0 1px 2px #000;}
+        .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #3f3f46; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #a1a1aa; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
-        .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
-        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
-        .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #27272a;}
+        .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.6);}
+        .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
         /* ГЛОБАЛЬНАЯ ПЕЛЕНА КРОВИ */
@@ -118,7 +127,7 @@
             100% { box-shadow: inset 0 0 70px rgba(220, 38, 38, 0.4); background: rgba(220, 38, 38, 0.05); }
         }
 
-        /* === PVE БОЕВКА 27.1 === */
+        /* === PVE БОЕВКА === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; transition: background-image 0.5s ease;
@@ -130,7 +139,6 @@
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* 🖼️ АЛТАРЬ-ДИОРАМА */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; position: relative; gap: 8px;
@@ -317,10 +325,9 @@
 
     <script>
         const STATIC_URL = "{{ url_for('static', filename='') }}";
-        const GOD_MODE = true; // РЕЖИМ БОГА Включен
+        const GOD_MODE = false; // Режим бога отключен для чистоты тестов и баланса
     </script>
 
-    <!-- Пелена штрафа смерти -->
     <div id="blood-screen" class="blood-overlay"></div>
 
     <div class="top-dashboard">
@@ -479,7 +486,7 @@
         <div class="inventory-panel">
             <div class="inventory-header">
                 <span>🎒 Сумка (Нажми для осмотра)</span>
-                <span id="ui-bag-capacity" style="color:#71717a;">0/10</span>
+                <span id="ui-bag-capacity" style="color:#a1a1aa;">0/10</span>
             </div>
             <div class="inventory-grid" id="ui-inventory-grid"></div>
         </div>
@@ -1108,15 +1115,27 @@
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
             if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
+            
+            let itemsToUnequip = [];
             for (let slot in hero.equipment) {
                 let item = hero.equipment[slot];
                 if (item && item.id !== "blocked" && item.allowedClasses && !item.allowedClasses.includes(classKey)) {
-                    if (hero.inventory.length < 10) {
-                        hero.inventory.push(item.id); hero.equipment[slot] = null;
-                        if (item.type === 'two_handed') hero.equipment.weapon2 = null; 
-                    } else { return alert("Освободите сумку! На вас вещи, несовместимые с новым классом."); }
+                    itemsToUnequip.push(slot);
                 }
             }
+            
+            let neededSlots = (hero.inventory.length + itemsToUnequip.length) - 10;
+            if (neededSlots > 0) {
+                return alert(`Для смены класса нужно снять несовместимые вещи. Освободите ${neededSlots} мест в сумке!`);
+            }
+            
+            itemsToUnequip.forEach(slot => {
+                let item = hero.equipment[slot];
+                if (item && item.id !== "blocked") hero.inventory.push(item.id);
+                hero.equipment[slot] = null;
+                if (item && item.type === 'two_handed') hero.equipment.weapon2 = null;
+            });
+
             hero.gold -= 5000; hero.baseClass = classKey;
             calculateStats(); saveGame(); openScreen('hero');
         }
@@ -1130,10 +1149,18 @@
 
             let targetSlot = item.type;
             if (item.type === 'two_handed') {
-                if (hero.equipment.weapon1 && hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked" && hero.inventory.length >= 10) return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
+                let w1 = hero.equipment.weapon1;
+                let w2 = hero.equipment.weapon2;
+                let needsExtraSlot = (w1 && w2 && w2.id !== "blocked");
+                
+                if (needsExtraSlot && hero.inventory.length >= 10) {
+                    return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
+                }
+                
                 hero.inventory.splice(invIndex, 1);
-                if (hero.equipment.weapon1) hero.inventory.push(hero.equipment.weapon1.id);
-                if (hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked") hero.inventory.push(hero.equipment.weapon2.id);
+                if (w1) hero.inventory.push(w1.id);
+                if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id);
+                
                 hero.equipment.weapon1 = item;
                 hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
                 calculateStats(); saveGame(); updateUI(); return;
@@ -1192,16 +1219,23 @@
             if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!");
             let missingHp = hero.finalStats.hp - Math.floor(hero.hp);
             let cost = Math.max(10, Math.floor(missingHp * 0.5));
-            if (hero.gold === 0 && hero.hp <= hero.finalStats.hp * 0.1) {
-                hero.hp = Math.floor(hero.finalStats.hp * 0.3);
-                alert("Лекарь оказал первую помощь бесплатно! Здоровье восстановлено до 30%.");
-                saveGame(); updateUI(); return;
+            
+            if (hero.gold < cost) {
+                if (hero.gold > 0) {
+                    let affordableHeal = hero.gold * 2;
+                    hero.hp += affordableHeal;
+                    hero.gold = 0;
+                    alert(`Золота хватило лишь на частичное лечение (+${affordableHeal} HP).`);
+                    saveGame(); updateUI();
+                } else {
+                    alert(`У вас нет золота! Продайте трофеи в Лавке или рискните спуститься на 1 этаж.`);
+                }
+                return;
             }
-            if (hero.gold >= cost) {
-                hero.gold -= cost; hero.hp = hero.finalStats.hp;
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                saveGame(); updateUI();
-            } else { alert(`Нужно ${cost} золота для полного лечения! У вас ${hero.gold}.`); }
+
+            hero.gold -= cost; hero.hp = hero.finalStats.hp;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            saveGame(); updateUI();
         }
 
         function calculateStats(isCombat = false) {
