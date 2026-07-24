@@ -106,10 +106,11 @@
             100% { box-shadow: inset 0 0 70px rgba(220, 38, 38, 0.4); background: rgba(220, 38, 38, 0.05); }
         }
 
-        /* === PVE БОЕВКА 26.0 (ИДЕАЛЬНЫЙ АРТ) === */
+        /* === PVE БОЕВКА 27.0 (ДВОЙНОЙ ФОН И ДИОРАМА) === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
-            position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden; transition: background-image 0.5s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
             background-color: #0f172a; 
         }
 
@@ -117,21 +118,21 @@
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* 🖼️ АЛТАРЬ ДЛЯ КАРТОЧЕК (ТЕПЕРЬ С ФОНОМ!) */
+        /* 🖼️ АЛТАРЬ-ДИОРАМА (ЧЕТКИЙ ФОН ВНУТРИ) */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; position: relative; gap: 8px;
             border: 2px solid #18181b; border-bottom: 4px solid #050505;
-            border-radius: 12px; padding: 15px 8px 12px 8px; 
+            border-radius: 12px; padding: 15px 6px 12px 6px; 
             box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5);
             background-color: #121214;
+            transition: background-image 0.5s ease;
         }
         
         /* ВРАППЕРЫ ДЛЯ РАЗДЕЛЕНИЯ ТЕКСТА И КАРТИНКИ */
         .combat-entity-wrapper {
             flex: 1; display: flex; flex-direction: column; align-items: center; 
-            width: 48%; /* Максимально широкие */
-            justify-content: flex-start; z-index: 2;
+            width: 48%; justify-content: flex-start; z-index: 2;
         }
 
         /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ И УРОВНЯ */
@@ -159,9 +160,7 @@
 
         /* 🃏 СТИЛИ КАРТОЧКИ: ИДЕАЛЬНЫЙ КВАДРАТ */
         .combat-card {
-            width: 100%; 
-            max-width: 160px; /* Увеличено до максимума */
-            aspect-ratio: 1; /* ГАРАНТИЯ КВАДРАТНОЙ ФОРМЫ */
+            width: 100%; max-width: 160px; aspect-ratio: 1; 
             background: #050505; border: 2px solid #3f3f46; 
             border-radius: 10px; position: relative; 
             box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8);
@@ -174,10 +173,8 @@
         
         /* CONTAIN - АРТ НЕ ОБРЕЗАЕТСЯ */
         .card-avatar-img { 
-            width: 100%; height: 100%; 
-            object-fit: contain; /* Все детали картинки будут видны! */
-            background-color: #050505;
-            filter: brightness(0.95); transition: filter 0.2s; 
+            width: 100%; height: 100%; object-fit: contain; 
+            background-color: #050505; filter: brightness(0.95); transition: filter 0.2s; 
         }
         
         /* Линза поверх картинки */
@@ -360,7 +357,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 26.0 - АБСОЛЮТНАЯ ГЕОМЕТРИЯ) -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 27.0 - ДВОЙНОЙ ФОН И ДИОРАМА) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -368,7 +365,8 @@
             <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
         </div>
         
-        <div class="combat-arena" id="arena-bg" style="background-color: #0f172a;">
+        <!-- ВНЕШНЯЯ АРЕНА (ЗАТЕМНЕННАЯ ДЛЯ ЧИТАЕМОСТИ UI) -->
+        <div class="combat-arena" id="arena-bg">
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
                 <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
@@ -383,7 +381,7 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК НА ПРОЗРАЧНОМ ПЬЕДЕСТАЛЕ -->
+            <!-- ВНУТРЕННИЙ АЛТАРЬ-ДИОРАМА (ЧЕТКИЙ ФОН ВНУТРИ) -->
             <div class="combat-entities" id="combat-entities-box">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
@@ -1338,10 +1336,15 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                let arenaBg = document.querySelector(".combat-entities");
-                arenaBg.style.backgroundImage = `linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`;
-                arenaBg.style.backgroundSize = 'cover';
-                arenaBg.style.backgroundPosition = 'center';
+                // Арена фон (Внешний)
+                let arenaOuter = document.getElementById("arena-bg");
+                arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%)`;
+                
+                // Диорама фон (Внутренний)
+                let diorama = document.getElementById("combat-entities-box");
+                diorama.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.9) 100%), url('${enemy.bgUrl}')`;
+                diorama.style.backgroundSize = 'cover';
+                diorama.style.backgroundPosition = 'center';
                 
                 let comboEl = document.getElementById("combo-display");
                 if (combatState.combo > 0) {
@@ -1397,7 +1400,7 @@
                 
                 let heroHpOuter = document.getElementById("combat-hero-hp-bar").parentElement;
                 if(isHeroDead) heroHpOuter.style.background = "#2a0808"; 
-                else heroHpOuter.style.background = "#050505";
+                else heroHpOuter.style.background = "#09090b";
 
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
