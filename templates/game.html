@@ -94,59 +94,71 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА 18.0 (СОВЕРШЕННЫЙ UI) === */
+        /* === PVE БОЕВКА 19.0 (ЧИСТЫЙ АРТ И ВЫНЕСЕННЫЙ UI) === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; transition: background-image 0.5s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
-            background-color: #0f172a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a;
         }
 
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
-        
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ */
+        /* АЛТАРЬ ДЛЯ КАРТОЧЕК */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; position: relative; gap: 8px;
             background: linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.8) 100%);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
-            border-radius: 12px; padding: 20px 8px 12px 8px;
+            border-radius: 12px; padding: 15px 10px;
             box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
         }
         
-        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (ГРИМДАРК СТАЛЬ) */
-        .combat-card {
-            flex: 1; max-width: 145px; background: #121214; border: 2px solid #3f3f46; 
-            border-radius: 10px; position: relative; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column;
+        /* ВРАППЕРЫ ДЛЯ РАЗДЕЛЕНИЯ ТЕКСТА И КАРТИНКИ */
+        .combat-entity-wrapper {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 50%;
         }
-        /* РАМКА ГЕРОЯ ТЕПЕРЬ СТАЛЬНАЯ/СИНЯЯ */
+
+        .entity-name-plate {
+            font-weight: 900; font-size: 12px; color: #e4e4e7; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
+            text-transform: uppercase; letter-spacing: 0.5px; text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
+        }
+
+        /* 🃏 СТИЛИ САМОЙ КАРТОЧКИ (ТЕПЕРЬ ТУТ ТОЛЬКО АРТ) */
+        .combat-card {
+            width: 100%; max-width: 135px; height: 135px; 
+            background: #000; border: 2px solid #3f3f46; 
+            border-radius: 10px; position: relative; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.8); display: flex;
+        }
         .combat-card.hero { border-color: #71717a; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
-        .card-avatar-wrap { width: 100%; height: 120px; position: relative; overflow: hidden; background: #000; border-radius: 8px 8px 0 0; }
+        .card-avatar-wrap { width: 100%; height: 100%; border-radius: inherit; position: relative; overflow: hidden; }
         .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
         
         .entity-tags { position: absolute; top: -8px; left: -8px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
         .e-tag { background: #09090b; color: #e4e4e7; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.9);}
         .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
-        .e-tag.class { color: #60a5fa; border-color: #2563eb; } /* Синий оттенок для класса */
+        .e-tag.class { color: #60a5fa; border-color: #2563eb; } 
         .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: #451a03;}
         .e-tag.boss { color: #fca5a5; border-color: #ef4444; background: #450a0a; animation: pulse-relic 1.5s infinite;}
         
-        .status-icon { position: absolute; top: 4px; right: 4px; font-size: 16px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
+        .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
-        .card-footer { padding: 6px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2; border-radius: 0 0 8px 8px;}
-        .card-name { font-weight: 900; font-size: 10px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
-        .card-hp-text { font-size: 9px; font-weight: bold; margin-bottom: 2px; color: #d4d4d8;}
-        .card-hp-bg { width: 100%; height: 5px; background: #050505; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px; border: 1px solid #27272a;}
-        .card-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 5px rgba(239,68,68,0.4);}
+        /* ПАНЕЛЬ ХП ВНИЗУ */
+        .entity-hp-plate { width: 100%; max-width: 135px; text-align: center; }
+        .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; }
+        .hp-bar-outer { width: 100%; height: 8px; background: #050505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
+        /* Сочный градиент и плавный переход убывания */
+        .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+        .hero-hp-fill { background: linear-gradient(90deg, #dc2626 0%, #fca5a5 100%); }
+        .enemy-hp-fill { background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); }
         
-        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 3px; border: 1px solid #27272a;}
+        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
         .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
@@ -249,6 +261,9 @@
         .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
+        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea;}
+        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d;}
+        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; }
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; }
         .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
@@ -301,7 +316,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (СОВЕРШЕННЫЙ UI 18.0) -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 19.0) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -329,39 +344,43 @@
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
                 
-                <!-- КАРТОЧКА ГЕРОЯ -->
-                <div class="combat-card hero" id="entity-hero-box">
-                    <div class="entity-tags">
-                        <span class="e-tag lvl" id="hero-tag-lvl">УР. 1</span>
-                        <span class="e-tag class" id="hero-tag-class">КЛАСС</span>
+                <!-- ГЕРОЙ -->
+                <div class="combat-entity-wrapper">
+                    <div class="entity-name-plate" id="combat-hero-name">Герой</div>
+                    <div class="combat-card hero" id="entity-hero-box">
+                        <div class="entity-tags">
+                            <span class="e-tag lvl" id="hero-tag-lvl">УР. 1</span>
+                            <span class="e-tag class" id="hero-tag-class">КЛАСС</span>
+                        </div>
+                        <div class="card-avatar-wrap">
+                            <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
+                            <div class="slash-fx" id="hero-slash"></div>
+                        </div>
                     </div>
-                    <div class="card-avatar-wrap">
-                        <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
-                        <div class="slash-fx" id="hero-slash"></div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="card-name" id="combat-hero-name">Герой</div>
-                        <div class="card-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
-                        <div class="card-hp-bg"><div class="card-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+                    <div class="entity-hp-plate">
+                        <div class="hp-text-plate"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
+                        <div class="hp-bar-outer"><div class="hp-bar-inner hero-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
                     </div>
                 </div>
                 
                 <div class="combat-vs">VS</div>
                 
-                <!-- КАРТОЧКА МОНСТРА -->
-                <div class="combat-card" id="entity-enemy-box">
-                    <div class="entity-tags" id="enemy-tags-container">
-                        <span class="e-tag lvl" id="enemy-tag-lvl">УР. 1</span>
+                <!-- МОНСТР -->
+                <div class="combat-entity-wrapper">
+                    <div class="entity-name-plate" id="combat-enemy-name">Монстр</div>
+                    <div class="combat-card" id="entity-enemy-box">
+                        <div class="entity-tags" id="enemy-tags-container">
+                            <span class="e-tag lvl" id="enemy-tag-lvl">УР. 1</span>
+                        </div>
+                        <div class="card-avatar-wrap">
+                            <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
+                            <div class="status-icon" id="enemy-stun-icon">💫</div>
+                            <div class="slash-fx" id="enemy-slash"></div>
+                        </div>
                     </div>
-                    <div class="card-avatar-wrap">
-                        <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
-                        <div class="status-icon" id="enemy-stun-icon">💫</div>
-                        <div class="slash-fx" id="enemy-slash"></div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="card-name" id="combat-enemy-name">Монстр</div>
-                        <div class="card-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
-                        <div class="card-hp-bg"><div class="card-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                    <div class="entity-hp-plate">
+                        <div class="hp-text-plate"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
+                        <div class="hp-bar-outer"><div class="hp-bar-inner enemy-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
                         <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
                     </div>
                 </div>
@@ -607,6 +626,9 @@
             let bgImg = isMegaBoss ? 'throne.png' : 'grave.png';
             let bgUrl = `${STATIC_URL}begraund/${bgImg}`;
 
+            if (isMegaBoss) { name = "👑 " + name; }
+            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; }
+
             let statMult = 1 + (floorLevel * 0.04);
             let hp = Math.floor((30 + floorLevel * 12) * statMult);
             let atk = Math.floor((6 + floorLevel * 3) * statMult);
@@ -671,6 +693,11 @@
             enemy = generateEnemy(hero.floor);
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
             calculateStats(true); 
+            
+            let title = document.getElementById("combat-stage-name");
+            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";}
+            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "none";}
+            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; document.getElementById("enemy-rage-bg").style.display = "none";}
             
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`;
             planEnemyTurn();
@@ -743,7 +770,7 @@
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
             logBox.innerHTML += `<div class="log-entry">${text}</div>`;
-            while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild);
+            while (logBox.children.length > 30) logBox.removeChild(logBox.firstChild);
             logBox.scrollTop = logBox.scrollHeight;
         }
 
@@ -1237,6 +1264,13 @@
                     comboEl.innerText = `🔥 КОМБО: x${(1 + combatState.combo * 0.25).toFixed(2)}`;
                     comboEl.className = "combo-meter show";
                 } else { comboEl.className = "combo-meter"; }
+
+                if (enemy.isBoss) {
+                    let rPct = (enemy.turnCounter % 4) / 3 * 100;
+                    document.getElementById("enemy-rage-bar").style.width = `${rPct}%`;
+                    if(rPct === 100) document.getElementById("enemy-rage-bar").classList.add("full");
+                    else document.getElementById("enemy-rage-bar").classList.remove("full");
+                }
 
                 let stunIcon = document.getElementById("enemy-stun-icon");
                 if (combatState.enemyStunned) stunIcon.style.display = "block";
