@@ -99,44 +99,43 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА 16.0 (КАМЕННЫЙ ПЬЕДЕСТАЛ И КЛЭШ-АНИМАЦИИ) === */
-        .combat-arena { border: 1px solid #3f3f46; border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative; overflow: hidden; transition: background 0.5s ease;}
-        .biome-1 { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); } 
-        .biome-2 { background: radial-gradient(circle at top, #3f1010 0%, #1a0505 100%); } 
-        .biome-3 { background: radial-gradient(circle at top, #064e3b 0%, #022c22 100%); } 
-        .biome-4 { background: radial-gradient(circle at top, #3b0764 0%, #1e1b4b 100%); } 
-        .biome-boss { background: radial-gradient(circle at top, #7f1d1d 0%, #450a0a 100%); border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); } 
+        /* === PVE БОЕВКА (КАРТОЧНЫЙ UI + ФОНЫ 17.1) === */
+        .combat-arena { 
+            border: 2px solid #27272a; border-radius: 12px; padding: 14px; margin-bottom: 16px; 
+            position: relative; overflow: hidden; transition: background-image 0.5s ease;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.6);
+            background-color: #0f172a;
+        }
 
-        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
-        .intent-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
-        .intent-box.ultimatum { background: #450a0a; border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
+        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000;}
+        .intent-box { background: rgba(30, 27, 75, 0.85); backdrop-filter: blur(4px); border: 1px solid #6366f1; border-radius: 6px; padding: 8px 10px; text-align: center; font-size: 11px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* МОНОЛИТНЫЙ КАМЕННЫЙ ПЬЕДЕСТАЛ ДЛЯ КАРТ */
+        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ ДЛЯ КАРТОЧЕК */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 14px; position: relative; gap: 10px;
-            background: radial-gradient(circle at 50% 100%, #27272a 0%, #09090b 100%);
-            border: 2px solid #18181b; border-bottom: 4px solid #050505;
+            background: linear-gradient(180deg, rgba(39,39,42,0.4) 0%, rgba(9,9,11,0.95) 100%);
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(255,255,255,0.05); border-bottom: 3px solid #050505;
             border-radius: 16px; padding: 25px 12px 15px 12px;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.9);
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.8);
         }
         
-        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (БЕЗ OVERFLOW: HIDDEN НА ГЛАВНОМ КОНТЕЙНЕРЕ) */
+        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ */
         .combat-card {
-            flex: 1; max-width: 140px; background: #121214; border: 2px solid #3f3f46; 
+            flex: 1; max-width: 145px; background: #121214; border: 2px solid #3f3f46; 
             border-radius: 12px; position: relative; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column;
         }
-        .combat-card.hero { border-color: #d97706; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(217,119,6,0.2); }
-        .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
+        .combat-card.hero { border-color: #d97706; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(217,119,6,0.3); }
+        .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.5); }
         
-        /* ОГРАНИЧИВАЕМ ТОЛЬКО КАРТИНКУ */
-        .card-avatar-wrap { width: 100%; height: 130px; position: relative; overflow: hidden; background: #000; border-radius: 10px 10px 0 0; }
-        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
+        .card-avatar-wrap { width: 100%; height: 135px; position: relative; overflow: hidden; background: #000; border-radius: 10px 10px 0 0; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.95); transition: filter 0.2s;}
         
-        /* ТЕГИ ТЕПЕРЬ ВЫСТУПАЮТ ЗА РАМКИ */
         .entity-tags { position: absolute; top: -10px; left: -10px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
-        .e-tag { background: #09090b; color: #e4e4e7; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.9);}
+        .e-tag { background: #09090b; color: #e4e4e7; padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.9);}
         .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
         .e-tag.class { color: #34d399; border-color: #059669; }
         .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: #451a03;}
@@ -148,14 +147,14 @@
         .card-footer { padding: 8px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2; border-radius: 0 0 10px 10px;}
         .card-name { font-weight: 900; font-size: 11px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
         .card-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 4px; color: #d4d4d8;}
-        .card-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px;}
-        .card-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
+        .card-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px; border: 1px solid #27272a;}
+        .card-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 5px rgba(239,68,68,0.4);}
         
-        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 3px;}
+        .boss-rage-bg { width: 100%; height: 4px; background: #050505; border-radius: 2px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
         .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-        .combat-vs { font-size: 24px; font-weight: 900; color: #3f3f46; margin: 0 5px; text-shadow: 0 2px 2px #000, 0 -1px 1px #27272a; font-style: italic;}
+        .combat-vs { font-size: 26px; font-weight: 900; color: #a1a1aa; margin: 0 5px; text-shadow: 0 2px 4px #000, 0 -1px 1px #27272a; font-style: italic;}
         
         .combo-meter { position: absolute; top: 5px; right: 15px; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
         .combo-meter.show { opacity: 1; }
@@ -166,37 +165,21 @@
         .spark-anim { animation: spark-boom 0.4s ease-out; }
 
         /* АНИМАЦИИ СТОЛКНОВЕНИЯ КАРТОЧЕК */
-        @keyframes clash-hero {
-            0% { transform: translateX(0) rotate(0deg); }
-            30% { transform: translateX(30px) rotate(5deg) scale(1.05); z-index: 10;}
-            50% { transform: translateX(35px) rotate(5deg) scale(1.05); }
-            100% { transform: translateX(0) rotate(0deg); }
-        }
-        @keyframes clash-enemy {
-            0% { transform: translateX(0) rotate(0deg); }
-            30% { transform: translateX(-30px) rotate(-5deg) scale(1.05); z-index: 10;}
-            50% { transform: translateX(-35px) rotate(-5deg) scale(1.05); }
-            100% { transform: translateX(0) rotate(0deg); }
-        }
+        @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(30px) rotate(5deg) scale(1.05); z-index: 10;} 50% { transform: translateX(35px) rotate(5deg) scale(1.05); } 100% { transform: translateX(0) rotate(0deg); } }
+        @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-30px) rotate(-5deg) scale(1.05); z-index: 10;} 50% { transform: translateX(-35px) rotate(-5deg) scale(1.05); } 100% { transform: translateX(0) rotate(0deg); } }
         .clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .clash-enemy-anim { animation: clash-enemy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        @keyframes hit-shake { 
-            0% { filter: brightness(1); } 
-            25% { transform: translateX(-3px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 
-            50% { transform: translateX(3px); } 
-            75% { transform: translateX(-3px); } 
-            100% { filter: brightness(1); } 
-        }
+        @keyframes hit-shake { 0% { filter: brightness(1); } 25% { transform: translateX(-3px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(3px); } 75% { transform: translateX(-3px); } 100% { filter: brightness(1); } }
         .hit-anim { animation: hit-shake 0.3s ease-out; }
         
-        .slash-fx { position: absolute; top: 50%; left: 50%; width: 100px; height: 6px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
+        .slash-fx { position: absolute; top: 50%; left: 50%; width: 120px; height: 6px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
         @keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
-        .dmg-popup { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 18px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
-        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -35px) scale(1.3); } }
+        .dmg-popup { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 5px #000;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -40px) scale(1.3); } }
 
-        .combat-log-box { background: rgba(9, 9, 11, 0.8); border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
-        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; }
+        .combat-log-box { background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(4px); border: 1px solid #27272a; border-radius: 8px; padding: 10px; height: 85px; overflow-y: auto; margin-bottom: 12px; font-size: 11px; line-height: 1.5; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);}
+        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 3px; margin-bottom: 3px;}
         .log-dmg { color: #f87171; font-weight: bold; }
         .log-crit { color: #fbbf24; font-weight: bold; }
         .log-dodge { color: #60a5fa; font-weight: bold; }
@@ -204,35 +187,35 @@
         .log-sys { color: #34d399; font-weight: bold; }
         .log-skill { color: #c084fc; font-weight: bold; }
 
-        .skill-box { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; margin-bottom: 12px; }
-        .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; }
+        .skill-box { display: flex; justify-content: space-between; align-items: center; background: rgba(24, 24, 27, 0.9); border: 1px solid #3f3f46; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; backdrop-filter: blur(4px);}
+        .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 6px rgba(126,34,206,0.4);}
 
-        .zone-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
-        .zone-btn { flex: 1; padding: 8px 0; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;}
-        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; }
-        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
+        .zone-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .zone-btn { flex: 1; padding: 10px 0; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);}
+        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
+        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: 0 4px 10px rgba(59,130,246,0.3);}
         
-        .durability-dots { display: flex; gap: 2px; }
-        .dur-dot { width: 6px; height: 6px; border-radius: 3px; background: #27272a; }
-        .dur-dot.g { background: #10b981; box-shadow: 0 0 5px #10b981; }
-        .dur-dot.y { background: #facc15; box-shadow: 0 0 5px #facc15; }
-        .dur-dot.o { background: #f97316; box-shadow: 0 0 5px #f97316; }
-        .dur-text { font-size: 7px; color: #ef4444; font-weight: bold; display: none; }
+        .durability-dots { display: flex; gap: 3px; }
+        .dur-dot { width: 8px; height: 8px; border-radius: 4px; background: #27272a; border: 1px solid #18181b;}
+        .dur-dot.g { background: #10b981; box-shadow: 0 0 6px #10b981; border-color: #059669;}
+        .dur-dot.y { background: #facc15; box-shadow: 0 0 6px #facc15; border-color: #ca8a04;}
+        .dur-dot.o { background: #f97316; box-shadow: 0 0 6px #f97316; border-color: #c2410c;}
+        .dur-text { font-size: 8px; color: #ef4444; font-weight: bold; display: none; }
         .zone-btn.broken .dur-text { display: block; }
         .zone-btn.broken .durability-dots { display: none; }
         
-        .action-row { display: flex; gap: 8px; margin-top: 4px; }
-        .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
-        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
+        .action-row { display: flex; gap: 8px; margin-top: 6px; }
+        .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 16px; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 6px 15px rgba(0,0,0,0.6);}
+        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
         /* МОДАЛКИ */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
         .modal-overlay.show { display: flex; }
-        .vic-title { font-size: 22px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 6px; text-transform: uppercase;}
-        .vic-loot-box { width: 64px; height: 64px; border-radius: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4); position: relative; overflow: hidden;}
-        .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-top: 6px; }
-        .modal-btn.danger { background: #ef4444; color: #fff; }
-        .modal-btn.secondary { background: #27272a; color: #a1a1aa; }
+        .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 8px; text-transform: uppercase;}
+        .vic-loot-box { width: 72px; height: 72px; border-radius: 10px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239,68,68,0.5); position: relative; overflow: hidden;}
+        .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 10px rgba(251,191,36,0.3);}
+        .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
+        .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
         
         /* === МАГАЗИН === */
         .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; }
@@ -298,30 +281,30 @@
 
     <!-- ИНСПЕКЦИЯ ПРЕДМЕТА -->
     <div class="modal-overlay" id="item-inspect-modal">
-        <div class="vic-title" style="font-size:16px;" id="inspect-title">Осмотр Предмета</div>
-        <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px;"></div>
-        <div id="inspect-stats-box" style="font-size:11px; color:#10b981; margin-bottom:12px; line-height:1.6;"></div>
+        <div class="vic-title" style="font-size:18px;" id="inspect-title">Осмотр Предмета</div>
+        <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px; width:80px; height:80px;"></div>
+        <div id="inspect-stats-box" style="font-size:12px; color:#10b981; margin-bottom:16px; line-height:1.6; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid #27272a; width: 100%;"></div>
         <button class="modal-btn" id="btn-inspect-equip">НАДЕТЬ ШМОТКУ</button>
         <button class="modal-btn danger" id="btn-inspect-sell">ПРОДАТЬ ЗА 💰 0</button>
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (КАРТОЧНЫЙ UI 16.0) -->
+    <!-- PVE БОЕВКА (С ЖЕСТКИМ РАЗДЕЛЕНИЕМ ФОНОВ 17.1) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
-            <span id="pve-floor-display">ЭТАЖ 1: ПОДЗЕМЕЛЬЕ</span>
+            <span id="pve-floor-display" style="font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">ЭТАЖ 1: ПОДЗЕМЕЛЬЕ</span>
             <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
         </div>
         
-        <div class="combat-arena biome-1" id="arena-bg">
+        <div class="combat-arena" id="arena-bg">
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
-                <div id="vic-rewards-text" style="color: #e4e4e7; font-weight: bold; margin-bottom: 16px;"></div>
-                <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center;">
-                    <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:6px;">ВЫБИТ АРТЕФАКТ:</div>
-                    <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
-                    <div id="vic-loot-name" style="font-size:11px; color:#fca5a5; font-weight:bold; margin-bottom:16px;"></div>
+                <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
+                <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid #3f3f46; margin-bottom: 15px; width: 100%;">
+                    <div style="font-size:12px; color:#fbbf24; font-weight:bold; margin-bottom:10px; letter-spacing: 1px;">ВЫБИТ АРТЕФАКТ:</div>
+                    <div class="vic-loot-box rarity-relic" id="vic-loot-box" style="width: 80px; height: 80px;"></div>
+                    <div id="vic-loot-name" style="font-size:13px; color:#fca5a5; font-weight:bold; margin-top:5px;"></div>
                 </div>
                 <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ➔</button>
             </div>
@@ -329,7 +312,7 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК С КАМЕННЫМ ПЬЕДЕСТАЛОМ -->
+            <!-- ЗОНА КАРТОЧЕК НА ПРОЗРАЧНОМ ПЬЕДЕСТАЛЕ -->
             <div class="combat-entities">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
@@ -375,7 +358,7 @@
             <div class="combat-log-box" id="combat-log"></div>
 
             <div class="skill-box">
-                <div class="skill-title" style="font-size:11px; color:#e4e4e7;" id="skill-name">Скилл</div>
+                <div class="skill-title" style="font-size:12px; color:#e4e4e7; text-shadow: 0 1px 2px #000;" id="skill-name">Скилл</div>
                 <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ</button>
             </div>
 
@@ -602,6 +585,13 @@
             let mobData = pool[Math.floor(Math.random() * pool.length)];
             let name = mobData.name;
             let mobImgUrl = `${STATIC_URL}mobs/B_${mobData.id}_high_resolution.png`;
+            
+            // ВЫБОР ДИНАМИЧЕСКОГО ФОНА 
+            let bgImg = isMegaBoss ? 'throne.png' : 'grave.png';
+            let bgUrl = `${STATIC_URL}begraund/${bgImg}`;
+
+            if (isMegaBoss) { name = "👑 " + name; }
+            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; }
 
             let statMult = 1 + (floorLevel * 0.04);
             let hp = Math.floor((30 + floorLevel * 12) * statMult);
@@ -613,7 +603,8 @@
 
             let zones = ["head", "chest", "legs"];
             return { 
-                name: name, floor: floorLevel, imgUrl: mobImgUrl, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
+                name: name, floor: floorLevel, imgUrl: mobImgUrl, bgUrl: bgUrl,
+                isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
                 hp: hp, maxHp: hp, nextAtkZone: zones[Math.floor(Math.random()*3)], turnCounter: 0, 
                 stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } 
             };
@@ -667,6 +658,11 @@
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
             calculateStats(true); 
             
+            let title = document.getElementById("combat-stage-name");
+            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";}
+            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "none";}
+            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; document.getElementById("enemy-rage-bg").style.display = "none";}
+            
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`;
             planEnemyTurn();
             updateUI();
@@ -694,7 +690,6 @@
             }
         }
 
-        // АНИМАЦИИ СТОЛКНОВЕНИЯ КАРТОЧЕК
         function triggerClashAnim(isHero, isEnemy) {
             if (isHero) {
                 let hc = document.getElementById("entity-hero-box");
@@ -704,7 +699,6 @@
                 let ec = document.getElementById("entity-enemy-box");
                 if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); }
             }
-            // Если бьют оба, создаем искру между ними
             if (isHero && isEnemy) {
                 let sp = document.getElementById("clash-spark-fx");
                 if(sp) { sp.classList.remove("spark-anim"); void sp.offsetWidth; sp.classList.add("spark-anim"); }
@@ -898,7 +892,6 @@
 
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
-            // Запускаем анимацию столкновения
             let isEnemyStunned = combatState.enemyStunned;
             triggerClashAnim(true, !isEnemyStunned);
 
@@ -978,7 +971,7 @@
                     }
                 }
                 resetCombatZones(); saveGame(); updateUI();
-            }, 150); // Задержка 150мс, чтобы дать карточкам столкнуться до вылета цифр
+            }, 150); 
         }
 
         function openInspectModal(invIndex) {
@@ -1214,7 +1207,7 @@
             
             let floorNavHtml = `
                 <button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 ? 'disabled' : ''}>◀</button>
-                <span id="pve-floor-display">ЭТАЖ ${hero.floor}</span>
+                <span id="pve-floor-display" style="font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">ЭТАЖ ${hero.floor}</span>
                 <button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor ? 'disabled' : ''}>▶</button>
             `;
             let titleEl = document.getElementById("combat-floor-title");
@@ -1225,10 +1218,13 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                let biomeIdx = Math.min(5, Math.ceil(hero.floor / 10));
                 let arenaBg = document.getElementById("arena-bg");
-                arenaBg.className = `combat-arena biome-${biomeIdx}`;
-                if(enemy.isBoss) arenaBg.classList.add("biome-boss");
+                arenaBg.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`;
+                arenaBg.style.backgroundSize = 'cover';
+                arenaBg.style.backgroundPosition = 'center';
+                
+                if(enemy.isBoss) arenaBg.style.boxShadow = "inset 0 0 30px rgba(239,68,68,0.6)";
+                else arenaBg.style.boxShadow = "inset 0 0 20px rgba(0,0,0,0.8)";
 
                 let comboEl = document.getElementById("combo-display");
                 if (combatState.combo > 0) {
@@ -1247,7 +1243,6 @@
                 if (combatState.enemyStunned) stunIcon.style.display = "block";
                 else stunIcon.style.display = "none";
 
-                // РЕНДЕР АВАТАРОВ БОЯ 
                 let cls = CLASSES[hero.baseClass];
                 document.getElementById("hero-tag-lvl").innerText = `УР. ${hero.level}`;
                 document.getElementById("hero-tag-class").innerText = cls.name;
@@ -1261,11 +1256,8 @@
                 
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
                 
-                if(enemy.isBoss) {
-                    document.getElementById("entity-enemy-box").classList.add("boss");
-                } else {
-                    document.getElementById("entity-enemy-box").classList.remove("boss");
-                }
+                if(enemy.isBoss) document.getElementById("entity-enemy-box").classList.add("boss");
+                else document.getElementById("entity-enemy-box").classList.remove("boss");
 
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; 
