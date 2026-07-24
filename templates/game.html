@@ -185,6 +185,16 @@
         .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
         .combat-vs { font-size: 16px; font-weight: 900; color: #52525b; }
         
+        /* CSS АНИМАЦИИ УДАРА */
+        @keyframes hit-shake { 
+            0% { transform: translateX(0) scale(1); filter: drop-shadow(0 0 15px rgba(239,68,68,0.8)); } 
+            25% { transform: translateX(-5px) scale(0.95); } 
+            50% { transform: translateX(5px) scale(1.05); } 
+            75% { transform: translateX(-5px) scale(0.95); } 
+            100% { transform: translateX(0) scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); } 
+        }
+        .hit-anim { animation: hit-shake 0.3s ease-out; }
+
         .dmg-popup { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 10; }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -25px) scale(1.3); } }
 
@@ -214,7 +224,7 @@
         /* ПОП-АП ПОБЕДЫ И ИНСПЕКЦИИ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(9, 9, 11, 0.9); border-radius: 8px; display: none;
+            background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none;
             flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100;
             animation: fadeIn 0.2s ease-out; text-align: center;
         }
@@ -372,7 +382,7 @@
         <div class="stats-two-column" id="ui-stats-container"></div>
     </div>
 
-    <!-- ЭКРАН 2: ЛАВКА -->
+    <!-- ЭКРАН 2: ЛАВКА (БЕЗ ФИЛЬТРОВ ТИПА) -->
     <div id="screen-shop" class="app-screen">
         <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
         <div class="shop-info-banner">Торговец продает лишь базовое снаряжение.<br>Истинные артефакты спрятаны в Башне.</div>
@@ -415,10 +425,10 @@
         };
 
         const CLASSES = {
-            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Исцеляет 25% HP.", cd: 3 } },
+            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 } },
             berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0, skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 } },
-            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит.", cd: 3 } },
-            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага.", cd: 3 } }
+            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 } },
+            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 } }
         };
 
         const ITEMS_DB = {
@@ -452,15 +462,15 @@
             "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 25, agi: 8, dodgeChance: 4 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, stats: { armor: 65, end: 8, str: 4 } },
             "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 60, blockChance: 18, end: 6 } },
-            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 100, str: 15, critDmg: 25 } },
+            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 100, str: 15, critDmg: 25 } },
             "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, dropOnly: true, stats: { armor: 75, str: 10 } },
             "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], dropOnly: true, stats: { armor: 50, agi: 12, mst: 6 } },
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
             "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
             "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
-            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
+            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
@@ -486,12 +496,13 @@
 
         // PVE STATE
         let enemy = null;
-        let combatState = { atkZone: null, defZone: null, skillCooldown: 0, enemyStunned: false };
+        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
         const BOSS_NAMES = ["Хранитель Сервера", "Древний Инвестор", "HR-Демон", "Пожиратель Дедлайнов"];
 
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
+        // МЯГКИЙ СКЕЙЛИНГ ВРАГОВ (Патч 10.0)
         function generateEnemy(floorLevel) {
             let isMegaBoss = floorLevel % 10 === 0;
             let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
@@ -501,9 +512,11 @@
             if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; }
             else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; }
 
-            let hp = Math.floor(25 + (floorLevel * 15) * Math.pow(1.08, floorLevel));
-            let atk = Math.floor(6 + (floorLevel * 4) * Math.pow(1.06, floorLevel));
-            let armor = Math.floor(floorLevel * 1.5);
+            // Полиномиальный + легкий процентный рост (чтобы не уйти в миллионы HP)
+            let statMult = 1 + (floorLevel * 0.04);
+            let hp = Math.floor((30 + floorLevel * 12) * statMult);
+            let atk = Math.floor((6 + floorLevel * 3) * statMult);
+            let armor = Math.floor(floorLevel * 1.2);
 
             if (isMiniBoss) { hp = Math.floor(hp * 1.5); atk = Math.floor(atk * 1.3); }
             if (isMegaBoss) { hp = Math.floor(hp * 2.5); atk = Math.floor(atk * 1.6); armor = Math.floor(armor * 1.5); }
@@ -512,8 +525,21 @@
             return { 
                 name: name, floor: floorLevel, avatar: avatar, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
                 hp: hp, maxHp: hp, nextAtkZone: zones[Math.floor(Math.random()*3)],
+                turnCounter: 0, // Добавлен счетчик ходов для ультиматумов
                 stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } 
             };
+        }
+
+        function planEnemyTurn() {
+            let zones = ["head", "chest", "legs"];
+            enemy.turnCounter++;
+            // УЛЬТИМАТУМ КАЖДЫЙ 4й ХОД БОССА
+            if (enemy.isBoss && enemy.turnCounter % 4 === 0) {
+                enemy.nextAtkZone = 'ULTIMATUM';
+            } else {
+                enemy.nextAtkZone = zones[Math.floor(Math.random()*3)];
+            }
+            updateIntentDisplay();
         }
 
         function changeFloor(dir) {
@@ -525,7 +551,6 @@
 
         function generateBossDrop(floor, specificId = null) {
             let maxLvl = Math.max(1, Math.ceil(floor / 10)); 
-            
             let baseId = specificId;
             if (!baseId) {
                 let pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl <= maxLvl);
@@ -574,14 +599,27 @@
             else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; }
             
             logCombat(`<span class="log-sys">Вход на этаж ${hero.floor}: Вас встречает ${enemy.name}!</span>`);
-            updateIntentDisplay();
+            updateIntentDisplay(); // Инициализация намерения первого хода
             resetCombatZones();
             updateUI();
         }
 
         function updateIntentDisplay() {
             let zRu = {head: "Голову 🪖", chest: "Торс 🦺", legs: "Ноги 👢"};
-            document.getElementById("combat-intent").innerText = `🔮 Намерение врага: Атака в ${zRu[enemy.nextAtkZone]}!`;
+            if (enemy.nextAtkZone === 'ULTIMATUM') {
+                document.getElementById("combat-intent").innerHTML = `☠️ <span style="color:#ef4444;">ВНИМАНИЕ! БОСС ГОТОВИТ УЛЬТИМАТУМ!</span>`;
+            } else {
+                document.getElementById("combat-intent").innerText = `🔮 Намерение врага: Атака в ${zRu[enemy.nextAtkZone]}!`;
+            }
+        }
+
+        function triggerHitAnim(elementId) {
+            let el = document.getElementById(elementId);
+            if(el) {
+                el.classList.remove("hit-anim");
+                void el.offsetWidth; // Магия для перезапуска анимации
+                el.classList.add("hit-anim");
+            }
         }
 
         function showDmgPopup(entityBoxId, text, colorClass) {
@@ -606,7 +644,7 @@
             let logBox = document.getElementById("combat-log");
             logBox.innerHTML += `<div class="log-entry">${text}</div>`;
             while (logBox.children.length > 30) {
-                logBox.removeChild(logBox.firstChild);
+                logBox.removeChild(logBox.firstChild); // Оптимизация памяти (не более 30 строк лога)
             }
             logBox.scrollTop = logBox.scrollHeight;
         }
@@ -624,17 +662,20 @@
             } else if (hero.baseClass === 'berserk') {
                 let dmg = Math.floor(hero.finalStats.damage * 2.5);
                 enemy.hp -= dmg;
+                triggerHitAnim("combat-enemy-avatar");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! -${dmg} HP.</span>`);
             } else if (hero.baseClass === 'shadow') {
                 let dmg = Math.floor(hero.finalStats.damage * 1.8);
                 enemy.hp -= dmg;
+                triggerHitAnim("combat-enemy-avatar");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Уворот активен.</span>`);
             } else if (hero.baseClass === 'ranger') {
                 let dmg = Math.floor(hero.finalStats.damage * 1.5);
                 enemy.hp -= dmg;
                 combatState.enemyStunned = true;
+                triggerHitAnim("combat-enemy-avatar");
                 showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Враг оглушен.</span>`);
             }
@@ -658,25 +699,23 @@
             if (zAtk === zDef) {
                 isBlock = true;
                 mitigation *= 2;
-                // ИДЕАЛЬНЫЙ БЛОК: Если защитил ту же зону, куда бьет намеренно враг
                 if (defender === hero.finalStats) {
                     isPerfectBlock = true;
-                    mitigation *= 1.5; // Еще 50% защиты
+                    mitigation *= 1.5; 
                 }
             } else {
                 mitigation = Math.floor(defArmor * 0.6);
             }
 
             let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation);
-            
             let resType = isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal"));
             return { dmg: finalDmg, type: resType };
         }
 
         function handleCombatWin() {
             enemy.hp = 0;
-            let goldGained = 10 + (hero.floor * 5);
-            let expGained = 15 + (hero.floor * 4);
+            let goldGained = 15 + (hero.floor * 5);
+            let expGained = 20 + (hero.floor * 8);
             
             if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; }
             if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
@@ -685,11 +724,11 @@
             hero.exp += expGained;
 
             let droppedItem = null;
-            let dropChance = 1 + hero.finalStats.luk * 0.1; 
+            let dropChance = 5 + hero.finalStats.luk * 0.2; 
             let isRelicDrop = false;
 
-            if (enemy.isBoss) { dropChance = 35 + hero.finalStats.luk * 1; isRelicDrop = true; } 
-            else if (enemy.isMiniBoss) { dropChance = 10 + hero.finalStats.luk * 0.5; isRelicDrop = Math.random() > 0.7; }
+            if (enemy.isBoss) { dropChance = 100; isRelicDrop = true; } 
+            else if (enemy.isMiniBoss) { dropChance = 40 + hero.finalStats.luk * 0.5; isRelicDrop = Math.random() > 0.5; }
 
             let logMsg = "";
             if (Math.random() * 100 <= dropChance) {
@@ -703,10 +742,31 @@
                 if (hero.inventory.length < 10) {
                     hero.inventory.push(droppedItem.id);
                 } else {
-                    let sellP = Math.floor(droppedItem.price * 0.5);
-                    hero.gold += sellP;
-                    logMsg = `\nСумка полна! ${isRelicDrop ? 'Реликвия' : 'Вещь'} продана за ${sellP}💰.`;
-                    droppedItem = null; 
+                    // SMART AUTO-SELL (Ищет самый дешевый предмет)
+                    if (droppedItem.rarity === 'relic') {
+                        let cheapestIdx = 0;
+                        let minPrice = ITEMS_DB[hero.inventory[0]].price || 0;
+                        for(let i=1; i<10; i++) {
+                            let p = ITEMS_DB[hero.inventory[i]].price || 0;
+                            if(p < minPrice) { minPrice = p; cheapestIdx = i; }
+                        }
+                        if (minPrice < droppedItem.price) {
+                            let soldItem = ITEMS_DB[hero.inventory[cheapestIdx]];
+                            hero.gold += Math.floor(soldItem.price * 0.5);
+                            logMsg = `\nСумка полна! Выброшен ${soldItem.name}, чтобы взять Реликвию!`;
+                            hero.inventory[cheapestIdx] = droppedItem.id;
+                        } else {
+                            let sellP = Math.floor(droppedItem.price * 0.5);
+                            hero.gold += sellP;
+                            logMsg = `\nСумка полна! Реликвия продана за ${sellP}💰.`;
+                            droppedItem = null;
+                        }
+                    } else {
+                        let sellP = Math.floor(droppedItem.price * 0.5);
+                        hero.gold += sellP;
+                        logMsg = `\nСумка полна! Вещь продана за ${sellP}💰.`;
+                        droppedItem = null;
+                    }
                 }
             }
             
@@ -748,17 +808,17 @@
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
 
-            let zones = ["head", "chest", "legs"];
-            let eAtkZone = enemy.nextAtkZone;
-            let eDefZone = zones[Math.floor(Math.random()*3)];
-            let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги"};
+            let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)"};
+            let eAtkZone = enemy.nextAtkZone; // Захватываем намерение врага ДО хода
+            let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
 
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
-            // Герой бьет
+            // === ГЕРОЙ БЬЕТ ===
             let hRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone);
             enemy.hp -= hRes.dmg;
             
+            triggerHitAnim("combat-enemy-avatar");
             if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge");
             else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
             else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
@@ -768,34 +828,53 @@
             if (enemy.hp <= 0) {
                 handleCombatWin();
             } else {
+                // === ВРАГ БЬЕТ ===
                 if (combatState.enemyStunned) {
-                    logCombat(`<span class="log-sys">${enemy.name} оглушен!</span>`);
+                    logCombat(`<span class="log-sys">${enemy.name} оглушен! Он пропускает ход.</span>`);
                     combatState.enemyStunned = false;
+                    // Если оглушен, намерение сохраняется на следующий ход (Игрок выйграл время)
                 } else {
                     let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1);
-                    let eRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone);
-                    if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
+                    let eRes;
+
+                    if (eAtkZone === 'ULTIMATUM') {
+                        // Атака ультиматумом (игнорирует защитную зону игрока, режет броню)
+                        let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5);
+                        if (forceDodge) {
+                            eRes = { dmg: 0, type: "dodge" };
+                        } else {
+                            let mitigation = Math.floor(hero.finalStats.armor * 0.3); // Броня почти не спасает
+                            let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation);
+                            eRes = { dmg: finalDmg, type: "crit" };
+                        }
+                    } else {
+                        eRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone);
+                        if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
+                    }
 
                     hero.hp -= eRes.dmg;
-                    
+                    triggerHitAnim("combat-hero-avatar");
+
                     if (eRes.type === "dodge") showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
                     else if (eRes.type === "perfect_block") {
                         showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block");
                         logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! Перезарядка скилла ускорена!</span>`);
                         if (combatState.skillCooldown > 0) combatState.skillCooldown--;
                     }
+                    else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit");
                     else showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
 
                     logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
                     
                     if (hero.hp <= 0) {
                         hero.hp = 0; 
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вернитесь в Лагерь.</span>`);
+                        if(hero.floor > 1) hero.floor--; // Штраф этажа
+                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вас отбросило на Этаж ${hero.floor}.</span>`);
                     }
+                    
+                    // Враг сходил, планируем его следующий ход
+                    planEnemyTurn();
                 }
-                
-                enemy.nextAtkZone = zones[Math.floor(Math.random()*3)];
-                updateIntentDisplay();
             }
 
             resetCombatZones();
@@ -812,7 +891,7 @@
             document.getElementById("inspect-title").innerText = item.name;
             document.getElementById("inspect-icon-box").className = `vic-loot-box rarity-${item.rarity}`;
             document.getElementById("inspect-icon-box").innerHTML = renderItemIcon(item);
-            document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats) + `<br><i style="color:#71717a">${item.desc||''}</i>`;
+            document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats) + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
 
             let sellPrice = Math.floor(item.price * 0.5);
             document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
@@ -1112,6 +1191,7 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
+                // БАГФИКС: Удалено обращение к несуществующим блокам combat-hero-lvl и combat-enemy-lvl
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
@@ -1257,7 +1337,6 @@
                         let item = ITEMS_DB[itemId];
                         
                         if(item.dropOnly || item.rarity === 'relic') return; 
-
                         if (fClass === 'my_class' && item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return;
 
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
