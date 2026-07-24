@@ -94,7 +94,7 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА 22.0 (ПОЛНОЦЕННЫЕ АРТЫ И СТРОГАЯ ФИКСАЦИЯ) === */
+        /* === PVE БОЕВКА 23.0 === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; transition: background-image 0.5s ease;
@@ -111,52 +111,54 @@
             margin-bottom: 10px; position: relative; gap: 8px;
             background: linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.8) 100%);
             backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
-            border-radius: 12px; padding: 15px 6px 12px 6px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
+            border-radius: 12px; padding: 15px 8px 12px 8px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
         }
         
         /* ЖЕСТКАЯ ФИКСАЦИЯ ВРАППЕРА */
         .combat-entity-wrapper {
-            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 50%;
-            height: 200px; /* Увеличена высота для больших карточек */
-            justify-content: flex-start;
+            flex: 1; display: flex; flex-direction: column; align-items: center; width: 50%;
+            height: 185px; justify-content: flex-start;
         }
 
-        /* ИМЯ + УРОВЕНЬ НАД КАРТОЧКОЙ */
+        /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ И УРОВНЯ (ИСПРАВЛЕН БАГ СО СМЕЩЕНИЕМ) */
         .entity-name-plate {
-            font-weight: 900; font-size: 13px; color: #e4e4e7; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
-            text-transform: uppercase; letter-spacing: 0.5px; text-align: center;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            width: 100%; height: 16px; 
+            display: flex; justify-content: center; align-items: center; gap: 4px;
+            width: 100%; height: 18px; margin-bottom: 4px;
+        }
+        .entity-name-text {
+            font-weight: 900; font-size: 12px; color: #e4e4e7; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 100px; /* Ограничение длины имени, чтобы влез тег уровня */
         }
         .entity-lvl {
-            color: #fbbf24; font-size: 10px; margin-left: 4px; padding: 1px 4px;
+            flex-shrink: 0; /* Тег никогда не сжимается */
+            color: #fbbf24; font-size: 9px; font-weight: bold; padding: 2px 4px;
             background: rgba(0,0,0,0.6); border-radius: 4px; border: 1px solid #b45309;
         }
 
-        /* 🃏 СТИЛИ КАРТОЧКИ (УВЕЛИЧЕННЫЕ И ПОЛНЫЕ) */
+        /* 🃏 СТИЛИ КАРТОЧКИ */
         .combat-card {
-            width: 155px; height: 155px; min-height: 155px; min-width: 155px; /* Увеличенный квадрат */
+            width: 135px; height: 135px; min-height: 135px; min-width: 135px; 
             background: #000; border: 2px solid #3f3f46; 
             border-radius: 12px; position: relative; 
             box-shadow: 0 6px 15px rgba(0,0,0,0.8); display: flex;
-            overflow: hidden; 
+            overflow: hidden; margin-bottom: 6px;
         }
         .combat-card.hero { border-color: #71717a; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
         .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
-        /* OBJECT-FIT CONTAIN чтобы арт не обрезался, а вписывался полностью! */
         .card-avatar-img { 
-            width: 100%; height: 100%; object-fit: contain; /* Картинка теперь цельная! */
-            background-color: #0d0d0f; /* Темный фон на случай если картинка не квадратная */
-            filter: brightness(0.95); transition: filter 0.2s; 
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: brightness(0.9); transition: filter 0.2s; 
             border-radius: 10px; 
         }
         
         .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
         /* ПАНЕЛЬ ХП ВНИЗУ */
-        .entity-hp-plate { width: 100%; max-width: 155px; text-align: center; }
+        .entity-hp-plate { width: 100%; max-width: 135px; text-align: center; }
         .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; }
         .hp-bar-outer { width: 100%; height: 8px; background: #1a0505; border-radius: 4px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
         
@@ -252,7 +254,7 @@
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
         
-        /* === МАГАЗИН И ПР === */
+        /* МАГАЗИН */
         .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; }
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
@@ -285,8 +287,11 @@
 
     <script>
         const STATIC_URL = "{{ url_for('static', filename='') }}";
-        const GOD_MODE = true; // РЕЖИМ БОГА Включен (Бесконечное ХП у героя)
+        const GOD_MODE = true; // РЕЖИМ БОГА Включен
     </script>
+
+    <!-- Пелена штрафа смерти -->
+    <div id="blood-screen" class="blood-overlay"></div>
 
     <div class="top-dashboard">
         <div class="resources">
@@ -320,7 +325,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 22.0 - НОВЫЙ ПУЛ МОБОВ И БОССОВ) -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 23.0 - ИМЕНА И ПРИВЯЗКА) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -343,7 +348,6 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК -->
             <div class="combat-entities">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
@@ -383,6 +387,7 @@
                 </div>
             </div>
 
+            <!-- ЛОГ БОЯ -->
             <div class="combat-log-box" id="combat-log"></div>
 
             <!-- ЕДИНАЯ БОЕВАЯ ПАНЕЛЬ -->
@@ -581,30 +586,18 @@
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
         
-        // НОВЫЙ ПУЛ МОБОВ ДЛЯ DARK FANTASY (Строгая привязка)
+        // ⚔️ ЖЕСТКАЯ ПРИВЯЗКА (ДЛЯ ОБЫЧНЫХ МОБОВ - 20 ШТУК)
         const NORMAL_MOBS = [
-            { id: 1, name: "Падший Страж", minFloor: 1 },
-            { id: 2, name: "Чумная Жаба", minFloor: 1 },
-            { id: 3, name: "Пещерная Сколопендра", minFloor: 1 },
-            { id: 4, name: "Алая Ведьма", minFloor: 3 },
-            { id: 5, name: "Скелет-Мародер", minFloor: 3 },
-            { id: 6, name: "Теневой Охотник", minFloor: 5 },
-            { id: 7, name: "Гниющий Упырь", minFloor: 5 },
-            { id: 8, name: "Проклятый Волк", minFloor: 8 },
-            { id: 9, name: "Голем из Крови", minFloor: 8 },
-            { id: 10, name: "Вурдалак", minFloor: 11 },
-            { id: 11, name: "Костяной Дракон", minFloor: 11 },
-            { id: 12, name: "Безликий Убийца", minFloor: 15 },
-            { id: 13, name: "Некромант", minFloor: 15 },
-            { id: 14, name: "Призрачный Рыцарь", minFloor: 21 },
-            { id: 15, name: "Гаргулья", minFloor: 21 },
-            { id: 16, name: "Темный Жрец", minFloor: 25 },
-            { id: 17, name: "Демон-Прислужник", minFloor: 25 },
-            { id: 18, name: "Оскверненный Энт", minFloor: 31 },
-            { id: 19, name: "Мерзость", minFloor: 31 },
-            { id: 20, name: "Адепт Бездны", minFloor: 41 }
+            { id: 1, name: "Падший Страж" }, { id: 2, name: "Чумная Жаба" }, { id: 3, name: "Пещерная Сколопендра" },
+            { id: 4, name: "Алая Ведьма" }, { id: 5, name: "Скелет-Мародер" }, { id: 6, name: "Теневой Охотник" },
+            { id: 7, name: "Гниющий Упырь" }, { id: 8, name: "Проклятый Волк" }, { id: 9, name: "Голем из Крови" },
+            { id: 10, name: "Вурдалак" }, { id: 11, name: "Костяной Дракон" }, { id: 12, name: "Безликий Убийца" },
+            { id: 13, name: "Некромант" }, { id: 14, name: "Призрачный Рыцарь" }, { id: 15, name: "Гаргулья" },
+            { id: 16, name: "Темный Жрец" }, { id: 17, name: "Демон-Прислужник" }, { id: 18, name: "Оскверненный Энт" },
+            { id: 19, name: "Мерзость" }, { id: 20, name: "Адепт Бездны" }
         ];
 
+        // 👑 ЖЕСТКАЯ ПРИВЯЗКА БОССОВ К ЭТАЖАМ (10-100)
         const BOSSES = {
             10: { id: 21, name: "Безумный Гном-Танк" },
             20: { id: 22, name: "Лорд Вампиров" },
@@ -622,20 +615,37 @@
 
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
+        setInterval(() => {
+            let bloodScreen = document.getElementById('blood-screen');
+            if (hero.deathDebuffEnd > Date.now()) {
+                let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000);
+                let m = Math.floor(left/60); let s = left%60;
+                let el = document.getElementById('ui-debuff-timer');
+                if(el) { el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`; el.style.display = 'block'; }
+                if(bloodScreen) bloodScreen.classList.add('active');
+            } else {
+                let el = document.getElementById('ui-debuff-timer');
+                if(el && hero.deathDebuffEnd !== 0) {
+                    el.style.display = 'none'; hero.deathDebuffEnd = 0;
+                    if(bloodScreen) bloodScreen.classList.remove('active');
+                    calculateStats(); updateUI();
+                }
+            }
+        }, 1000);
+
         function generateEnemy(floorLevel) {
             let isMegaBoss = floorLevel % 10 === 0;
             let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
             
             let mobData;
             if (isMegaBoss) {
-                // Если этаж > 100, берем последнего босса (ID 30)
                 let bossKey = floorLevel > 100 ? 100 : floorLevel;
-                mobData = BOSSES[bossKey];
+                mobData = BOSSES[bossKey] || BOSSES[10];
             } else {
-                // Фильтруем мобов по уровню этажа
-                let availableMobs = NORMAL_MOBS.filter(m => m.minFloor <= floorLevel);
-                if (availableMobs.length === 0) availableMobs = [NORMAL_MOBS[0]]; // fallback
-                mobData = availableMobs[Math.floor(Math.random() * availableMobs.length)];
+                // Строгая математическая привязка (без рандома)
+                let normalFloorCount = floorLevel - Math.floor(floorLevel / 10);
+                let mobIndex = (normalFloorCount - 1) % NORMAL_MOBS.length;
+                mobData = NORMAL_MOBS[mobIndex];
             }
 
             let name = mobData.name;
@@ -1306,13 +1316,13 @@
 
                 // === ИМЯ И УРОВЕНЬ (ПРИСТАВКОЙ) ===
                 let heroLvlHtml = `<span class="entity-lvl">УР. ${hero.level}</span>`;
-                document.getElementById("combat-hero-name").innerHTML = `${hero.name} ${heroLvlHtml}`;
+                document.getElementById("combat-hero-name").innerHTML = `<span class="entity-name-text">${hero.name}</span>${heroLvlHtml}`;
                 document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
                 
                 let bossIcon = enemy.isBoss ? "👑 " : (enemy.isMiniBoss ? "☠️ " : "");
                 let enemyCleanName = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", "");
                 let enemyLvlHtml = `<span class="entity-lvl">УР. ${enemy.floor}</span>`;
-                document.getElementById("combat-enemy-name").innerHTML = `${bossIcon}${enemyCleanName} ${enemyLvlHtml}`;
+                document.getElementById("combat-enemy-name").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlHtml}`;
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
                 
                 if(enemy.isBoss) document.getElementById("entity-enemy-box").className = "combat-card boss";
