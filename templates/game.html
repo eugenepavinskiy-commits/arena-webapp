@@ -175,7 +175,7 @@
         .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
         .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
 
-        /* МОДАЛКИ */
+        /* === МОДАЛКИ === */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; }
         .modal-overlay.show { display: flex; }
         .vic-title { font-size: 22px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 6px; text-transform: uppercase;}
@@ -184,7 +184,8 @@
         .modal-btn.danger { background: #ef4444; color: #fff; }
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; }
         
-        /* МАГАЗИН И ПРОЧЕЕ */
+        /* === МАГАЗИН === */
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; /* БАГФИКС ГИГАНТСКИХ ИЗОБРАЖЕНИЙ */ }
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
         .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; }
@@ -193,7 +194,6 @@
         .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 10px; font-size: 12px; outline: none; }
         .shop-list { display: flex; flex-direction: column; gap: 12px; }
         .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
         .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
         .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; }
@@ -207,6 +207,14 @@
         .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
         .btn-sell { background: #ef4444; color: #fff; border-bottom: 3px solid #7f1d1d;}
+
+        /* === КЛАССЫ === */
+        .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+        .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; opacity: 0.4; filter: grayscale(100%); }
+        .class-icon-btn.selected { background: #18181b; border-color: #52525b; opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
+        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 8px; width: 100%; }
+        .class-preview-img { width: 100%; height: auto; display: block; border-bottom: 1px solid #27272a; }
+        .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -238,6 +246,7 @@
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
     </div>
 
+    <!-- ИНСПЕКЦИЯ ПРЕДМЕТА -->
     <div class="modal-overlay" id="item-inspect-modal">
         <div class="vic-title" style="font-size:16px;" id="inspect-title">Осмотр Предмета</div>
         <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px;"></div>
@@ -247,7 +256,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА 13.0 -->
+    <!-- PVE БОЕВКА -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -274,7 +283,9 @@
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 
                 <div class="combat-entity" id="entity-hero-box">
-                    <div class="combat-avatar" id="combat-hero-avatar">🛡️<div class="slash-fx" id="hero-slash"></div></div>
+                    <div class="combat-avatar" id="combat-hero-avatar">🛡️
+                        <div class="slash-fx" id="hero-slash"></div>
+                    </div>
                     <div class="combat-name" id="combat-hero-name">Герой</div>
                     <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
@@ -283,7 +294,10 @@
                 <div class="combat-vs">VS</div>
                 
                 <div class="combat-entity" id="entity-enemy-box">
-                    <div class="combat-avatar" id="combat-enemy-avatar">🧟<div class="status-icon" id="enemy-stun-icon">💫</div><div class="slash-fx" id="enemy-slash"></div></div>
+                    <div class="combat-avatar" id="combat-enemy-avatar">🧟
+                        <div class="status-icon" id="enemy-stun-icon">💫</div>
+                        <div class="slash-fx" id="enemy-slash"></div>
+                    </div>
                     <div class="combat-name" id="combat-enemy-name">Монстр</div>
                     <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
@@ -440,20 +454,17 @@
         let previewClassId = "knight";
         let inspectInvIndex = null;
 
-        // HERO STATE
         let hero = {
             name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0,
             baseClass: "knight", hp: 100, maxHp: 100,
             baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
-            finalStats: {}, combatStats: {},
-            deathDebuffEnd: 0 
+            finalStats: {}, combatStats: {}, deathDebuffEnd: 0 
         };
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
-        // === SAVE SYSTEM (LOCAL STORAGE) ===
         function saveGame() {
             localStorage.setItem('tg_rpg_hero', JSON.stringify(hero));
             let customItems = {};
@@ -471,7 +482,6 @@
             }
             if(savedHero) {
                 hero = JSON.parse(savedHero);
-                // Защита от NaN при обновах:
                 if(isNaN(hero.hp)) hero.hp = 100;
             }
             previewClassId = hero.baseClass;
@@ -485,10 +495,8 @@
             }
         }
 
-        // Загрузка при старте
         loadGame();
 
-        // PVE COMBAT STATE
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
@@ -540,8 +548,7 @@
             hero.floor += dir;
             if (hero.floor < 1) hero.floor = 1;
             if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor;
-            saveGame();
-            initCombat();
+            saveGame(); initCombat();
         }
 
         function generateBossDrop(floor, specificId = null) {
@@ -619,14 +626,10 @@
 
         function triggerHitAnim(elementId) {
             let el = document.getElementById(elementId);
-            if(el) {
-                el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim");
-            }
+            if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); }
             let slashId = elementId === "combat-hero-avatar" ? "hero-slash" : "enemy-slash";
             let slash = document.getElementById(slashId);
-            if(slash) {
-                slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out';
-            }
+            if(slash) { slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out'; }
         }
 
         function showDmgPopup(entityBoxId, text, colorClass) {
@@ -797,10 +800,7 @@
             updateUI(); 
         }
 
-        function closeVictoryModal() {
-            document.getElementById("vic-modal").classList.remove("show");
-            initCombat();
-        }
+        function closeVictoryModal() { document.getElementById("vic-modal").classList.remove("show"); initCombat(); }
 
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
@@ -811,7 +811,6 @@
 
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
-            // Герой бьет
             let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone);
             enemy.hp -= hRes.dmg;
             
@@ -886,10 +885,7 @@
                     planEnemyTurn();
                 }
             }
-
-            resetCombatZones();
-            saveGame();
-            updateUI();
+            resetCombatZones(); saveGame(); updateUI();
         }
 
         function openInspectModal(invIndex) {
@@ -1001,6 +997,7 @@
             if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert("Предмет не для вашего класса!");
             if (hero.inventory.length >= 10) return alert("Сумка полна!");
             hero.gold -= item.price; hero.inventory.push(itemId);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             saveGame(); updateUI();
         }
         
@@ -1023,6 +1020,7 @@
             }
             if (hero.gold >= cost) {
                 hero.gold -= cost; hero.hp = hero.finalStats.hp;
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 saveGame(); updateUI();
             } else { alert(`Нужно ${cost} золота для полного лечения! У вас ${hero.gold}.`); }
         }
@@ -1191,7 +1189,6 @@
                 document.getElementById("ui-class-name").innerHTML = `<button class="reset-btn" onclick="hardReset()">СБРОС</button> ${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
                 document.getElementById("main-hero-avatar").src = CLASS_AVATARS[hero.baseClass];
 
-                // Визуализация поломок на экране героя
                 let isCombat = currentScreen === 'PVE' && enemy;
                 let skipHead = isCombat && combatState.zoneHealth.head === 0;
                 let skipChest = isCombat && combatState.zoneHealth.chest === 0;
