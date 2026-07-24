@@ -106,7 +106,7 @@
             100% { box-shadow: inset 0 0 70px rgba(220, 38, 38, 0.4); background: rgba(220, 38, 38, 0.05); }
         }
 
-        /* === PVE БОЕВКА 25.0 (КРАСИВАЯ ДИОРАМА) === */
+        /* === PVE БОЕВКА 26.0 (ИДЕАЛЬНЫЙ АРТ) === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
@@ -124,45 +124,45 @@
             border: 2px solid #18181b; border-bottom: 4px solid #050505;
             border-radius: 12px; padding: 15px 8px 12px 8px; 
             box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5);
-            /* Фон задается через JS */
             background-color: #121214;
         }
         
-        /* ЖЕСТКАЯ ФИКСАЦИЯ ВРАППЕРА */
+        /* ВРАППЕРЫ ДЛЯ РАЗДЕЛЕНИЯ ТЕКСТА И КАРТИНКИ */
         .combat-entity-wrapper {
-            flex: 1; display: flex; flex-direction: column; align-items: center; width: 50%;
-            height: 220px; /* Увеличена высота для больших карточек и новых шрифтов */
+            flex: 1; display: flex; flex-direction: column; align-items: center; 
+            width: 48%; /* Максимально широкие */
             justify-content: flex-start; z-index: 2;
         }
 
-        /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ И УРОВНЯ В ОДНУ СТРОКУ */
+        /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ И УРОВНЯ */
         .entity-name-plate {
             display: flex; align-items: center; justify-content: center; gap: 6px;
             width: 100%; min-height: 24px; margin-bottom: 6px;
         }
-        /* КРАСИВЫЙ ШРИФТ ДЛЯ ИМЕНИ */
         .entity-name-text {
             font-family: "Georgia", "Palatino Linotype", serif;
             font-weight: bold; font-size: 14px; color: #fbbf24; 
             text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4);
             text-transform: uppercase; letter-spacing: 0.5px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            max-width: 105px; 
+            max-width: 100px; 
         }
         .entity-lvl {
             flex-shrink: 0; color: #e4e4e7; font-size: 10px; font-weight: 900; padding: 2px 5px;
             background: linear-gradient(135deg, #7f1d1d, #450a0a); 
             border-radius: 4px; border: 1px solid #ef4444;
             box-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            font-family: -apple-system, sans-serif; /* Обычный шрифт для читаемости цифр */
+            font-family: -apple-system, sans-serif;
         }
         .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
         .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
 
-        /* 🃏 СТИЛИ КАРТОЧКИ (УВЕЛИЧЕННЫЕ И ШИРОКИЕ) */
+        /* 🃏 СТИЛИ КАРТОЧКИ: ИДЕАЛЬНЫЙ КВАДРАТ */
         .combat-card {
-            width: 100%; max-width: 150px; height: 165px; 
-            background: #000; border: 2px solid #3f3f46; 
+            width: 100%; 
+            max-width: 160px; /* Увеличено до максимума */
+            aspect-ratio: 1; /* ГАРАНТИЯ КВАДРАТНОЙ ФОРМЫ */
+            background: #050505; border: 2px solid #3f3f46; 
             border-radius: 10px; position: relative; 
             box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8);
             overflow: hidden; margin-bottom: 6px;
@@ -171,12 +171,16 @@
         .combat-card.boss { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
         .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
+        
+        /* CONTAIN - АРТ НЕ ОБРЕЗАЕТСЯ */
         .card-avatar-img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            filter: brightness(0.9); transition: filter 0.2s; 
+            width: 100%; height: 100%; 
+            object-fit: contain; /* Все детали картинки будут видны! */
+            background-color: #050505;
+            filter: brightness(0.95); transition: filter 0.2s; 
         }
         
-        /* Линза поверх картинки для эффекта вдавленности в экран */
+        /* Линза поверх картинки */
         .combat-card::after {
             content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
             border-radius: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.1);
@@ -298,6 +302,9 @@
         .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
+        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea;}
+        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d;}
+        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; }
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; }
         .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
@@ -353,7 +360,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 25.0 - ДИОРАМА) -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 26.0 - АБСОЛЮТНАЯ ГЕОМЕТРИЯ) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -376,7 +383,7 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК (ТЕПЕРЬ С ФОНОМ ВНУТРИ) -->
+            <!-- ЗОНА КАРТОЧЕК НА ПРОЗРАЧНОМ ПЬЕДЕСТАЛЕ -->
             <div class="combat-entities" id="combat-entities-box">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
@@ -1242,7 +1249,12 @@
             }
 
             let hp = total.end * 10; 
-            if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; }
+            
+            if (GOD_MODE) { 
+                hp = 999999; 
+                hero.hp = 999999; 
+                hero.deathDebuffEnd = 0; 
+            } 
             
             let damage = total.str * 2 + total.atk;
             total.critChance += (total.luk / 5); total.dodge += (total.agi / 4);      
