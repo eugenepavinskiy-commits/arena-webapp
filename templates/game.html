@@ -106,90 +106,99 @@
             100% { box-shadow: inset 0 0 70px rgba(220, 38, 38, 0.4); background: rgba(220, 38, 38, 0.05); }
         }
 
-        /* === PVE БОЕВКА 24.0 (УЛУЧШЕННЫЕ ПРОПОРЦИИ И ПЕРЕНОС СТРОК) === */
+        /* === PVE БОЕВКА 25.0 (КРАСИВАЯ ДИОРАМА) === */
         .combat-arena { 
             border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
-            position: relative; overflow: hidden; transition: background-image 0.5s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a;
+            position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            background-color: #0f172a; 
         }
 
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ */
+        /* 🖼️ АЛТАРЬ ДЛЯ КАРТОЧЕК (ТЕПЕРЬ С ФОНОМ!) */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; position: relative; gap: 8px;
-            background: linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.8) 100%);
-            backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
-            border-radius: 12px; padding: 15px 8px 12px 8px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
+            border: 2px solid #18181b; border-bottom: 4px solid #050505;
+            border-radius: 12px; padding: 15px 8px 12px 8px; 
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5);
+            /* Фон задается через JS */
+            background-color: #121214;
         }
         
-        /* КОНТЕЙНЕРЫ (48% ширины = МАКСИМАЛЬНЫЙ РАЗМЕР КАРТ) */
+        /* ЖЕСТКАЯ ФИКСАЦИЯ ВРАППЕРА */
         .combat-entity-wrapper {
-            width: 48%; max-width: 170px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            flex: 1; display: flex; flex-direction: column; align-items: center; width: 50%;
+            height: 220px; /* Увеличена высота для больших карточек и новых шрифтов */
+            justify-content: flex-start; z-index: 2;
         }
 
-        /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ (ДВЕ СТРОКИ, БЕЗ ОБРЕЗАНИЯ) */
+        /* 💎 УМНЫЙ КОНТЕЙНЕР ДЛЯ ИМЕНИ И УРОВНЯ В ОДНУ СТРОКУ */
         .entity-name-plate {
-            display: flex; align-items: flex-end; justify-content: center;
-            width: 100%; min-height: 28px; /* Фиксируем высоту под 2 строчки */
-            font-weight: 900; font-size: 11px; color: #e4e4e7;
-            text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,0.8);
-            text-transform: uppercase; text-align: center;
-            white-space: normal; word-wrap: break-word; line-height: 1.1; margin-bottom: 4px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; min-height: 24px; margin-bottom: 6px;
         }
+        /* КРАСИВЫЙ ШРИФТ ДЛЯ ИМЕНИ */
+        .entity-name-text {
+            font-family: "Georgia", "Palatino Linotype", serif;
+            font-weight: bold; font-size: 14px; color: #fbbf24; 
+            text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 105px; 
+        }
+        .entity-lvl {
+            flex-shrink: 0; color: #e4e4e7; font-size: 10px; font-weight: 900; padding: 2px 5px;
+            background: linear-gradient(135deg, #7f1d1d, #450a0a); 
+            border-radius: 4px; border: 1px solid #ef4444;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-family: -apple-system, sans-serif; /* Обычный шрифт для читаемости цифр */
+        }
+        .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
+        .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
 
-        /* 🃏 КАРТОЧКА: АБСОЛЮТНЫЙ КВАДРАТ И ЭФФЕКТ ГЛУБИНЫ */
+        /* 🃏 СТИЛИ КАРТОЧКИ (УВЕЛИЧЕННЫЕ И ШИРОКИЕ) */
         .combat-card {
-            width: 100%; aspect-ratio: 1; /* Квадрат зависит от ширины экрана */
+            width: 100%; max-width: 150px; height: 165px; 
             background: #000; border: 2px solid #3f3f46; 
             border-radius: 10px; position: relative; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); /* УГЛУБЛЕНИЕ */
-            overflow: hidden; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8);
+            overflow: hidden; margin-bottom: 6px;
         }
         .combat-card.hero { border-color: #71717a; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
-        /* Линза поверх картинки для вдавленности */
+        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
+        .card-avatar-img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: brightness(0.9); transition: filter 0.2s; 
+        }
+        
+        /* Линза поверх картинки для эффекта вдавленности в экран */
         .combat-card::after {
             content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
             border-radius: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.1);
             pointer-events: none; z-index: 5;
         }
 
-        .card-avatar-img { 
-            width: 100%; height: 100%; object-fit: cover; 
-            filter: brightness(0.9); transition: filter 0.2s; 
-        }
-        
-        /* ТЕГ УРОВНЯ ТЕПЕРЬ В УГЛУ КАРТОЧКИ (Без "Рыцаря") */
-        .entity-lvl {
-            position: absolute; top: 4px; left: 4px; z-index: 10;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(2px);
-            color: #fbbf24; font-size: 9px; font-weight: bold; 
-            padding: 2px 4px; border-radius: 4px; border: 1px solid #b45309;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-        .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: rgba(69,10,10,0.8); }
-        .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: rgba(69,26,3,0.8); }
-
         .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
-        /* ПАНЕЛЬ ХП ВНИЗУ (УМЕНЬШЕН ШРИФТ) */
-        .entity-hp-plate { width: 100%; text-align: center; margin-top: 2px; }
-        .hp-text-plate { font-size: 9px; font-weight: bold; margin-bottom: 2px; color: #d4d4d8; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
+        /* ПАНЕЛЬ ХП ВНИЗУ */
+        .entity-hp-plate { width: 100%; max-width: 140px; text-align: center; }
+        .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
         .hp-bar-outer { width: 100%; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
         
-        .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
-        .hero-hp-fill { background: linear-gradient(90deg, #b91c1c 0%, #f87171 100%); }
+        .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+        .hero-hp-fill { background: linear-gradient(90deg, #dc2626 0%, #fca5a5 100%); }
         .enemy-hp-fill { background: linear-gradient(90deg, #7f1d1d 0%, #ef4444 100%); }
         
-        .boss-rage-bg { width: 100%; height: 2px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 3px;}
+        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
+        .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-        .combat-vs { font-size: 22px; font-weight: 900; color: #71717a; margin: 0 2px; text-shadow: 0 2px 4px #000; font-style: italic;}
+        .combat-vs { font-size: 22px; font-weight: 900; color: #71717a; margin: 0 2px; text-shadow: 0 2px 4px #000; font-style: italic; z-index: 2;}
         .combo-meter { position: absolute; top: 4px; right: 10px; font-size: 10px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
         .combo-meter.show { opacity: 1; }
 
@@ -198,7 +207,6 @@
         @keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
         .spark-anim { animation: spark-boom 0.4s ease-out; }
 
-        /* АНИМАЦИИ СТОЛКНОВЕНИЯ ТОЛЬКО ДЛЯ КАРТОЧКИ */
         @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(15px) rotate(3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(20px) rotate(3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
         @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-15px) rotate(-3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(-20px) rotate(-3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
         .clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -290,9 +298,6 @@
         .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
-        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea;}
-        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d;}
-        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; }
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; }
         .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
@@ -348,7 +353,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 24.0) -->
+    <!-- PVE БОЕВКА (ИДЕАЛЬНЫЙ UI 25.0 - ДИОРАМА) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -356,7 +361,7 @@
             <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
         </div>
         
-        <div class="combat-arena" id="arena-bg">
+        <div class="combat-arena" id="arena-bg" style="background-color: #0f172a;">
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
                 <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
@@ -371,16 +376,18 @@
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🗡️ Враг выжидает и готовится к удару...</div>
 
-            <!-- ЗОНА КАРТОЧЕК НА ПРОЗРАЧНОМ ПЬЕДЕСТАЛЕ -->
-            <div class="combat-entities">
+            <!-- ЗОНА КАРТОЧЕК (ТЕПЕРЬ С ФОНОМ ВНУТРИ) -->
+            <div class="combat-entities" id="combat-entities-box">
                 <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
                 <div class="clash-spark" id="clash-spark-fx"></div>
                 
                 <!-- ГЕРОЙ -->
                 <div class="combat-entity-wrapper">
-                    <div class="entity-name-plate" id="combat-hero-name">Герой</div>
-                    <div class="combat-card hero" id="entity-hero-box">
+                    <div class="entity-name-plate" id="combat-hero-name-plate">
+                        <span class="entity-name-text" id="combat-hero-name">Герой</span>
                         <span class="entity-lvl" id="hero-tag-lvl">УР. 1</span>
+                    </div>
+                    <div class="combat-card hero" id="entity-hero-box">
                         <div class="card-avatar-wrap">
                             <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
                             <div class="slash-fx" id="hero-slash"></div>
@@ -396,9 +403,11 @@
                 
                 <!-- МОНСТР -->
                 <div class="combat-entity-wrapper">
-                    <div class="entity-name-plate" id="combat-enemy-name">Монстр</div>
-                    <div class="combat-card" id="entity-enemy-box">
+                    <div class="entity-name-plate" id="combat-enemy-name-plate">
+                        <span class="entity-name-text" id="combat-enemy-name">Монстр</span>
                         <span class="entity-lvl" id="enemy-tag-lvl">УР. 1</span>
+                    </div>
+                    <div class="combat-card" id="entity-enemy-box">
                         <div class="card-avatar-wrap">
                             <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
                             <div class="status-icon" id="enemy-stun-icon">💫</div>
@@ -1233,13 +1242,7 @@
             }
 
             let hp = total.end * 10; 
-            
-            // ВАЖНО: Если включен GOD_MODE, принудительно делаем героя бессмертным.
-            if (GOD_MODE) { 
-                hp = 999999; 
-                hero.hp = 999999; 
-                hero.deathDebuffEnd = 0; // Снимаем штрафы в годмоде
-            } 
+            if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; }
             
             let damage = total.str * 2 + total.atk;
             total.critChance += (total.luk / 5); total.dodge += (total.agi / 4);      
@@ -1323,8 +1326,8 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                let arenaBg = document.getElementById("arena-bg");
-                arenaBg.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.85) 100%), url('${enemy.bgUrl}')`;
+                let arenaBg = document.querySelector(".combat-entities");
+                arenaBg.style.backgroundImage = `linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`;
                 arenaBg.style.backgroundSize = 'cover';
                 arenaBg.style.backgroundPosition = 'center';
                 
@@ -1345,26 +1348,24 @@
                 if (combatState.enemyStunned) stunIcon.style.display = "block";
                 else stunIcon.style.display = "none";
 
-                // === ИМЕНА И ТЕГИ УРОВНЯ ВНУТРИ КАРТОЧЕК ===
-                document.getElementById("combat-hero-name").innerText = hero.name;
-                document.getElementById("hero-tag-lvl").innerText = `УР. ${hero.level}`;
+                // === ИМЕНА И ТЕГИ ===
+                let heroLvlHtml = `<span class="entity-lvl">УР. ${hero.level}</span>`;
+                document.getElementById("combat-hero-name-plate").innerHTML = `<span class="entity-name-text">${hero.name}</span>${heroLvlHtml}`;
                 document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
                 
                 let bossIcon = enemy.isBoss ? "👑 " : (enemy.isMiniBoss ? "☠️ " : "");
-                document.getElementById("combat-enemy-name").innerText = `${bossIcon}${enemy.name}`;
+                let enemyCleanName = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", "");
                 
-                let enemyLvlTag = document.getElementById("enemy-tag-lvl");
+                let enemyLvlTag = "";
                 if(enemy.isBoss) {
-                    enemyLvlTag.className = "entity-lvl boss";
-                    enemyLvlTag.innerText = `БОСС ${enemy.floor}`;
+                    enemyLvlTag = `<span class="entity-lvl boss">БОСС ${enemy.floor}</span>`;
                 } else if(enemy.isMiniBoss) {
-                    enemyLvlTag.className = "entity-lvl elite";
-                    enemyLvlTag.innerText = `ЭЛИТА ${enemy.floor}`;
+                    enemyLvlTag = `<span class="entity-lvl elite">ЭЛИТА ${enemy.floor}</span>`;
                 } else {
-                    enemyLvlTag.className = "entity-lvl";
-                    enemyLvlTag.innerText = `УР. ${enemy.floor}`;
+                    enemyLvlTag = `<span class="entity-lvl">УР. ${enemy.floor}</span>`;
                 }
-                
+
+                document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`;
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
                 
                 if(enemy.isBoss) document.getElementById("entity-enemy-box").className = "combat-card boss";
