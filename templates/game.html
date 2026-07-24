@@ -21,8 +21,8 @@
             border: 1px solid #27272a; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
             position: relative; overflow: hidden;
         }
-        .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2;}
-        .resources span { color: #fff; margin-right: 12px; }
+        .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
+        .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
@@ -36,11 +36,7 @@
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.02), 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px;
         }
         .nav-btn:active { transform: scale(0.95); }
-        .nav-btn.active { 
-            background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); 
-            color: #e9d5ff; border-color: #9333ea; 
-            box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); 
-        }
+        .nav-btn.active { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); }
         .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -50,26 +46,17 @@
             border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; 
             padding: 10px; text-align: center; margin-bottom: 16px; 
             color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center;
         }
         
-        .floor-nav-btn {
-            background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; 
-            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
+        .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .floor-nav-btn:active { transform: scale(0.9); }
         .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         /* === ИНВЕНТАРЬ И ГЕРОЙ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
-        .equip-slot {
-            width: 48px; height: 48px; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: transform 0.1s;
-            background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95);
-        }
+        .equip-slot { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95); }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { background: #050505; border: 1px solid #1c1c1f; }
         .equip-slot.blocked { border: 1px solid #450a0a; background: #1a0505; cursor: not-allowed; }
@@ -100,92 +87,83 @@
         /* === СТАТЫ === */
         .levelup-container { margin-bottom: 16px; }
         .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;}
-        .btn-toggle-levelup.active { background: #451a03; color: #fbbf24; border-color: #92400e; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); }
-        .levelup-dropdown { background: #121214; border: 1px solid #3f3f46; border-radius: 8px; padding: 12px; margin-top: 8px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
-        .levelup-dropdown.show { display: grid; }
-        .lvl-stat-row { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #27272a; padding: 8px 12px; border-radius: 6px; font-size: 11px; color:#d4d4d8;}
         .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .add-stat-btn:active { transform: scale(0.9); }
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stats-card { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
         .stat-group-title { color: #71717a; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px;}
         .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #27272a; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #a1a1aa; }
-        .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
         .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #18181b;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.4);}
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .heal-btn:active { transform: scale(0.9); }
 
         /* === МАГАЗИН === */
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
-        .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); letter-spacing: 0.5px;}
-        .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
-        .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.2), 0 4px 10px rgba(0,0,0,0.6); }
+        .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
+        .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; }
+        .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; }
         .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
-        .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 10px; font-size: 12px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); }
+        .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 10px; font-size: 12px; outline: none; }
         .shop-list { display: flex; flex-direction: column; gap: 12px; }
         .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9); overflow: hidden; position: relative; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a;}
         .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
-        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; text-shadow: 0 1px 3px #000; }
-        .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; letter-spacing: 0.5px;}
-        .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: bold; text-transform: uppercase;}
+        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
+        .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; }
+        .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
-        .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; box-shadow: 0 0 5px rgba(16,185,129,0.2);}
-        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea; box-shadow: 0 0 5px rgba(147,51,234,0.3);}
-        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d; box-shadow: 0 0 5px rgba(239,68,68,0.2);}
-        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; text-shadow: 0 1px 2px #000;}
-        .stat-diff-pos { color: #34d399; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
-        .stat-diff-neg { color: #f87171; font-size: 10px; font-weight: bold; margin-left: 3px; text-shadow: none;}
-        .shop-item-desc { font-size: 11px; color: #52525b; font-style: italic; line-height: 1.4;}
-        .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; transition: transform 0.1s; text-transform: uppercase; z-index: 2;}
-        .shop-btn:active { transform: translateY(2px); }
-        .btn-buy { background: #fbbf24; color: #000; box-shadow: 0 4px 10px rgba(251,191,36,0.3); border-bottom: 3px solid #b45309;}
-        .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; box-shadow: none;}
-        .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); border-bottom: 3px solid #7f1d1d;}
-        .shop-info-banner { font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 12px; font-style: italic; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; padding: 6px 0; background: #121214;}
+        .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
+        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; }
+        .shop-item-desc { font-size: 11px; color: #52525b; font-style: italic; }
+        .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; }
+        .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
+        .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
+        .btn-sell { background: #ef4444; color: #fff; border-bottom: 3px solid #7f1d1d;}
 
         /* === КЛАССЫ === */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
-        .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; opacity: 0.4; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
-        .class-icon-btn .icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
-        .class-icon-btn .name { font-size: 10px; font-weight: bold; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;}
-        .class-icon-btn.selected { background: #18181b; border-color: #52525b; box-shadow: 0 6px 15px rgba(0,0,0,0.8); opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
-        .class-icon-btn.selected .name { color: #e4e4e7; }
-        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 8px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; }
-        .class-detail-img-box { width: 100%; border-bottom: 1px solid #27272a; }
-        .class-preview-img { width: 100%; height: auto; display: block; }
-        .class-detail-content { padding: 20px; display: flex; flex-direction: column; }
-        .class-detail-header { text-align: center; margin-bottom: 16px; }
-        .class-detail-title { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin-bottom: 8px;}
-        .class-detail-growth { font-size: 11px; color: #71717a; letter-spacing: 0.5px;}
-        .class-detail-lore { font-size: 12px; color: #a1a1aa; line-height: 1.6; font-style: italic; margin-bottom: 24px; text-align: center;}
-        .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-bottom: 4px solid #0d0d0f; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); transition: all 0.1s; letter-spacing: 1.5px;}
-        .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
-        .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
+        .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; opacity: 0.4; filter: grayscale(100%); }
+        .class-icon-btn.selected { background: #18181b; border-color: #52525b; opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
+        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 8px; width: 100%; }
+        .class-preview-img { width: 100%; height: auto; display: block; border-bottom: 1px solid #27272a; }
+        .select-class-btn { width: 100%; background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; }
 
-        /* === PVE БОЕВКА === */
-        .combat-arena { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative;}
+        /* === PVE БОЕВКА 4.0 (СЛЕШИ, БИОМЫ, ТРАВМЫ, КОМБО) === */
+        .combat-arena { border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative; overflow: hidden; transition: background 0.5s ease;}
+        
+        /* Динамические Биомы */
+        .biome-1 { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); } /* Подземелье */
+        .biome-2 { background: radial-gradient(circle at top, #3f1010 0%, #1a0505 100%); } /* Склеп Крови */
+        .biome-3 { background: radial-gradient(circle at top, #064e3b 0%, #022c22 100%); } /* Ядовитые Пещеры */
+        .biome-4 { background: radial-gradient(circle at top, #3b0764 0%, #1e1b4b 100%); } /* Астрал */
+        .biome-boss { background: radial-gradient(circle at top, #7f1d1d 0%, #450a0a 100%); border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); } /* Арена Мега-Босса */
+
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
-        .combat-header.boss { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); font-size: 16px; }
+        .intent-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 12px; }
+        .intent-box.ultimatum { background: #450a0a; border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        .intent-box {
-            background: #1e1b4b; border: 1px solid #6366f1; border-radius: 6px; padding: 6px 10px; text-align: center;
-            font-size: 10px; font-weight: bold; color: #c7d2fe; margin-bottom: 12px; box-shadow: 0 0 10px rgba(99,102,241,0.2);
-        }
-        
-        .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative;}
+        .combat-entities { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; position: relative;}
         .combat-entity { width: 45%; text-align: center; position: relative;}
-        .combat-avatar { font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 4px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px;}
-        .combat-avatar.boss { border-color: #ef4444; box-shadow: inset 0 0 15px rgba(239,68,68,0.3); font-size: 45px;}
-        .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
-        .combat-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; }
-        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
-        .combat-vs { font-size: 16px; font-weight: 900; color: #52525b; }
+        .combat-avatar { font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 4px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px; position: relative; z-index: 2;}
         
-        /* CSS АНИМАЦИИ УДАРА */
+        /* Иконки дебаффов на аватаре */
+        .status-icon { position: absolute; top: -8px; right: -8px; font-size: 16px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 5;}
+        
+        .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; }
+        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+        .combat-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; margin-bottom: 4px;}
+        .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
+        
+        /* Шкала ярости босса */
+        .boss-rage-bg { width: 100%; height: 4px; background: #050505; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; display: none;}
+        .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
+        .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+        .combat-vs { font-size: 16px; font-weight: 900; color: #52525b; margin-bottom: 20px;}
+        .combo-meter { position: absolute; top: -10px; left: 0; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; }
+        .combo-meter.show { opacity: 1; }
+
+        /* CSS АНИМАЦИИ */
         @keyframes hit-shake { 
             0% { transform: translateX(0) scale(1); filter: drop-shadow(0 0 15px rgba(239,68,68,0.8)); } 
             25% { transform: translateX(-5px) scale(0.95); } 
@@ -194,11 +172,23 @@
             100% { transform: translateX(0) scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); } 
         }
         .hit-anim { animation: hit-shake 0.3s ease-out; }
+        
+        .slash-fx {
+            position: absolute; top: 50%; left: 50%; width: 80px; height: 4px;
+            background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444;
+            transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+            pointer-events: none; z-index: 10; opacity: 0;
+        }
+        @keyframes slashAnim {
+            0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; }
+        }
 
-        .dmg-popup { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 10; }
+        .dmg-popup { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 15; text-shadow: 0 2px 4px #000;}
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -25px) scale(1.3); } }
 
-        .combat-log-box { background: #09090b; border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
+        .combat-log-box { background: rgba(9, 9, 11, 0.8); border: 1px solid #18181b; border-radius: 6px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
         .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; }
         .log-dmg { color: #f87171; font-weight: bold; }
         .log-crit { color: #fbbf24; font-weight: bold; }
@@ -207,32 +197,32 @@
         .log-sys { color: #34d399; font-weight: bold; }
 
         .skill-box { display: flex; justify-content: space-between; align-items: center; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; margin-bottom: 12px; }
-        .skill-title { font-weight: bold; font-size: 10px; color: #e9d5ff; }
         .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; }
-        .skill-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
 
-        .combat-controls-title { text-align: center; font-size: 9px; font-weight: bold; color: #71717a; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;}
+        /* Зоны с индикацией поломки */
         .zone-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
-        .zone-btn { flex: 1; padding: 10px 0; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: 0.1s; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center;}
+        .zone-btn { flex: 1; padding: 8px 0; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;}
         .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; }
         .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
+        
+        .durability-dots { display: flex; gap: 2px; }
+        .dur-dot { width: 6px; height: 6px; border-radius: 3px; background: #27272a; }
+        .dur-dot.g { background: #10b981; box-shadow: 0 0 5px #10b981; }
+        .dur-dot.y { background: #f59e0b; box-shadow: 0 0 5px #f59e0b; }
+        .dur-dot.r { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+        .dur-text { font-size: 7px; color: #ef4444; font-weight: bold; display: none; }
+        .zone-btn.broken .dur-text { display: block; }
+        .zone-btn.broken .durability-dots { display: none; }
         
         .action-row { display: flex; gap: 8px; margin-top: 4px; }
         .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
         .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; }
 
-        /* ПОП-АП ПОБЕДЫ И ИНСПЕКЦИИ */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none;
-            flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100;
-            animation: fadeIn 0.2s ease-out; text-align: center;
-        }
+        /* МОДАЛКИ */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; }
         .modal-overlay.show { display: flex; }
         .vic-title { font-size: 22px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 6px; text-transform: uppercase;}
-        .vic-rewards { font-size: 12px; color: #e4e4e7; margin-bottom: 16px; font-weight: bold;}
         .vic-loot-box { width: 64px; height: 64px; border-radius: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4); position: relative; overflow: hidden;}
-        .vic-loot-name { font-size: 11px; color: #fca5a5; font-weight: bold; margin-bottom: 16px; text-shadow: 0 1px 2px #000; text-transform: uppercase; text-align: center;}
         .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-top: 6px; }
         .modal-btn.danger { background: #ef4444; color: #fff; }
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; }
@@ -245,10 +235,13 @@
     </script>
 
     <div class="top-dashboard">
-        <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
+        <div class="resources">
+            💰 <span id="ui-gold">5000</span> 💎 <span>12</span>
+            <div class="debuff-timer" id="ui-debuff-timer">ШТРАФ: 00:00</div>
+        </div>
         <div class="progress-info">
             УР. <span id="ui-top-lvl">1</span> | ЭТАЖ <span id="ui-top-floor" style="color:#f59e0b;">1</span>
-            <div style="font-size:9px; font-weight:normal; margin-top:2px;">EXP: <span id="ui-top-exp" style="font-size:9px;">0/100</span></div>
+            <div style="font-size:9px; font-weight:normal; margin-top:2px;">EXP: <span id="ui-top-exp">0/100</span></div>
         </div>
         <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
     </div>
@@ -264,7 +257,7 @@
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
     </div>
 
-    <!-- ЭКРАН ИНСПЕКЦИИ ПРЕДМЕТА ИЗ СУМКИ -->
+    <!-- ИНСПЕКЦИЯ ПРЕДМЕТА -->
     <div class="modal-overlay" id="item-inspect-modal">
         <div class="vic-title" style="font-size:16px;" id="inspect-title">Осмотр Предмета</div>
         <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px;"></div>
@@ -274,7 +267,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- ЭКРАН 0: PVE БОЕВКА -->
+    <!-- PVE БОЕВКА 5.0 (Juice + Trauma + Combo) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -282,24 +275,28 @@
             <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
         </div>
         
-        <div class="combat-arena">
-            <div class="modal-overlay" id="vic-modal">
+        <div class="combat-arena biome-1" id="arena-bg">
+            <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
-                <div class="vic-rewards" id="vic-rewards-text">Заработано: +50💰 | +40 EXP</div>
+                <div id="vic-rewards-text" style="color: #e4e4e7; font-weight: bold; margin-bottom: 16px;"></div>
                 <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center;">
                     <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:6px;">ВЫБИТ АРТЕФАКТ:</div>
                     <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
-                    <div class="vic-loot-name" id="vic-loot-name">Название реликвии</div>
+                    <div id="vic-loot-name" style="font-size:11px; color:#fca5a5; font-weight:bold; margin-bottom:16px;"></div>
                 </div>
-                <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ПУТЬ ➔</button>
+                <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ➔</button>
             </div>
 
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
-            <div class="intent-box" id="combat-intent">🔮 Враг готовит атаку...</div>
+            <div class="intent-box" id="combat-intent">🔮 Намерение врага...</div>
 
             <div class="combat-entities">
+                <div class="combo-meter" id="combo-display">🔥 КОМБО: x1.0</div>
+                
                 <div class="combat-entity" id="entity-hero-box">
-                    <div class="combat-avatar" id="combat-hero-avatar">🛡️</div>
+                    <div class="combat-avatar" id="combat-hero-avatar">🛡️
+                        <div class="slash-fx" id="hero-slash"></div>
+                    </div>
                     <div class="combat-name" id="combat-hero-name">Герой</div>
                     <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
@@ -308,19 +305,21 @@
                 <div class="combat-vs">VS</div>
                 
                 <div class="combat-entity" id="entity-enemy-box">
-                    <div class="combat-avatar" id="combat-enemy-avatar">🧟</div>
+                    <div class="combat-avatar" id="combat-enemy-avatar">🧟
+                        <div class="status-icon" id="enemy-stun-icon">💫</div>
+                        <div class="slash-fx" id="enemy-slash"></div>
+                    </div>
                     <div class="combat-name" id="combat-enemy-name">Монстр</div>
                     <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                    <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
                 </div>
             </div>
 
-            <div class="combat-log-box" id="combat-log">
-                <div class="log-entry log-sys">Двери открываются. Сражение начинается!</div>
-            </div>
+            <div class="combat-log-box" id="combat-log"></div>
 
             <div class="skill-box">
-                <div class="skill-title" id="skill-name">Прием: Скилл</div>
+                <div class="skill-title" style="font-size:11px; color:#e4e4e7;" id="skill-name">Скилл</div>
                 <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ</button>
             </div>
 
@@ -331,11 +330,11 @@
                 <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
             </div>
 
-            <div class="combat-controls-title">🛡️ Ваш блок:</div>
+            <div class="combat-controls-title">🛡️ Ваш блок (и прочность брони):</div>
             <div class="zone-row">
-                <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова</div>
-                <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс</div>
-                <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги</div>
+                <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова<div class="durability-dots" id="dur-head"></div><div class="dur-text">СЛОМАНО</div></div>
+                <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс<div class="durability-dots" id="dur-chest"></div><div class="dur-text">СЛОМАНО</div></div>
+                <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги<div class="durability-dots" id="dur-legs"></div><div class="dur-text">СЛОМАНО</div></div>
             </div>
 
             <div class="action-row">
@@ -377,55 +376,43 @@
             </div>
             <div class="inventory-grid" id="ui-inventory-grid"></div>
         </div>
-
-        <div class="levelup-container" id="ui-levelup-container"></div>
-        <div class="stats-two-column" id="ui-stats-container"></div>
+        
+        <div id="ui-stats-container" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
     </div>
 
-    <!-- ЭКРАН 2: ЛАВКА (БЕЗ ФИЛЬТРОВ ТИПА) -->
+    <!-- ЭКРАН 2: ЛАВКА -->
     <div id="screen-shop" class="app-screen">
         <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
-        <div class="shop-info-banner">Торговец продает лишь базовое снаряжение.<br>Истинные артефакты спрятаны в Башне.</div>
+        <div style="font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 12px; font-style: italic; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; padding: 6px 0; background: #121214;">Торговец продает лишь базовое снаряжение.<br>Истинные артефакты спрятаны в Башне.</div>
         <div class="shop-controls">
             <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">🛒 КУПИТЬ</div>
             <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">💰 ПРОДАТЬ</div>
         </div>
-        
         <div class="shop-filters" id="ui-shop-filters">
             <select class="shop-select" id="filter-class" onchange="updateUI()">
                 <option value="my_class">Показывать: Для моего класса</option>
                 <option value="all">Показывать: Все предметы</option>
             </select>
         </div>
-
         <div class="shop-list" id="ui-shop-list"></div>
     </div>
 
     <!-- ЭКРАН 3: КЛАССЫ -->
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="margin-bottom: 16px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div style="font-size: 11px; color: #71717a; text-align: center; margin-bottom: 24px; line-height: 1.5;">
-            Смена специализации стоит <b style="color:#fbbf24; text-shadow: 0 1px 2px #000;">5000 💰</b>.<br>Класс определяет авто-рост характеристик и доступную экипировку.
-        </div>
-        
         <div class="classes-gallery" id="ui-classes-gallery"></div>
         <div id="ui-class-detail"></div>
     </div>
 
-    <!-- ЛОГИКА -->
+    <!-- ЛОГИКА И ГЕЙМДИЗАЙН -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const CLASS_AVATARS = {
-            knight: STATIC_URL + "knight.png",
-            berserk: STATIC_URL + "berserk.png",
-            shadow: STATIC_URL + "shadow.png",
-            ranger: STATIC_URL + "ranger.png"
-        };
+        const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 
         const CLASSES = {
-            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 } },
+            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Исцеляет 25% HP.", cd: 3 } },
             berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0, skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 } },
             shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 } },
             ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 } }
@@ -442,14 +429,12 @@
             "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, inShop: true, stats: { armor: 12, blockChance: 6 } },
             "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, inShop: true, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
 
-            // DROP ONLY
             "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { atk: 18, critChance: 6, armorPen: 3 } },
             "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, dropOnly: true, stats: { armor: 15, str: 3 } },
             "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], dropOnly: true, stats: { armor: 10, str: 3 } },
             "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 38, armorPen: 10, agi: -2 } },
             "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, dropOnly: true, stats: { armor: 18, mst: 8, end: 3 } },
             "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
-            "24393": { id: "24393", name: "Шляпа Колдуна", type: "head", icon: "🧙‍♂️", rarity: "epic", lvl: 4, price: 400, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 8, mst: 15 } },
             "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, stats: { atk: 42, str: 5 } },
             "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 15, end: 5 } },
             "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 38, blockChance: 12 } },
@@ -457,20 +442,12 @@
             "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 55, str: 8, armorPen: 15 } },
             "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 55, end: 5, dodgeChance: -4 } },
             "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 45, mst: 5, blockChance: 14 } },
-            "19204": { id: "19204", name: "Рубиновый Перстень", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, dropOnly: true, stats: { str: 8, atk: 15, critDmg: 10 } },
             "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
             "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 25, agi: 8, dodgeChance: 4 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, stats: { armor: 65, end: 8, str: 4 } },
-            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 60, blockChance: 18, end: 6 } },
             "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 100, str: 15, critDmg: 25 } },
-            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, dropOnly: true, stats: { armor: 75, str: 10 } },
-            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], dropOnly: true, stats: { armor: 50, agi: 12, mst: 6 } },
-            "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
             "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
-            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
-            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
@@ -478,31 +455,56 @@
 
         let currentScreen = "hero";
         let shopMode = "buy";
-        let isLevelUpOpen = false;
         let previewClassId = "knight";
         let inspectInvIndex = null;
 
+        // HERO STATE
         let hero = {
-            name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
+            name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000,
             baseClass: "knight", hp: 100, maxHp: 100,
             baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
-            finalStats: {}
+            finalStats: {}, combatStats: {},
+            deathDebuffEnd: 0 // Таймер штрафа смерти
         };
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         previewClassId = hero.baseClass;
 
-        // PVE STATE
+        // PVE COMBAT STATE
         let enemy = null;
-        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
+        let combatState = { 
+            atkZone: null, defZone: null, enemyNextAtkZone: null, 
+            skillCooldown: 0, enemyStunned: false, combo: 0,
+            zoneHealth: { head: 2, chest: 2, legs: 2 } // 2=Green, 1=Yellow, 0=Broken
+        };
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
         const BOSS_NAMES = ["Хранитель Сервера", "Древний Инвестор", "HR-Демон", "Пожиратель Дедлайнов"];
 
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
-        // МЯГКИЙ СКЕЙЛИНГ ВРАГОВ (Патч 10.0)
+        // Таймер штрафа
+        setInterval(() => {
+            if (hero.deathDebuffEnd > Date.now()) {
+                let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000);
+                let m = Math.floor(left/60);
+                let s = left%60;
+                let el = document.getElementById('ui-debuff-timer');
+                if(el) {
+                    el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`;
+                    el.style.display = 'block';
+                }
+            } else {
+                let el = document.getElementById('ui-debuff-timer');
+                if(el && hero.deathDebuffEnd !== 0) {
+                    el.style.display = 'none';
+                    hero.deathDebuffEnd = 0;
+                    calculateStats(); updateUI();
+                }
+            }
+        }, 1000);
+
         function generateEnemy(floorLevel) {
             let isMegaBoss = floorLevel % 10 === 0;
             let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
@@ -512,7 +514,7 @@
             if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; }
             else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; }
 
-            // Полиномиальный + легкий процентный рост (чтобы не уйти в миллионы HP)
+            // Полиномиальный рост (чтобы не упереться в миллионы HP)
             let statMult = 1 + (floorLevel * 0.04);
             let hp = Math.floor((30 + floorLevel * 12) * statMult);
             let atk = Math.floor((6 + floorLevel * 3) * statMult);
@@ -525,21 +527,9 @@
             return { 
                 name: name, floor: floorLevel, avatar: avatar, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
                 hp: hp, maxHp: hp, nextAtkZone: zones[Math.floor(Math.random()*3)],
-                turnCounter: 0, // Добавлен счетчик ходов для ультиматумов
+                turnCounter: 0, 
                 stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } 
             };
-        }
-
-        function planEnemyTurn() {
-            let zones = ["head", "chest", "legs"];
-            enemy.turnCounter++;
-            // УЛЬТИМАТУМ КАЖДЫЙ 4й ХОД БОССА
-            if (enemy.isBoss && enemy.turnCounter % 4 === 0) {
-                enemy.nextAtkZone = 'ULTIMATUM';
-            } else {
-                enemy.nextAtkZone = zones[Math.floor(Math.random()*3)];
-            }
-            updateIntentDisplay();
         }
 
         function changeFloor(dir) {
@@ -563,17 +553,13 @@
             newItem.id = baseId + "_" + Date.now();
             let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)];
             newItem.name = `✨ ${prefix} ${baseItem.name}`;
-            newItem.rarity = "relic";
-            newItem.premium = false; 
-            newItem.dropOnly = true;
+            newItem.rarity = "relic"; newItem.premium = false; newItem.dropOnly = true;
             
             let tierMult = 1 + (floor * 0.05); 
             let rollQuality = 0.85 + (Math.random() * 0.40);
             let finalMult = tierMult * rollQuality;
             
-            for (let s in newItem.stats) {
-                newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult));
-            }
+            for (let s in newItem.stats) { newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult)); }
             
             let possibleSubstats = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg'];
             possibleSubstats = possibleSubstats.filter(s => !newItem.stats[s]); 
@@ -591,34 +577,56 @@
 
         function initCombat() {
             enemy = generateEnemy(hero.floor);
-            combatState.skillCooldown = 0;
-            combatState.enemyStunned = false;
-            let title = document.getElementById("combat-stage-name");
-            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; }
-            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; }
-            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; }
+            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 2, chest: 2, legs: 2 } };
+            calculateStats(true); // Пересчет с учетом целых зон
             
-            logCombat(`<span class="log-sys">Вход на этаж ${hero.floor}: Вас встречает ${enemy.name}!</span>`);
-            updateIntentDisplay(); // Инициализация намерения первого хода
-            resetCombatZones();
+            let title = document.getElementById("combat-stage-name");
+            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";}
+            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "none";}
+            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; document.getElementById("enemy-rage-bg").style.display = "none";}
+            
+            document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`;
+            planEnemyTurn();
             updateUI();
+        }
+
+        function planEnemyTurn() {
+            let zones = ["head", "chest", "legs"];
+            enemy.turnCounter++;
+            if (enemy.isBoss && enemy.turnCounter % 4 === 0) {
+                enemy.nextAtkZone = 'ULTIMATUM';
+            } else {
+                enemy.nextAtkZone = zones[Math.floor(Math.random()*3)];
+            }
+            updateIntentDisplay();
         }
 
         function updateIntentDisplay() {
             let zRu = {head: "Голову 🪖", chest: "Торс 🦺", legs: "Ноги 👢"};
+            let el = document.getElementById("combat-intent");
             if (enemy.nextAtkZone === 'ULTIMATUM') {
-                document.getElementById("combat-intent").innerHTML = `☠️ <span style="color:#ef4444;">ВНИМАНИЕ! БОСС ГОТОВИТ УЛЬТИМАТУМ!</span>`;
+                el.innerHTML = `☠️ <span style="color:#fca5a5;">БОСС ГОТОВИТ УЛЬТИМАТУМ!</span>`;
+                el.className = "intent-box ultimatum";
             } else {
-                document.getElementById("combat-intent").innerText = `🔮 Намерение врага: Атака в ${zRu[enemy.nextAtkZone]}!`;
+                el.innerText = `🔮 Намерение врага: Атака в ${zRu[enemy.nextAtkZone]}!`;
+                el.className = "intent-box";
             }
         }
 
-        function triggerHitAnim(elementId) {
+        function triggerHitAnim(elementId, type) {
             let el = document.getElementById(elementId);
             if(el) {
                 el.classList.remove("hit-anim");
-                void el.offsetWidth; // Магия для перезапуска анимации
+                void el.offsetWidth;
                 el.classList.add("hit-anim");
+            }
+            // СЛЕШ FX
+            let slashId = elementId === "combat-hero-avatar" ? "hero-slash" : "enemy-slash";
+            let slash = document.getElementById(slashId);
+            if(slash) {
+                slash.style.animation = 'none';
+                void slash.offsetWidth;
+                slash.style.animation = 'slashAnim 0.3s ease-out';
             }
         }
 
@@ -638,14 +646,10 @@
             updateUI();
         }
 
-        function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
-
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
             logBox.innerHTML += `<div class="log-entry">${text}</div>`;
-            while (logBox.children.length > 30) {
-                logBox.removeChild(logBox.firstChild); // Оптимизация памяти (не более 30 строк лога)
-            }
+            while (logBox.children.length > 30) logBox.removeChild(logBox.firstChild);
             logBox.scrollTop = logBox.scrollHeight;
         }
 
@@ -655,24 +659,24 @@
             combatState.skillCooldown = cls.skill.cd;
 
             if (hero.baseClass === 'knight') {
-                let heal = Math.floor(hero.finalStats.hp * 0.25);
-                hero.hp = Math.min(hero.finalStats.hp, hero.hp + heal);
+                let heal = Math.floor(hero.combatStats.hp * 0.25);
+                hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal);
                 showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! +${heal} HP.</span>`);
             } else if (hero.baseClass === 'berserk') {
-                let dmg = Math.floor(hero.finalStats.damage * 2.5);
+                let dmg = Math.floor(hero.combatStats.damage * 2.5);
                 enemy.hp -= dmg;
                 triggerHitAnim("combat-enemy-avatar");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! -${dmg} HP.</span>`);
             } else if (hero.baseClass === 'shadow') {
-                let dmg = Math.floor(hero.finalStats.damage * 1.8);
+                let dmg = Math.floor(hero.combatStats.damage * 1.8);
                 enemy.hp -= dmg;
                 triggerHitAnim("combat-enemy-avatar");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
                 logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Уворот активен.</span>`);
             } else if (hero.baseClass === 'ranger') {
-                let dmg = Math.floor(hero.finalStats.damage * 1.5);
+                let dmg = Math.floor(hero.combatStats.damage * 1.5);
                 enemy.hp -= dmg;
                 combatState.enemyStunned = true;
                 triggerHitAnim("combat-enemy-avatar");
@@ -688,6 +692,11 @@
             if (Math.random() * 100 < (defender.dodge || 0)) return { dmg: 0, type: "dodge" };
 
             let baseAtk = attacker.damage || attacker.atk || 5;
+            // Применяем Комбо Множитель если атакует герой
+            if (attacker === hero.combatStats && combatState.combo > 0) {
+                baseAtk = Math.floor(baseAtk * (1 + combatState.combo * 0.15));
+            }
+
             let isCrit = Math.random() * 100 < (attacker.critChance || 5);
             if (isCrit) baseAtk = Math.floor(baseAtk * ((attacker.critDmg || 150) / 100));
 
@@ -697,12 +706,8 @@
             let isPerfectBlock = false;
 
             if (zAtk === zDef) {
-                isBlock = true;
-                mitigation *= 2;
-                if (defender === hero.finalStats) {
-                    isPerfectBlock = true;
-                    mitigation *= 1.5; 
-                }
+                isBlock = true; mitigation *= 2;
+                if (defender === hero.combatStats) { isPerfectBlock = true; mitigation *= 1.5; }
             } else {
                 mitigation = Math.floor(defArmor * 0.6);
             }
@@ -724,11 +729,11 @@
             hero.exp += expGained;
 
             let droppedItem = null;
-            let dropChance = 5 + hero.finalStats.luk * 0.2; 
+            let dropChance = 1 + hero.combatStats.luk * 0.1; 
             let isRelicDrop = false;
 
             if (enemy.isBoss) { dropChance = 100; isRelicDrop = true; } 
-            else if (enemy.isMiniBoss) { dropChance = 40 + hero.finalStats.luk * 0.5; isRelicDrop = Math.random() > 0.5; }
+            else if (enemy.isMiniBoss) { dropChance = 35 + hero.combatStats.luk * 0.5; isRelicDrop = Math.random() > 0.6; }
 
             let logMsg = "";
             if (Math.random() * 100 <= dropChance) {
@@ -742,7 +747,7 @@
                 if (hero.inventory.length < 10) {
                     hero.inventory.push(droppedItem.id);
                 } else {
-                    // SMART AUTO-SELL (Ищет самый дешевый предмет)
+                    // УМНЫЙ АВТО-СЕЙЛ
                     if (droppedItem.rarity === 'relic') {
                         let cheapestIdx = 0;
                         let minPrice = ITEMS_DB[hero.inventory[0]].price || 0;
@@ -753,18 +758,18 @@
                         if (minPrice < droppedItem.price) {
                             let soldItem = ITEMS_DB[hero.inventory[cheapestIdx]];
                             hero.gold += Math.floor(soldItem.price * 0.5);
-                            logMsg = `\nСумка полна! Выброшен ${soldItem.name}, чтобы взять Реликвию!`;
+                            logMsg = `<br>Сумка полна! Выброшен ${soldItem.name} ради Реликвии!`;
                             hero.inventory[cheapestIdx] = droppedItem.id;
                         } else {
                             let sellP = Math.floor(droppedItem.price * 0.5);
                             hero.gold += sellP;
-                            logMsg = `\nСумка полна! Реликвия продана за ${sellP}💰.`;
+                            logMsg = `<br>Сумка полна! Реликвия продана за ${sellP}💰.`;
                             droppedItem = null;
                         }
                     } else {
                         let sellP = Math.floor(droppedItem.price * 0.5);
                         hero.gold += sellP;
-                        logMsg = `\nСумка полна! Вещь продана за ${sellP}💰.`;
+                        logMsg = `<br>Сумка полна! Вещь продана за ${sellP}💰.`;
                         droppedItem = null;
                     }
                 }
@@ -773,29 +778,20 @@
             if (hero.exp >= hero.expNext) {
                 hero.exp -= hero.expNext;
                 hero.level++;
-                hero.unspentPoints += 3;
                 hero.expNext = getExpReq(hero.level);
                 calculateStats();
             }
 
-            let vicText = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
-            document.getElementById("vic-rewards-text").innerText = vicText;
-            
+            document.getElementById("vic-rewards-text").innerHTML = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
             let lootBox = document.getElementById("vic-loot-container");
             if (droppedItem) {
                 lootBox.style.display = "flex";
                 document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`;
                 document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem);
                 document.getElementById("vic-loot-name").innerText = droppedItem.name;
-            } else {
-                lootBox.style.display = "none";
-            }
+            } else { lootBox.style.display = "none"; }
 
-            if (hero.floor === hero.maxFloor && hero.maxFloor < 100) {
-                hero.maxFloor++;
-                hero.floor = hero.maxFloor;
-            }
-            
+            if (hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
             document.getElementById("vic-modal").classList.add("show");
             updateUI(); 
         }
@@ -809,13 +805,13 @@
             if (!combatState.atkZone || !combatState.defZone) return;
 
             let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)"};
-            let eAtkZone = enemy.nextAtkZone; // Захватываем намерение врага ДО хода
+            let eAtkZone = enemy.nextAtkZone; 
             let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
 
             if (combatState.skillCooldown > 0) combatState.skillCooldown--;
 
             // === ГЕРОЙ БЬЕТ ===
-            let hRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone);
+            let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone);
             enemy.hp -= hRes.dmg;
             
             triggerHitAnim("combat-enemy-avatar");
@@ -823,7 +819,8 @@
             else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit");
             else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
 
-            logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP.`);
+            let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.15).toFixed(2)})` : '';
+            logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP${comboTxt}.`);
 
             if (enemy.hp <= 0) {
                 handleCombatWin();
@@ -832,52 +829,67 @@
                 if (combatState.enemyStunned) {
                     logCombat(`<span class="log-sys">${enemy.name} оглушен! Он пропускает ход.</span>`);
                     combatState.enemyStunned = false;
-                    // Если оглушен, намерение сохраняется на следующий ход (Игрок выйграл время)
                 } else {
                     let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1);
                     let eRes;
 
                     if (eAtkZone === 'ULTIMATUM') {
-                        // Атака ультиматумом (игнорирует защитную зону игрока, режет броню)
                         let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5);
-                        if (forceDodge) {
-                            eRes = { dmg: 0, type: "dodge" };
-                        } else {
-                            let mitigation = Math.floor(hero.finalStats.armor * 0.3); // Броня почти не спасает
+                        if (forceDodge) { eRes = { dmg: 0, type: "dodge" }; } 
+                        else {
+                            let mitigation = Math.floor(hero.combatStats.armor * 0.3); 
                             let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation);
                             eRes = { dmg: finalDmg, type: "crit" };
                         }
                     } else {
-                        eRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone);
+                        eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, combatState.defZone);
                         if(forceDodge) { eRes.dmg = 0; eRes.type = "dodge"; }
                     }
 
                     hero.hp -= eRes.dmg;
                     triggerHitAnim("combat-hero-avatar");
 
-                    if (eRes.type === "dodge") showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
-                    else if (eRes.type === "perfect_block") {
-                        showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block");
-                        logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! Перезарядка скилла ускорена!</span>`);
-                        if (combatState.skillCooldown > 0) combatState.skillCooldown--;
+                    // ЛОГИКА КОМБО И ТРАВМ
+                    if (eRes.dmg > 0) {
+                        combatState.combo = 0; // Сброс комбо при получении урона
+                        // Травма экипировки (если не ультиматум и не перфект блок)
+                        if (eAtkZone !== 'ULTIMATUM' && eRes.type !== "perfect_block" && combatState.zoneHealth[eAtkZone] > 0) {
+                            combatState.zoneHealth[eAtkZone]--;
+                            if (combatState.zoneHealth[eAtkZone] === 0) {
+                                logCombat(`<span class="log-dmg">⚠️ ЭКИПИРОВКА В ЗОНЕ '${zNameRu[eAtkZone].toUpperCase()}' СЛОМАНА ДО КОНЦА БОЯ!</span>`);
+                                showDmgPopup("entity-hero-box", "СЛОМАНО!", "log-crit");
+                                calculateStats(true); // Пересчет статов в бою
+                            }
+                        }
                     }
-                    else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit");
-                    else showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
+
+                    if (eRes.type === "dodge") {
+                        showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge");
+                    } else if (eRes.type === "perfect_block") {
+                        showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block");
+                        logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! +1 КОМБО!</span>`);
+                        combatState.combo++;
+                        if (combatState.skillCooldown > 0) combatState.skillCooldown--;
+                    } else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") {
+                        showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit");
+                    } else {
+                        showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg");
+                    }
 
                     logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
                     
                     if (hero.hp <= 0) {
                         hero.hp = 0; 
-                        if(hero.floor > 1) hero.floor--; // Штраф этажа
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вас отбросило на Этаж ${hero.floor}.</span>`);
+                        hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; // 10 МИНУТ ШТРАФА
+                        if(hero.floor > 1) hero.floor--;
+                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`);
+                        calculateStats(); // Пересчет базовых статов со штрафом
                     }
-                    
-                    // Враг сходил, планируем его следующий ход
                     planEnemyTurn();
                 }
             }
 
-            resetCombatZones();
+            combatState.atkZone = null; combatState.defZone = null;
             updateUI();
         }
 
@@ -896,22 +908,13 @@
             let sellPrice = Math.floor(item.price * 0.5);
             document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
             
-            document.getElementById("btn-inspect-equip").onclick = function() {
-                equipItem(inspectInvIndex);
-                closeInspectModal();
-            };
-            document.getElementById("btn-inspect-sell").onclick = function() {
-                sellItem(inspectInvIndex);
-                closeInspectModal();
-            };
+            document.getElementById("btn-inspect-equip").onclick = function() { equipItem(inspectInvIndex); closeInspectModal(); };
+            document.getElementById("btn-inspect-sell").onclick = function() { sellItem(inspectInvIndex); closeInspectModal(); };
 
             document.getElementById("item-inspect-modal").classList.add("show");
         }
 
-        function closeInspectModal() {
-            document.getElementById("item-inspect-modal").classList.remove("show");
-            inspectInvIndex = null;
-        }
+        function closeInspectModal() { document.getElementById("item-inspect-modal").classList.remove("show"); inspectInvIndex = null; }
 
         function openScreen(screenName) {
             if (!['hero', 'shop', 'classes', 'PVE'].includes(screenName)) return alert("В разработке!");
@@ -932,24 +935,18 @@
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
             if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
-            
             for (let slot in hero.equipment) {
                 let item = hero.equipment[slot];
                 if (item && item.id !== "blocked" && item.allowedClasses && !item.allowedClasses.includes(classKey)) {
                     if (hero.inventory.length < 10) {
                         hero.inventory.push(item.id); hero.equipment[slot] = null;
                         if (item.type === 'two_handed') hero.equipment.weapon2 = null; 
-                    } else {
-                        return alert("Освободите сумку! На вас вещи, несовместимые с новым классом.");
-                    }
+                    } else { return alert("Освободите сумку! На вас вещи, несовместимые с новым классом."); }
                 }
             }
             hero.gold -= 5000; hero.baseClass = classKey;
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             calculateStats(); openScreen('hero');
         }
-
-        function toggleLevelUp() { isLevelUpOpen = !isLevelUpOpen; updateUI(); }
         
         function equipItem(invIndex) {
             let itemId = hero.inventory[invIndex];
@@ -959,21 +956,14 @@
             if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert(`Этот предмет не подходит для вашего класса!`);
 
             let targetSlot = item.type;
-
             if (item.type === 'two_handed') {
-                if (hero.equipment.weapon1 && hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked" && hero.inventory.length >= 10) {
-                    return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
-                }
+                if (hero.equipment.weapon1 && hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked" && hero.inventory.length >= 10) return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
                 hero.inventory.splice(invIndex, 1);
                 if (hero.equipment.weapon1) hero.inventory.push(hero.equipment.weapon1.id);
                 if (hero.equipment.weapon2 && hero.equipment.weapon2.id !== "blocked") hero.inventory.push(hero.equipment.weapon2.id);
-                
                 hero.equipment.weapon1 = item;
                 hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
-                
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                calculateStats(); updateUI();
-                return;
+                calculateStats(); updateUI(); return;
             }
 
             if ((targetSlot === 'weapon1' || targetSlot === 'weapon2') && hero.equipment.weapon1 && hero.equipment.weapon1.type === 'two_handed') {
@@ -981,18 +971,13 @@
                 hero.equipment.weapon1 = null; hero.equipment.weapon2 = null;
                 hero.inventory.splice(invIndex, 1); hero.inventory.push(twoHandedItem.id);
                 hero.equipment[targetSlot] = item;
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                calculateStats(); updateUI();
-                return;
+                calculateStats(); updateUI(); return;
             }
 
             if (item.type === 'ring') { targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2'; }
-            
             let oldItem = hero.equipment[targetSlot];
             hero.equipment[targetSlot] = item; hero.inventory.splice(invIndex, 1);
             if (oldItem && oldItem.id !== "blocked") hero.inventory.push(oldItem.id);
-            
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             calculateStats(); updateUI();
         }
 
@@ -1000,18 +985,12 @@
             let item = hero.equipment[slotKey];
             if (!item || item.id === "blocked") return;
             if (hero.inventory.length >= 10) return alert("Сумка полна!");
-
             if (item.type === 'two_handed') {
-                hero.inventory.push(item.id);
-                hero.equipment.weapon1 = null; hero.equipment.weapon2 = null;
+                hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null;
             } else {
                 hero.inventory.push(item.id); hero.equipment[slotKey] = null;
             }
             calculateStats(); updateUI();
-        }
-
-        function addStat(statKey) {
-            if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; calculateStats(); updateUI(); }
         }
 
         function buyItem(itemId) {
@@ -1020,7 +999,6 @@
             if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert("Предмет не для вашего класса!");
             if (hero.inventory.length >= 10) return alert("Сумка полна!");
             hero.gold -= item.price; hero.inventory.push(itemId);
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             updateUI();
         }
         
@@ -1034,29 +1012,20 @@
 
         function healHero() {
             if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!");
-            
             let missingHp = hero.finalStats.hp - Math.floor(hero.hp);
             let cost = Math.max(10, Math.floor(missingHp * 0.5));
-
-            // АНТИ-ТУПИК: Бесплатное восстановление до 30% HP при 0 золота
             if (hero.gold === 0 && hero.hp <= hero.finalStats.hp * 0.1) {
                 hero.hp = Math.floor(hero.finalStats.hp * 0.3);
                 alert("Лекарь оказал первую помощь бесплатно! Здоровье восстановлено до 30%.");
-                updateUI();
-                return;
+                updateUI(); return;
             }
-
             if (hero.gold >= cost) {
-                hero.gold -= cost;
-                hero.hp = hero.finalStats.hp;
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                hero.gold -= cost; hero.hp = hero.finalStats.hp;
                 updateUI();
-            } else {
-                alert(`Нужно ${cost} золота для полного лечения! У вас ${hero.gold}.`);
-            }
+            } else { alert(`Нужно ${cost} золота для полного лечения! У вас ${hero.gold}.`); }
         }
 
-        function calculateStats() {
+        function calculateStats(isCombat = false) {
             let cls = CLASSES[hero.baseClass];
             let lvlBonus = hero.level - 1; 
 
@@ -1067,7 +1036,16 @@
                 armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0
             };
 
+            // ЛОГИКА ТРАВМ (Если мы в бою и зона сломана - шмот из зоны не дает статы)
+            let skipHead = isCombat && combatState.zoneHealth.head === 0;
+            let skipChest = isCombat && combatState.zoneHealth.chest === 0;
+            let skipLegs = isCombat && combatState.zoneHealth.legs === 0;
+
             for (let key in hero.equipment) {
+                if (skipHead && key === 'head') continue;
+                if (skipChest && (key === 'chest' || key === 'weapon1' || key === 'weapon2')) continue;
+                if (skipLegs && (key === 'boots' || key === 'belt')) continue;
+
                 let item = hero.equipment[key];
                 if (item && item.stats) {
                     if (item.stats.str) total.str += item.stats.str; if (item.stats.agi) total.agi += item.stats.agi;
@@ -1088,18 +1066,21 @@
             total.armor = Math.floor(total.armor * cls.armorMult);
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult);
             total.dodge = Math.floor(total.dodge * cls.dodgeMult);
-
             total.dodge = Math.min(75, total.dodge);
             total.blockChance = Math.min(60, total.blockChance);
 
-            hero.maxHp = hp; if (hero.hp > hero.maxHp) hero.hp = hero.maxHp;
+            // ПРИМЕНЕНИЕ ШТРАФА СМЕРТИ (-25% к Урону и Броне)
+            if (hero.deathDebuffEnd > Date.now()) {
+                total.armor = Math.floor(total.armor * 0.75);
+                damage = Math.floor(damage * 0.75);
+            }
 
-            hero.finalStats = {
-                hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen,
-                critChance: total.critChance.toFixed(1), critDmg: total.critDmg,
-                dodge: total.dodge.toFixed(1), blockChance: total.blockChance,
-                str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk
-            };
+            if (!isCombat) {
+                hero.maxHp = hp; if (hero.hp > hero.maxHp) hero.hp = hero.maxHp;
+                hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk };
+            }
+            // Боевые статы обновляются динамически при травмах
+            hero.combatStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk };
         }
 
         function formatStats(stats) {
@@ -1119,41 +1100,6 @@
             return res.join(' • ');
         }
         
-        function getEquippedItemFor(shopItem) {
-            if (shopItem.type === 'two_handed') return hero.equipment.weapon1; 
-            if (shopItem.type === 'ring') return hero.equipment.ring1 || hero.equipment.ring2; 
-            return hero.equipment[shopItem.type];
-        }
-
-        function formatShopStats(shopItem) {
-            let equipped = getEquippedItemFor(shopItem);
-            let eStats = equipped && equipped.stats ? equipped.stats : {};
-            let sStats = shopItem.stats || {};
-            let res = [];
-            const statMap = [
-                {k: 'atk', n: 'Урон'}, {k: 'armor', n: 'Броня'}, {k: 'str', n: 'СИЛ'}, {k: 'agi', n: 'ЛОВ'},
-                {k: 'end', n: 'ВЫН'}, {k: 'mst', n: 'МСТ'}, {k: 'luk', n: 'УДЧ'}, 
-                {k: 'critChance', n: 'Крит'}, {k: 'dodgeChance', n: 'Уворот'}, 
-                {k: 'blockChance', n: 'Блок'}, {k: 'armorPen', n: 'Пробитие'}, {k: 'critDmg', n: 'Крит. Урон'}
-            ];
-
-            statMap.forEach(s => {
-                let sVal = sStats[s.k] || 0;
-                let eVal = eStats[s.k] || 0;
-                if (sVal !== 0) {
-                    let diff = sVal - eVal;
-                    let diffHtml = '';
-                    if (equipped && diff !== 0) {
-                        if (diff > 0) diffHtml = `<span class="stat-diff-pos">(+${diff})</span>`;
-                        else diffHtml = `<span class="stat-diff-neg">(${diff})</span>`;
-                    }
-                    let isPct = ['critChance', 'dodgeChance', 'blockChance', 'critDmg'].includes(s.k) ? '%' : '';
-                    res.push(`${s.n} ${sVal>0?'+':''}${sVal}${isPct}${diffHtml}`);
-                }
-            });
-            return res.join(' • ');
-        }
-
         function getSlotName(slotId) {
             return {head:"Шлем", chest:"Броня", belt:"Пояс", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId];
         }
@@ -1161,18 +1107,18 @@
         function renderItemIcon(item) {
             if (!item) return "";
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
-            
             let imgId = item.id.split('_')[0]; 
             if (item.id.includes("shields_v2_")) {
-                let parts = item.id.split('_');
-                imgId = parts[0] + "_" + parts[1] + "_" + parts[2];
+                let parts = item.id.split('_'); imgId = parts[0] + "_" + parts[1] + "_" + parts[2];
             }
-            
-            return `
-                <div class="item-img-wrapper">
-                    <img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';">
-                </div>
-            `;
+            return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';"></div>`;
+        }
+
+        function renderDurability(zoneKey) {
+            let dur = combatState.zoneHealth[zoneKey];
+            if(dur === 2) return `<span class="dur-dot g"></span><span class="dur-dot g"></span>`;
+            if(dur === 1) return `<span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`;
+            return ``; // 0 рисуется через CSS класс .broken
         }
 
         function updateUI() {
@@ -1184,54 +1130,68 @@
                 <span id="pve-floor-display">ЭТАЖ ${hero.floor}</span>
                 <button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor ? 'disabled' : ''}>▶</button>
             `;
-            document.getElementById("combat-floor-title").innerHTML = floorNavHtml;
+            let titleEl = document.getElementById("combat-floor-title");
+            if(titleEl) titleEl.innerHTML = floorNavHtml;
             document.getElementById("ui-top-floor").innerText = hero.floor;
             
             document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`;
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                // БАГФИКС: Удалено обращение к несуществующим блокам combat-hero-lvl и combat-enemy-lvl
+                // БИОМЫ
+                let biomeIdx = Math.min(5, Math.ceil(hero.floor / 10));
+                let arenaBg = document.getElementById("arena-bg");
+                arenaBg.className = `combat-arena biome-${biomeIdx}`;
+                if(enemy.isBoss) arenaBg.classList.add("biome-boss");
+
+                // КОМБО
+                let comboEl = document.getElementById("combo-display");
+                if (combatState.combo > 0) {
+                    comboEl.innerText = `🔥 КОМБО: x${(1 + combatState.combo * 0.15).toFixed(2)}`;
+                    comboEl.className = "combo-meter show";
+                } else { comboEl.className = "combo-meter"; }
+
+                // РАЖ БОССА
+                if (enemy.isBoss) {
+                    let rPct = (enemy.turnCounter % 4) / 3 * 100;
+                    document.getElementById("enemy-rage-bar").style.width = `${rPct}%`;
+                    if(rPct === 100) document.getElementById("enemy-rage-bar").classList.add("full");
+                    else document.getElementById("enemy-rage-bar").classList.remove("full");
+                }
+
+                // СТАТУСЫ
+                let stunIcon = document.getElementById("enemy-stun-icon");
+                if (combatState.enemyStunned) stunIcon.style.display = "block";
+                else stunIcon.style.display = "none";
+
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
-                document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
-                document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
+                document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; // Боевое макс ХП может меняться
+                document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.combatStats.hp)*100)}%`;
                 
                 document.getElementById("combat-enemy-name").innerText = enemy.name;
-                document.getElementById("combat-enemy-avatar").innerText = enemy.avatar;
-                if(enemy.isBoss) document.getElementById("combat-enemy-avatar").classList.add("boss");
-                else document.getElementById("combat-enemy-avatar").classList.remove("boss");
-
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
 
-                let cls = CLASSES[hero.baseClass];
-                document.getElementById("skill-name").innerText = cls.skill.name;
                 let btnSkill = document.getElementById("btn-use-skill");
-                if (combatState.skillCooldown > 0) {
-                    btnSkill.innerText = `ПЕРЕЗАРЯДКА (${combatState.skillCooldown})`;
-                    btnSkill.disabled = true;
-                } else {
-                    btnSkill.innerText = `ПРИМЕНИТЬ`;
-                    btnSkill.disabled = hero.hp <= 0;
-                }
+                if (combatState.skillCooldown > 0) { btnSkill.innerText = `КД (${combatState.skillCooldown})`; btnSkill.disabled = true; } 
+                else { btnSkill.innerText = `ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0; }
 
                 ['head', 'chest', 'legs'].forEach(z => {
-                    document.getElementById(`btn-atk-${z}`).className = `zone-btn atk ${combatState.atkZone === z ? 'selected' : ''}`;
-                    document.getElementById(`btn-def-${z}`).className = `zone-btn def ${combatState.defZone === z ? 'selected' : ''}`;
+                    let btnAtk = document.getElementById(`btn-atk-${z}`);
+                    let btnDef = document.getElementById(`btn-def-${z}`);
+                    btnAtk.className = `zone-btn atk ${combatState.atkZone === z ? 'selected' : ''}`;
+                    
+                    let defClass = `zone-btn def ${combatState.defZone === z ? 'selected' : ''}`;
+                    if (combatState.zoneHealth[z] === 0) defClass += " broken";
+                    btnDef.className = defClass;
+                    document.getElementById(`dur-${z}`).innerHTML = renderDurability(z);
                 });
                 
                 let btnExe = document.getElementById("btn-execute-turn");
-                if(hero.hp <= 0) {
-                    btnExe.innerText = "ГЕРОЙ МЕРТВ";
-                    btnExe.disabled = true;
-                } else if (combatState.atkZone && combatState.defZone) {
-                    btnExe.innerText = "УДАРИТЬ ⚔️";
-                    btnExe.disabled = false;
-                } else {
-                    btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ";
-                    btnExe.disabled = true;
-                }
+                if(hero.hp <= 0) { btnExe.innerText = "ГЕРОЙ МЕРТВ"; btnExe.disabled = true; } 
+                else if (combatState.atkZone && combatState.defZone) { btnExe.innerText = "УДАРИТЬ ⚔️"; btnExe.disabled = false; } 
+                else { btnExe.innerText = "ВЫБЕРИТЕ ЗОНЫ"; btnExe.disabled = true; }
             }
 
             if (currentScreen === 'hero') {
@@ -1239,18 +1199,8 @@
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
                 document.getElementById("main-hero-avatar").src = CLASS_AVATARS[hero.baseClass];
 
-                const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2"];
+                const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2", "weapon1", "weapon2"];
                 slots.forEach(slotKey => {
-                    let el = document.getElementById("slot-" + slotKey);
-                    if (el) {
-                        let item = hero.equipment[slotKey];
-                        el.className = `equip-slot ${item ? (item.id === "blocked" ? "blocked" : "filled rarity-" + (item.rarity || "common")) : "empty"}`;
-                        el.innerHTML = item ? `${renderItemIcon(item)}<span class="slot-label" ${item.id==="blocked"?'style="color:#ef4444"':''}>${getSlotName(slotKey)}</span>` : `<div class="silhouette">${el.getAttribute("data-sil")}</div><span class="slot-label">${getSlotName(slotKey)}</span>`;
-                    }
-                });
-                
-                const wSlots = ["weapon1", "weapon2"];
-                wSlots.forEach(slotKey => {
                     let el = document.getElementById("slot-" + slotKey);
                     if (el) {
                         let item = hero.equipment[slotKey];
@@ -1269,30 +1219,13 @@
                 }
                 document.getElementById("ui-inventory-grid").innerHTML = invHtml;
 
-                let levelUpHtml = '';
-                if (hero.unspentPoints > 0 || isLevelUpOpen) {
-                    if (!isLevelUpOpen) {
-                        levelUpHtml = `<div class="btn-toggle-levelup" onclick="toggleLevelUp()">✨ Доступно очков: ${hero.unspentPoints} ✨</div>`;
-                    } else {
-                        levelUpHtml = `
-                            <div class="btn-toggle-levelup active" onclick="toggleLevelUp()">❌ Скрыть панель (Осталось: ${hero.unspentPoints})</div>
-                            <div class="levelup-dropdown show">
-                                <div class="lvl-stat-row"><span>⚔️ Сила (${hero.finalStats.str})</span> <button class="add-stat-btn" onclick="addStat('str')">+</button></div>
-                                <div class="lvl-stat-row"><span>🏃 Ловкость (${hero.finalStats.agi})</span> <button class="add-stat-btn" onclick="addStat('agi')">+</button></div>
-                                <div class="lvl-stat-row"><span>❤️ Выносл-ть (${hero.finalStats.end})</span> <button class="add-stat-btn" onclick="addStat('end')">+</button></div>
-                                <div class="lvl-stat-row"><span>🎯 Мастерство (${hero.finalStats.mst})</span> <button class="add-stat-btn" onclick="addStat('mst')">+</button></div>
-                                <div class="lvl-stat-row"><span>🍀 Удача (${hero.finalStats.luk})</span> <button class="add-stat-btn" onclick="addStat('luk')">+</button></div>
-                            </div>
-                        `;
-                    }
-                }
-                document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
-
                 let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
-                
                 let missingHp = hero.finalStats.hp - Math.floor(hero.hp);
                 let healCost = Math.max(10, Math.floor(missingHp * 0.5));
                 let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-${healCost}💰)</button>` : ``;
+
+                let isDebuff = hero.deathDebuffEnd > Date.now();
+                let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
 
                 document.getElementById("ui-stats-container").innerHTML = `
                     <div class="stats-card">
@@ -1305,6 +1238,7 @@
                     </div>
                     <div class="stats-card">
                         <div class="stat-group-title">Боевые параметры</div>
+                        ${warnTxt}
                         <div class="stat-item" style="flex-direction:column; align-items:stretch;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
                                 <span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>
@@ -1312,8 +1246,8 @@
                             </div>
                             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
                         </div>
-                        <div class="stat-item"><span>🗡️ Урон</span> <b>${hero.finalStats.damage}</b></div>
-                        <div class="stat-item"><span>🛡️ Броня</span> <b>${hero.finalStats.armor}</b></div>
+                        <div class="stat-item"><span>🗡️ Урон</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.damage}</b></div>
+                        <div class="stat-item"><span>🛡️ Броня</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.armor}</b></div>
                         <div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
                         <div class="stat-item"><span>⚡ Крит</span> <b>${hero.finalStats.critChance}%</b></div>
                     </div>
@@ -1323,52 +1257,37 @@
             if (currentScreen === 'shop') {
                 let shopHtml = '';
                 if (shopMode === 'buy') {
-                    document.getElementById("ui-shop-filters").style.display = "flex";
                     let fClass = document.getElementById("filter-class").value;
-
                     let sortedAssortment = [...SHOP_ASSORTMENT].sort((a, b) => {
                         let itemA = ITEMS_DB[a], itemB = ITEMS_DB[b];
                         if(itemA.lvl <= hero.level && itemB.lvl > hero.level) return -1;
                         if(itemA.lvl > hero.level && itemB.lvl <= hero.level) return 1;
                         return itemA.price - itemB.price;
                     });
-
                     sortedAssortment.forEach(itemId => {
                         let item = ITEMS_DB[itemId];
-                        
                         if(item.dropOnly || item.rarity === 'relic') return; 
                         if (fClass === 'my_class' && item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return;
-
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
-                        let tagTwoHandHtml = item.type === 'two_handed' ? `<div class="shop-class-tag tag-twohand">[Двуруч]</div>` : '';
-                        let tagPremiumHtml = item.premium ? `<div class="shop-class-tag tag-premium">[Премиум]</div>` : '';
-                        
                         let canAfford = hero.gold >= item.price;
                         let meetLvl = hero.level >= item.lvl;
                         let classMatch = !item.allowedClasses || item.allowedClasses.includes(hero.baseClass);
-                        
-                        let btnHtml = (canAfford && meetLvl && classMatch)
-                            ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${item.price}</button>` 
-                            : `<button class="shop-btn btn-buy" disabled>💰 ${item.price}</button>`;
-
+                        let btnHtml = (canAfford && meetLvl && classMatch) ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${item.price}</button>` : `<button class="shop-btn btn-buy" disabled>💰 ${item.price}</button>`;
                         shopHtml += `
                             <div class="shop-item-card">
                                 <div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div>
                                 <div class="shop-item-info">
                                     <div class="shop-item-name"><span>${item.name}</span><span class="shop-item-lvl" style="color:${meetLvl?'#a1a1aa':'#ef4444'}">Ур. ${item.lvl}</span></div>
-                                    <div style="display:flex; gap:4px; flex-wrap:wrap;">${tagClassHtml}${tagTwoHandHtml}${tagPremiumHtml}</div>
-                                    <div class="shop-item-stats">${formatShopStats(item)}</div>
-                                    ${item.desc ? `<div class="shop-item-desc">${item.desc}</div>` : ''}
+                                    <div style="display:flex; gap:4px; flex-wrap:wrap;">${tagClassHtml}</div>
+                                    <div class="shop-item-stats">${formatStats(item.stats)}</div>
                                 </div>
                                 ${btnHtml}
                             </div>
                         `;
                     });
                 } else {
-                    document.getElementById("ui-shop-filters").style.display = "none";
-                    if (hero.inventory.length === 0) {
-                        shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Ваша сумка пуста.</div>`;
-                    } else {
+                    if (hero.inventory.length === 0) shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Ваша сумка пуста.</div>`;
+                    else {
                         hero.inventory.forEach((itemId, index) => {
                             let item = ITEMS_DB[hero.inventory[index]];
                             shopHtml += `
@@ -1385,39 +1304,6 @@
                     }
                 }
                 document.getElementById("ui-shop-list").innerHTML = shopHtml;
-            }
-
-            if (currentScreen === 'classes') {
-                let galleryHtml = '';
-                for (let key in CLASSES) {
-                    let cls = CLASSES[key];
-                    galleryHtml += `
-                        <div class="class-icon-btn ${previewClassId === key ? 'selected' : ''}" onclick="selectPreviewClass('${key}')">
-                            <div class="icon">${cls.icon}</div>
-                            <div class="name">${cls.name}</div>
-                        </div>
-                    `;
-                }
-                document.getElementById("ui-classes-gallery").innerHTML = galleryHtml;
-
-                let selCls = CLASSES[previewClassId];
-                let isCurrentHeroClass = hero.baseClass === previewClassId;
-                
-                document.getElementById("ui-class-detail").innerHTML = `
-                    <div class="class-detail-wrapper">
-                        <div class="class-detail-img-box"><img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img"></div>
-                        <div class="class-detail-card">
-                            <div class="class-detail-header">
-                                <div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div>
-                                <div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div>
-                            </div>
-                            <div class="class-detail-lore">"${selCls.lore}"</div>
-                            <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 0 20px ${selCls.color}40; border-color: ${selCls.color};` : ''}">
-                                ${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}
-                            </button>
-                        </div>
-                    </div>
-                `;
             }
         }
 
