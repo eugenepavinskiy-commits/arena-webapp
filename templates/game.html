@@ -51,8 +51,17 @@
             padding: 10px; text-align: center; margin-bottom: 16px; 
             color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            display: flex; justify-content: space-between; align-items: center;
         }
         
+        .floor-nav-btn {
+            background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; 
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .floor-nav-btn:active { transform: scale(0.9); }
+        .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
         /* === ИНВЕНТАРЬ И ГЕРОЙ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
@@ -159,7 +168,7 @@
         .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
         .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
 
-        /* === PVE БОЕВКА 3.0 (ЭТАЖИ И БОССЫ) === */
+        /* === PVE БОЕВКА === */
         .combat-arena { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 14px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative;}
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
         .combat-header.boss { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); font-size: 16px; }
@@ -217,8 +226,10 @@
         .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 6px; text-transform: uppercase;}
         .vic-rewards { font-size: 12px; color: #e4e4e7; margin-bottom: 16px; font-weight: bold;}
         .vic-loot-box { width: 64px; height: 64px; border-radius: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4); position: relative; overflow: hidden;}
-        .vic-loot-name { font-size: 10px; color: #fca5a5; font-weight: bold; margin-bottom: 16px; text-shadow: 0 1px 2px #000; text-transform: uppercase;}
+        .vic-loot-name { font-size: 10px; color: #fca5a5; font-weight: bold; margin-bottom: 16px; text-shadow: 0 1px 2px #000; text-transform: uppercase; text-align: center;}
         .vic-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; }
+        
+        .shop-info-banner { font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 12px; font-style: italic; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; padding: 6px 0; background: #121214;}
     </style>
 </head>
 <body>
@@ -230,7 +241,7 @@
     <div class="top-dashboard">
         <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
         <div class="progress-info">
-            УР. <span id="ui-top-lvl">1</span> | ЭТАЖ <span id="ui-top-floor" style="color:#f59e0b;">1</span>/100
+            УР. <span id="ui-top-lvl">1</span> | ЭТАЖ <span id="ui-top-floor" style="color:#f59e0b;">1</span>
             <div style="font-size:9px; font-weight:normal; margin-top:2px;">EXP: <span id="ui-top-exp" style="font-size:9px;">0/100</span></div>
         </div>
         <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
@@ -247,21 +258,24 @@
         <button class="nav-btn" onclick="openScreen('КУЗНЕЦ')">⛏️ КУЗНЕЦ</button>
     </div>
 
-    <!-- ЭКРАН 0: PVE БОЕВКА 3.0 -->
+    <!-- ЭКРАН 0: PVE БОЕВКА -->
     <div id="screen-PVE" class="app-screen">
-        <div class="class-banner" id="combat-floor-title">БЕСКОНЕЧНАЯ БАШНЯ</div>
+        <div class="class-banner" id="combat-floor-title">
+            <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
+            <span id="pve-floor-display">ЭТАЖ 1: ПОДЗЕМЕЛЬЕ</span>
+            <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
+        </div>
         
         <div class="combat-arena">
-            <!-- ЭКРАН ПОБЕДЫ -->
             <div class="victory-modal" id="vic-modal">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
                 <div class="vic-rewards" id="vic-rewards-text">Заработано: +50💰 | +40 EXP</div>
                 <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center;">
-                    <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:6px;">ВЫБИТА РЕЛИКВИЯ:</div>
+                    <div style="font-size:11px; color:#fbbf24; font-weight:bold; margin-bottom:6px;">ВЫБИТ АРТЕФАКТ:</div>
                     <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
                     <div class="vic-loot-name" id="vic-loot-name">Название реликвии</div>
                 </div>
-                <button class="vic-btn" onclick="closeVictoryModal()">СЛЕДУЮЩИЙ ЭТАЖ ➔</button>
+                <button class="vic-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ПУТЬ ➔</button>
             </div>
 
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
@@ -355,6 +369,7 @@
     <!-- ЭКРАН 2: ЛАВКА -->
     <div id="screen-shop" class="app-screen">
         <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
+        <div class="shop-info-banner">Торговец продает лишь базовое снаряжение.<br>Истинные артефакты спрятаны в Башне.</div>
         <div class="shop-controls">
             <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">🛒 КУПИТЬ</div>
             <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">💰 ПРОДАТЬ</div>
@@ -391,6 +406,7 @@
         <div id="ui-class-detail"></div>
     </div>
 
+    <!-- ЛОГИКА -->
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -403,81 +419,57 @@
         };
 
         const CLASSES = {
-            knight: {
-                id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24",
-                lore: "Держит удар лучше, чем корпоративный сервер в пятницу. Выживает там, где остальные уже пишут завещание.",
-                growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 },
-                armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9,
-                skill: { name: "🛡️ Щит Веры", desc: "Исцеляет 25% HP.", cd: 3 },
-                bars: { dmg: 40, def: 100, diff: 20 }
-            },
-            berserk: {
-                id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444",
-                lore: "Работает без выходных и инстинкта самосохранения. Машина для переработки врагов, презирающая любую защиту.",
-                growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 },
-                armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0,
-                skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 },
-                bars: { dmg: 100, def: 30, diff: 50 }
-            },
-            shadow: {
-                id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7",
-                lore: "Специалист по внезапным сокращениям популяции. Убьет до того, как враг успеет поздороваться.",
-                growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 },
-                armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3,
-                skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит.", cd: 3 },
-                bars: { dmg: 85, def: 20, diff: 90 }
-            },
-            ranger: {
-                id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981",
-                lore: "Эффективно делегирует стрелы прямо в уязвимые места. Любит, когда проблемы решаются еще на подходе.",
-                growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 },
-                armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15,
-                skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага.", cd: 3 },
-                bars: { dmg: 70, def: 40, diff: 60 }
-            }
+            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Исцеляет 25% HP.", cd: 3 } },
+            berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0, skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 } },
+            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит.", cd: 3 } },
+            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага.", cd: 3 } }
         };
 
         const ITEMS_DB = {
-            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
-            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
-            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10, dodgeChance: -1 } },
-            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 6, blockChance: 5 } },
-            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12, str: 2 } },
-            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8, mst: 5, luk: 2 } },
-            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, str: 2 } },
-            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12, blockChance: 6 } },
-            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18, critChance: 6, armorPen: 3 } },
-            "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, stats: { armor: 15, str: 3 } },
-            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
-            "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 10, str: 3 } },
-            "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 38, armorPen: 10, agi: -2 } },
-            "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, stats: { armor: 18, mst: 8, end: 3 } },
-            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25, blockChance: 10 } },
-            "24393": { id: "24393", name: "Шляпа Колдуна", type: "head", icon: "🧙‍♂️", rarity: "epic", lvl: 4, price: 400, allowedClasses: ["shadow"], stats: { armor: 8, mst: 15 } },
-            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 42, str: 5 } },
-            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], stats: { armor: 15, end: 5 } },
-            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 38, blockChance: 12 } },
-            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 12, agi: 6, dodgeChance: 4 } },
-            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { atk: 55, str: 8, armorPen: 15 } },
-            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], stats: { armor: 55, end: 5, dodgeChance: -4 } },
-            "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 45, mst: 5, blockChance: 14 } },
-            "19204": { id: "19204", name: "Рубиновый Перстень", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, stats: { str: 8, atk: 15, critDmg: 10 } },
-            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
-            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 25, agi: 8, dodgeChance: 4 } },
-            "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 65, end: 8, str: 4 } },
-            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 60, blockChance: 18, end: 6 } },
-            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], stats: { atk: 100, str: 15, critDmg: 25 } },
-            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 75, str: 10 } },
-            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], stats: { armor: 50, agi: 12, mst: 6 } },
-            "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 55, mst: 15, luk: 5 } },
-            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, stats: { armor: 15, end: 20, mst: 10 } },
-            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 90, atk: 25, blockChance: 20, end: -5 }, desc: "Шипы наносят урон, но щит тяжел." },
-            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 65, mst: 25, critChance: 8 } },
-            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
-            "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
+            // == SHOP ITEMS (Доступны в Лавке, Базовый шмот для старта) ==
+            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, inShop: true, stats: { atk: 5, armorPen: 2 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], inShop: true, stats: { atk: 4, critChance: 3 } },
+            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, inShop: true, stats: { armor: 10, dodgeChance: -1 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], inShop: true, stats: { armor: 6, blockChance: 5 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], inShop: true, stats: { atk: 12, str: 2 } },
+            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, inShop: true, stats: { armor: 8, mst: 5, luk: 2 } },
+            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, inShop: true, stats: { armor: 10, str: 2 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, inShop: true, stats: { armor: 12, blockChance: 6 } },
+            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, inShop: true, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
+
+            // == DROP ONLY (Только из Башни, в Лавке не продаются) ==
+            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { atk: 18, critChance: 6, armorPen: 3 } },
+            "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, dropOnly: true, stats: { armor: 15, str: 3 } },
+            "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], dropOnly: true, stats: { armor: 10, str: 3 } },
+            "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 38, armorPen: 10, agi: -2 } },
+            "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, dropOnly: true, stats: { armor: 18, mst: 8, end: 3 } },
+            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
+            "24393": { id: "24393", name: "Шляпа Колдуна", type: "head", icon: "🧙‍♂️", rarity: "epic", lvl: 4, price: 400, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 8, mst: 15 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, stats: { atk: 42, str: 5 } },
+            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 15, end: 5 } },
+            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 38, blockChance: 12 } },
+            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 12, agi: 6, dodgeChance: 4 } },
+            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 55, str: 8, armorPen: 15 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 55, end: 5, dodgeChance: -4 } },
+            "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 45, mst: 5, blockChance: 14 } },
+            "19204": { id: "19204", name: "Рубиновый Перстень", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, dropOnly: true, stats: { str: 8, atk: 15, critDmg: 10 } },
+            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
+            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 25, agi: 8, dodgeChance: 4 } },
+            "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, stats: { armor: 65, end: 8, str: 4 } },
+            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 60, blockChance: 18, end: 6 } },
+            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 100, str: 15, critDmg: 25 } },
+            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, dropOnly: true, stats: { armor: 75, str: 10 } },
+            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], dropOnly: true, stats: { armor: 50, agi: 12, mst: 6 } },
+            "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
+            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
+            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
+            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
+            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
+            "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
         };
         const SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
+        const PREFIXES = ["Древний", "Проклятый", "Пылающий", "Забытый", "Рунный", "Теневой", "Божественный"];
 
         let currentScreen = "hero";
         let shopMode = "buy";
@@ -485,7 +477,7 @@
         let previewClassId = "knight";
 
         let hero = {
-            name: "Гладиатор", level: 1, floor: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
+            name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, unspentPoints: 0, gold: 5000,
             baseClass: "knight", hp: 100, maxHp: 100,
             baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
@@ -502,24 +494,24 @@
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
         const BOSS_NAMES = ["Хранитель Сервера", "Древний Инвестор", "HR-Демон", "Пожиратель Дедлайнов"];
 
-        function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.5, lvl - 1)); }
+        function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
         function generateEnemy(floorLevel) {
             let isMegaBoss = floorLevel % 10 === 0;
             let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
-            
             let name = ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)];
             let avatar = "🧟";
 
             if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; }
             else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; }
 
-            let hp = 20 + (floorLevel * 10);
-            let atk = 5 + (floorLevel * 2);
-            let armor = floorLevel;
+            // Экспоненциальный скейлинг врагов (Жесткая стена гринда)
+            let hp = Math.floor(25 + (floorLevel * 15) * Math.pow(1.08, floorLevel));
+            let atk = Math.floor(6 + (floorLevel * 4) * Math.pow(1.06, floorLevel));
+            let armor = Math.floor(floorLevel * 1.5);
 
-            if (isMiniBoss) { hp = 40 + (floorLevel * 15); atk = 10 + (floorLevel * 3); }
-            if (isMegaBoss) { hp = 100 + (floorLevel * 25); atk = 20 + (floorLevel * 5); armor = floorLevel * 2; }
+            if (isMiniBoss) { hp = Math.floor(hp * 1.5); atk = Math.floor(atk * 1.3); }
+            if (isMegaBoss) { hp = Math.floor(hp * 2.5); atk = Math.floor(atk * 1.6); armor = Math.floor(armor * 1.5); }
 
             let zones = ["head", "chest", "legs"];
             return { 
@@ -529,36 +521,54 @@
             };
         }
 
-        // ГЕНЕРАТОР РЕЛИКВИЙ С БОССОВ (Механика Raid: SL)
-        function generateBossDrop(floor) {
-            let maxLvl = Math.max(1, Math.ceil(floor / 10)); // Этаж 10 дает вещи 1-го тира, Этаж 20 - 2-го.
-            let pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl <= maxLvl);
-            if(pool.length === 0) pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl === 1);
+        function changeFloor(dir) {
+            hero.floor += dir;
+            if (hero.floor < 1) hero.floor = 1;
+            if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor;
+            initCombat();
+        }
+
+        // РЕЛИКВИИ: Масштабирование дропа от этажа с роллом качества
+        function generateBossDrop(floor, specificId = null) {
+            let maxLvl = Math.max(1, Math.ceil(floor / 10)); 
             
-            let baseId = pool[Math.floor(Math.random() * pool.length)];
-            let baseItem = ITEMS_DB[baseId];
-            
-            let newItem = JSON.parse(JSON.stringify(baseItem)); // deep clone
-            newItem.id = baseId + "_" + Date.now();
-            newItem.name = "✨ " + baseItem.name;
-            newItem.rarity = "relic";
-            newItem.premium = false; // Убираем бейдж магазина, если был
-            
-            // Буст основных статов на 30%
-            for (let s in newItem.stats) {
-                newItem.stats[s] = Math.ceil(newItem.stats[s] * 1.3);
+            let baseId = specificId;
+            if (!baseId) {
+                let pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl <= maxLvl);
+                if(pool.length === 0) pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl === 1);
+                baseId = pool[Math.floor(Math.random() * pool.length)];
             }
             
-            // Добавляем 1 случайный дополнительный стат
-            let possibleSubstats = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance'];
-            possibleSubstats = possibleSubstats.filter(s => !newItem.stats[s]); // Исключаем то, что уже есть
+            let baseItem = ITEMS_DB[baseId];
+            let newItem = JSON.parse(JSON.stringify(baseItem));
+            newItem.id = baseId + "_" + Date.now();
+            let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)];
+            newItem.name = `✨ ${prefix} ${baseItem.name}`;
+            newItem.rarity = "relic";
+            newItem.premium = false; 
+            newItem.dropOnly = true;
+            
+            // Коэффициент этажа (растет на 5% каждый уровень)
+            let tierMult = 1 + (floor * 0.05); 
+            // Ролл качества вещи (от 85% до 125% эффективности) - Заставляет фармить "идеальный прок"
+            let rollQuality = 0.85 + (Math.random() * 0.40);
+            let finalMult = tierMult * rollQuality;
+            
+            for (let s in newItem.stats) {
+                newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult));
+            }
+            
+            let possibleSubstats = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg'];
+            possibleSubstats = possibleSubstats.filter(s => !newItem.stats[s]); 
             if(possibleSubstats.length > 0) {
                 let sub = possibleSubstats[Math.floor(Math.random() * possibleSubstats.length)];
-                newItem.stats[sub] = (sub.includes('Chance') || sub === 'critDmg') ? 5 : 3;
+                newItem.stats[sub] = (sub.includes('Chance') || sub === 'critDmg') ? Math.floor(5 * finalMult) : Math.floor(3 * finalMult);
             }
             
-            newItem.desc = "Трофей с босса. Имеет уникальные характеристики.";
-            ITEMS_DB[newItem.id] = newItem; // Сохраняем в память
+            newItem.lvl = floor; 
+            newItem.price = Math.floor(baseItem.price * finalMult * 2.5);
+            newItem.desc = `Трофей ${floor} этажа. Качество: ${Math.floor(rollQuality*100)}%`;
+            ITEMS_DB[newItem.id] = newItem; 
             return newItem;
         }
 
@@ -567,9 +577,9 @@
             combatState.skillCooldown = 0;
             combatState.enemyStunned = false;
             let title = document.getElementById("combat-stage-name");
-            if (enemy.isBoss) { title.innerText = `ЭТАЖ ${hero.floor}: ВЕЛИКИЙ БОСС`; title.className = "combat-header boss"; }
-            else if (enemy.isMiniBoss) { title.innerText = `ЭТАЖ ${hero.floor}: ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; }
-            else { title.innerText = `ЭТАЖ ${hero.floor}`; title.className = "combat-header"; }
+            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; }
+            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; }
+            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; }
             
             logCombat(`<span class="log-sys">Вход на этаж ${hero.floor}: Вас встречает ${enemy.name}!</span>`);
             updateIntentDisplay();
@@ -657,30 +667,50 @@
                 mitigation = Math.floor(defArmor * 0.6);
             }
 
-            let finalDmg = Math.max(1, baseAtk - mitigation);
+            // ЖЕСТКОЕ ПРАВИЛО: Минимальный урон 15% от базы. Бессмертия нет.
+            let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation);
+            
             return { dmg: finalDmg, type: isCrit ? "crit" : (isBlock ? "block" : "normal") };
         }
 
         function handleCombatWin() {
             enemy.hp = 0;
-            let goldGained = 15 + (hero.floor * 5);
-            let expGained = 20 + (hero.floor * 10);
+            // Сниженный базовый опыт для долгой прогрессии
+            let goldGained = 10 + (hero.floor * 5);
+            let expGained = 15 + (hero.floor * 4);
             
             if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; }
-            if (enemy.isBoss) { goldGained *= 5; expGained *= 5; }
+            if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
 
             hero.gold += goldGained;
             hero.exp += expGained;
 
-            // ДРОП ЛУТА (Механика Raid: SL)
+            // ДРОП ЛУТА (Жесткая система)
             let droppedItem = null;
-            let dropChance = 0;
-            if (enemy.isBoss) dropChance = 100;
-            else if (enemy.isMiniBoss) dropChance = 25 + hero.finalStats.luk;
+            let dropChance = 1 + hero.finalStats.luk * 0.1; // Базовый шанс мобов ~1-2%
+            let isRelicDrop = false;
 
-            if (dropChance > 0 && Math.random() * 100 <= dropChance && hero.inventory.length < 10) {
-                droppedItem = generateBossDrop(hero.floor);
-                hero.inventory.push(droppedItem.id);
+            if (enemy.isBoss) { dropChance = 35 + hero.finalStats.luk * 1; isRelicDrop = true; } // Нужно фармить босса 3-4 раза ради леги
+            else if (enemy.isMiniBoss) { dropChance = 10 + hero.finalStats.luk * 0.5; isRelicDrop = Math.random() > 0.7; }
+
+            let logMsg = "";
+            if (Math.random() * 100 <= dropChance) {
+                if (isRelicDrop) {
+                    droppedItem = generateBossDrop(hero.floor);
+                } else {
+                    let pool = SHOP_ASSORTMENT.filter(id => !ITEMS_DB[id].dropOnly);
+                    droppedItem = ITEMS_DB[pool[Math.floor(Math.random() * pool.length)]];
+                }
+
+                if (hero.inventory.length < 10) {
+                    hero.inventory.push(droppedItem.id);
+                } else {
+                    // АВТОПРОДАЖА ЕСЛИ СУМКА ПОЛНА
+                    let sellP = Math.floor(droppedItem.price * 0.5);
+                    hero.gold += sellP;
+                    logMsg = `\nСумка полна! ${isRelicDrop ? 'Реликвия' : 'Вещь'} продана за ${sellP}💰.`;
+                    droppedItem = null; 
+                }
             }
             
             if (hero.exp >= hero.expNext) {
@@ -691,24 +721,27 @@
                 calculateStats();
             }
 
-            // Показываем экран победы
-            let vicText = `Заработан Этаж: +${goldGained}💰 | +${expGained} EXP`;
+            let vicText = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
             document.getElementById("vic-rewards-text").innerText = vicText;
             
             let lootBox = document.getElementById("vic-loot-container");
             if (droppedItem) {
                 lootBox.style.display = "flex";
+                document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`;
                 document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem);
                 document.getElementById("vic-loot-name").innerText = droppedItem.name;
             } else {
                 lootBox.style.display = "none";
             }
 
-            // Прогрессируем этаж
-            if (hero.floor < 100) hero.floor++;
+            // Открываем следующий этаж, если убили максимальный
+            if (hero.floor === hero.maxFloor && hero.maxFloor < 100) {
+                hero.maxFloor++;
+                hero.floor = hero.maxFloor;
+            }
             
             document.getElementById("vic-modal").classList.add("show");
-            updateUI(); // чтобы обновить полоски под модалкой
+            updateUI(); 
         }
 
         function closeVictoryModal() {
@@ -757,7 +790,8 @@
                     
                     if (hero.hp <= 0) {
                         hero.hp = 0; 
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вылечитесь в Лагере. Этаж потерян.</span>`);
+                        // Штраф за смерть - не теряем этаж навсегда, просто придется его перепройти
+                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Враг оказался слишком силен. Вернитесь в Лагерь.</span>`);
                     }
                 }
                 
@@ -887,13 +921,18 @@
 
         function healHero() {
             if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!");
-            if (hero.gold >= 10) {
-                hero.gold -= 10;
+            
+            let missingHp = hero.finalStats.hp - Math.floor(hero.hp);
+            // 1 золото лечит 2 HP. Минимальная цена 10 золота.
+            let cost = Math.max(10, Math.floor(missingHp * 0.5));
+
+            if (hero.gold >= cost) {
+                hero.gold -= cost;
                 hero.hp = hero.finalStats.hp;
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 updateUI();
             } else {
-                alert("Нужно 10 золота для лечения!");
+                alert(`Нужно ${cost} золота для полного лечения! У вас ${hero.gold}.`);
             }
         }
 
@@ -1002,9 +1041,8 @@
         function renderItemIcon(item) {
             if (!item) return "";
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
-            // Для реликвий используем картинку базовой вещи (id до знака подчеркивания)
+            
             let imgId = item.id.split('_')[0]; 
-            // Обработка особых случаев вроде shields_v2_33, где подчеркивания есть в базовом имени
             if (item.id.includes("shields_v2_")) {
                 let parts = item.id.split('_');
                 imgId = parts[0] + "_" + parts[1] + "_" + parts[2];
@@ -1020,7 +1058,16 @@
         function updateUI() {
             document.getElementById("ui-gold").innerText = hero.gold;
             document.getElementById("ui-top-lvl").innerText = hero.level;
+            
+            // UI Обновление навигации этажей
+            let floorNavHtml = `
+                <button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 ? 'disabled' : ''}>◀</button>
+                <span id="pve-floor-display">ЭТАЖ ${hero.floor}</span>
+                <button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor ? 'disabled' : ''}>▶</button>
+            `;
+            document.getElementById("combat-floor-title").innerHTML = floorNavHtml;
             document.getElementById("ui-top-floor").innerText = hero.floor;
+            
             document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`;
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
@@ -1124,7 +1171,10 @@
                 document.getElementById("ui-levelup-container").innerHTML = levelUpHtml;
 
                 let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100));
-                let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-10💰)</button>` : ``;
+                
+                let missingHp = hero.finalStats.hp - Math.floor(hero.hp);
+                let healCost = Math.max(10, Math.floor(missingHp * 0.5));
+                let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-${healCost}💰)</button>` : ``;
 
                 document.getElementById("ui-stats-container").innerHTML = `
                     <div class="stats-card">
@@ -1169,6 +1219,8 @@
                     sortedAssortment.forEach(itemId => {
                         let item = ITEMS_DB[itemId];
                         
+                        if(item.dropOnly || item.rarity === 'relic') return; 
+
                         if (fType === 'weapons' && item.type !== 'weapon1' && item.type !== 'two_handed') return;
                         if (fType === 'shields' && item.type !== 'weapon2') return;
                         if (fType === 'head' && item.type !== 'head') return;
