@@ -144,6 +144,7 @@
         .btn-buy { background: #fbbf24; color: #000; box-shadow: 0 4px 10px rgba(251,191,36,0.3); border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; box-shadow: none;}
         .btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); border-bottom: 3px solid #7f1d1d;}
+        .shop-info-banner { font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 12px; font-style: italic; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; padding: 6px 0; background: #121214;}
 
         /* === КЛАССЫ === */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
@@ -183,7 +184,6 @@
         .combat-avatar { font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: 4px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px;}
         .combat-avatar.boss { border-color: #ef4444; box-shadow: inset 0 0 15px rgba(239,68,68,0.3); font-size: 45px;}
         .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .combat-lvl { font-size: 9px; color: #71717a; margin-bottom: 6px; }
         .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
         .combat-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; }
         .combat-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; }
@@ -228,8 +228,6 @@
         .vic-loot-box { width: 64px; height: 64px; border-radius: 8px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4); position: relative; overflow: hidden;}
         .vic-loot-name { font-size: 10px; color: #fca5a5; font-weight: bold; margin-bottom: 16px; text-shadow: 0 1px 2px #000; text-transform: uppercase; text-align: center;}
         .vic-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; }
-        
-        .shop-info-banner { font-size: 10px; color: #a1a1aa; text-align: center; margin-bottom: 12px; font-style: italic; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; padding: 6px 0; background: #121214;}
     </style>
 </head>
 <body>
@@ -366,7 +364,7 @@
         <div class="stats-two-column" id="ui-stats-container"></div>
     </div>
 
-    <!-- ЭКРАН 2: ЛАВКА -->
+    <!-- ЭКРАН 2: ЛАВКА (ОЧИЩЕННАЯ ОТ ФИЛЬТРОВ ПО ТИПУ) -->
     <div id="screen-shop" class="app-screen">
         <div class="class-banner">🧙‍♂️ ТАИНСТВЕННЫЙ ТОРГОВЕЦ</div>
         <div class="shop-info-banner">Торговец продает лишь базовое снаряжение.<br>Истинные артефакты спрятаны в Башне.</div>
@@ -376,19 +374,10 @@
         </div>
         
         <div class="shop-filters" id="ui-shop-filters">
-            <select class="shop-select" id="filter-type" onchange="updateUI()">
-                <option value="all">📜 Все предметы</option>
-                <option value="weapons">⚔️ Оружие (1H/2H)</option>
-                <option value="shields">🛡️ Щиты</option>
-                <option value="head">🪖 Шлемы</option>
-                <option value="chest">🦺 Броня и Мантии</option>
-                <option value="belt">🧪 Пояса и Зелья</option>
-                <option value="boots">👢 Обувь</option>
-                <option value="jewelry">💍 Бижутерия (Кольца, Амулеты)</option>
-            </select>
+            <!-- Оставлен только полезный фильтр классов -->
             <select class="shop-select" id="filter-class" onchange="updateUI()">
-                <option value="all">Для всех классов</option>
-                <option value="my_class">Только для моего класса</option>
+                <option value="my_class">Показывать: Для моего класса</option>
+                <option value="all">Показывать: Все предметы</option>
             </select>
         </div>
 
@@ -463,7 +452,7 @@
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
             "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 }, desc: "Шипы наносят урон, но щит тяжел." },
             "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
             "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
@@ -613,6 +602,10 @@
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
             logBox.innerHTML += `<div class="log-entry">${text}</div>`;
+            // Защита от переполнения логов и лагов:
+            while (logBox.children.length > 30) {
+                logBox.removeChild(logBox.firstChild);
+            }
             logBox.scrollTop = logBox.scrollHeight;
         }
 
@@ -690,7 +683,7 @@
             let dropChance = 1 + hero.finalStats.luk * 0.1; // Базовый шанс мобов ~1-2%
             let isRelicDrop = false;
 
-            if (enemy.isBoss) { dropChance = 35 + hero.finalStats.luk * 1; isRelicDrop = true; } // Нужно фармить босса 3-4 раза ради леги
+            if (enemy.isBoss) { dropChance = 35 + hero.finalStats.luk * 1; isRelicDrop = true; } 
             else if (enemy.isMiniBoss) { dropChance = 10 + hero.finalStats.luk * 0.5; isRelicDrop = Math.random() > 0.7; }
 
             let logMsg = "";
@@ -790,8 +783,8 @@
                     
                     if (hero.hp <= 0) {
                         hero.hp = 0; 
-                        // Штраф за смерть - не теряем этаж навсегда, просто придется его перепройти
-                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Враг оказался слишком силен. Вернитесь в Лагерь.</span>`);
+                        if(hero.floor > 1) hero.floor--; // Штраф этажа
+                        logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Вас отбросило на Этаж ${hero.floor}.</span>`);
                     }
                 }
                 
@@ -1072,7 +1065,8 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
-                document.getElementById("combat-hero-lvl").innerText = hero.level;
+                // ВНИМАНИЕ: СТРОКИ С КОДАМИ combat-hero-lvl и combat-enemy-lvl УДАЛЕНЫ (ЗАЩИТА ОТ КРАША)
+
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
@@ -1082,7 +1076,6 @@
                 if(enemy.isBoss) document.getElementById("combat-enemy-avatar").classList.add("boss");
                 else document.getElementById("combat-enemy-avatar").classList.remove("boss");
 
-                document.getElementById("combat-enemy-lvl").innerText = enemy.level;
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
@@ -1206,7 +1199,6 @@
                 let shopHtml = '';
                 if (shopMode === 'buy') {
                     document.getElementById("ui-shop-filters").style.display = "flex";
-                    let fType = document.getElementById("filter-type").value;
                     let fClass = document.getElementById("filter-class").value;
 
                     let sortedAssortment = [...SHOP_ASSORTMENT].sort((a, b) => {
@@ -1221,13 +1213,6 @@
                         
                         if(item.dropOnly || item.rarity === 'relic') return; 
 
-                        if (fType === 'weapons' && item.type !== 'weapon1' && item.type !== 'two_handed') return;
-                        if (fType === 'shields' && item.type !== 'weapon2') return;
-                        if (fType === 'head' && item.type !== 'head') return;
-                        if (fType === 'chest' && item.type !== 'chest') return;
-                        if (fType === 'boots' && item.type !== 'boots') return;
-                        if (fType === 'belt' && item.type !== 'belt') return;
-                        if (fType === 'jewelry' && item.type !== 'ring' && item.type !== 'amulet') return;
                         if (fClass === 'my_class' && item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return;
 
                         let tagClassHtml = item.allowedClasses ? `<div class="shop-class-tag tag-class">[Класс]</div>` : `<div class="shop-class-tag tag-uni">[Общее]</div>`;
