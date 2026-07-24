@@ -9,7 +9,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 8px;
+            background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 6px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
         }
         
@@ -18,7 +18,7 @@
             display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; 
-            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+            margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
         .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
@@ -28,7 +28,7 @@
         .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
 
         /* === НАВИГАЦИЯ === */
-        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
+        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
         .nav-btn {
             background: #121214; color: #71717a; border: 1px solid #27272a; padding: 10px 0; 
             font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; 
@@ -43,7 +43,7 @@
         .class-banner {
             background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); 
             border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; 
-            padding: 10px; text-align: center; margin-bottom: 16px; 
+            padding: 8px 10px; text-align: center; margin-bottom: 12px; 
             color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center;
         }
@@ -69,8 +69,6 @@
         .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4); }
         .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.5); animation: pulse-leg 2s infinite; }
         .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.6); animation: pulse-relic 1.5s infinite; }
-        @keyframes pulse-leg { 0% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } 50% { box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.6); } 100% { box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); } }
-        @keyframes pulse-relic { 0% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.4); } 50% { box-shadow: inset 0 0 30px rgba(239, 68, 68, 0.8); } 100% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.4); } }
         
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #71717a; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px;}
         .hero-avatar-box { flex-shrink: 0; width: 220px; text-align: center; position: relative; }
@@ -85,9 +83,6 @@
         .inv-item.empty { background: #050505; border: 1px solid #1c1c1f; cursor: default; }
 
         /* СТАТЫ */
-        .levelup-container { margin-bottom: 16px; }
-        .btn-toggle-levelup { width: 100%; background: linear-gradient(180deg, #27272a 0%, #18181b 100%); color: #f59e0b; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.6); text-transform: uppercase; letter-spacing: 1px;}
-        .add-stat-btn { background: #f59e0b; color: #000; border: none; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         .stats-two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stats-card { background: #121214; border-radius: 8px; padding: 14px; border: 1px solid #27272a; box-shadow: 0 6px 15px rgba(0,0,0,0.6); position: relative;}
         .stat-group-title { color: #71717a; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px;}
@@ -99,87 +94,86 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 8px; padding: 2px 4px; border-radius: 3px; cursor: pointer; }
 
-        /* === PVE БОЕВКА (КАРТОЧНЫЙ UI + ФОНЫ 17.1) === */
+        /* === PVE БОЕВКА 18.0 (СОВЕРШЕННЫЙ UI) === */
         .combat-arena { 
-            border: 2px solid #27272a; border-radius: 12px; padding: 14px; margin-bottom: 16px; 
+            border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; 
             position: relative; overflow: hidden; transition: background-image 0.5s ease;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
             background-color: #0f172a;
         }
 
-        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 4px #000;}
-        .intent-box { background: rgba(30, 27, 75, 0.85); backdrop-filter: blur(4px); border: 1px solid #6366f1; border-radius: 6px; padding: 8px 10px; text-align: center; font-size: 11px; font-weight: bold; color: #c7d2fe; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
+        
+        .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ ДЛЯ КАРТОЧЕК */
+        /* СТЕКЛЯННЫЙ ПЬЕДЕСТАЛ */
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 14px; position: relative; gap: 10px;
-            background: linear-gradient(180deg, rgba(39,39,42,0.4) 0%, rgba(9,9,11,0.95) 100%);
-            backdrop-filter: blur(3px);
-            border: 1px solid rgba(255,255,255,0.05); border-bottom: 3px solid #050505;
-            border-radius: 16px; padding: 25px 12px 15px 12px;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.8);
+            margin-bottom: 10px; position: relative; gap: 8px;
+            background: linear-gradient(180deg, rgba(39,39,42,0.3) 0%, rgba(9,9,11,0.8) 100%);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.05); border-bottom: 2px solid #050505;
+            border-radius: 12px; padding: 20px 8px 12px 8px;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.5);
         }
         
-        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ */
+        /* 🃏 СТИЛИ КАРТОЧЕК ПЕРСОНАЖЕВ (ГРИМДАРК СТАЛЬ) */
         .combat-card {
             flex: 1; max-width: 145px; background: #121214; border: 2px solid #3f3f46; 
-            border-radius: 12px; position: relative; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column;
+            border-radius: 10px; position: relative; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.8); display: flex; flex-direction: column;
         }
-        .combat-card.hero { border-color: #d97706; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(217,119,6,0.3); }
-        .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.5); }
+        /* РАМКА ГЕРОЯ ТЕПЕРЬ СТАЛЬНАЯ/СИНЯЯ */
+        .combat-card.hero { border-color: #71717a; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
+        .combat-card.boss { border-color: #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
         
-        .card-avatar-wrap { width: 100%; height: 135px; position: relative; overflow: hidden; background: #000; border-radius: 10px 10px 0 0; }
-        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.95); transition: filter 0.2s;}
+        .card-avatar-wrap { width: 100%; height: 120px; position: relative; overflow: hidden; background: #000; border-radius: 8px 8px 0 0; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: filter 0.2s;}
         
-        .entity-tags { position: absolute; top: -10px; left: -10px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
-        .e-tag { background: #09090b; color: #e4e4e7; padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.9);}
+        .entity-tags { position: absolute; top: -8px; left: -8px; display: flex; flex-direction: column; gap: 4px; z-index: 20; align-items: flex-start;}
+        .e-tag { background: #09090b; color: #e4e4e7; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: bold; border: 1px solid #52525b; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.9);}
         .e-tag.lvl { color: #fbbf24; border-color: #b45309; }
-        .e-tag.class { color: #34d399; border-color: #059669; }
+        .e-tag.class { color: #60a5fa; border-color: #2563eb; } /* Синий оттенок для класса */
         .e-tag.elite { color: #fcd34d; border-color: #f59e0b; background: #451a03;}
         .e-tag.boss { color: #fca5a5; border-color: #ef4444; background: #450a0a; animation: pulse-relic 1.5s infinite;}
         
-        .status-icon { position: absolute; top: 6px; right: 6px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
+        .status-icon { position: absolute; top: 4px; right: 4px; font-size: 16px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
-        /* ФУТЕР КАРТОЧКИ (ИНФО И ХП) */
-        .card-footer { padding: 8px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2; border-radius: 0 0 10px 10px;}
-        .card-name { font-weight: 900; font-size: 11px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
-        .card-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 4px; color: #d4d4d8;}
-        .card-hp-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px; border: 1px solid #27272a;}
+        .card-footer { padding: 6px; background: linear-gradient(0deg, #09090b 0%, #18181b 100%); border-top: 1px solid #27272a; text-align: center; position: relative; z-index: 2; border-radius: 0 0 8px 8px;}
+        .card-name { font-weight: 900; font-size: 10px; margin-bottom: 4px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
+        .card-hp-text { font-size: 9px; font-weight: bold; margin-bottom: 2px; color: #d4d4d8;}
+        .card-hp-bg { width: 100%; height: 5px; background: #050505; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); overflow: hidden; margin-bottom: 2px; border: 1px solid #27272a;}
         .card-hp-fill { height: 100%; background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 5px rgba(239,68,68,0.4);}
         
-        .boss-rage-bg { width: 100%; height: 4px; background: #050505; border-radius: 2px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
+        .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 3px; border: 1px solid #27272a;}
         .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
         .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 
-        .combat-vs { font-size: 26px; font-weight: 900; color: #a1a1aa; margin: 0 5px; text-shadow: 0 2px 4px #000, 0 -1px 1px #27272a; font-style: italic;}
-        
-        .combo-meter { position: absolute; top: 5px; right: 15px; font-size: 12px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
+        .combat-vs { font-size: 22px; font-weight: 900; color: #71717a; margin: 0 2px; text-shadow: 0 2px 4px #000; font-style: italic;}
+        .combo-meter { position: absolute; top: 4px; right: 10px; font-size: 10px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
         .combo-meter.show { opacity: 1; }
 
-        /* ИСКРА ПРИ СТОЛКНОВЕНИИ */
-        .clash-spark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; background: radial-gradient(circle, #fbbf24 0%, #ef4444 20%, transparent 60%); opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; }
+        /* ИСКРА И АНИМАЦИИ */
+        .clash-spark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: radial-gradient(circle, #fbbf24 0%, #ef4444 20%, transparent 60%); opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; }
         @keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
         .spark-anim { animation: spark-boom 0.4s ease-out; }
 
-        /* АНИМАЦИИ СТОЛКНОВЕНИЯ КАРТОЧЕК */
-        @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(30px) rotate(5deg) scale(1.05); z-index: 10;} 50% { transform: translateX(35px) rotate(5deg) scale(1.05); } 100% { transform: translateX(0) rotate(0deg); } }
-        @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-30px) rotate(-5deg) scale(1.05); z-index: 10;} 50% { transform: translateX(-35px) rotate(-5deg) scale(1.05); } 100% { transform: translateX(0) rotate(0deg); } }
+        @keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(20px) rotate(3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(25px) rotate(3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
+        @keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-20px) rotate(-3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(-25px) rotate(-3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
         .clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .clash-enemy-anim { animation: clash-enemy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        @keyframes hit-shake { 0% { filter: brightness(1); } 25% { transform: translateX(-3px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(3px); } 75% { transform: translateX(-3px); } 100% { filter: brightness(1); } }
+        @keyframes hit-shake { 0% { filter: brightness(1); } 25% { transform: translateX(-2px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(2px); } 75% { transform: translateX(-2px); } 100% { filter: brightness(1); } }
         .hit-anim { animation: hit-shake 0.3s ease-out; }
-        
-        .slash-fx { position: absolute; top: 50%; left: 50%; width: 120px; height: 6px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
+        .slash-fx { position: absolute; top: 50%; left: 50%; width: 90px; height: 5px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
         @keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
-        .dmg-popup { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 5px #000;}
-        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -40px) scale(1.3); } }
+        
+        .dmg-popup { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
 
-        .combat-log-box { background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(4px); border: 1px solid #27272a; border-radius: 8px; padding: 10px; height: 85px; overflow-y: auto; margin-bottom: 12px; font-size: 11px; line-height: 1.5; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);}
-        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 3px; margin-bottom: 3px;}
+        .combat-log-box { background: rgba(9, 9, 11, 0.7); backdrop-filter: blur(4px); border: 1px solid #27272a; border-radius: 8px; padding: 6px 8px; height: 56px; overflow-y: auto; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8);}
+        .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; margin-bottom: 2px;}
         .log-dmg { color: #f87171; font-weight: bold; }
         .log-crit { color: #fbbf24; font-weight: bold; }
         .log-dodge { color: #60a5fa; font-weight: bold; }
@@ -187,26 +181,48 @@
         .log-sys { color: #34d399; font-weight: bold; }
         .log-skill { color: #c084fc; font-weight: bold; }
 
-        .skill-box { display: flex; justify-content: space-between; align-items: center; background: rgba(24, 24, 27, 0.9); border: 1px solid #3f3f46; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; backdrop-filter: blur(4px);}
-        .skill-btn { background: #7e22ce; color: #fff; border: 1px solid #a855f7; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 6px rgba(126,34,206,0.4);}
-
-        .zone-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .zone-btn { flex: 1; padding: 10px 0; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #71717a; border: 1px solid #27272a; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);}
-        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
-        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: 0 4px 10px rgba(59,130,246,0.3);}
+        /* === ЕДИНАЯ БОЕВАЯ ПАНЕЛЬ (DASHBOARD) === */
+        .combat-dashboard {
+            background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px);
+            border: 1px solid #27272a; border-radius: 12px; padding: 10px; margin-top: 10px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
+        }
+        .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
+        .control-label { font-size: 9px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1;}
+        .zone-group { display: flex; flex: 1; gap: 6px; }
         
-        .durability-dots { display: flex; gap: 3px; }
-        .dur-dot { width: 8px; height: 8px; border-radius: 4px; background: #27272a; border: 1px solid #18181b;}
-        .dur-dot.g { background: #10b981; box-shadow: 0 0 6px #10b981; border-color: #059669;}
-        .dur-dot.y { background: #facc15; box-shadow: 0 0 6px #facc15; border-color: #ca8a04;}
-        .dur-dot.o { background: #f97316; box-shadow: 0 0 6px #f97316; border-color: #c2410c;}
-        .dur-text { font-size: 8px; color: #ef4444; font-weight: bold; display: none; }
+        .zone-btn { 
+            flex: 1; padding: 8px 0; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; 
+            text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; 
+            text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s;
+        }
+        .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
+        .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.4);}
+        
+        .durability-dots { display: flex; gap: 2px; }
+        .dur-dot { width: 6px; height: 6px; border-radius: 3px; background: #27272a; border: 1px solid #18181b;}
+        .dur-dot.g { background: #10b981; box-shadow: 0 0 4px #10b981; border-color: #059669;}
+        .dur-dot.y { background: #facc15; box-shadow: 0 0 4px #facc15; border-color: #ca8a04;}
+        .dur-dot.o { background: #f97316; box-shadow: 0 0 4px #f97316; border-color: #c2410c;}
+        .dur-text { font-size: 7px; color: #ef4444; font-weight: bold; display: none; }
         .zone-btn.broken .dur-text { display: block; }
         .zone-btn.broken .durability-dots { display: none; }
         
-        .action-row { display: flex; gap: 8px; margin-top: 6px; }
-        .action-btn { flex: 1; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; padding: 16px; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 6px 15px rgba(0,0,0,0.6);}
-        .action-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
+        .main-actions { display: flex; gap: 8px; margin-top: 2px; }
+        .btn-skill-compact { 
+            flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; 
+            border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; 
+            text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 6px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .btn-skill-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
+        .btn-exe-compact { 
+            flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; 
+            border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+        }
+        .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
         /* МОДАЛКИ */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
@@ -217,7 +233,7 @@
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
         
-        /* === МАГАЗИН === */
+        /* === МАГАЗИН И ПР === */
         .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; }
         .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
         .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
@@ -233,15 +249,11 @@
         .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
-        .tag-premium { background: #3b0764; color: #d8b4fe; border: 1px solid #9333ea;}
-        .tag-twohand { background: #450a0a; color: #ef4444; border: 1px solid #7f1d1d;}
-        .shop-item-stats { font-size: 12px; color: #10b981; margin-top: 2px; }
         .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; }
         .btn-buy { background: #fbbf24; color: #000; border-bottom: 3px solid #b45309;}
         .btn-buy:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; }
         .btn-sell { background: #ef4444; color: #fff; border-bottom: 3px solid #7f1d1d;}
 
-        /* === КЛАССЫ === */
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; opacity: 0.4; filter: grayscale(100%); }
         .class-icon-btn.selected { background: #18181b; border-color: #52525b; opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
@@ -289,7 +301,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE БОЕВКА (С ЖЕСТКИМ РАЗДЕЛЕНИЕМ ФОНОВ 17.1) -->
+    <!-- PVE БОЕВКА (СОВЕРШЕННЫЙ UI 18.0) -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -355,29 +367,33 @@
                 </div>
             </div>
 
+            <!-- ЛОГ БОЯ -->
             <div class="combat-log-box" id="combat-log"></div>
 
-            <div class="skill-box">
-                <div class="skill-title" style="font-size:12px; color:#e4e4e7; text-shadow: 0 1px 2px #000;" id="skill-name">Скилл</div>
-                <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ</button>
-            </div>
+            <!-- ЕДИНАЯ БОЕВАЯ ПАНЕЛЬ -->
+            <div class="combat-dashboard">
+                <div class="control-row">
+                    <div class="control-label">⚔️ Атака</div>
+                    <div class="zone-group">
+                        <div class="zone-btn atk" id="btn-atk-head" onclick="selectZone('atk', 'head')">Голова</div>
+                        <div class="zone-btn atk" id="btn-atk-chest" onclick="selectZone('atk', 'chest')">Торс</div>
+                        <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-label">🛡️ Блок</div>
+                    <div class="zone-group">
+                        <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова<div class="durability-dots" id="dur-head"></div><div class="dur-text">СЛОМАНО</div></div>
+                        <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс<div class="durability-dots" id="dur-chest"></div><div class="dur-text">СЛОМАНО</div></div>
+                        <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги<div class="durability-dots" id="dur-legs"></div><div class="dur-text">СЛОМАНО</div></div>
+                    </div>
+                </div>
 
-            <div class="combat-controls-title">⚔️ Ваша атака:</div>
-            <div class="zone-row">
-                <div class="zone-btn atk" id="btn-atk-head" onclick="selectZone('atk', 'head')">Голова</div>
-                <div class="zone-btn atk" id="btn-atk-chest" onclick="selectZone('atk', 'chest')">Торс</div>
-                <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
-            </div>
-
-            <div class="combat-controls-title">🛡️ Ваш блок (прочность брони):</div>
-            <div class="zone-row">
-                <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')">Голова<div class="durability-dots" id="dur-head"></div><div class="dur-text">СЛОМАНО</div></div>
-                <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')">Торс<div class="durability-dots" id="dur-chest"></div><div class="dur-text">СЛОМАНО</div></div>
-                <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги<div class="durability-dots" id="dur-legs"></div><div class="dur-text">СЛОМАНО</div></div>
-            </div>
-
-            <div class="action-row">
-                <button class="action-btn" id="btn-execute-turn" onclick="executeTurn()" disabled>УДАРИТЬ ⚔️</button>
+                <div class="main-actions">
+                    <button class="btn-skill-compact" id="btn-use-skill" onclick="useClassSkill()"></button>
+                    <button class="btn-exe-compact" id="btn-execute-turn" onclick="executeTurn()" disabled>УДАРИТЬ ⚔️</button>
+                </div>
             </div>
         </div>
     </div>
@@ -451,10 +467,10 @@
         const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 
         const CLASSES = {
-            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "🛡️ Щит Веры", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 } },
-            berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0, skill: { name: "🔥 Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 } },
-            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "👤 Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 } },
-            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "🎯 Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 } }
+            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Выживает там, где остальные уже пишут завещание.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9, skill: { name: "Щит Веры", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 } },
+            berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 } },
+            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3, skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 } },
+            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 } }
         };
 
         let ITEMS_DB = {
@@ -556,6 +572,8 @@
             tier3: [ { id: 23, name: "HR-Демон" }, { id: 24, name: "Хранитель Сервера" }, { id: 25, name: "Древний Инвестор" }, { id: 26, name: "Пожиратель Дедлайнов" }, { id: 27, name: "Лорд Ликвидации" }, { id: 28, name: "Архидемон Менеджмента" }, { id: 29, name: "Титан Бюджета" }, { id: 30, name: "Король Акционеров" } ]
         };
 
+        const ARENA_BGS = ['grave.png', 'throne.png'];
+
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
         setInterval(() => {
@@ -586,12 +604,8 @@
             let name = mobData.name;
             let mobImgUrl = `${STATIC_URL}mobs/B_${mobData.id}_high_resolution.png`;
             
-            // ВЫБОР ДИНАМИЧЕСКОГО ФОНА 
             let bgImg = isMegaBoss ? 'throne.png' : 'grave.png';
             let bgUrl = `${STATIC_URL}begraund/${bgImg}`;
-
-            if (isMegaBoss) { name = "👑 " + name; }
-            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; }
 
             let statMult = 1 + (floorLevel * 0.04);
             let hp = Math.floor((30 + floorLevel * 12) * statMult);
@@ -657,11 +671,6 @@
             enemy = generateEnemy(hero.floor);
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
             calculateStats(true); 
-            
-            let title = document.getElementById("combat-stage-name");
-            if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";}
-            else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "none";}
-            else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header"; document.getElementById("enemy-rage-bg").style.display = "none";}
             
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`;
             planEnemyTurn();
@@ -734,7 +743,7 @@
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
             logBox.innerHTML += `<div class="log-entry">${text}</div>`;
-            while (logBox.children.length > 30) logBox.removeChild(logBox.firstChild);
+            while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild);
             logBox.scrollTop = logBox.scrollHeight;
         }
 
@@ -747,26 +756,26 @@
                 let heal = Math.floor(hero.combatStats.hp * 0.25);
                 hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal);
                 showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys");
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! +${heal} HP.</span>`);
+                logCombat(`<span class="log-skill">Вы применили СКИЛЛ! +${heal} HP.</span>`);
             } else if (hero.baseClass === 'berserk') {
                 let dmg = Math.floor(hero.combatStats.damage * 2.5);
                 enemy.hp -= dmg;
                 triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! -${dmg} HP.</span>`);
+                logCombat(`<span class="log-skill">Вы применили СКИЛЛ! -${dmg} HP.</span>`);
             } else if (hero.baseClass === 'shadow') {
                 let dmg = Math.floor(hero.combatStats.damage * 1.8);
                 enemy.hp -= dmg;
                 triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit");
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Уворот активен.</span>`);
+                logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Уворот активен.</span>`);
             } else if (hero.baseClass === 'ranger') {
                 let dmg = Math.floor(hero.combatStats.damage * 1.5);
                 enemy.hp -= dmg;
                 combatState.enemyStunned = true;
                 triggerHitAnim("entity-enemy-box");
                 showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block");
-                logCombat(`<span class="log-skill">Вы применили ${cls.skill.name}! Враг оглушен.</span>`);
+                logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Враг оглушен.</span>`);
             }
 
             if (enemy.hp <= 0) handleCombatWin();
@@ -971,7 +980,7 @@
                     }
                 }
                 resetCombatZones(); saveGame(); updateUI();
-            }, 150); 
+            }, 250); 
         }
 
         function openInspectModal(invIndex) {
@@ -1219,25 +1228,15 @@
 
             if (currentScreen === 'PVE' && enemy) {
                 let arenaBg = document.getElementById("arena-bg");
-                arenaBg.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`;
+                arenaBg.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.85) 100%), url('${enemy.bgUrl}')`;
                 arenaBg.style.backgroundSize = 'cover';
                 arenaBg.style.backgroundPosition = 'center';
                 
-                if(enemy.isBoss) arenaBg.style.boxShadow = "inset 0 0 30px rgba(239,68,68,0.6)";
-                else arenaBg.style.boxShadow = "inset 0 0 20px rgba(0,0,0,0.8)";
-
                 let comboEl = document.getElementById("combo-display");
                 if (combatState.combo > 0) {
                     comboEl.innerText = `🔥 КОМБО: x${(1 + combatState.combo * 0.25).toFixed(2)}`;
                     comboEl.className = "combo-meter show";
                 } else { comboEl.className = "combo-meter"; }
-
-                if (enemy.isBoss) {
-                    let rPct = (enemy.turnCounter % 4) / 3 * 100;
-                    document.getElementById("enemy-rage-bar").style.width = `${rPct}%`;
-                    if(rPct === 100) document.getElementById("enemy-rage-bar").classList.add("full");
-                    else document.getElementById("enemy-rage-bar").classList.remove("full");
-                }
 
                 let stunIcon = document.getElementById("enemy-stun-icon");
                 if (combatState.enemyStunned) stunIcon.style.display = "block";
@@ -1256,8 +1255,8 @@
                 
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
                 
-                if(enemy.isBoss) document.getElementById("entity-enemy-box").classList.add("boss");
-                else document.getElementById("entity-enemy-box").classList.remove("boss");
+                if(enemy.isBoss) document.getElementById("entity-enemy-box").className = "combat-card boss";
+                else document.getElementById("entity-enemy-box").className = "combat-card";
 
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; 
@@ -1269,8 +1268,15 @@
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
 
                 let btnSkill = document.getElementById("btn-use-skill");
-                if (combatState.skillCooldown > 0) { btnSkill.innerText = `КД (${combatState.skillCooldown})`; btnSkill.disabled = true; } 
-                else { btnSkill.innerText = `ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0; }
+                if (combatState.skillCooldown > 0) { 
+                    btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">Скилл</span>КД (${combatState.skillCooldown})`; 
+                    btnSkill.disabled = true; 
+                    btnSkill.style.filter = "grayscale(100%) opacity(0.5)";
+                } else { 
+                    btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; 
+                    btnSkill.disabled = hero.hp <= 0; 
+                    btnSkill.style.filter = "none";
+                }
 
                 ['head', 'chest', 'legs'].forEach(z => {
                     let btnAtk = document.getElementById(`btn-atk-${z}`);
