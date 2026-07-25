@@ -99,6 +99,9 @@
         .stat-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dotted #3f3f46; padding-bottom: 6px; margin-bottom: 6px; font-size: 11px; color: #a1a1aa; }
         .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .stat-item b { font-size: 12px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
+        .stat-btn-add { background: #fbbf24; color: #000; border: none; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 2px 4px rgba(251,191,36,0.4); margin-left: 8px;}
+        .stat-btn-add:active { transform: scale(0.9); }
+        
         .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #27272a;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.6);}
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 6px; font-size: 11px; padding: 0 16px; height: 44px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; margin-left: auto; }
@@ -321,7 +324,7 @@
         <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
     </div>
 
-    <!-- PVE / БОЕВАЯ АРЕНА (ПЕРЕИСПОЛЬЗУЕТСЯ ДЛЯ БОССОВ) -->
+    <!-- PVE / БОЕВАЯ АРЕНА -->
     <div id="screen-PVE" class="app-screen">
         <div class="class-banner" id="combat-floor-title">
             <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
@@ -445,7 +448,7 @@
         <div id="ui-stats-container" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
     </div>
     
-    <!-- ЭКРАН МИРОВЫЕ БОССЫ (НОВОЕ) -->
+    <!-- ЭКРАН МИРОВЫЕ БОССЫ -->
     <div id="screen-boss" class="app-screen">
         <div class="class-banner">🦖 ОХОТА НА БОССОВ</div>
         <div style="text-align: center; color: #a1a1aa; margin-bottom: 12px; font-size: 11px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px; border: 1px solid #27272a;">
@@ -507,23 +510,34 @@
 
         const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
-        const setW = (id, val) => { const el = document.getElementById(id); if (el) el.style.width = val; };
         const setCls = (id, val) => { const el = document.getElementById(id); if (el) el.className = val; };
 
         const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
         
-        // ФОНОВЫЙ ПРЕЛОАДЕР ИЗОБРАЖЕНИЙ ДЛЯ ВЕРСТКИ
         const imgCache = {};
         for (let key in CLASS_AVATARS) {
             imgCache[key] = new Image();
             imgCache[key].src = CLASS_AVATARS[key];
         }
 
+        // ОБНОВЛЕННЫЕ КЛАССЫ С УНИКАЛЬНЫМ ВЕСОМ СТАТОВ
         const CLASSES = {
-            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, statWeights: { str_dmg: 1.5, str_arm: 0.5, agi_dodge: 0, agi_block: 0.5, end_hp: 15, mst_block: 1, mst_pen: 1, luk_crit: 0.2, luk_cdmg: 0, luk_dodge: 0, luk_pen: 0 }, skill: { name: "Эгида Обреченных", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
-            berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов, презирающая любую защиту.", growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 }, statWeights: { str_dmg: 2.5, str_arm: 0, agi_dodge: 0.5, agi_block: 0, end_hp: 10, mst_block: 0, mst_pen: 2, luk_crit: 0.5, luk_cdmg: 2, luk_dodge: 0, luk_pen: 0 }, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
-            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 }, statWeights: { str_dmg: 0.5, str_arm: 0, agi_dodge: 1, agi_block: 0, agi_dmg: 2, end_hp: 8, mst_block: 0, mst_pen: 2, mst_crit: 1, mst_cdmg: 1.5, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 1, luk_pen: 0 }, skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, bars: { dmg: 85, def: 20, diff: 90 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 },
-            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Эффективно делегирует стрелы прямо в уязвимые места.", growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 }, statWeights: { str_dmg: 1, str_arm: 0, agi_dodge: 0.5, agi_block: 0, agi_dmg: 1.5, end_hp: 10, mst_block: 0, mst_pen: 1.5, mst_crit: 0, mst_cdmg: 1, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 0, luk_pen: 1 }, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
+            knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу. [Пассивка: Идеальный блок отражает 20% урона]", 
+                growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, 
+                statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, 
+                skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
+            berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов. [Пассивка: Меньше HP - больше урон и крит]", 
+                growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, 
+                statWeights: { str_dmg: 3, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, 
+                skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
+            shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]", 
+                growth: { str: 0, agi: 1, end: 0, mst: 1, luk: 0 }, 
+                statWeights: { str_dmg: 0.5, agi_dmg: 2, agi_dodge: 1, end_hp: 6, mst_cdmg: 3, mst_pen: 1, luk_crit: 0.8, luk_dodge: 0.5, luk_drop: 0.1 }, 
+                skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, bars: { dmg: 85, def: 20, diff: 90 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 },
+            ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Делегирует стрелы в уязвимые места. [Пассивка: Удача сильно влияет на лут. Игнор 30% брони]", 
+                growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, 
+                statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, 
+                skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
         };
 
         const ITEMS_DB = {
@@ -573,10 +587,9 @@
         let inspectInvIndex = null;
         let forgeSelectedIndex = null; 
 
-        // ИСПРАВЛЕНИЕ: Добавлены билеты и гемы для новых сейвов
         let hero = {
-            name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0,
-            gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0,
+            name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, 
+            unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0,
             baseClass: "knight", hp: 100, maxHp: 100,
             baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 },
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
@@ -602,11 +615,11 @@
             if(savedHero) { 
                 hero = JSON.parse(savedHero); 
                 if(isNaN(hero.hp)) hero.hp = 100; 
-                // Поддержка старых сейвов:
                 if(hero.gems === undefined) hero.gems = 0;
                 if(hero.tickets === undefined) hero.tickets = 3;
                 if(hero.maxTickets === undefined) hero.maxTickets = 3;
                 if(hero.nextTicketTime === undefined) hero.nextTicketTime = 0;
+                if(hero.unspentPoints === undefined) hero.unspentPoints = 0;
             }
             previewClassId = hero.baseClass;
         }
@@ -615,13 +628,13 @@
         loadGame();
 
         let enemy = null;
-        let combatMode = 'pve'; // 'pve' или 'raid'
-        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
+        let combatMode = 'pve';
+        // Добавлен shadowCritReady для пассивки Тени
+        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false };
         
         const NORMAL_MOBS = [ { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" }, { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" }, { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" }, { id: 10, name: "Червь" }, { id: 11, name: "Улитка" }, { id: 12, name: "Ведьма" }, { id: 13, name: "Вирм" }, { id: 14, name: "Стрелок" }, { id: 15, name: "Гаргулья" }, { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" }, { id: 19, name: "Паук" }, { id: 20, name: "Пугало" } ];
         const BOSSES = { 10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" }, 40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" }, 70: { id: 27, name: "Голем" }, 80: { id: 28, name: "Гидра" }, 90: { id: 29, name: "Механоид" }, 100: { id: 30, name: "Суккуб" } };
 
-        // НОВЫЙ МАССИВ ДЛЯ РЕЙДОВЫХ БОССОВ
         const RAID_BOSSES = [
             { id: "raid_1", name: "Костяной Голем", imgId: 27, diff: "Легкий", desc: "Уязвимая груда камней.", hpMult: 3, atkMult: 1.2, armMult: 1, gemReward: 2, dropRelic: false },
             { id: "raid_2", name: "Архилич Тьмы", imgId: 21, diff: "Средний", desc: "Бьет больно, живет недолго.", hpMult: 5, atkMult: 1.8, armMult: 1.5, gemReward: 5, dropRelic: false },
@@ -631,7 +644,6 @@
         function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
         setInterval(() => {
-            // Восстановление билетов рейдов
             if (hero.tickets < hero.maxTickets) {
                 if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
                 if (Date.now() >= hero.nextTicketTime) {
@@ -653,7 +665,6 @@
                 if(el && hero.deathDebuffEnd !== 0) { el.style.display = 'none'; hero.deathDebuffEnd = 0; if(bloodScreen) bloodScreen.classList.remove('active'); calculateStats(); updateUI(); }
             }
 
-            // Обновление таймера билетов в UI
             let tTimer = document.getElementById("ui-ticket-timer");
             if (tTimer) {
                 if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов";
@@ -707,7 +718,7 @@
         function initCombat() {
             combatMode = 'pve';
             enemy = generateEnemy(hero.floor);
-            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
+            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false };
             calculateStats(true); 
             
             let title = document.getElementById("combat-stage-name");
@@ -729,10 +740,10 @@
             let bData = RAID_BOSSES.find(b => b.id === bossId);
             combatMode = 'raid';
             
-            let statMult = 1 + (hero.level * 0.1); // Скейлинг от уровня героя
+            let statMult = 1 + (hero.level * 0.1); 
             enemy = {
                 name: "Рейд: " + bData.name,
-                floor: hero.level, // Отображаем уровень героя как сложность
+                floor: hero.level, 
                 imgUrl: `${STATIC_URL}mobs/B_${bData.imgId}_high_resolution.png`,
                 bgUrl: `${STATIC_URL}begraund/throne.png`,
                 isBoss: true, isMiniBoss: false, isRaid: true, raidData: bData,
@@ -743,7 +754,7 @@
                 stats: { atk: Math.floor(10 * statMult * bData.atkMult), armor: Math.floor(5 * statMult * bData.armMult), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }
             };
             
-            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 } };
+            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false };
             calculateStats(true); 
             
             document.getElementById("combat-stage-name").innerText = `МИРОВОЙ БОСС`;
@@ -815,18 +826,71 @@
             if (enemy.hp <= 0) handleCombatWin(); updateUI();
         }
 
-        function calcDmg(attacker, defender, zAtk, zDef) {
-            if (Math.random() * 100 < (defender.dodge || 0)) return { dmg: 0, type: "dodge" };
-            let baseAtk = attacker.damage || attacker.atk || 5; if (attacker === hero.combatStats && combatState.combo > 0) baseAtk = Math.floor(baseAtk * (1 + combatState.combo * 0.25));
-            let isCrit = Math.random() * 100 < (attacker.critChance || 5); if (isCrit) baseAtk = Math.floor(baseAtk * ((attacker.critDmg || 150) / 100));
-            let defArmor = Math.max(0, (defender.armor || 0) - (attacker.armorPen || 0)); let mitigation = defArmor; let isBlock = false; let isPerfectBlock = false;
-            if (zAtk === zDef) { isBlock = true; mitigation *= 2; if (defender === hero.combatStats) { isPerfectBlock = true; mitigation *= 1.5; } } 
-            else { mitigation = Math.floor(defArmor * 0.5); }
-            let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation); return { dmg: finalDmg, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ УРОНА С УЧЕТОМ ПАССИВОК
+        function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
+            if (Math.random() * 100 < (defender.dodge || 0)) return { dmg: 0, rawDmg: 0, type: "dodge" };
+            
+            let baseAtk = attacker.damage || attacker.atk || 5; 
+            let cChance = attacker.critChance || 5;
+            let armPen = attacker.armorPen || 0;
+            let cDmg = attacker.critDmg || 150;
+            
+            let bIsBerserk = isHeroAtk && hero.baseClass === 'berserk';
+            let bIsKnightDef = !isHeroAtk && hero.baseClass === 'knight';
+            let bIsShadowAtk = isHeroAtk && hero.baseClass === 'shadow';
+            let bIsRangerAtk = isHeroAtk && hero.baseClass === 'ranger';
+            
+            if (isHeroAtk && combatState.combo > 0) baseAtk = Math.floor(baseAtk * (1 + combatState.combo * 0.25));
+            
+            // ПАССИВКА БЕРСЕРКА
+            if (bIsBerserk) {
+                let missingHpPct = (hero.combatStats.hp - hero.hp) / hero.combatStats.hp;
+                let stacks = Math.floor(missingHpPct * 10);
+                baseAtk = Math.floor(baseAtk * (1 + stacks * 0.05));
+                cChance += stacks * 2;
+            }
+
+            // ПАССИВКА ТЕНИ
+            if (bIsShadowAtk && combatState.shadowCritReady) {
+                cChance = 100;
+                combatState.shadowCritReady = false; 
+            }
+
+            // ПАССИВКА СЛЕДОПЫТА
+            if (bIsRangerAtk) {
+                armPen += Math.floor(defender.armor * 0.3); // Игнор 30% брони
+                if (combatState.zoneHealth[zAtk] === 0) baseAtk = Math.floor(baseAtk * 1.25); // +25% по сломанному
+            }
+
+            let isCrit = Math.random() * 100 < cChance; 
+            if (isCrit) baseAtk = Math.floor(baseAtk * (cDmg / 100));
+            
+            let defArmor = Math.max(0, (defender.armor || 0) - armPen); 
+            let mitigation = defArmor; 
+            let isBlock = false; 
+            let isPerfectBlock = false;
+            
+            if (zAtk === zDef) { 
+                isBlock = true; 
+                if (!isHeroAtk) {
+                    isPerfectBlock = true; 
+                    mitigation = bIsKnightDef ? Math.floor(defArmor * 1.5) : Math.floor(defArmor * 1.5);
+                } else {
+                    mitigation *= 2; 
+                }
+            } else { 
+                // ПАССИВКА РЫЦАРЯ (Срез урона без идеального блока)
+                mitigation = bIsKnightDef ? Math.floor(defArmor * 0.7) : Math.floor(defArmor * 0.5); 
+            }
+            
+            let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation); 
+            return { dmg: finalDmg, rawDmg: baseAtk, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
         }
 
         function handleCombatWin() {
             enemy.hp = 0; 
+            let lukDropMod = CLASSES[hero.baseClass].statWeights.luk_drop || 0.1;
+            
             if (enemy.isRaid) {
                 let gems = enemy.raidData.gemReward; hero.gems += gems; let goldGained = hero.level * 50 + 100; hero.gold += goldGained;
                 let droppedItem = null; let logMsg = "";
@@ -851,8 +915,11 @@
                 let goldGained = 15 + (hero.floor * 5); let expGained = 20 + (hero.floor * 8);
                 if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
                 hero.gold += goldGained; hero.exp += expGained;
-                let droppedItem = null; let dropChance = 1 + hero.combatStats.luk * 0.1; let isRelicDrop = false;
-                if (enemy.isBoss) { dropChance = 100; isRelicDrop = true; } else if (enemy.isMiniBoss) { dropChance = 35 + hero.combatStats.luk * 0.5; isRelicDrop = Math.random() > 0.6; }
+                
+                let droppedItem = null; 
+                let dropChance = (enemy.isBoss ? 100 : (enemy.isMiniBoss ? 35 : 1)) + (hero.combatStats.luk * lukDropMod); 
+                let isRelicDrop = enemy.isBoss || (enemy.isMiniBoss && Math.random() > 0.6);
+                
                 let logMsg = "";
                 if (Math.random() * 100 <= dropChance) {
                     if (isRelicDrop) droppedItem = generateBossDrop(hero.floor); else { let pool = SHOP_ASSORTMENT.filter(id => !ITEMS_DB[id].dropOnly); droppedItem = ITEMS_DB[pool[Math.floor(Math.random() * pool.length)]]; }
@@ -866,7 +933,15 @@
                         } else { let sellP = Math.floor(droppedItem.price * 0.5); hero.gold += sellP; logMsg = `<br>Сумка полна! Вещь продана за ${sellP}💰.`; droppedItem = null; }
                     }
                 }
-                if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level); calculateStats(); }
+                
+                if (hero.exp >= hero.expNext) { 
+                    hero.exp -= hero.expNext; hero.level++; 
+                    hero.unspentPoints += 3; // +3 очка игроку
+                    hero.expNext = getExpReq(hero.level); 
+                    calculateStats(); 
+                    logMsg += `<br><span style="color:#34d399;">УРОВЕНЬ ПОВЫШЕН! Получено +3 очка характеристик.</span>`;
+                }
+                
                 document.getElementById("vic-title-text").innerText = "ЭТАЖ ПРОЙДЕН!";
                 document.getElementById("vic-rewards-text").innerHTML = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
                 let lootBox = document.getElementById("vic-loot-container");
@@ -882,6 +957,7 @@
 
         function closeVictoryModal() { setCls("vic-modal", "victory-modal"); if (combatMode === 'raid') openScreen('boss'); else initCombat(); }
 
+        // ОБНОВЛЕННЫЙ ХОД С УЧЕТОМ ПАССИВОК
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -893,8 +969,10 @@
             let isEnemyStunned = combatState.enemyStunned; triggerClashAnim(true, !isEnemyStunned);
 
             setTimeout(() => {
-                let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone); enemy.hp -= hRes.dmg;
+                let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone, true); 
+                enemy.hp -= hRes.dmg;
                 triggerHitAnim("entity-enemy-box");
+                
                 if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); else if (hRes.type === "crit") showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
                 let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
                 logCombat(`Вы ударили в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP${comboTxt}.`);
@@ -906,17 +984,31 @@
                         let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1); let eRes;
                         
                         if (eAtkZone === 'ENRAGE') {
-                            eRes = { dmg: 99999, type: "crit" };
+                            eRes = { dmg: 99999, rawDmg: 99999, type: "crit" };
                         } else if (eAtkZone === 'ULTIMATUM') { 
                             let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5); 
-                            if (forceDodge) eRes = { dmg: 0, type: "dodge" }; 
-                            else { let mitigation = Math.floor(hero.combatStats.armor * 0.2); let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation); eRes = { dmg: finalDmg, type: "crit" }; } 
+                            if (forceDodge) eRes = { dmg: 0, rawDmg: 0, type: "dodge" }; 
+                            else { let mitigation = Math.floor(hero.combatStats.armor * 0.2); let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation); eRes = { dmg: finalDmg, rawDmg: baseAtk, type: "crit" }; } 
                         } else { 
-                            eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, combatState.defZone); 
-                            if(forceDodge) eRes = { dmg: 0, type: "dodge" }; 
+                            eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, combatState.defZone, false); 
+                            if(forceDodge) eRes = { dmg: 0, rawDmg: 0, type: "dodge" }; 
                         }
 
                         if (!GOD_MODE) hero.hp -= eRes.dmg; triggerHitAnim("entity-hero-box");
+
+                        // Пассивка Тени: Подготовка 100% крита после уклонения
+                        if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
+                            combatState.shadowCritReady = true;
+                            logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! Следующий удар будет критическим.</span>`);
+                        }
+
+                        // Пассивка Рыцаря: Отражение урона при идеальном блоке
+                        if (eRes.type === "perfect_block" && hero.baseClass === 'knight') {
+                            let reflectDmg = Math.floor((enemy.stats.atk || 10) * 0.2);
+                            enemy.hp -= reflectDmg;
+                            showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block");
+                            logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`);
+                        }
 
                         if (eRes.dmg > 0) {
                             combatState.combo = 0; 
@@ -1030,7 +1122,17 @@
             calculateStats(); saveGame(); updateUI();
         }
 
-        function addStat(statKey) { if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; calculateStats(); saveGame(); updateUI(); } }
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДОБАВЛЕНИЯ СТАТОВ
+        function addStat(statKey) { 
+            if (hero.unspentPoints > 0) { 
+                hero.baseStats[statKey]++; 
+                hero.unspentPoints--; 
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+                calculateStats(); 
+                saveGame(); 
+                updateUI(); 
+            } 
+        }
 
         function buyItem(itemId) {
             let item = ITEMS_DB[itemId];
@@ -1083,11 +1185,23 @@
             saveGame(); updateUI();
         }
 
+        // ОБНОВЛЕННЫЙ КАЛЬКУЛЯТОР СТАТОВ С УЧЕТОМ ВЕСОВ (Скейлы)
         function calculateStats(isCombat = false) {
             let cls = CLASSES[hero.baseClass]; let lvlBonus = hero.level - 1; 
-            let total = { str: hero.baseStats.str + (cls.growth.str * lvlBonus), agi: hero.baseStats.agi + (cls.growth.agi * lvlBonus), end: hero.baseStats.end + (cls.growth.end * lvlBonus), mst: hero.baseStats.mst + (cls.growth.mst * lvlBonus), luk: hero.baseStats.luk + (cls.growth.luk * lvlBonus), armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0 };
+            
+            // Базовые статы (Ручная прокачка + Авторост от уровня)
+            let total = { 
+                str: hero.baseStats.str + (cls.growth.str * lvlBonus), 
+                agi: hero.baseStats.agi + (cls.growth.agi * lvlBonus), 
+                end: hero.baseStats.end + (cls.growth.end * lvlBonus), 
+                mst: hero.baseStats.mst + (cls.growth.mst * lvlBonus), 
+                luk: hero.baseStats.luk + (cls.growth.luk * lvlBonus), 
+                armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0 
+            };
+            
             let skipHead = isCombat && combatState.zoneHealth.head === 0; let skipChest = isCombat && combatState.zoneHealth.chest === 0; let skipLegs = isCombat && combatState.zoneHealth.legs === 0;
 
+            // Прибавляем статы от шмоток
             for (let key in hero.equipment) {
                 if (skipHead && key === 'head') continue; if (skipChest && (key === 'chest' || key === 'weapon1' || key === 'weapon2')) continue; if (skipLegs && (key === 'boots' || key === 'belt')) continue;
                 let item = hero.equipment[key];
@@ -1096,11 +1210,36 @@
                 }
             }
 
-            let hp = total.end * 10; if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; } 
-            let damage = total.str * 2 + total.atk; total.critChance += (total.luk / 5); total.dodge += (total.agi / 4); total.armorPen += total.mst * 2; total.critDmg += total.mst * 3;      
-            total.armor = Math.floor(total.armor * cls.armorMult); total.critDmg = Math.floor(total.critDmg * cls.critDmgMult); total.dodge = Math.floor(total.dodge * cls.dodgeMult); total.dodge = Math.min(75, total.dodge); total.blockChance = Math.min(60, total.blockChance);
+            // ПРИМЕНЯЕМ ВЕСА СТАТОВ КЛАССА
+            let w = cls.statWeights;
+            let hp = Math.floor(total.end * (w.end_hp || 10)); 
+            if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; } 
+            
+            let damage = Math.floor(total.str * (w.str_dmg || 0) + total.agi * (w.agi_dmg || 0) + total.atk);
+            
+            total.critChance += total.luk * (w.luk_crit || 0) + total.mst * (w.mst_crit || 0);
+            total.dodge += total.agi * (w.agi_dodge || 0) + total.luk * (w.luk_dodge || 0);
+            total.armorPen += total.mst * (w.mst_pen || 0);
+            total.critDmg += total.mst * (w.mst_cdmg || 0);
+            total.armor += total.str * (w.str_arm || 0);
+            total.blockChance += total.mst * (w.mst_block || 0);
+
+            // Глобальные классовые множители
+            total.armor = Math.floor(total.armor * cls.armorMult); 
+            total.critDmg = Math.floor(total.critDmg * cls.critDmgMult); 
+            total.dodge = Math.floor(total.dodge * cls.dodgeMult); 
+            
+            // Хардкапы
+            total.dodge = Math.min(75, total.dodge); 
+            total.blockChance = Math.min(60, total.blockChance);
+            
             if (hero.deathDebuffEnd > Date.now()) { total.armor = Math.floor(total.armor * 0.75); damage = Math.floor(damage * 0.75); }
-            if (!isCombat) { hero.maxHp = hp; if (hero.hp > hero.maxHp && !GOD_MODE) hero.hp = hero.maxHp; hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk }; }
+            
+            if (!isCombat) { 
+                hero.maxHp = hp; 
+                if (hero.hp > hero.maxHp && !GOD_MODE) hero.hp = hero.maxHp; 
+                hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk }; 
+            }
             hero.combatStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk };
         }
 
@@ -1204,9 +1343,38 @@
                 let isDebuff = hero.deathDebuffEnd > Date.now();
                 let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
 
+                // ОБНОВЛЕННАЯ ПАНЕЛЬ СТАТОВ С КНОПКАМИ ПРОКАЧКИ
+                let unspentHtml = hero.unspentPoints > 0 ? `<div style="background:#064e3b; color:#34d399; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">ДОСТУПНО ОЧКОВ: ${hero.unspentPoints}</div>` : '';
+                
+                function renderStatRow(icon, name, key, val) {
+                    let btn = hero.unspentPoints > 0 ? `<button class="stat-btn-add" onclick="addStat('${key}')">+</button>` : '';
+                    return `<div class="stat-item"><span>${icon} ${name}</span> <div style="display:flex; align-items:center;"><b>${val}</b>${btn}</div></div>`;
+                }
+
                 document.getElementById("ui-stats-container").innerHTML = `
-                    <div class="stats-card"><div class="stat-group-title">Базовые параметры</div><div class="stat-item"><span>⚔️ Сила (Урон)</span> <b>${hero.finalStats.str}</b></div><div class="stat-item"><span>🏃 Ловкость (Уворот)</span> <b>${hero.finalStats.agi}</b></div><div class="stat-item"><span>❤️ Выносл-ть (HP)</span> <b>${hero.finalStats.end}</b></div><div class="stat-item"><span>🎯 Мастерство</span> <b>${hero.finalStats.mst}</b></div><div class="stat-item"><span>🍀 Удача (Дроп)</span> <b>${hero.finalStats.luk}</b></div></div>
-                    <div class="stats-card"><div class="stat-group-title">Боевые параметры</div>${warnTxt}<div class="stat-item" style="flex-direction:column; align-items:stretch;"><div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;"><span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>${healBtnHtml}</div><div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div></div><div class="stat-item"><span>🗡️ Урон</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.damage}</b></div><div class="stat-item"><span>🛡️ Броня</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.armor}</b></div><div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div><div class="stat-item"><span>⚡ Крит</span> <b>${hero.finalStats.critChance}%</b></div></div>
+                    <div class="stats-card">
+                        ${unspentHtml}
+                        <div class="stat-group-title">Базовые параметры</div>
+                        ${renderStatRow('⚔️', 'Сила (СИЛ)', 'str', hero.finalStats.str)}
+                        ${renderStatRow('🏃', 'Ловкость (ЛОВ)', 'agi', hero.finalStats.agi)}
+                        ${renderStatRow('❤️', 'Выносл-ть (ВЫН)', 'end', hero.finalStats.end)}
+                        ${renderStatRow('🎯', 'Мастерство (МСТ)', 'mst', hero.finalStats.mst)}
+                        ${renderStatRow('🍀', 'Удача (УДЧ)', 'luk', hero.finalStats.luk)}
+                    </div>
+                    <div class="stats-card">
+                        <div class="stat-group-title">Боевые параметры</div>
+                        ${warnTxt}
+                        <div class="stat-item" style="flex-direction:column; align-items:stretch;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
+                                <span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>${healBtnHtml}
+                            </div>
+                            <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
+                        </div>
+                        <div class="stat-item"><span>🗡️ Урон</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.damage}</b></div>
+                        <div class="stat-item"><span>🛡️ Броня</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.armor}</b></div>
+                        <div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
+                        <div class="stat-item"><span>⚡ Крит</span> <b>${hero.finalStats.critChance}%</b></div>
+                    </div>
                 `;
             }
 
@@ -1292,7 +1460,6 @@
 
                 let selCls = CLASSES[previewClassId]; let isCurrentHeroClass = hero.baseClass === previewClassId;
                 
-                // ИСПРАВЛЕНИЕ UI/UX И ЗАГРУЗКИ: Добавлен Skeleton Loader и градиентный фейд
                 document.getElementById("ui-class-detail").innerHTML = `
                     <div class="class-detail-card" style="border-color: ${selCls.color}40;">
                         <div class="class-detail-img-box">
