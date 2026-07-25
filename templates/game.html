@@ -2,16 +2,27 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Game - Лагерь героя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            /* Динамическая высота для Telegram Mini Apps */
+            --vh: 100vh;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            /* Убираем системное выделение тапов на смартфонах */
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0d0d0f; 
             color: #e4e4e7; margin: 0; padding: 8px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
+            touch-action: manipulation;
         }
         
         .top-dashboard {
@@ -54,7 +65,8 @@
         }
 
         /* === КЛАССЫ: ГЕНИАЛЬНЫЙ UI (БЕЗ СКРОЛЛА) === */
-        #screen-classes { height: calc(100vh - 140px); display: flex; flex-direction: column; overflow: hidden; }
+        /* Используем TMA-совместимую переменную --vh */
+        #screen-classes { height: calc(var(--vh) - 140px); display: flex; flex-direction: column; overflow: hidden; }
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
@@ -62,14 +74,12 @@
         .class-icon-btn.selected { background: #18181b; border-color: #52525b; box-shadow: 0 6px 15px rgba(0,0,0,0.8); opacity: 1; filter: grayscale(0%); transform: translateY(-2px); }
         .class-icon-btn.selected .name { color: #e4e4e7; }
         
-        /* Карточка во весь экран */
         .class-master-card {
             flex-grow: 1; position: relative; border-radius: 12px; border: 1px solid #3f3f46; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.9); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
             background-color: #050505;
         }
         .cmc-bg { position: absolute; top: 0; left: 0; width: 100%; height: 60%; background-size: cover; background-position: center top; z-index: 0; border-bottom: 1px solid #27272a;}
-        /* Плавный градиент снизу вверх, чтобы текст читался */
         .cmc-gradient { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,1) 40%, rgba(5,5,5,0.7) 60%, rgba(5,5,5,0) 100%); z-index: 1; pointer-events: none;}
         
         .cmc-content { position: relative; z-index: 2; padding: 16px; display: flex; flex-direction: column; gap: 10px;}
@@ -77,14 +87,12 @@
         .cmc-title { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; gap: 8px;}
         .cmc-lore { font-size: 11px; color: #a1a1aa; line-height: 1.4; font-style: italic; text-align: center; margin-bottom: 4px; text-shadow: 0 1px 3px #000;}
         
-        /* Уникальное скалирование */
         .cmc-scaling-box { background: rgba(24,24,27,0.8); border: 1px solid #3f3f46; border-radius: 6px; padding: 8px; backdrop-filter: blur(4px); }
         .cmc-scaling-title { font-size: 9px; color: #71717a; text-transform: uppercase; text-align: center; margin-bottom: 6px; font-weight: bold; letter-spacing: 1px;}
         .cmc-scaling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px; color: #d4d4d8;}
         .cmc-scaling-grid div { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dotted #3f3f46; padding-bottom: 2px;}
         .cmc-scaling-grid b { color: #fbbf24; font-size: 11px;}
         
-        /* Скилл и Кнопка */
         .cmc-skill-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; background: rgba(9,9,11,0.8); padding: 8px 10px; border-radius: 6px; border: 1px solid #27272a;}
         .cmc-skill-name { font-weight: bold; color: #e9d5ff; }
         .cmc-skill-desc { color: #a1a1aa; font-size: 10px;}
@@ -93,7 +101,6 @@
         .select-class-btn:active { transform: translateY(3px); border-bottom-width: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 3px;}
         .select-class-btn:disabled { background: #09090b !important; color: #3f3f46 !important; cursor: default; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important; border-width: 1px !important; transform: none; margin-bottom: 0;}
 
-        
         /* === ИНВЕНТАРЬ И ГЕРОЙ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
@@ -412,6 +419,17 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        // Фикс прыгающей высоты экрана в TMA
+        function updateViewport() {
+            const vh = tg.viewportStableHeight || window.innerHeight;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        tg.onEvent('viewportChanged', updateViewport);
+        updateViewport();
+
+        const STATIC_URL = "{{ url_for('static', filename='') }}";
 
         const CLASS_AVATARS = {
             knight: STATIC_URL + "knight.png",
@@ -420,7 +438,6 @@
             ranger: STATIC_URL + "ranger.png"
         };
 
-        // ВАЖНО: Добавлено уникальное скалирование (statWeights)
         const CLASSES = {
             knight: {
                 id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24",
@@ -539,9 +556,45 @@
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
         previewClassId = hero.baseClass;
 
-        // PVE STATE
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
+
+        // === STATE MANAGER (SAVE/LOAD LOGIC) ===
+        const SAVE_KEY = 'hero_camp_save_v1';
+
+        function saveGame() {
+            try {
+                const state = { hero, enemy, combatState, currentScreen, previewClassId };
+                localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error("Save failed (Quota exceeded?)", e);
+            }
+        }
+
+        function loadGame() {
+            try {
+                const data = localStorage.getItem(SAVE_KEY);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    if (parsed.hero) Object.assign(hero, parsed.hero);
+                    if (parsed.enemy !== undefined) enemy = parsed.enemy;
+                    if (parsed.combatState) Object.assign(combatState, parsed.combatState);
+                    if (parsed.currentScreen) currentScreen = parsed.currentScreen;
+                    if (parsed.previewClassId) previewClassId = parsed.previewClassId;
+                    
+                    // Обновляем UI под загруженный экран
+                    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+                    document.getElementById('screen-' + currentScreen).classList.add('active');
+                    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+                    document.getElementById('nav-' + (currentScreen === 'classes' ? 'class' : currentScreen)).classList.add('active');
+                }
+            } catch (e) {
+                console.error("Load failed", e);
+            }
+        }
+        // Загружаем стейт при старте
+        loadGame();
+
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
         const BOSS_NAMES = ["Хранитель Сервера", "Древний Инвестор", "HR-Демон", "Пожиратель Дедлайнов"];
 
@@ -1067,7 +1120,6 @@
             `;
         }
 
-        // Вспомогательная функция для вывода скалирования текстом
         function generateScalingText(w) {
             let res = '';
             if (w.str_dmg > 0) res += `<div><span>💪 Сила дает:</span> <b>Урон (+${w.str_dmg}) ${w.str_arm > 0 ? `, Броню (+${w.str_arm})` : ''}</b></div>`;
@@ -1338,6 +1390,9 @@
                     </div>
                 `;
             }
+
+            // МАГИЯ АВТОСОХРАНЕНИЯ: вызывается каждый раз, когда меняется UI
+            saveGame();
         }
 
         calculateStats(); updateUI();
