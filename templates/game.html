@@ -113,7 +113,7 @@
         .btn-upgrade { width: 100%; background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%); color: #000; border: 1px solid #fcd34d; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); margin-top: 12px;}
         .btn-upgrade:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; box-shadow: none; cursor: not-allowed;}
 
-        /* === РЕЙДЫ НА БОССОВ (НОВОЕ) === */
+        /* === РЕЙДЫ НА БОССОВ === */
         .raid-boss-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #3f3f46; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.2s; }
         .raid-boss-card:active { transform: scale(0.98); }
         .raid-img-box { width: 100px; height: 100px; background: #000; position: relative; border-right: 1px solid #3f3f46;}
@@ -225,7 +225,7 @@
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
         
-        /* === ЭКРАН КЛАССОВ (ИСПРАВЛЕНИЕ ВЕРСТКИ) === */
+        /* === ЭКРАН КЛАССОВ (ЭСТЕТИКА + PRELOADER) === */
         .classes-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
         .classes-gallery::-webkit-scrollbar { display: none; }
         .class-icon-btn { flex: 0 0 auto; background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; min-height: 44px; }
@@ -233,23 +233,43 @@
         .class-icon-btn .icon { font-size: 16px; }
         .class-icon-btn .name { font-weight: bold; font-size: 11px; text-transform: uppercase; }
         
-        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
-        .class-detail-img-box { width: 100%; background: #000; border-bottom: 1px solid #27272a; display: flex; justify-content: center; align-items: center; padding: 10px; }
-        .class-preview-img { max-width: 100%; max-height: 280px; object-fit: contain; }
-        .class-detail-content { padding: 16px; }
+        /* Карточка героя */
+        .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.9); transition: border-color 0.3s ease, box-shadow 0.3s ease; position: relative;}
+        
+        /* Контейнер картинки с шиммером */
+        .class-detail-img-box { width: 100%; height: 320px; background: #09090b; position: relative; overflow: hidden; }
+        
+        /* Скелетон (Шиммер) эффекта загрузки */
+        .skeleton-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; z-index: 1; transition: opacity 0.3s; }
+        .skeleton-loader.hidden { opacity: 0; pointer-events: none; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Изображение с плавным появлением (cover убирает черные рамки) */
+        .class-preview-img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transform: scale(1.05); transition: opacity 0.5s ease, transform 3s ease-out; z-index: 2; position: relative; }
+        .class-preview-img.loaded { opacity: 1; transform: scale(1); }
+        
+        /* Градиентный фейд снизу, чтобы картинка красиво сливалась с контентом */
+        .class-gradient-fade { position: absolute; bottom: 0; left: 0; width: 100%; height: 140px; background: linear-gradient(to top, #121214 0%, transparent 100%); z-index: 3; pointer-events: none; }
+
+        /* Блок контента наезжает на картинку */
+        .class-detail-content { padding: 0 16px 16px 16px; margin-top: -30px; position: relative; z-index: 4; }
+        
         .class-detail-header { margin-bottom: 12px; }
-        .class-detail-title { font-size: 18px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .class-detail-growth { font-size: 9px; color: #71717a; margin-top: 4px; font-weight: bold; text-transform: uppercase; }
-        .class-detail-lore { font-style: italic; color: #a1a1aa; font-size: 11px; margin-bottom: 16px; line-height: 1.4; border-left: 2px solid #3f3f46; padding-left: 8px; }
+        .class-detail-title { font-size: 20px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+        .class-detail-growth { font-size: 9px; color: #a1a1aa; margin-top: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .class-detail-lore { font-style: italic; color: #d4d4d8; font-size: 11px; margin-bottom: 16px; line-height: 1.5; border-left: 2px solid #3f3f46; padding-left: 10px; text-shadow: 0 1px 2px #000; font-family: "Georgia", serif;}
         
-        .class-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; }
-        .c-bar-row span { width: 70px; }
-        .c-bar-wrap { flex: 1; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; }
-        .c-bar-fill { height: 100%; border-radius: 3px; }
+        /* Неоновые полоски статов */
+        .class-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid #27272a;}
+        .c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .c-bar-row span { width: 85px; }
+        .c-bar-wrap { flex: 1; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #18181b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); position: relative;}
+        .c-bar-fill { height: 100%; border-radius: 3px; position: relative; transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        /* Светящийся наконечник полоски */
+        .c-bar-fill::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px; width: 4px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px inherit; }
         
-        .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.2); }
+        .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
     </style>
 </head>
 <body>
@@ -483,6 +503,13 @@
         const setCls = (id, val) => { const el = document.getElementById(id); if (el) el.className = val; };
 
         const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
+        
+        // ФОНОВЫЙ ПРЕЛОАДЕР ИЗОБРАЖЕНИЙ ДЛЯ ВЕРСТКИ
+        const imgCache = {};
+        for (let key in CLASS_AVATARS) {
+            imgCache[key] = new Image();
+            imgCache[key].src = CLASS_AVATARS[key];
+        }
 
         const CLASSES = {
             knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу.", growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 }, statWeights: { str_dmg: 1.5, str_arm: 0.5, agi_dodge: 0, agi_block: 0.5, end_hp: 15, mst_block: 1, mst_pen: 1, luk_crit: 0.2, luk_cdmg: 0, luk_dodge: 0, luk_pen: 0 }, skill: { name: "Эгида Обреченных", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
@@ -685,7 +712,6 @@
             planEnemyTurn(); updateUI();
         }
 
-        // ЛОГИКА ЗАПУСКА РЕЙДА НА БОССА
         function startRaid(bossId) {
             if (hero.tickets < 1) return alert("Нет билетов рейда!");
             if (hero.hp <= 0) return alert("Герой мертв!");
@@ -719,7 +745,6 @@
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Рейд начался! У вас только 15 ходов!</div>`;
             planEnemyTurn();
             
-            // Открываем арену (переиспользуем экран PVE)
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
             document.getElementById('screen-PVE').classList.add('active'); 
             currentScreen = 'PVE';
@@ -728,8 +753,6 @@
 
         function planEnemyTurn() {
             enemy.turnCounter++;
-            
-            // ИСПРАВЛЕНИЕ: Логика таймера ярости для рейдовых боссов
             if (enemy.isRaid) {
                 let turnsLeft = 15 - enemy.turnCounter;
                 if (turnsLeft <= 0) {
@@ -796,14 +819,8 @@
 
         function handleCombatWin() {
             enemy.hp = 0; 
-            
-            // ИСПРАВЛЕНИЕ: Логика победы для рейдов
             if (enemy.isRaid) {
-                let gems = enemy.raidData.gemReward;
-                hero.gems += gems;
-                let goldGained = hero.level * 50 + 100;
-                hero.gold += goldGained;
-                
+                let gems = enemy.raidData.gemReward; hero.gems += gems; let goldGained = hero.level * 50 + 100; hero.gold += goldGained;
                 let droppedItem = null; let logMsg = "";
                 if (enemy.raidData.dropRelic) {
                     droppedItem = generateBossDrop(hero.level);
@@ -815,7 +832,6 @@
                         else { let sellP = Math.floor(droppedItem.price * 0.5); hero.gold += sellP; logMsg = `<br>Сумка полна! Реликвия продана за ${sellP}💰.`; droppedItem = null; }
                     }
                 }
-                
                 document.getElementById("vic-title-text").innerText = "РЕЙД ЗАВЕРШЕН!";
                 document.getElementById("vic-rewards-text").innerHTML = `Заработано: +${goldGained}💰 | +${gems}💎 ${logMsg}`;
                 let lootBox = document.getElementById("vic-loot-container");
@@ -824,7 +840,6 @@
                     else { lootBox.style.display = "none"; }
                 }
             } else {
-                // Обычная логика PVE победы
                 let goldGained = 15 + (hero.floor * 5); let expGained = 20 + (hero.floor * 8);
                 if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
                 hero.gold += goldGained; hero.exp += expGained;
@@ -844,7 +859,6 @@
                     }
                 }
                 if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level); calculateStats(); }
-                
                 document.getElementById("vic-title-text").innerText = "ЭТАЖ ПРОЙДЕН!";
                 document.getElementById("vic-rewards-text").innerHTML = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
                 let lootBox = document.getElementById("vic-loot-container");
@@ -855,16 +869,10 @@
                 if (hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
             }
 
-            saveGame();
-            setCls("vic-modal", "victory-modal show");
-            updateUI(); 
+            saveGame(); setCls("vic-modal", "victory-modal show"); updateUI(); 
         }
 
-        function closeVictoryModal() { 
-            setCls("vic-modal", "victory-modal"); 
-            if (combatMode === 'raid') openScreen('boss'); // Возврат после рейда
-            else initCombat(); // Продолжение PVE
-        }
+        function closeVictoryModal() { setCls("vic-modal", "victory-modal"); if (combatMode === 'raid') openScreen('boss'); else initCombat(); }
 
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
@@ -890,7 +898,7 @@
                         let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1); let eRes;
                         
                         if (eAtkZone === 'ENRAGE') {
-                            eRes = { dmg: 99999, type: "crit" }; // Ваншот
+                            eRes = { dmg: 99999, type: "crit" };
                         } else if (eAtkZone === 'ULTIMATUM') { 
                             let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5); 
                             if (forceDodge) eRes = { dmg: 0, type: "dodge" }; 
@@ -921,7 +929,7 @@
                         
                         if (hero.hp <= 0 && !GOD_MODE) {
                             hero.hp = 0; hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
-                            if(!enemy.isRaid && hero.floor > 1) hero.floor--; // Падаем в PVE, но не в Рейде
+                            if(!enemy.isRaid && hero.floor > 1) hero.floor--; 
                             logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`); calculateStats(); 
                             setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000);
                         } else { planEnemyTurn(); }
@@ -954,13 +962,18 @@
             setCls('nav-' + (screenName === 'classes' ? 'class' : screenName), 'nav-btn active');
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
-            if(screenName === 'PVE' && (!enemy || enemy.isRaid)) initCombat(); // Сброс, если вернулись из рейда
+            if(screenName === 'PVE' && (!enemy || enemy.isRaid)) initCombat();
             if(screenName === 'blacksmith') forgeSelectedIndex = null; 
             updateUI();
         }
         
         function setShopMode(mode) { shopMode = mode; updateUI(); }
-        function selectPreviewClass(classId) { previewClassId = classId; if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
+        
+        function selectPreviewClass(classId) { 
+            previewClassId = classId; 
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); 
+            updateUI(); 
+        }
 
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
@@ -1035,11 +1048,7 @@
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); saveGame(); updateUI();
         }
 
-        function selectForgeItem(idx) {
-            forgeSelectedIndex = idx;
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-            updateUI();
-        }
+        function selectForgeItem(idx) { forgeSelectedIndex = idx; if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 
         function upgradeItem() {
             if (forgeSelectedIndex === null) return;
@@ -1274,7 +1283,29 @@
                 document.getElementById("ui-classes-gallery").innerHTML = galleryHtml;
 
                 let selCls = CLASSES[previewClassId]; let isCurrentHeroClass = hero.baseClass === previewClassId;
-                document.getElementById("ui-class-detail").innerHTML = `<div class="class-detail-card"><div class="class-detail-img-box"><img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img"></div><div class="class-detail-content"><div class="class-detail-header"><div class="class-detail-title" style="color:${selCls.color};">${selCls.icon} ${selCls.name}</div><div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div></div><div class="class-detail-lore">"${selCls.lore}"</div><div class="class-bars"><div class="c-bar-row"><span>Атака</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.dmg}%; background: ${selCls.color};"></div></div></div><div class="c-bar-row"><span>Защита</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.def}%; background: ${selCls.color};"></div></div></div><div class="c-bar-row"><span>Сложность</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.diff}%; background: ${selCls.color};"></div></div></div></div><button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 0 20px ${selCls.color}40; border-color: ${selCls.color};` : ''}">${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}</button></div></div>`;
+                
+                // ИСПРАВЛЕНИЕ UI/UX И ЗАГРУЗКИ: Добавлен Skeleton Loader и градиентный фейд
+                document.getElementById("ui-class-detail").innerHTML = `
+                    <div class="class-detail-card" style="border-color: ${selCls.color}40;">
+                        <div class="class-detail-img-box">
+                            <div class="skeleton-loader" id="class-skeleton-${previewClassId}"></div>
+                            <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img" onload="this.classList.add('loaded'); document.getElementById('class-skeleton-${previewClassId}').classList.add('hidden');">
+                            <div class="class-gradient-fade"></div>
+                        </div>
+                        <div class="class-detail-content">
+                            <div class="class-detail-header">
+                                <div class="class-detail-title" style="color:${selCls.color}; text-shadow: 0 0 15px ${selCls.color}80;">${selCls.icon} ${selCls.name}</div>
+                                <div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div>
+                            </div>
+                            <div class="class-detail-lore">"${selCls.lore}"</div>
+                            <div class="class-bars">
+                                <div class="c-bar-row"><span>Атака</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.dmg}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
+                                <div class="c-bar-row"><span>Защита</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.def}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
+                                <div class="c-bar-row"><span>Сложность</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.diff}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
+                            </div>
+                            <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 4px 15px ${selCls.color}40; border-color: ${selCls.color};` : ''}">${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}</button>
+                        </div>
+                    </div>`;
             }
         }
 
