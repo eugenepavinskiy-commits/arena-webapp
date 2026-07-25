@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Game - Лагерь героя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -542,63 +542,84 @@
 
     <!-- ЛОГИКА -->
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (tg && tg.initData) { try { tg.expand(); tg.ready(); } catch(e) {} }
 
-        const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
+        function updateViewport() {
+            const vh = (tg && tg.viewportStableHeight) ? tg.viewportStableHeight : window.innerHeight;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        if (tg && tg.onEvent) tg.onEvent('viewportChanged', updateViewport);
+        updateViewport();
+
+        const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+        const setW = (id, val) => { const el = document.getElementById(id); if (el) el.style.width = val; };
+        const setCls = (id, val) => { const el = document.getElementById(id); if (el) el.className = val; };
+
+        const CLASS_AVATARS = {
+            knight: STATIC_URL + "knight.png",
+            berserk: STATIC_URL + "berserk.png",
+            shadow: STATIC_URL + "shadow.png",
+            ranger: STATIC_URL + "ranger.png"
+        };
 
         const CLASSES = {
             knight: {
                 id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24",
-                lore: "Держит удар лучше, чем корпоративный сервер в пятницу. Выживает там, где остальные уже пишут завещание.",
-                growth: { str: 2, agi: 0, end: 3, mst: 1, luk: 0 },
-                armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9,
-                skill: { name: "Щит Веры", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 },
-                bars: { dmg: 40, def: 100, diff: 20 }
+                lore: "Их доспехи выкованы из метеоритного железа. Последние хранители забытых клятв. Непоколебимая скала, о которую разбивается тьма.",
+                growth: { str: 2, agi: 0, end: 4, mst: 1, luk: 0 },
+                statWeights: { str_dmg: 1.5, str_arm: 0.5, agi_dodge: 0, agi_block: 0.5, end_hp: 15, mst_block: 1, mst_pen: 1, luk_crit: 0.2, luk_cdmg: 0, luk_dodge: 0, luk_pen: 0 },
+                skill: { name: "Эгида Обреченных", desc: "Блокирует удар и исцеляет 20% HP.", cd: 4 },
+                bars: { dmg: 40, def: 100, diff: 20 },
+                armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 
             },
             berserk: {
                 id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444",
-                lore: "Работает без выходных и инстинкта самосохранения. Машина для переработка врагов, презирающая любую защиту.",
-                growth: { str: 3, agi: 1, end: 1, mst: 1, luk: 0 },
-                armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0,
-                skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 },
-                bars: { dmg: 100, def: 30, diff: 50 }
+                lore: "Дикари из пепельных пустошей. Мифологические татуировки горят древней магией. Боль только делает их сильнее.",
+                growth: { str: 4, agi: 1, end: 2, mst: 0, luk: 0 },
+                statWeights: { str_dmg: 2.5, str_arm: 0, agi_dodge: 0.5, agi_block: 0, end_hp: 10, mst_block: 0, mst_pen: 2, luk_crit: 0.5, luk_cdmg: 2, luk_dodge: 0, luk_pen: 0 },
+                skill: { name: "Печать Крови", desc: "Удар на x2.5 урона. Жертвует броней.", cd: 3 },
+                bars: { dmg: 100, def: 30, diff: 50 },
+                armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 
             },
             shadow: {
-                id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7",
-                lore: "Специалист по внезапным сокращениям популяции. Убьет до того, как враг успеет поздороваться.",
-                growth: { str: 0, agi: 3, end: 1, mst: 2, luk: 0 },
-                armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3,
-                skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 },
-                bars: { dmg: 85, def: 20, diff: 90 }
+                id: "shadow", name: "Тень", icon: "🗡️", color: "#10b981",
+                lore: "Прикованы к материальному миру цепями своих грехов. Эфирные клинки и смертоносный танец во мраке.",
+                growth: { str: 0, agi: 4, end: 1, mst: 2, luk: 1 },
+                statWeights: { str_dmg: 0.5, str_arm: 0, agi_dodge: 1, agi_block: 0, agi_dmg: 2, end_hp: 8, mst_block: 0, mst_pen: 2, mst_crit: 1, mst_cdmg: 1.5, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 1, luk_pen: 0 },
+                skill: { name: "Поцелуй Бездны", desc: "Гарантированный уворот + Крит.", cd: 3 },
+                bars: { dmg: 85, def: 20, diff: 90 },
+                armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 
             },
             ranger: {
-                id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981",
-                lore: "Эффективно делегирует стрелы прямо в уязвимые места. Любит, когда проблемы решаются еще на подходе.",
-                growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 1 },
-                armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15,
+                id: "ranger", name: "Следопыт", icon: "🏹", color: "#3b82f6",
+                lore: "Слышит дыхание леса и видит сквозь тьму. Эффективно делегирует стрелы в уязвимые места порождений Бездны.",
+                growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 2 },
+                statWeights: { str_dmg: 1, str_arm: 0, agi_dodge: 0.5, agi_block: 0, agi_dmg: 1.5, end_hp: 10, mst_block: 0, mst_pen: 1.5, mst_crit: 0, mst_cdmg: 1, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 0, luk_pen: 1 },
                 skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 },
-                bars: { dmg: 70, def: 40, diff: 60 }
+                bars: { dmg: 70, def: 40, diff: 60 },
+                armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 
             }
         };
 
-        let ITEMS_DB = {
-            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, inShop: true, stats: { atk: 5, armorPen: 2 } },
-            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], inShop: true, stats: { atk: 4, critChance: 3 } },
-            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, inShop: true, stats: { armor: 10, dodgeChance: -1 } },
-            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], inShop: true, stats: { armor: 6, blockChance: 5 } },
-            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], inShop: true, stats: { atk: 12, str: 2 } },
-            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, inShop: true, stats: { armor: 8, mst: 5, luk: 2 } },
-            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, inShop: true, stats: { armor: 10, str: 2 } },
-            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, inShop: true, stats: { armor: 12, blockChance: 6 } },
-            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, inShop: true, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
-
+        const ITEMS_DB = {
+            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
+            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10, dodgeChance: -1 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { armor: 6, blockChance: 5 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12, str: 2 } },
+            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8, mst: 5, luk: 2 } },
+            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10, str: 2 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12, blockChance: 6 } },
             "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { atk: 18, critChance: 6, armorPen: 3 } },
             "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, dropOnly: true, stats: { armor: 15, str: 3 } },
+            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { agi: 4, luk: 3, dodgeChance: 2 } },
             "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], dropOnly: true, stats: { armor: 10, str: 3 } },
             "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 38, armorPen: 10, agi: -2 } },
             "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, dropOnly: true, stats: { armor: 18, mst: 8, end: 3 } },
             "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
+            "24393": { id: "24393", name: "Шляпа Колдуна", type: "head", icon: "🧙‍♂️", rarity: "epic", lvl: 4, price: 400, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 8, mst: 15 } },
             "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, stats: { atk: 42, str: 5 } },
             "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 15, end: 5 } },
             "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 38, blockChance: 12 } },
@@ -606,6 +627,7 @@
             "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 55, str: 8, armorPen: 15 } },
             "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 55, end: 5, dodgeChance: -4 } },
             "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 45, mst: 5, blockChance: 14 } },
+            "19204": { id: "19204", name: "Рубиновый Перстень", type: "ring", icon: "💍", rarity: "epic", lvl: 6, price: 1300, stats: { str: 8, atk: 15, critDmg: 10 } },
             "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
             "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 25, agi: 8, dodgeChance: 4 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, stats: { armor: 65, end: 8, str: 4 } },
@@ -616,7 +638,7 @@
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
             "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
             "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 }, desc: "Шипы наносят урон, но щит тяжел." },
             "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
             "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
@@ -640,10 +662,23 @@
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
+        // ИСПРАВЛЕНИЕ #1: Безопасное сохранение без утечки памяти
         function saveGame() {
             localStorage.setItem('tg_rpg_hero', JSON.stringify(hero));
+            
+            let activeItemIds = [...hero.inventory];
+            for (let key in hero.equipment) {
+                if (hero.equipment[key] && hero.equipment[key].id !== "blocked") {
+                    activeItemIds.push(hero.equipment[key].id);
+                }
+            }
+
             let customItems = {};
-            for(let key in ITEMS_DB) { if(ITEMS_DB[key].rarity === 'relic') customItems[key] = ITEMS_DB[key]; }
+            for(let key in ITEMS_DB) { 
+                if(ITEMS_DB[key].rarity === 'relic' && activeItemIds.includes(key)) {
+                    customItems[key] = ITEMS_DB[key]; 
+                }
+            }
             localStorage.setItem('tg_rpg_custom_items', JSON.stringify(customItems));
         }
 
@@ -864,6 +899,7 @@
         function selectZone(type, zone) {
             if(type === 'atk') combatState.atkZone = zone;
             if(type === 'def') combatState.defZone = zone;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
             updateUI();
         }
 
@@ -871,9 +907,10 @@
 
         function logCombat(text) {
             let logBox = document.getElementById("combat-log");
-            logBox.innerHTML += `<div class="log-entry">${text}</div>`;
-            while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild);
-            logBox.scrollTop = logBox.scrollHeight;
+            if (logBox) {
+                logBox.innerHTML += `<div class="log-entry">${text}</div>`;
+                logBox.scrollTop = logBox.scrollHeight;
+            }
         }
 
         function useClassSkill() {
@@ -906,34 +943,27 @@
                 showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block");
                 logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Враг оглушен.</span>`);
             }
-
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
             if (enemy.hp <= 0) handleCombatWin();
             updateUI();
         }
 
         function calcDmg(attacker, defender, zAtk, zDef) {
             if (Math.random() * 100 < (defender.dodge || 0)) return { dmg: 0, type: "dodge" };
-
             let baseAtk = attacker.damage || attacker.atk || 5;
             if (attacker === hero.combatStats && combatState.combo > 0) {
                 baseAtk = Math.floor(baseAtk * (1 + combatState.combo * 0.25));
             }
-
             let isCrit = Math.random() * 100 < (attacker.critChance || 5);
             if (isCrit) baseAtk = Math.floor(baseAtk * ((attacker.critDmg || 150) / 100));
-
             let defArmor = Math.max(0, (defender.armor || 0) - (attacker.armorPen || 0));
             let mitigation = defArmor;
             let isBlock = false;
             let isPerfectBlock = false;
-
             if (zAtk === zDef) {
                 isBlock = true; mitigation *= 2;
                 if (defender === hero.combatStats) { isPerfectBlock = true; mitigation *= 1.5; }
-            } else {
-                mitigation = Math.floor(defArmor * 0.5);
-            }
-
+            } else { mitigation = Math.floor(defArmor * 0.5); }
             let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation);
             let resType = isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal"));
             return { dmg: finalDmg, type: resType };
@@ -997,32 +1027,32 @@
             }
             
             if (hero.exp >= hero.expNext) {
-                hero.exp -= hero.expNext;
-                hero.level++;
-                hero.unspentPoints += 3;
-                hero.expNext = getExpReq(hero.level);
+                hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level);
                 calculateStats();
             }
 
-            document.getElementById("vic-rewards-text").innerHTML = `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`;
+            setTxt("vic-rewards-text", `Заработано: +${goldGained}💰 | +${expGained} EXP ${logMsg}`);
             let lootBox = document.getElementById("vic-loot-container");
-            if (droppedItem) {
-                lootBox.style.display = "flex";
-                document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`;
-                document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem);
-                document.getElementById("vic-loot-name").innerText = droppedItem.name;
-            } else { lootBox.style.display = "none"; }
+            if (lootBox) {
+                if (droppedItem) {
+                    lootBox.style.display = "flex";
+                    document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`;
+                    setHtml("vic-loot-box", renderItemIcon(droppedItem));
+                    setTxt("vic-loot-name", droppedItem.name);
+                } else { lootBox.style.display = "none"; }
+            }
 
             if (hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
             saveGame();
-            document.getElementById("vic-modal").classList.add("show");
+            setCls("vic-modal", "victory-modal show");
             updateUI(); 
         }
 
-        function closeVictoryModal() { document.getElementById("vic-modal").classList.remove("show"); initCombat(); }
+        function closeVictoryModal() { setCls("vic-modal", "victory-modal"); initCombat(); }
 
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
             let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)"};
             let eAtkZone = enemy.nextAtkZone; 
@@ -1098,14 +1128,22 @@
 
                         if (eAtkZone !== 'ULTIMATUM') logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
                         
+                        // ИСПРАВЛЕНИЕ #3: Безопасная эвакуация при смерти героя
                         if (hero.hp <= 0 && !GOD_MODE) {
                             hero.hp = 0; 
                             hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
                             if(hero.floor > 1) hero.floor--;
                             logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`);
                             calculateStats(); 
+                            
+                            setTimeout(() => {
+                                alert("Вы были повержены и отступаете в Лагерь...");
+                                enemy = null; 
+                                openScreen('hero'); 
+                            }, 2000);
+                        } else {
+                            planEnemyTurn();
                         }
-                        planEnemyTurn();
                     }
                 }
                 resetCombatZones(); saveGame(); updateUI();
@@ -1138,9 +1176,10 @@
             if (!['hero', 'shop', 'classes', 'PVE'].includes(screenName)) return alert("В разработке!");
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
-            document.getElementById('screen-' + screenName).classList.add('active');
+            setCls('screen-' + screenName, 'app-screen active');
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + (screenName === 'classes' ? 'class' : screenName)).classList.add('active');
+            setCls('nav-' + (screenName === 'classes' ? 'class' : screenName), 'nav-btn active');
+            
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
             if(screenName === 'PVE' && !enemy) initCombat();
@@ -1178,7 +1217,12 @@
             calculateStats(); saveGame(); openScreen('hero');
         }
         
+        // ИСПРАВЛЕНИЕ #2: Защита от абьюза переодевания в бою
         function equipItem(invIndex) {
+            if (currentScreen === 'PVE' || (enemy && enemy.hp > 0 && hero.hp > 0)) {
+                return alert("Нельзя менять снаряжение прямо во время боя!");
+            }
+            
             let itemId = hero.inventory[invIndex];
             if (!itemId) return;
             let item = ITEMS_DB[itemId];
@@ -1219,7 +1263,12 @@
             calculateStats(); saveGame(); updateUI();
         }
 
+        // ИСПРАВЛЕНИЕ #2: Защита от абьюза раздевания в бою
         function unequipSlot(slotKey) {
+            if (currentScreen === 'PVE' || (enemy && enemy.hp > 0 && hero.hp > 0)) {
+                return alert("Нельзя снимать снаряжение во время боя!");
+            }
+            
             let item = hero.equipment[slotKey];
             if (!item || item.id === "blocked") return;
             if (hero.inventory.length >= 10) return alert("Сумка полна!");
