@@ -65,9 +65,9 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
-        /* === КЛАССЫ (ИСПРАВЛЕНО: скрытие экрана) === */
+        /* === КЛАССЫ === */
         #screen-classes { height: calc(var(--vh) - 140px); flex-direction: column; overflow: hidden; }
-        #screen-classes.active { display: flex; } /* Flex применяется только если экран активен */
+        #screen-classes.active { display: flex; } 
         
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
@@ -297,6 +297,8 @@
                 <div class="combat-entity" id="entity-hero-box">
                     <div class="combat-avatar" id="combat-hero-avatar">🛡️</div>
                     <div class="combat-name" id="combat-hero-name">Герой</div>
+                    <!-- ИСПРАВЛЕНИЕ: Добавлен блок с уровнем, из-за которого ломался JS -->
+                    <div class="combat-lvl">Ур. <span id="combat-hero-lvl">1</span></div>
                     <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
                 </div>
@@ -306,6 +308,8 @@
                 <div class="combat-entity" id="entity-enemy-box">
                     <div class="combat-avatar" id="combat-enemy-avatar">🧟</div>
                     <div class="combat-name" id="combat-enemy-name">Монстр</div>
+                    <!-- ИСПРАВЛЕНИЕ: Добавлен блок с уровнем монстра -->
+                    <div class="combat-lvl">Ур. <span id="combat-enemy-lvl">1</span></div>
                     <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
                     <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
                 </div>
@@ -355,7 +359,6 @@
             <div class="hero-avatar-box">
                 <!-- ФОЛЛБЭК: Если картинка сервера недоступна, покажем красивое эмодзи класса -->
                 <div id="main-hero-avatar-fallback" style="font-size: 90px; text-shadow: 0 10px 20px rgba(0,0,0,0.8); margin-bottom: 10px; display: none;"></div>
-                <!-- ОСНОВНАЯ КАРТИНКА -->
                 <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar" onerror="this.style.display='none'; document.getElementById('main-hero-avatar-fallback').style.display='block';">
             </div>
             
@@ -421,7 +424,7 @@
 
     <!-- ЛОГИКА -->
     <script>
-        // ИСПРАВЛЕНИЕ #1: БЕЗОПАСНАЯ ИНИЦИАЛИЗАЦИЯ TELEGRAM
+        // ИНИЦИАЛИЗАЦИЯ TELEGRAM
         const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
         
         if (tg && tg.initData) {
@@ -431,7 +434,7 @@
             } catch(e) { console.error("Telegram WebApp init error", e); }
         }
 
-        // Фикс прыгающей высоты экрана в TMA (с проверкой на наличие tg)
+        // Фикс прыгающей высоты экрана в TMA
         function updateViewport() {
             const vh = (tg && tg.viewportStableHeight) ? tg.viewportStableHeight : window.innerHeight;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -558,8 +561,8 @@
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
 
-        // ИСПРАВЛЕНИЕ #2: ЗАЩИТА STATE MANAGER ОТ КРАША
-        const SAVE_KEY = 'hero_camp_save_v2';
+        // STATE MANAGER
+        const SAVE_KEY = 'hero_camp_save_v3';
 
         function saveGame() {
             try {
@@ -1053,23 +1056,6 @@
                 str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk
             };
         }
-
-        function formatStats(stats) {
-            let res = [];
-            if(stats.atk) res.push(`Урон ${stats.atk>0?'+':''}${stats.atk}`);
-            if(stats.armor) res.push(`Броня ${stats.armor>0?'+':''}${stats.armor}`);
-            if(stats.str) res.push(`СИЛ ${stats.str>0?'+':''}${stats.str}`);
-            if(stats.agi) res.push(`ЛОВ ${stats.agi>0?'+':''}${stats.agi}`);
-            if(stats.end) res.push(`ВЫН ${stats.end>0?'+':''}${stats.end}`);
-            if(stats.mst) res.push(`МСТ ${stats.mst>0?'+':''}${stats.mst}`);
-            if(stats.luk) res.push(`УДЧ ${stats.luk>0?'+':''}${stats.luk}`);
-            if(stats.critChance) res.push(`Крит ${stats.critChance>0?'+':''}${stats.critChance}%`);
-            if(stats.dodgeChance) res.push(`Уворот ${stats.dodgeChance>0?'+':''}${stats.dodgeChance}%`);
-            if(stats.blockChance) res.push(`Блок ${stats.blockChance>0?'+':''}${stats.blockChance}%`);
-            if(stats.armorPen) res.push(`Пробитие ${stats.armorPen>0?'+':''}${stats.armorPen}`);
-            if(stats.critDmg) res.push(`Крит. Урон ${stats.critDmg>0?'+':''}${stats.critDmg}%`);
-            return res.join(' • ');
-        }
         
         function getEquippedItemFor(shopItem) {
             if (shopItem.type === 'two_handed') return hero.equipment.weapon1; 
@@ -1145,6 +1131,7 @@
             document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
             if (currentScreen === 'PVE' && enemy) {
+                // ТЕПЕРЬ ОШИБКИ NULL НЕ БУДЕТ, ЭЛЕМЕНТЫ ДОБАВЛЕНЫ В HTML
                 document.getElementById("combat-hero-lvl").innerText = hero.level;
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
@@ -1155,7 +1142,8 @@
                 if(enemy.isBoss) document.getElementById("combat-enemy-avatar").classList.add("boss");
                 else document.getElementById("combat-enemy-avatar").classList.remove("boss");
 
-                document.getElementById("combat-enemy-lvl").innerText = enemy.level;
+                // ТЕПЕРЬ ОШИБКИ NULL НЕ БУДЕТ, И ИСПОЛЬЗУЕТСЯ .floor ВМЕСТО .level
+                document.getElementById("combat-enemy-lvl").innerText = enemy.floor;
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
@@ -1194,7 +1182,6 @@
                 
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
                 
-                // ИСПРАВЛЕНИЕ #3: Безопасная загрузка картинки героя
                 let avatarImg = document.getElementById("main-hero-avatar");
                 let avatarFallback = document.getElementById("main-hero-avatar-fallback");
                 avatarImg.style.display = 'block';
