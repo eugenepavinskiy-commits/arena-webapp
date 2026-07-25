@@ -15,7 +15,7 @@ DATA_FILE = "players_data.json"
 # --- ЛОГИКА СОХРАНЕНИЯ ---
 def load_players():
     if not os.path.exists(DATA_FILE):
-        return {}9
+        return {}
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -63,7 +63,7 @@ def save_player():
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
     # Добавил параметр ?v=777 чтобы 100% сбить кэш Telegram при запуске!
-    webapp_url = "https://arena-webapp-production.up.railway.app/?v=9247"
+    webapp_url = "https://arena-webapp-production.up.railway.app/?v=437"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
@@ -105,6 +105,3 @@ if __name__ == "__main__":
     
     # Запускаем веб-сервер Flask
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-
-
