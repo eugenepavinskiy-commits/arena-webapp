@@ -216,7 +216,7 @@ font-weight: bold; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(2
 .btn-upgrade:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; box-shadow: none; cursor: not-allowed;}
 
 
-/* === РЕЙДЫ НА БОССОВ === */
+/* === РЕЙДЫ НА БОССОВ (НОВОЕ) === */
 
 .raid-boss-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #3f3f46; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.2s; }
 
@@ -434,7 +434,7 @@ font-weight: bold; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(2
 .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
 
 
-/* === ЭКРАН КЛАССОВ (ЭСТЕТИКА + PRELOADER) === */
+/* === ЭКРАН КЛАССОВ (ИСПРАВЛЕНИЕ ВЕРСТКИ) === */
 
 .classes-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
 
@@ -449,71 +449,37 @@ font-weight: bold; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(2
 .class-icon-btn .name { font-weight: bold; font-size: 11px; text-transform: uppercase; }
 
 
-/* Карточка героя */
+.class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
 
-.class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.9); transition: border-color 0.3s ease, box-shadow 0.3s ease; position: relative;}
+.class-detail-img-box { width: 100%; background: #000; border-bottom: 1px solid #27272a; display: flex; justify-content: center; align-items: center; padding: 10px; }
 
+.class-preview-img { max-width: 100%; max-height: 280px; object-fit: contain; }
 
-/* Контейнер картинки с шиммером */
-
-.class-detail-img-box { width: 100%; height: 320px; background: #09090b; position: relative; overflow: hidden; }
-
-
-/* Скелетон (Шиммер) эффекта загрузки */
-
-.skeleton-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; z-index: 1; transition: opacity 0.3s; }
-
-.skeleton-loader.hidden { opacity: 0; pointer-events: none; }
-
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-
-/* Изображение с плавным появлением (cover убирает черные рамки) */
-
-.class-preview-img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transform: scale(1.05); transition: opacity 0.5s ease, transform 3s ease-out; z-index: 2; position: relative; }
-
-.class-preview-img.loaded { opacity: 1; transform: scale(1); }
-
-
-/* Градиентный фейд снизу, чтобы картинка красиво сливалась с контентом */
-
-.class-gradient-fade { position: absolute; bottom: 0; left: 0; width: 100%; height: 140px; background: linear-gradient(to top, #121214 0%, transparent 100%); z-index: 3; pointer-events: none; }
-
-
-/* Блок контента наезжает на картинку */
-
-.class-detail-content { padding: 0 16px 16px 16px; margin-top: -30px; position: relative; z-index: 4; }
-
+.class-detail-content { padding: 16px; }
 
 .class-detail-header { margin-bottom: 12px; }
 
-.class-detail-title { font-size: 20px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+.class-detail-title { font-size: 18px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-.class-detail-growth { font-size: 9px; color: #a1a1aa; margin-top: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+.class-detail-growth { font-size: 9px; color: #71717a; margin-top: 4px; font-weight: bold; text-transform: uppercase; }
 
-.class-detail-lore { font-style: italic; color: #d4d4d8; font-size: 11px; margin-bottom: 16px; line-height: 1.5; border-left: 2px solid #3f3f46; padding-left: 10px; text-shadow: 0 1px 2px #000; font-family: "Georgia", serif;}
-
-
-/* Неоновые полоски статов /
-
-.class-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid #27272a;}
-
-.c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
-
-.c-bar-row span { width: 85px; }
-
-.c-bar-wrap { flex: 1; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #18181b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); position: relative;}
-
-.c-bar-fill { height: 100%; border-radius: 3px; position: relative; transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-
-/ Светящийся наконечник полоски */
-
-.c-bar-fill::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px; width: 4px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px inherit; }
+.class-detail-lore { font-style: italic; color: #a1a1aa; font-size: 11px; margin-bottom: 16px; line-height: 1.4; border-left: 2px solid #3f3f46; padding-left: 8px; }
 
 
-.select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.class-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 
-.select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
+.c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; }
+
+.c-bar-row span { width: 70px; }
+
+.c-bar-wrap { flex: 1; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; }
+
+.c-bar-fill { height: 100%; border-radius: 3px; }
+
+
+.select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+
+.select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.2); }
 
 </style>
 
@@ -815,4 +781,71 @@ const GOD_MODE = false;
 
 <span>🎒 Сумка (Нажми для осмотра)</span>
 
-<span
+<span id="ui-bag-capacity" style="color:#a1a1aa;">0/10</span>
+
+</div>
+
+<div class="inventory-grid" id="ui-inventory-grid"></div>
+
+</div>
+
+
+<div id="ui-stats-container" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;"></div>
+
+</div>
+
+
+<!-- ЭКРАН МИРОВЫЕ БОССЫ (НОВОЕ) -->
+
+<div id="screen-boss" class="app-screen">
+
+<div class="class-banner">🦖 ОХОТА НА БОССОВ</div>
+
+<div style="text-align: center; color: #a1a1aa; margin-bottom: 12px; font-size: 11px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 8px; border: 1px solid #27272a;">
+
+Билеты рейдов: <b style="color:#fbbf24; font-size: 14px;" id="ui-raid-tickets">3/3</b> 🎟️
+
+<div id="ui-ticket-timer" style="font-size:9px; margin-top:4px; color: #10b981;">До следующего: 00:00</div>
+
+</div>
+
+
+<div style="font-size: 10px; color: #71717a; text-align: center; margin-bottom: 16px; font-style: italic;">
+
+⚠️ Рейдовый босс впадает в БЕЗУМИЕ на 15 ходу!<br>У вас есть только 15 ударов, чтобы уничтожить его.
+
+</div>
+
+
+<div id="ui-raid-list"></div>
+
+</div>
+
+
+<!-- ЭКРАН КУЗНЕЦА -->
+
+<div id="screen-blacksmith" class="app-screen">
+
+<div class="class-banner">⛏️ КУЗНИЦА</div>
+
+<div class="forge-arena">
+
+<div class="anvil-icon" id="forge-anvil">⚒️</div>
+
+<div class="forge-sparks" id="forge-sparks"></div>
+
+<div class="inventory-grid" id="ui-forge-grid" style="margin-top: 16px;"></div>
+
+<div class="forge-details" id="forge-details-panel">
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+
+<div id="f-item-name" style="font-weight:900; color:#fbbf24; font-size:14px; text-transform:uppercase;">Название</div>
+
+<div id="f-item-lvl" style="font-size:10px; background:#27272a; padding:2px 6px; border-radius:4px; border:1px solid #3f3f46;">УР. 1 ➔ 2</div>
+
+</div>
+
+<div id="f-item-stats"></div>
+
+<button class="btn-upgrade" id="btn-forge-up
