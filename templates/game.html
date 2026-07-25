@@ -192,8 +192,7 @@
         .combat-entities { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative;}
         .combat-entity { width: 45%; text-align: center; position: relative;}
         
-        /* Изменили стили аватарки для PVE, чтобы туда красиво ложились картинки классов */
-        .combat-avatar { width: 60px; height: 60px; margin: 0 auto 6px auto; display: flex; align-items: center; justify-content: center; font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px; overflow: hidden; position: relative;}
+        .combat-avatar { width: 64px; height: 64px; margin: 0 auto 6px auto; display: flex; align-items: center; justify-content: center; font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px; overflow: hidden; position: relative;}
         .combat-avatar.boss { border-color: #ef4444; box-shadow: inset 0 0 15px rgba(239,68,68,0.3); width: 75px; height: 75px; font-size: 45px;}
         
         .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -290,9 +289,10 @@
             <div class="intent-box" id="combat-intent">🔮 Враг готовит атаку...</div>
 
             <div class="combat-entities">
+                <!-- Аватар героя в бою с поддержкой картинки класса -->
                 <div class="combat-entity" id="entity-hero-box">
                     <div class="combat-avatar">
-                        <div id="combat-hero-fallback" style="font-size: 34px; display: none;"></div>
+                        <div id="combat-hero-fallback" style="font-size: 30px; display: none;">🛡️</div>
                         <img src="" id="combat-hero-img" alt="Герой" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; document.getElementById('combat-hero-fallback').style.display='block';">
                     </div>
                     <div class="combat-name" id="combat-hero-name">Герой</div>
@@ -303,8 +303,12 @@
                 
                 <div class="combat-vs">VS</div>
                 
+                <!-- Аватар врага с поддержкой папки mobs/ -->
                 <div class="combat-entity" id="entity-enemy-box">
-                    <div class="combat-avatar" id="combat-enemy-avatar">🧟</div>
+                    <div class="combat-avatar" id="combat-enemy-avatar-wrap">
+                        <div id="combat-enemy-fallback" style="font-size: 30px;">🧟</div>
+                        <img src="" id="combat-enemy-img" alt="Монстр" style="width: 100%; height: 100%; object-fit: contain; display: none;" onerror="this.style.display='none'; document.getElementById('combat-enemy-fallback').style.display='block';">
+                    </div>
                     <div class="combat-name" id="combat-enemy-name">Монстр</div>
                     <div class="combat-lvl">Ур. <span id="combat-enemy-lvl">1</span></div>
                     <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
@@ -430,7 +434,6 @@
         if (tg && tg.onEvent) tg.onEvent('viewportChanged', updateViewport);
         updateViewport();
 
-        // Safe DOM manipulation functions (Защита от крашей кэша!)
         const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         const setW = (id, val) => { const el = document.getElementById(id); if (el) el.style.width = val; };
@@ -541,7 +544,7 @@
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, skillCooldown: 0, enemyStunned: false };
 
-        const SAVE_KEY = 'hero_camp_save_v4';
+        const SAVE_KEY = 'hero_camp_save_v5';
 
         function saveGame() {
             try { localStorage.setItem(SAVE_KEY, JSON.stringify({ hero, enemy, combatState, currentScreen, previewClassId })); } catch (e) {}
@@ -577,9 +580,10 @@
             let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
             let name = ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)];
             let avatar = "🧟";
+            let imgKey = "zombie"; // Ключ для папки mobs/
 
-            if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; }
-            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; }
+            if (isMegaBoss) { name = "👑 " + BOSS_NAMES[Math.floor(Math.random() * BOSS_NAMES.length)]; avatar = "👹"; imgKey = "boss"; }
+            else if (isMiniBoss) { name = "☠️ " + name + " (Элита)"; avatar = "🧛"; imgKey = "elite"; }
 
             let hp = 20 + (floorLevel * 10);
             let atk = 5 + (floorLevel * 2);
@@ -590,7 +594,7 @@
 
             let zones = ["head", "chest", "legs"];
             return { 
-                name: name, floor: floorLevel, avatar: avatar, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
+                name: name, floor: floorLevel, avatar: avatar, imgKey: imgKey, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
                 hp: hp, maxHp: hp, nextAtkZone: zones[Math.floor(Math.random()*3)],
                 stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } 
             };
@@ -994,7 +998,6 @@
         }
 
         function updateUI() {
-            // Safe UI updates - NO CRASHES ANYMORE
             setTxt("ui-gold", hero.gold);
             setTxt("ui-top-lvl", hero.level);
             setTxt("ui-top-floor", hero.floor);
@@ -1007,12 +1010,13 @@
                 setTxt("combat-hero-maxhp", hero.finalStats.hp);
                 setW("combat-hero-hp-bar", `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`);
                 
-                let heroImg = document.getElementById("combat-hero-img");
-                let heroFall = document.getElementById("combat-hero-fallback");
-                if (heroImg && heroFall) {
-                    heroImg.style.display = 'block'; heroFall.style.display = 'none';
-                    heroImg.src = CLASS_AVATARS[hero.baseClass];
-                    heroFall.innerText = CLASSES[hero.baseClass].icon;
+                // Исправление аватара героя в бою (теперь берет картинку класса)
+                let cHeroImg = document.getElementById("combat-hero-img");
+                let cHeroFall = document.getElementById("combat-hero-fallback");
+                if (cHeroImg && cHeroFall) {
+                    cHeroImg.style.display = 'block'; cHeroFall.style.display = 'none';
+                    cHeroImg.src = CLASS_AVATARS[hero.baseClass];
+                    cHeroFall.innerText = CLASSES[hero.baseClass].icon;
                 }
                 
                 let title = document.getElementById("combat-stage-name");
@@ -1022,8 +1026,17 @@
                 }
 
                 setTxt("combat-enemy-name", enemy.name);
-                setTxt("combat-enemy-avatar", enemy.avatar);
-                setCls("combat-enemy-avatar", enemy.isBoss ? "combat-avatar boss" : "combat-avatar");
+                
+                // Поддержка аватарок мобов из папки mobs/ с фоллбэком на эмодзи
+                let cEnemyImg = document.getElementById("combat-enemy-img");
+                let cEnemyFall = document.getElementById("combat-enemy-fallback");
+                if (cEnemyImg && cEnemyFall) {
+                    cEnemyImg.style.display = 'block'; cEnemyFall.style.display = 'none';
+                    cEnemyImg.src = `${STATIC_URL}mobs/${enemy.imgKey}.png`;
+                    cEnemyFall.innerText = enemy.avatar;
+                }
+
+                setCls("combat-enemy-avatar-wrap", enemy.isBoss ? "combat-avatar boss" : "combat-avatar");
                 setTxt("combat-enemy-lvl", enemy.floor);
                 setTxt("combat-enemy-hp", Math.floor(enemy.hp));
                 setTxt("combat-enemy-maxhp", enemy.maxHp);
