@@ -18,9 +18,10 @@
             display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; 
-            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+            margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
+        .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
         .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
@@ -36,10 +37,10 @@
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); }
         
-        /* ВАЖНО: Фикс наложения экранов */
-        .app-screen { display: none !important; animation: fadeIn 0.2s ease-out; }
-        .app-screen.active { display: block !important; }
-        #screen-classes.active { display: flex !important; flex-direction: column; }
+        /* Исправление наложения экранов */
+        .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
+        .app-screen.active { display: block; }
+        #screen-classes.active { display: flex; flex-direction: column; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .class-banner {
@@ -49,13 +50,16 @@
             color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center;
         }
+        
+        .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .floor-nav-btn:active { transform: scale(0.9); }
 
         /* === ИДЕАЛЬНЫЙ ФОН ДЛЯ ВКЛАДКИ ГЕРОЯ === */
         #screen-hero { position: relative; z-index: 1; }
         #screen-hero::before {
             content: ''; position: fixed; top: -30px; left: -30px; right: -30px; bottom: -30px;
             background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
-            background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1;
+            background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; pointer-events: none;
         }
 
         /* === AFK СУНДУК === */
@@ -69,7 +73,7 @@
         .afk-info { flex-grow: 1; margin-left: 12px; }
         .afk-btn { background: linear-gradient(180deg, #10b981 0%, #059669 100%); border: 1px solid #047857; color: #fff; font-weight: bold; padding: 8px 16px; border-radius: 6px; font-size: 11px; text-transform: uppercase; box-shadow: 0 4px 6px rgba(0,0,0,0.3); pointer-events: none;}
 
-        /* === ГЕРОЙ И ИНВЕНТАРЬ (GLASSMORPHISM) === */
+        /* === ГЕРОЙ И ИНВЕНТАРЬ === */
         .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
         .equip-slot { 
@@ -104,6 +108,7 @@
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: rgba(5,5,5,0.6); border: 1px solid #27272a; cursor: default; }
 
+        /* === СТАТЫ ГЕРОЯ === */
         .stats-card { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; box-shadow: 0 8px 20px rgba(0,0,0,0.8); margin-bottom: 16px;}
         .stat-group-title { color: #d4d4d8; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px; text-shadow: 0 1px 2px #000;}
         .extended-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; color: #a1a1aa;}
@@ -114,10 +119,8 @@
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .heal-btn:active { transform: scale(0.9); }
 
-        /* === PVE БОЕВКА (ДИОРАМА) === */
-        .combat-arena { 
-            background: #0f172a; border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative;
-        }
+        /* === PVE БОЕВКА (ИДЕАЛЬНАЯ ДИОРАМА) === */
+        .combat-arena { background: #0f172a; border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative; transition: background-image 0.5s ease;}
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
         .combat-header.boss { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); font-size: 16px; }
         
@@ -126,20 +129,41 @@
         .combat-entities { 
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: relative; gap: 8px;
             border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; padding: 15px 6px 12px 6px; 
-            box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease;
         }
         
-        .combat-entity { width: 48%; text-align: center; position: relative; display: flex; flex-direction: column; align-items: center;}
-        .combat-avatar { font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); margin-bottom: 4px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;}
-        .combat-avatar.boss { border-color: #ef4444; box-shadow: inset 0 0 15px rgba(239,68,68,0.3); font-size: 45px;}
-        .combat-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;}
-        .combat-hp-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; color: #e4e4e7; text-shadow: 0 1px 2px #000;}
-        .combat-vs { font-size: 22px; font-weight: 900; color: #71717a; text-shadow: 0 2px 4px #000; font-style: italic; z-index: 2;}
-        .status-badge { position: absolute; top: -8px; right: 10px; font-size: 16px; filter: drop-shadow(0 2px 4px #000); z-index: 5; display: none;}
+        .combat-entity-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; width: 48%; justify-content: flex-start; z-index: 2;}
+        .entity-name-plate { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 24px; margin-bottom: 6px;}
+        .entity-name-text { font-family: "Georgia", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+        .entity-lvl { flex-shrink: 0; color: #e4e4e7; font-size: 10px; font-weight: 900; padding: 2px 5px; background: linear-gradient(135deg, #7f1d1d, #450a0a); border-radius: 4px; border: 1px solid #ef4444; box-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: -apple-system, sans-serif;}
+        .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
+        .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
+
+        .combat-card { width: 100%; max-width: 160px; aspect-ratio: 1; background: #050505; border: 2px solid #3f3f46; border-radius: 10px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 6px;}
+        .combat-card.hero { border-color: #71717a; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
+        .combat-card.boss { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
+        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: contain; background-color: #050505; filter: brightness(0.95); transition: filter 0.2s; }
+        .combat-card::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.1); pointer-events: none; z-index: 5;}
+        
+        .status-badge { position: absolute; top: 4px; right: 4px; font-size: 18px; filter: drop-shadow(0 2px 4px #000); z-index: 15; display: none;}
         .status-badge.show { display: block; animation: pulse-leg 1.5s infinite; }
 
-        .dmg-popup { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 10; text-shadow: 0 2px 4px #000;}
-        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -25px) scale(1.3); } }
+        .entity-hp-plate { width: 100%; max-width: 140px; text-align: center; }
+        .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
+        .combat-vs { font-size: 22px; font-weight: 900; color: #71717a; text-shadow: 0 2px 4px #000; font-style: italic; z-index: 2;}
+
+        .dmg-popup { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
+
+        /* Искры и анимации ударов */
+        .clash-spark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: radial-gradient(circle, #fbbf24 0%, #ef4444 20%, transparent 60%); opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; }
+        @keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+        .spark-anim { animation: spark-boom 0.4s ease-out; }
+        @keyframes hit-shake { 0% { filter: brightness(1); } 25% { transform: translateX(-2px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(2px); } 75% { transform: translateX(-2px); } 100% { filter: brightness(1); } }
+        .hit-anim { animation: hit-shake 0.3s ease-out; }
+        .slash-fx { position: absolute; top: 50%; left: 50%; width: 90px; height: 5px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
+        @keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
 
         .combat-log-box { background: rgba(18, 18, 20, 0.9); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 8px; height: 80px; overflow-y: auto; margin-bottom: 12px; font-size: 10px; line-height: 1.4; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 3px;}
         .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; }
@@ -168,6 +192,7 @@
 
         /* === КЛАССЫ: ПРЕМИУМ UI === */
         #screen-classes { height: calc(100vh - 140px); overflow: hidden; }
+        #screen-classes.active { display: flex; flex-direction: column; }
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
@@ -203,7 +228,7 @@
         .smith-upgrade-box.show { display: block; }
         .smith-btn { width: 100%; background: linear-gradient(180deg, #d97706 0%, #b45309 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.6);}
 
-        /* === МОДАЛКА ОСМОТРА И СРАВНЕНИЯ === */
+        /* === МОДАЛКА ОСМОТРА И ПОБЕДЫ === */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; backdrop-filter: blur(5px);}
         .modal-overlay.show { display: flex; }
         .inspect-card { background: #121214; border: 1px solid #3f3f46; border-radius: 12px; padding: 16px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px #000;}
@@ -212,9 +237,18 @@
         .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(251,191,36,0.3);}
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
+        .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 8px; text-transform: uppercase;}
+        .vic-loot-box { width: 72px; height: 72px; border-radius: 10px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239,68,68,0.5); position: relative; overflow: hidden;}
     </style>
 </head>
 <body>
+
+    <script>
+        const STATIC_URL = "{{ url_for('static', filename='') }}";
+        const GOD_MODE = false;
+        const SAVE_KEY_HERO = 'tg_rpg_hero_v10';
+        const SAVE_KEY_ITEMS = 'tg_rpg_items_v10';
+    </script>
 
     <div class="top-dashboard">
         <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
@@ -249,34 +283,68 @@
         </div>
     </div>
 
-    <!-- PVE БОЕВКА -->
+    <!-- PVE БОЕВКА 4.0 -->
     <div id="screen-PVE" class="app-screen">
-        <div class="class-banner" id="combat-floor-title">БЕСКОНЕЧНАЯ БАШНЯ</div>
-        <div class="combat-arena">
+        <div class="class-banner" id="combat-floor-title">
+            <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
+            <span id="pve-floor-display" style="font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">ЭТАЖ 1</span>
+            <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
+        </div>
+        
+        <div class="combat-arena" id="arena-bg">
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
-                <div style="font-size:20px; font-weight:900; color:#fbbf24; text-transform:uppercase; margin-bottom:10px;">ЭТАЖ ПРОЙДЕН!</div>
-                <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 12px; margin-bottom: 15px;"></div>
+                <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
+                <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
+                <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid #3f3f46; margin-bottom: 15px; width: 100%;">
+                    <div style="font-size:12px; color:#fbbf24; font-weight:bold; margin-bottom:10px; letter-spacing: 1px;">ВЫБИТ АРТЕФАКТ:</div>
+                    <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
+                    <div id="vic-loot-name" style="font-size:13px; color:#fca5a5; font-weight:bold; margin-top:5px;"></div>
+                </div>
                 <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ➔</button>
             </div>
 
             <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
             <div class="intent-box" id="combat-intent">🔮 Враг готовит атаковать...</div>
 
-            <div class="combat-entities">
-                <div class="combat-entity" id="entity-hero-box">
-                    <div class="status-badge" id="hero-buff-icon">🛡️</div>
-                    <div class="combat-avatar">👤</div>
-                    <div class="combat-name" id="combat-hero-name">Герой</div>
-                    <div class="combat-hp-text"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
-                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+            <div class="combat-entities" id="combat-entities-box">
+                <div class="clash-spark" id="clash-spark-fx"></div>
+                
+                <div class="combat-entity-wrapper">
+                    <div class="entity-name-plate">
+                        <span class="entity-name-text" id="combat-hero-name">Герой</span>
+                        <span class="entity-lvl" id="hero-tag-lvl">УР. 1</span>
+                    </div>
+                    <div class="combat-card hero" id="entity-hero-box">
+                        <div class="status-badge" id="hero-buff-icon">🛡️</div>
+                        <div class="card-avatar-wrap">
+                            <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
+                            <div class="slash-fx" id="hero-slash"></div>
+                        </div>
+                    </div>
+                    <div class="entity-hp-plate">
+                        <div class="hp-text-plate"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
+                        <div class="hp-bar-bg"><div class="hp-bar-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
+                    </div>
                 </div>
+                
                 <div class="combat-vs">VS</div>
-                <div class="combat-entity" id="entity-enemy-box">
-                    <div class="status-badge" id="enemy-debuff-icon">🎯</div>
-                    <div class="combat-avatar">🧟</div>
-                    <div class="combat-name" id="combat-enemy-name">Монстр</div>
-                    <div class="combat-hp-text"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
-                    <div class="combat-hp-bg"><div class="combat-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                
+                <div class="combat-entity-wrapper">
+                    <div class="entity-name-plate">
+                        <span class="entity-name-text" id="combat-enemy-name">Монстр</span>
+                        <span class="entity-lvl" id="enemy-tag-lvl">УР. 1</span>
+                    </div>
+                    <div class="combat-card" id="entity-enemy-box">
+                        <div class="status-badge" id="enemy-debuff-icon">🎯</div>
+                        <div class="card-avatar-wrap">
+                            <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
+                            <div class="slash-fx" id="enemy-slash"></div>
+                        </div>
+                    </div>
+                    <div class="entity-hp-plate">
+                        <div class="hp-text-plate"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
+                        <div class="hp-bar-bg"><div class="hp-bar-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
+                    </div>
                 </div>
             </div>
 
@@ -393,12 +461,9 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
         const GOD_MODE = false;
 
-        // ВАЖНО: Новые ключи спасут от битых сохранений с прошлой версии
-        const SAVE_KEY_HERO = 'tg_rpg_hero_v8';
-        const SAVE_KEY_ITEMS = 'tg_rpg_items_v8';
-
-        // ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ИСКЛЮЧЕНИЯ JINJA-КРАША
         const ZONE_NAMES_RU = { "head": "Голову 🪖", "chest": "Торс 🦺", "legs": "Ноги 👢" };
+        const SAVE_KEY_HERO = 'tg_rpg_hero_v10';
+        const SAVE_KEY_ITEMS = 'tg_rpg_items_v10';
 
         const CLASS_AVATARS = {
             knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png",
@@ -440,15 +505,63 @@
             accuracy: "🎯 Меткость", resistance: "🔮 Сопротивление", counterChance: "⚔️ Контратака (%)"
         };
 
+        // ВАЖНО: ВОЗВРАЩЕНА ПОЛНАЯ БАЗА И ИЗОБРАЖЕНИЯ ПРЕДМЕТОВ!
         let ITEMS_DB = {
-            "w_1": { id: "w_1", name: "Кинжал Охотника", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, mainStat: { atk: 12 } },
-            "w_2": { id: "w_2", name: "Топор Варяга", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 150, mainStat: { atk: 25 } },
-            "a_1": { id: "a_1", name: "Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 80, mainStat: { armor: 15 } },
-            "s_1": { id: "s_1", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 2, price: 120, mainStat: { blockChance: 10 } },
-            "r_1": { id: "r_1", name: "Кольцо Вампира", type: "ring", icon: "💍", rarity: "epic", lvl: 3, price: 300, mainStat: { lifesteal: 5 } },
-            "h_1": { id: "h_1", name: "Капюшон", type: "head", icon: "🪖", rarity: "common", lvl: 1, price: 40, mainStat: { armor: 5 } }
+            "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4 } },
+            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { blockChance: 5 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12 } },
+            "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8 } },
+            "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10 } },
+            "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12 } },
+            "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { lifesteal: 2 } },
+            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18 } },
+            "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, stats: { armor: 15 } },
+            "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 10 } },
+            "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 38 } },
+            "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, stats: { armor: 18 } },
+            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 42 } },
+            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], stats: { armor: 15 } },
+            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 38 } },
+            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 12 } },
+            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { atk: 55 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], stats: { armor: 55 } },
+            "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 45 } },
+            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85 } },
+            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 25 } },
+            "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 65 } },
+            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 60 } },
+            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], stats: { atk: 100 } },
+            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 75 } },
+            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], stats: { armor: 50 } },
+            "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 55 } },
+            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, stats: { armor: 15, hp: 150 } },
+            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, stats: { lifesteal: 10 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 90 } },
+            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 65 } },
+            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["shadow"], stats: { armor: 80 } },
+            "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], stats: { armor: 120 } }
         };
         const BASE_ITEMS_KEYS = Object.keys(ITEMS_DB);
+
+        // ВАЖНО: ВОЗВРАЩЕНЫ ИЗОБРАЖЕНИЯ МОНСТРОВ ВМЕСТО СМАЙЛОВ
+        const NORMAL_MOBS = [
+            { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" },
+            { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" },
+            { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" },
+            { id: 10, name: "Червь" }, { id: 11, name: "Улитка" }, { id: 12, name: "Ведьма" },
+            { id: 13, name: "Вирм" }, { id: 14, name: "Стрелок" }, { id: 15, name: "Гаргулья" },
+            { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" },
+            { id: 19, name: "Паук" }, { id: 20, name: "Пугало" }
+        ];
+
+        const BOSSES = {
+            10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" },
+            40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" },
+            70: { id: 27, name: "Голем" }, 80: { id: 28, name: "Гидра" }, 90: { id: 29, name: "Механоид" }, 100: { id: 30, name: "Суккуб" }
+        };
 
         let hero = {
             name: "Игрок", level: 1, maxFloor: 1, floor: 1, exp: 0, expNext: 100, gold: 5000,
@@ -475,7 +588,7 @@
                     if(parsed && parsed.inventory) hero = parsed;
                 }
             } catch (e) {
-                console.error("Сохранение повреждено.");
+                console.error("Сохранение повреждено, загружен новый профиль.");
             }
             if (!hero.lastAfkTime) hero.lastAfkTime = Date.now();
             if (!hero.defHistory) hero.defHistory = [];
@@ -491,7 +604,6 @@
 
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, activeSkill: null, heroBuff: null, enemyDebuff: null };
-        const ENEMY_NAMES = ["Упырь", "Гоблин", "Паук", "Зомби", "Скелет"];
 
         setInterval(() => {
             let elapsed = Date.now() - hero.lastAfkTime;
@@ -518,7 +630,6 @@
                 hero.lastAfkTime = Date.now();
                 saveGame(); updateUI();
                 if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                alert(`Ваши наемники вернулись из дозора!\nДобыто: +${afkGold} 💰`);
             }
         }
 
@@ -585,6 +696,7 @@
                 let item = hero.equipment[slot];
                 if (item && item.id !== "blocked") {
                     let enhMult = 1 + ((item.enhance || 0) * 0.1); 
+                    if (item.stats) { for (let k in item.stats) bonus[k] = (bonus[k] || 0) + Math.ceil(item.stats[k] * enhMult); } // Fallback for old items
                     if (item.mainStat) { for (let k in item.mainStat) bonus[k] = (bonus[k] || 0) + Math.ceil(item.mainStat[k] * enhMult); }
                     if (item.substats) { for (let k in item.substats) bonus[k] = (bonus[k] || 0) + Math.ceil(item.substats[k] * enhMult); }
                 }
@@ -624,12 +736,32 @@
             return zones[Math.floor(Math.random() * zones.length)];
         }
 
-        function generateCombatEnemy(floor) {
-            let hp = (40 + floor * 15) * 2;
-            return {
-                name: ENEMY_NAMES[Math.floor(Math.random() * ENEMY_NAMES.length)], floor: floor, avatar: "🧟", 
-                hp: hp, maxHp: hp, nextAtkZone: getSmartEnemyZone(),
-                stats: { atk: Math.floor((10 + floor * 3) * 1.5), armor: floor * 4, critChance: 5, dodge: 5, blockChance: 5, accuracy: floor }
+        function generateCombatEnemy(floorLevel) {
+            let isMegaBoss = floorLevel % 10 === 0;
+            let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
+            
+            let mobData;
+            if (isMegaBoss) { let bossKey = floorLevel > 100 ? 100 : floorLevel; mobData = BOSSES[bossKey] || BOSSES[10]; } 
+            else { let normalFloorCount = floorLevel - Math.floor(floorLevel / 10); let mobIndex = (normalFloorCount - 1) % NORMAL_MOBS.length; mobData = NORMAL_MOBS[mobIndex]; }
+
+            let name = mobData.name;
+            let imgUrl = `${STATIC_URL}mobs/B_${mobData.id}_high_resolution.png`;
+            let bgImg = isMegaBoss ? 'throne.png' : 'grave.png';
+            let bgUrl = `${STATIC_URL}begraund/${bgImg}`;
+
+            if (isMegaBoss) name = "👑 " + name; else if (isMiniBoss) name = "☠️ " + name + " (Элита)";
+
+            let hp = Math.floor((40 + floorLevel * 15) * 2);
+            if(isMiniBoss) hp = Math.floor(hp * 1.5);
+            if(isMegaBoss) hp = Math.floor(hp * 2.5);
+
+            let atk = Math.floor((10 + floorLevel * 3) * 1.5);
+            let armor = floorLevel * 4;
+
+            return { 
+                name: name, floor: floorLevel, imgUrl: imgUrl, bgUrl: bgUrl, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, 
+                hp: hp, maxHp: hp, nextAtkZone: getSmartEnemyZone(), 
+                stats: { atk: atk, armor: armor, critChance: 5, dodge: 5, blockChance: 5, accuracy: floorLevel } 
             };
         }
 
@@ -683,12 +815,19 @@
             return { dmg: finalDmg, type: isCrit ? "crit" : (isBlock ? "block" : "normal") };
         }
 
+        function triggerHitAnim(elementId) {
+            let el = document.getElementById(elementId);
+            if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); }
+            let slashId = elementId === "entity-hero-box" ? "hero-slash" : "enemy-slash";
+            let slash = document.getElementById(slashId);
+            if(slash) { slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out'; }
+        }
+
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
 
             let eAtkZone = enemy.nextAtkZone; 
             let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
-            let zNameRu = {head: "Голова", chest: "Торс", legs: "Ноги"};
 
             hero.defHistory.push(combatState.defZone);
             if (hero.defHistory.length > 3) hero.defHistory.shift();
@@ -696,8 +835,9 @@
             let hRes = calcDmg(hero.finalStats, enemy.stats, combatState.atkZone, eDefZone, true);
             enemy.hp -= hRes.dmg;
             
+            triggerHitAnim("entity-enemy-box");
             showDmgPopup("entity-enemy-box", hRes.type === "dodge" ? "УВОРОТ" : `-${hRes.dmg}`, hRes.type === "crit" ? "log-crit" : "log-dmg");
-            logCombat(`Вы бьете в ${zNameRu[combatState.atkZone]}: -${hRes.dmg} HP.`);
+            logCombat(`Вы бьете в ${ZONE_NAMES_RU[combatState.atkZone]}: -${hRes.dmg} HP.`);
 
             if (combatState.activeSkill === 'berserk' && enemy.hp <= 0) {
                 let heal = Math.floor(hero.finalStats.hp * 0.15); hero.hp = Math.min(hero.finalStats.hp, hero.hp + heal);
@@ -711,8 +851,10 @@
             } else {
                 let eRes = calcDmg(enemy.stats, hero.finalStats, eAtkZone, combatState.defZone, false);
                 hero.hp -= eRes.dmg;
+                
+                triggerHitAnim("entity-hero-box");
                 showDmgPopup("entity-hero-box", eRes.type === "dodge" ? "УВОРОТ" : `-${eRes.dmg}`, "log-dmg");
-                logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP.`);
+                logCombat(`${enemy.name} бьет в ${ZONE_NAMES_RU[eAtkZone]}: -${eRes.dmg} HP.`);
 
                 if (hero.finalStats.counterChance > 0 && Math.random() * 100 < hero.finalStats.counterChance) {
                     let cRes = calcDmg(hero.finalStats, enemy.stats, "chest", "chest", true);
@@ -743,9 +885,16 @@
             if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.expNext = Math.floor(hero.expNext * 1.5); calculateStats(); }
             
             let vicMsg = `Победа! +${gGain}💰 | +${eGain} EXP`;
-            if (droppedItem) vicMsg += `<br><br><span style="color:#fbbf24; font-size:10px;">ВЫБИТ ПРЕДМЕТ:<br>${droppedItem.name} (${droppedItem.rarity.toUpperCase()})</span>`;
-            document.getElementById("vic-rewards-text").innerHTML = vicMsg;
+            if (droppedItem) {
+                document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`;
+                document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem);
+                document.getElementById("vic-loot-name").innerText = droppedItem.name;
+                document.getElementById("vic-loot-container").style.display = "flex";
+            } else {
+                document.getElementById("vic-loot-container").style.display = "none";
+            }
             
+            document.getElementById("vic-rewards-text").innerHTML = vicMsg;
             hero.floor++; 
             if (hero.floor > hero.maxFloor) hero.maxFloor = hero.floor;
             saveGame();
@@ -762,10 +911,19 @@
             updateUI();
         }
 
+        function changeFloor(dir) {
+            hero.floor += dir;
+            if (hero.floor < 1) hero.floor = 1;
+            if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor;
+            saveGame(); initCombat();
+        }
+
         function initCombat() {
             enemy = generateCombatEnemy(hero.floor);
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, activeSkill: null, heroBuff: null, enemyDebuff: null };
+            document.getElementById("pve-floor-display").innerText = `ЭТАЖ ${hero.floor}`;
             document.getElementById("combat-stage-name").innerText = `ЭТАЖ ${hero.floor}`;
+            
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой начинается! Награда в 3 раза выше.</div>`;
             document.getElementById("combat-intent").innerText = `🔮 Враг готовит удар в ${ZONE_NAMES_RU[enemy.nextAtkZone]}!`;
             resetCombatZones(); updateUI();
@@ -830,6 +988,7 @@
         function openInspectModal(invIndex) {
             inspectInvIndex = invIndex; let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return;
             document.getElementById("inspect-title").innerText = item.name + (item.enhance ? ` (+${item.enhance})` : '');
+            document.getElementById("inspect-icon-box").className = `inspect-icon rarity-${item.rarity}`;
             document.getElementById("inspect-icon-box").innerHTML = renderItemIcon(item);
             
             let mStatTxt = ""; if(item.mainStat) for(let k in item.mainStat) mStatTxt += `${STAT_NAMES[k] || k} +${Math.ceil(item.mainStat[k]*(1+((item.enhance||0)*0.1)))} `;
@@ -956,9 +1115,20 @@
             }
 
             if (currentScreen === 'PVE' && enemy) {
+                let arenaOuter = document.getElementById("arena-bg");
+                if(enemy.bgUrl) { arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`; arenaOuter.style.backgroundSize = 'cover'; arenaOuter.style.backgroundPosition = 'center'; }
+                
+                let diorama = document.getElementById("combat-entities-box");
+                if(enemy.bgUrl) { diorama.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.9) 100%), url('${enemy.bgUrl}')`; diorama.style.backgroundSize = 'cover'; diorama.style.backgroundPosition = 'center'; }
+
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
+                document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
+                
+                document.getElementById("combat-enemy-name").innerText = enemy.isBoss ? "👑 " + enemy.name : (enemy.isMiniBoss ? "☠️ " + enemy.name : enemy.name);
+                document.getElementById("combat-enemy-img").src = enemy.imgUrl;
+                document.getElementById("entity-enemy-box").className = enemy.isBoss ? "combat-card boss" : "combat-card";
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
                 document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
