@@ -313,6 +313,7 @@
         </div>
         
         <div class="combat-arena" id="arena-bg">
+            <!-- ИСПРАВЛЕННЫЙ БЛОК МОДАЛЬНОГО ОКНА ПОБЕДЫ -->
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
                 <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
@@ -587,7 +588,7 @@
         let shopMode = "buy";
         let previewClassId = "knight";
         let inspectInvIndex = null;
-        let forgeSelectedIndex = null; // Для кузнеца
+        let forgeSelectedIndex = null; 
 
         let hero = {
             name: "Гладиатор", level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0,
@@ -598,7 +599,7 @@
             finalStats: {}, combatStats: {}, deathDebuffEnd: 0 
         };
 
-        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
         function saveGame() {
             localStorage.setItem('tg_rpg_hero', JSON.stringify(hero));
@@ -792,10 +793,16 @@
                 } else { lootBox.style.display = "none"; }
             }
             if (hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
-            saveGame(); setCls("vic-modal", "victory-modal show"); updateUI(); 
+            saveGame(); 
+            document.getElementById("vic-modal").classList.add("show"); // ИСПРАВЛЕННЫЙ ВЫЗОВ
+            updateUI(); 
         }
 
-        function closeVictoryModal() { setCls("vic-modal", "victory-modal"); initCombat(); }
+        // ИСПРАВЛЕННЫЙ ВЫЗОВ ЗАКРЫТИЯ
+        function closeVictoryModal() { 
+            document.getElementById("vic-modal").classList.remove("show"); 
+            initCombat(); 
+        }
 
         function executeTurn() {
             if (!combatState.atkZone || !combatState.defZone) return;
@@ -874,7 +881,7 @@
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
             if(screenName === 'PVE' && !enemy) initCombat();
-            if(screenName === 'blacksmith') forgeSelectedIndex = null; // Сброс кузницы
+            if(screenName === 'blacksmith') forgeSelectedIndex = null; 
             updateUI();
         }
         
@@ -951,7 +958,6 @@
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); saveGame(); updateUI();
         }
 
-        // ЛОГИКА КУЗНЕЦА
         function selectForgeItem(idx) {
             forgeSelectedIndex = idx;
             if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
@@ -962,42 +968,25 @@
             if (forgeSelectedIndex === null) return;
             let itemId = hero.inventory[forgeSelectedIndex];
             let item = ITEMS_DB[itemId];
-            
             let cost = item.lvl * item.price * 2; 
             
             if (hero.gold < cost) return alert("Не хватает золота!");
             if (item.lvl >= 20) return alert("Максимальный уровень предмета достигнут!");
 
             hero.gold -= cost;
-            
             let newItem = JSON.parse(JSON.stringify(item));
-            if (!newItem.id.includes("_upg_")) {
-                newItem.id = newItem.id + "_upg_" + Date.now();
-            } else {
-                newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now();
-            }
+            if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } 
+            else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); }
             
-            newItem.lvl += 1;
-            newItem.price = Math.floor(newItem.price * 1.5);
+            newItem.lvl += 1; newItem.price = Math.floor(newItem.price * 1.5);
+            for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15));
             
-            for (let s in newItem.stats) {
-                newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15));
-            }
-            
-            ITEMS_DB[newItem.id] = newItem;
-            hero.inventory[forgeSelectedIndex] = newItem.id; 
-            
+            ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             
             let anvil = document.getElementById("forge-anvil");
-            if (anvil) {
-                anvil.classList.remove("hammer-hit");
-                void anvil.offsetWidth;
-                anvil.classList.add("hammer-hit");
-            }
-
-            saveGame();
-            updateUI();
+            if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); }
+            saveGame(); updateUI();
         }
 
         function calculateStats(isCombat = false) {
@@ -1121,43 +1110,26 @@
                 let forgeHtml = '';
                 for (let i = 0; i < 10; i++) { 
                     if (i < hero.inventory.length) { 
-                        let item = ITEMS_DB[hero.inventory[i]]; 
-                        let selClass = forgeSelectedIndex === i ? 'selected' : '';
+                        let item = ITEMS_DB[hero.inventory[i]]; let selClass = forgeSelectedIndex === i ? 'selected' : '';
                         forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; 
-                    } else { 
-                        forgeHtml += `<div class="inv-item empty"></div>`; 
-                    } 
+                    } else { forgeHtml += `<div class="inv-item empty"></div>`; } 
                 }
                 document.getElementById("ui-forge-grid").innerHTML = forgeHtml;
 
-                let dPanel = document.getElementById("forge-details-panel");
-                let btnUpg = document.getElementById("btn-forge-upgrade");
-                
+                let dPanel = document.getElementById("forge-details-panel"); let btnUpg = document.getElementById("btn-forge-upgrade");
                 if (forgeSelectedIndex !== null && hero.inventory[forgeSelectedIndex]) {
-                    let item = ITEMS_DB[hero.inventory[forgeSelectedIndex]];
-                    let cost = item.lvl * item.price * 2;
-                    let nextLvl = item.lvl + 1;
-                    
-                    document.getElementById("f-item-name").innerText = item.name;
-                    document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`;
-                    
+                    let item = ITEMS_DB[hero.inventory[forgeSelectedIndex]]; let cost = item.lvl * item.price * 2; let nextLvl = item.lvl + 1;
+                    document.getElementById("f-item-name").innerText = item.name; document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`;
                     let statHtml = "";
                     for (let s in item.stats) {
-                        let oldVal = item.stats[s];
-                        let newVal = Math.max(1, Math.ceil(oldVal * 1.15));
-                        let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %'}[s] || s;
+                        let oldVal = item.stats[s]; let newVal = Math.max(1, Math.ceil(oldVal * 1.15)); let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %'}[s] || s;
                         statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`;
                     }
                     document.getElementById("f-item-stats").innerHTML = statHtml;
-                    
-                    btnUpg.innerText = `КОВАТЬ (💰 ${cost})`;
-                    btnUpg.disabled = hero.gold < cost || item.lvl >= 20;
+                    btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || item.lvl >= 20;
                     if (item.lvl >= 20) btnUpg.innerText = "МАКСИМАЛЬНЫЙ УРОВЕНЬ";
-                    
                     dPanel.classList.add("show");
-                } else {
-                    dPanel.classList.remove("show");
-                }
+                } else { dPanel.classList.remove("show"); }
             }
 
             if (currentScreen === 'shop') {
