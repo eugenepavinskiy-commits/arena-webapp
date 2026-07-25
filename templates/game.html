@@ -52,6 +52,7 @@
             color: #e9d5ff; border-color: #9333ea; 
             box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); 
         }
+        
         .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -64,9 +65,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
-        /* === КЛАССЫ: ГЕНИАЛЬНЫЙ UI (БЕЗ СКРОЛЛА) === */
-        /* Используем TMA-совместимую переменную --vh */
-        #screen-classes { height: calc(var(--vh) - 140px); display: flex; flex-direction: column; overflow: hidden; }
+        /* === КЛАССЫ (ИСПРАВЛЕНО: скрытие экрана) === */
+        #screen-classes { height: calc(var(--vh) - 140px); flex-direction: column; overflow: hidden; }
+        #screen-classes.active { display: flex; } /* Flex применяется только если экран активен */
+        
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
@@ -349,9 +351,14 @@
                 <div class="equip-slot empty" id="slot-belt" data-sil="🧪" onclick="unequipSlot('belt')"></div>
                 <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
             </div>
+            
             <div class="hero-avatar-box">
-                <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
+                <!-- ФОЛЛБЭК: Если картинка сервера недоступна, покажем красивое эмодзи класса -->
+                <div id="main-hero-avatar-fallback" style="font-size: 90px; text-shadow: 0 10px 20px rgba(0,0,0,0.8); margin-bottom: 10px; display: none;"></div>
+                <!-- ОСНОВНАЯ КАРТИНКА -->
+                <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar" onerror="this.style.display='none'; document.getElementById('main-hero-avatar-fallback').style.display='block';">
             </div>
+            
             <div class="equip-col">
                 <div class="equip-slot empty" id="slot-amulet" data-sil="🧿" onclick="unequipSlot('amulet')"></div>
                 <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
@@ -404,32 +411,35 @@
         <div class="shop-list" id="ui-shop-list"></div>
     </div>
 
-    <!-- ЭКРАН 3: КЛАССЫ (ИДЕАЛЬНЫЙ ПОДХОД) -->
+    <!-- ЭКРАН 3: КЛАССЫ -->
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
         
-        <!-- Верхняя сетка кнопок (компактно) -->
         <div class="classes-gallery" id="ui-classes-gallery"></div>
-        
-        <!-- Карточка класса (во весь экран) -->
         <div id="ui-class-detail" style="height: 100%; display: flex; flex-direction: column;"></div>
     </div>
 
     <!-- ЛОГИКА -->
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        // ИСПРАВЛЕНИЕ #1: БЕЗОПАСНАЯ ИНИЦИАЛИЗАЦИЯ TELEGRAM
+        const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+        
+        if (tg && tg.initData) {
+            try {
+                tg.expand();
+                tg.ready();
+            } catch(e) { console.error("Telegram WebApp init error", e); }
+        }
 
-        // Фикс прыгающей высоты экрана в TMA
+        // Фикс прыгающей высоты экрана в TMA (с проверкой на наличие tg)
         function updateViewport() {
-            const vh = tg.viewportStableHeight || window.innerHeight;
+            const vh = (tg && tg.viewportStableHeight) ? tg.viewportStableHeight : window.innerHeight;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         }
-        tg.onEvent('viewportChanged', updateViewport);
+        if (tg && tg.onEvent) {
+            tg.onEvent('viewportChanged', updateViewport);
+        }
         updateViewport();
-
-        const STATIC_URL = "{{ url_for('static', filename='') }}";
 
         const CLASS_AVATARS = {
             knight: STATIC_URL + "knight.png",
@@ -444,11 +454,8 @@
                 lore: "Их доспехи выкованы из метеоритного железа. Последние хранители забытых клятв. Непоколебимая скала, о которую разбивается тьма.",
                 growth: { str: 2, agi: 0, end: 4, mst: 1, luk: 0 },
                 statWeights: {
-                    str_dmg: 1.5, str_arm: 0.5,
-                    agi_dodge: 0, agi_block: 0.5,
-                    end_hp: 15,
-                    mst_block: 1, mst_pen: 1,
-                    luk_crit: 0.2, luk_cdmg: 0, luk_dodge: 0, luk_pen: 0
+                    str_dmg: 1.5, str_arm: 0.5, agi_dodge: 0, agi_block: 0.5, end_hp: 15,
+                    mst_block: 1, mst_pen: 1, luk_crit: 0.2, luk_cdmg: 0, luk_dodge: 0, luk_pen: 0
                 },
                 skill: { name: "Эгида Обреченных", desc: "Блокирует удар и исцеляет 20% HP.", cd: 4 },
                 bars: { dmg: 40, def: 100, diff: 20 }
@@ -458,11 +465,8 @@
                 lore: "Дикари из пепельных пустошей. Мифологические татуировки горят древней магией. Боль только делает их сильнее.",
                 growth: { str: 4, agi: 1, end: 2, mst: 0, luk: 0 },
                 statWeights: {
-                    str_dmg: 2.5, str_arm: 0,
-                    agi_dodge: 0.5, agi_block: 0,
-                    end_hp: 10,
-                    mst_block: 0, mst_pen: 2,
-                    luk_crit: 0.5, luk_cdmg: 2, luk_dodge: 0, luk_pen: 0
+                    str_dmg: 2.5, str_arm: 0, agi_dodge: 0.5, agi_block: 0, end_hp: 10,
+                    mst_block: 0, mst_pen: 2, luk_crit: 0.5, luk_cdmg: 2, luk_dodge: 0, luk_pen: 0
                 },
                 skill: { name: "Печать Крови", desc: "Удар на x2.5 урона. Жертвует броней.", cd: 3 },
                 bars: { dmg: 100, def: 30, diff: 50 }
@@ -472,11 +476,8 @@
                 lore: "Прикованы к материальному миру цепями своих грехов. Эфирные клинки и смертоносный танец во мраке.",
                 growth: { str: 0, agi: 4, end: 1, mst: 2, luk: 1 },
                 statWeights: {
-                    str_dmg: 0.5, str_arm: 0,
-                    agi_dodge: 1, agi_block: 0, agi_dmg: 2,
-                    end_hp: 8,
-                    mst_block: 0, mst_pen: 2, mst_crit: 1, mst_cdmg: 1.5,
-                    luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 1, luk_pen: 0
+                    str_dmg: 0.5, str_arm: 0, agi_dodge: 1, agi_block: 0, agi_dmg: 2, end_hp: 8,
+                    mst_block: 0, mst_pen: 2, mst_crit: 1, mst_cdmg: 1.5, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 1, luk_pen: 0
                 },
                 skill: { name: "Поцелуй Бездны", desc: "Гарантированный уворот + Крит.", cd: 3 },
                 bars: { dmg: 85, def: 20, diff: 90 }
@@ -486,11 +487,8 @@
                 lore: "Слышит дыхание леса и видит сквозь тьму. Эффективно делегирует стрелы в уязвимые места порождений Бездны.",
                 growth: { str: 1, agi: 2, end: 1, mst: 1, luk: 2 },
                 statWeights: {
-                    str_dmg: 1, str_arm: 0,
-                    agi_dodge: 0.5, agi_block: 0, agi_dmg: 1.5,
-                    end_hp: 10,
-                    mst_block: 0, mst_pen: 1.5, mst_crit: 0, mst_cdmg: 1,
-                    luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 0, luk_pen: 1
+                    str_dmg: 1, str_arm: 0, agi_dodge: 0.5, agi_block: 0, agi_dmg: 1.5, end_hp: 10,
+                    mst_block: 0, mst_pen: 1.5, mst_crit: 0, mst_cdmg: 1, luk_crit: 0.5, luk_cdmg: 0, luk_dodge: 0, luk_pen: 1
                 },
                 skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 },
                 bars: { dmg: 70, def: 40, diff: 60 }
@@ -553,21 +551,22 @@
             finalStats: {}
         };
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
-        previewClassId = hero.baseClass;
-
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
+        }
+        
         let enemy = null;
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false };
 
-        // === STATE MANAGER (SAVE/LOAD LOGIC) ===
-        const SAVE_KEY = 'hero_camp_save_v1';
+        // ИСПРАВЛЕНИЕ #2: ЗАЩИТА STATE MANAGER ОТ КРАША
+        const SAVE_KEY = 'hero_camp_save_v2';
 
         function saveGame() {
             try {
                 const state = { hero, enemy, combatState, currentScreen, previewClassId };
                 localStorage.setItem(SAVE_KEY, JSON.stringify(state));
             } catch (e) {
-                console.error("Save failed (Quota exceeded?)", e);
+                console.error("Save failed", e);
             }
         }
 
@@ -576,23 +575,24 @@
                 const data = localStorage.getItem(SAVE_KEY);
                 if (data) {
                     const parsed = JSON.parse(data);
-                    if (parsed.hero) Object.assign(hero, parsed.hero);
+                    if (parsed.hero && parsed.hero.baseClass) Object.assign(hero, parsed.hero);
                     if (parsed.enemy !== undefined) enemy = parsed.enemy;
                     if (parsed.combatState) Object.assign(combatState, parsed.combatState);
-                    if (parsed.currentScreen) currentScreen = parsed.currentScreen;
+                    if (parsed.currentScreen && ['hero', 'shop', 'classes', 'PVE'].includes(parsed.currentScreen)) {
+                        currentScreen = parsed.currentScreen;
+                    }
                     if (parsed.previewClassId) previewClassId = parsed.previewClassId;
                     
-                    // Обновляем UI под загруженный экран
                     document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
                     document.getElementById('screen-' + currentScreen).classList.add('active');
                     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
                     document.getElementById('nav-' + (currentScreen === 'classes' ? 'class' : currentScreen)).classList.add('active');
                 }
             } catch (e) {
-                console.error("Load failed", e);
+                console.error("Load failed, starting fresh", e);
+                localStorage.removeItem(SAVE_KEY); 
             }
         }
-        // Загружаем стейт при старте
         loadGame();
 
         const ENEMY_NAMES = ["Стажер-Зомби", "Скелет-Менеджер", "Гоблин-Курьер", "Орк-Бухгалтер"];
@@ -858,18 +858,27 @@
         function openScreen(screenName) {
             if (!['hero', 'shop', 'classes', 'PVE'].includes(screenName)) return alert("В разработке!");
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
             document.getElementById('screen-' + screenName).classList.add('active');
+            
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-' + (screenName === 'classes' ? 'class' : screenName)).classList.add('active');
+            
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
             if(screenName === 'PVE' && !enemy) initCombat();
+            
             updateUI();
         }
         
         function setShopMode(mode) { shopMode = mode; updateUI(); }
-        function selectPreviewClass(classId) { previewClassId = classId; if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
+        
+        function selectPreviewClass(classId) { 
+            previewClassId = classId; 
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); 
+            updateUI(); 
+        }
 
         function changeClass(classKey) {
             if (hero.baseClass === classKey) return;
@@ -992,12 +1001,10 @@
             }
         }
 
-        // ВАЖНО: УНИКАЛЬНАЯ ЛОГИКА СКАЛИРОВАНИЯ СТАТОВ
         function calculateStats() {
             let cls = CLASSES[hero.baseClass];
             let lvlBonus = hero.level - 1; 
 
-            // Сначала считаем сырые статы (База героя + рост от уровня)
             let total = {
                 str: hero.baseStats.str + (cls.growth.str * lvlBonus), 
                 agi: hero.baseStats.agi + (cls.growth.agi * lvlBonus),
@@ -1007,7 +1014,6 @@
                 armor: 0, atk: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0
             };
 
-            // Плюсуем статы со шмоток
             for (let key in hero.equipment) {
                 let item = hero.equipment[key];
                 if (item && item.stats) {
@@ -1022,7 +1028,6 @@
                 }
             }
 
-            // ПРЕОБРАЗОВАНИЕ В БОЕВЫЕ ПАРАМЕТРЫ СОГЛАСНО ВЕСУ КЛАССА
             let w = cls.statWeights;
             
             let hp = total.end * w.end_hp; 
@@ -1186,8 +1191,16 @@
 
             if (currentScreen === 'hero') {
                 let cls = CLASSES[hero.baseClass];
+                
                 document.getElementById("ui-class-name").innerHTML = `${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
-                document.getElementById("main-hero-avatar").src = CLASS_AVATARS[hero.baseClass];
+                
+                // ИСПРАВЛЕНИЕ #3: Безопасная загрузка картинки героя
+                let avatarImg = document.getElementById("main-hero-avatar");
+                let avatarFallback = document.getElementById("main-hero-avatar-fallback");
+                avatarImg.style.display = 'block';
+                avatarFallback.style.display = 'none';
+                avatarImg.src = CLASS_AVATARS[hero.baseClass];
+                avatarFallback.innerText = cls.icon;
 
                 const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2"];
                 slots.forEach(slotKey => {
@@ -1391,7 +1404,6 @@
                 `;
             }
 
-            // МАГИЯ АВТОСОХРАНЕНИЯ: вызывается каждый раз, когда меняется UI
             saveGame();
         }
 
