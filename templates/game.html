@@ -40,9 +40,8 @@
 
         .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 10px; text-align: center; margin-bottom: 16px; color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
 
-        /* === КЛАССЫ: ПРЕМИУМ UI === */
-        #screen-classes { height: calc(100vh - 140px); overflow: hidden; }
-        #screen-classes.active { display: flex; flex-direction: column; }
+        /* === КЛАССЫ: ЧИСТЫЙ UI === */
+        #screen-classes { height: calc(100vh - 140px); display: flex; flex-direction: column; overflow: hidden; }
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
@@ -94,11 +93,11 @@
 
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center;}
         .hero-avatar-box { flex-shrink: 0; width: 200px; text-align: center; position: relative; }
-        .hero-avatar { width: 100%; height: auto; display: block; border-radius: 6px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 2px solid #27272a;}
+        .hero-avatar { width: 100%; height: auto; display: block; border-radius: 6px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.95); border: 1px solid #18181b;}
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; }
         
         .inventory-panel { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 12px; border: 1px solid #3f3f46; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
-        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #27272a; padding-bottom: 8px; margin-bottom: 10px;}
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; color: #a1a1aa; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 10px;}
         .inventory-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .inv-item { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; background: radial-gradient(circle, rgba(39,39,42,0.8) 0%, rgba(9,9,11,0.9) 80%); border: 1px solid #3f3f46; position: relative;}
         .inv-item.empty { background: rgba(5,5,5,0.6); border: 1px solid #27272a; cursor: default; }
@@ -108,7 +107,7 @@
         .extended-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; color: #a1a1aa;}
         .stat-item-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #3f3f46; padding-bottom: 4px;}
         .stat-item-row b { color: #e4e4e7;}
-        .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; border: 1px solid #27272a;}
+        .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; border: 1px solid #18181b;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s;}
         .heal-btn { background: #059669; color: #fff; border: 1px solid #064e3b; border-radius: 4px; font-size: 9px; padding: 2px 6px; cursor: pointer; font-weight: bold;}
 
@@ -271,7 +270,7 @@
     <div id="screen-hero" class="app-screen active">
         <div class="class-banner" id="ui-class-name">ЗАГРУЗКА...</div>
 
-        <!-- AFK СУНДУК (НОВАЯ МЕХАНИКА ОФФЛАЙН ФАРМА) -->
+        <!-- AFK СУНДУК -->
         <div class="afk-box" onclick="claimAfkLoot()">
             <div class="afk-icon">🏕️</div>
             <div class="afk-info">
@@ -321,7 +320,7 @@
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
         <div class="classes-gallery" id="ui-classes-gallery"></div>
-        <div id="ui-class-detail"></div>
+        <div id="ui-class-detail" style="height: 100%; display: flex; flex-direction: column;"></div>
     </div>
 
     <!-- ЭКРАН 4: КУЗНЕЦ -->
@@ -351,9 +350,12 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
         const GOD_MODE = false;
 
-        // ВАЖНО: Новые ключи спасут от битых сохранений с прошлой версии
-        const SAVE_KEY_HERO = 'tg_rpg_hero_v6';
-        const SAVE_KEY_ITEMS = 'tg_rpg_items_v6';
+        // ВАЖНО: КЛЮЧИ ХРАНИЛИЩА (МЕНЯЕМ ДЛЯ ЧИСТОГО СТАРТА БЕЗ БАГОВ)
+        const SAVE_KEY_HERO = 'tg_rpg_hero_v7';
+        const SAVE_KEY_ITEMS = 'tg_rpg_items_v7';
+
+        // ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ИСКЛЮЧЕНИЯ JINJA-КРАША
+        const ZONE_NAMES_RU = { "head": "Голову 🪖", "chest": "Торс 🦺", "legs": "Ноги 👢" };
 
         const CLASS_AVATARS = {
             knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png",
@@ -395,7 +397,6 @@
             accuracy: "🎯 Меткость", resistance: "🔮 Сопротивление", counterChance: "⚔️ Контратака (%)"
         };
 
-        // БАЗА ПРЕДМЕТОВ С ОБЯЗАТЕЛЬНЫМ ПАРАМЕТРОМ lvl (Критический фикс краша)
         let ITEMS_DB = {
             "w_1": { id: "w_1", name: "Кинжал Охотника", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, mainStat: { atk: 12 } },
             "w_2": { id: "w_2", name: "Топор Варяга", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 150, mainStat: { atk: 25 } },
@@ -448,7 +449,6 @@
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, activeSkill: null, heroBuff: null, enemyDebuff: null };
         const ENEMY_NAMES = ["Упырь", "Гоблин", "Паук", "Зомби", "Скелет"];
 
-        // === МЕХАНИКА AFK ДОЗОРА ===
         setInterval(() => {
             let elapsed = Date.now() - hero.lastAfkTime;
             let maxAfk = 24 * 60 * 60 * 1000;
@@ -478,7 +478,6 @@
             }
         }
 
-        // === ПРОЦЕДУРНАЯ ГЕНЕРАЦИЯ ВЕЩЕЙ ===
         function generateRngItem(floor) {
             let maxLvl = Math.max(1, Math.ceil(floor / 10)); 
             let pool = BASE_ITEMS_KEYS.filter(id => (ITEMS_DB[id].lvl || 1) <= maxLvl);
@@ -568,7 +567,6 @@
             saveGame();
         }
 
-        // === УМНЫЙ ИИ И БОЕВКА ===
         function getSmartEnemyZone() {
             let zones = ["head", "chest", "legs"];
             if (hero.defHistory && hero.defHistory.length >= 2) {
@@ -684,7 +682,7 @@
                 if (combatState.enemyDebuff) { combatState.enemyDebuff.duration--; if (combatState.enemyDebuff.duration <= 0) combatState.enemyDebuff = null; }
 
                 enemy.nextAtkZone = getSmartEnemyZone();
-                document.getElementById("combat-intent").innerText = `🔮 Враг готовит удар в ${zNameRu[enemy.nextAtkZone]}!`;
+                document.getElementById("combat-intent").innerText = `🔮 Враг готовит удар в ${ZONE_NAMES_RU[enemy.nextAtkZone]}!`;
             }
             resetCombatZones(); updateUI();
         }
@@ -725,7 +723,7 @@
             combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, activeSkill: null, heroBuff: null, enemyDebuff: null };
             document.getElementById("combat-stage-name").innerText = `ЭТАЖ ${hero.floor}`;
             document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой начинается! Награда в 3 раза выше.</div>`;
-            document.getElementById("combat-intent").innerText = `🔮 Враг готовит удар в ${{"head":"Голову 🪖", "chest":"Торс 🦺", "legs":"Ноги 👢"}[enemy.nextAtkZone]}!`;
+            document.getElementById("combat-intent").innerText = `🔮 Враг готовит удар в ${ZONE_NAMES_RU[enemy.nextAtkZone]}!`;
             resetCombatZones(); updateUI();
         }
 
