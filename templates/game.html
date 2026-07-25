@@ -8,12 +8,12 @@
     <style>
         * { box-sizing: border-box; }
         
-        /* БЕЗОПАСНЫЙ ГЛОБАЛЬНЫЙ ФОН */
+        /* ГЛОБАЛЬНЫЙ ФОН БЕЗ JINJA */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 6px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
-            background-image: linear-gradient(to bottom, rgba(13,13,15,0.85) 0%, rgba(13,13,15,1) 100%), url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
+            background-image: linear-gradient(to bottom, rgba(13,13,15,0.85) 0%, rgba(13,13,15,1) 100%), url("static/begraund/1784901836658.png");
             background-size: cover; background-position: center top; background-attachment: fixed;
         }
         
@@ -40,7 +40,6 @@
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); }
         
-        /* Исправление наложения экранов */
         .app-screen { display: none; animation: fadeIn 0.2s ease-out; }
         .app-screen.active { display: block; }
         #screen-classes.active { display: flex; flex-direction: column; }
@@ -53,7 +52,6 @@
             color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center;
         }
-        
         .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .floor-nav-btn:active { transform: scale(0.9); }
 
@@ -104,7 +102,7 @@
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: rgba(5,5,5,0.6); border: 1px solid #27272a; cursor: default; }
 
-        /* СТАТЫ */
+        /* === СТАТЫ ГЕРОЯ === */
         .stats-card { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; box-shadow: 0 8px 20px rgba(0,0,0,0.8); margin-bottom: 16px;}
         .stat-group-title { color: #d4d4d8; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px; text-shadow: 0 1px 2px #000;}
         .extended-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; color: #a1a1aa;}
@@ -140,8 +138,9 @@
         .combat-card { width: 100%; max-width: 160px; aspect-ratio: 1; background: #050505; border: 2px solid #3f3f46; border-radius: 10px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 6px;}
         .combat-card.hero { border-color: #71717a; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
-        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
-        .card-avatar-img { width: 100%; height: 100%; object-fit: contain; background-color: #050505; filter: brightness(0.95); transition: filter 0.2s; }
+        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        /* Защита от битых картинок */
+        .card-avatar-img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0.95); transition: filter 0.2s; }
         .combat-card::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.1); pointer-events: none; z-index: 5;}
         
         .status-badge { position: absolute; top: 4px; right: 4px; font-size: 18px; filter: drop-shadow(0 2px 4px #000); z-index: 15; display: none;}
@@ -190,7 +189,6 @@
 
         /* === КЛАССЫ: ПРЕМИУМ UI === */
         #screen-classes { height: calc(100vh - 140px); overflow: hidden; }
-        #screen-classes.active { display: flex; flex-direction: column; }
         .classes-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; flex-shrink: 0;}
         .class-icon-btn { background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.5; filter: grayscale(100%); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.5); }
         .class-icon-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9)); }
@@ -226,11 +224,25 @@
         .smith-upgrade-box.show { display: block; }
         .smith-btn { width: 100%; background: linear-gradient(180deg, #d97706 0%, #b45309 100%); color: #fff; border: 1px solid #fbbf24; padding: 14px; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.6);}
 
+        /* === МАГАЗИН === */
+        .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
+        .shop-tab { flex: 1; padding: 12px; text-align: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
+        .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
+        .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; box-shadow: inset 0 0 10px rgba(220, 38, 38, 0.2); }
+        .shop-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;}
+        .shop-item-card { display: flex; background: rgba(18, 18, 20, 0.8); border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; box-shadow: inset 0 4px 8px rgba(0,0,0,0.9);}
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
+        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; text-shadow: 0 1px 3px #000; }
+        .shop-btn { padding: 12px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; border: none; flex-shrink: 0; text-transform: uppercase; background: #fbbf24; color: #000; box-shadow: 0 4px 10px rgba(251,191,36,0.3); border-bottom: 3px solid #b45309;}
+        .shop-btn:disabled { background: #18181b; color: #3f3f46; border: 1px solid #27272a; border-bottom-width: 1px; cursor: not-allowed; box-shadow: none;}
+        .shop-btn.btn-sell { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3); border-bottom: 3px solid #7f1d1d;}
+
         /* === МОДАЛКА ОСМОТРА И ПОБЕДЫ === */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; backdrop-filter: blur(5px);}
         .modal-overlay.show { display: flex; }
         .inspect-card { background: #121214; border: 1px solid #3f3f46; border-radius: 12px; padding: 16px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px #000;}
-        .inspect-icon { width: 64px; height: 64px; margin: 0 auto 10px auto; border-radius: 8px; background: #27272a; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 2px solid #52525b; position: relative;}
+        .inspect-icon { width: 64px; height: 64px; margin: 0 auto 10px auto; border-radius: 8px; background: #27272a; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 2px solid #52525b; position: relative; overflow: hidden;}
         .substats-list { background: #09090b; border: 1px solid #27272a; border-radius: 6px; padding: 8px; text-align: left; font-size: 11px; color: #34d399; margin: 10px 0; line-height: 1.6;}
         .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(251,191,36,0.3);}
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
@@ -242,211 +254,8 @@
 </head>
 <body>
 
-    <div class="top-dashboard">
-        <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
-        <div class="progress-info">
-            УР. <span id="ui-top-lvl">1</span> | ЭТАЖ <span id="ui-top-floor" style="color:#f59e0b;">1</span>
-            <div style="font-size:9px; font-weight:normal; margin-top:2px;">EXP: <span id="ui-top-exp">0/100</span></div>
-        </div>
-        <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
-    </div>
-
-    <div class="nav-grid">
-        <button class="nav-btn" id="nav-PVE" onclick="openScreen('PVE')">⚔️ PVE</button>
-        <button class="nav-btn" onclick="alert('В разработке!')">🦖 БОСС</button>
-        <button class="nav-btn" onclick="alert('В разработке!')">🛡️ PVP</button>
-        <button class="nav-btn active" id="nav-hero" onclick="openScreen('hero')">👤 ГЕРОЙ</button>
-        <button class="nav-btn" onclick="alert('В разработке!')">🛒 ЛАВКА</button>
-        <button class="nav-btn" id="nav-class" onclick="openScreen('classes')">📜 КЛАСС</button>
-        <button class="nav-btn" onclick="alert('В разработке!')">🏛️ АУКЦИОН</button>
-        <button class="nav-btn" id="nav-smith" onclick="openScreen('smith')">⛏️ КУЗНЕЦ</button>
-    </div>
-
-    <!-- МОДАЛКА ОСМОТРА ВЕЩЕЙ И СРАВНЕНИЯ -->
-    <div class="modal-overlay" id="item-inspect-modal">
-        <div class="inspect-card">
-            <div id="inspect-title" style="font-weight:900; font-size:16px; color:#fbbf24; text-transform:uppercase; margin-bottom:8px;">Название</div>
-            <div class="inspect-icon" id="inspect-icon-box"></div>
-            <div id="inspect-main-stat" style="font-weight:bold; color:#e4e4e7; font-size:12px;"></div>
-            <div class="substats-list" id="inspect-substats-box"></div>
-            <button class="modal-btn" id="btn-inspect-equip">НАДЕТЬ</button>
-            <button class="modal-btn danger" id="btn-inspect-sell">ПРОДАТЬ</button>
-            <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
-        </div>
-    </div>
-
-    <!-- PVE БОЕВКА -->
-    <div id="screen-PVE" class="app-screen">
-        <div class="class-banner" id="combat-floor-title">БЕСКОНЕЧНАЯ БАШНЯ</div>
-        <div class="combat-arena" id="arena-bg">
-            
-            <div class="modal-overlay" id="vic-modal" style="position: absolute;">
-                <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
-                <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
-                <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid #3f3f46; margin-bottom: 15px; width: 100%;">
-                    <div style="font-size:12px; color:#fbbf24; font-weight:bold; margin-bottom:10px; letter-spacing: 1px;">ВЫБИТ АРТЕФАКТ:</div>
-                    <div class="vic-loot-box rarity-relic" id="vic-loot-box"></div>
-                    <div id="vic-loot-name" style="font-size:13px; color:#fca5a5; font-weight:bold; margin-top:5px;"></div>
-                </div>
-                <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ➔</button>
-            </div>
-
-            <div class="combat-header" id="combat-stage-name">ЭТАЖ 1</div>
-            <div class="intent-box" id="combat-intent">🔮 Враг готовит атаковать...</div>
-
-            <div class="combat-entities" id="combat-entities-box">
-                <div class="clash-spark" id="clash-spark-fx"></div>
-                
-                <div class="combat-entity-wrapper">
-                    <div class="entity-name-plate">
-                        <span class="entity-name-text" id="combat-hero-name">Герой</span>
-                        <span class="entity-lvl" id="hero-tag-lvl">УР. 1</span>
-                    </div>
-                    <div class="combat-card hero" id="entity-hero-box">
-                        <div class="status-badge" id="hero-buff-icon">🛡️</div>
-                        <div class="card-avatar-wrap">
-                            <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
-                            <div class="slash-fx" id="hero-slash"></div>
-                        </div>
-                    </div>
-                    <div class="entity-hp-plate">
-                        <div class="hp-text-plate"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
-                        <div class="hp-bar-bg"><div class="hp-bar-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
-                    </div>
-                </div>
-                
-                <div class="combat-vs">VS</div>
-                
-                <div class="combat-entity-wrapper">
-                    <div class="entity-name-plate">
-                        <span class="entity-name-text" id="combat-enemy-name">Монстр</span>
-                        <span class="entity-lvl" id="enemy-tag-lvl">УР. 1</span>
-                    </div>
-                    <div class="combat-card" id="entity-enemy-box">
-                        <div class="status-badge" id="enemy-debuff-icon">🎯</div>
-                        <div class="card-avatar-wrap">
-                            <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
-                            <div class="slash-fx" id="enemy-slash"></div>
-                        </div>
-                    </div>
-                    <div class="entity-hp-plate">
-                        <div class="hp-text-plate"><span id="combat-enemy-hp">50</span> / <span id="combat-enemy-maxhp">50</span></div>
-                        <div class="hp-bar-bg"><div class="hp-bar-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="combat-log-box" id="combat-log"></div>
-
-            <div class="skill-box">
-                <div>
-                    <div class="skill-title" id="skill-name">Скилл</div>
-                    <div style="font-size: 9px; color: #a1a1aa;" id="skill-desc">Описание</div>
-                </div>
-                <button class="skill-btn" id="btn-use-skill" onclick="useClassSkill()">ПРИМЕНИТЬ</button>
-            </div>
-
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1;">
-                    <div class="combat-controls-title">⚔️ Ваша атака:</div>
-                    <div class="zone-btn atk" id="btn-atk-head" onclick="selectZone('atk', 'head')" style="margin-bottom:4px;">Голова</div>
-                    <div class="zone-btn atk" id="btn-atk-chest" onclick="selectZone('atk', 'chest')" style="margin-bottom:4px;">Торс</div>
-                    <div class="zone-btn atk" id="btn-atk-legs" onclick="selectZone('atk', 'legs')">Ноги</div>
-                </div>
-                <div style="flex:1;">
-                    <div class="combat-controls-title">🛡️ Ваш блок:</div>
-                    <div class="zone-btn def" id="btn-def-head" onclick="selectZone('def', 'head')" style="margin-bottom:4px;">Голова</div>
-                    <div class="zone-btn def" id="btn-def-chest" onclick="selectZone('def', 'chest')" style="margin-bottom:4px;">Торс</div>
-                    <div class="zone-btn def" id="btn-def-legs" onclick="selectZone('def', 'legs')">Ноги</div>
-                </div>
-            </div>
-
-            <button class="action-btn" id="btn-execute-turn" onclick="executeTurn()" disabled>УДАРИТЬ ⚔️</button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 1: ГЕРОЙ И ИНВЕНТАРЬ -->
-    <div id="screen-hero" class="app-screen active">
-        <div class="class-banner" id="ui-class-name">ЗАГРУЗКА...</div>
-
-        <!-- AFK СУНДУК -->
-        <div class="afk-box" onclick="claimAfkLoot()">
-            <div class="afk-icon">🏕️</div>
-            <div class="afk-info">
-                <div style="font-size:10px; color:#a1a1aa; text-transform:uppercase; font-weight:bold;">Наемники в дозоре</div>
-                <div style="color:#fbbf24; font-weight:900; font-size:14px;">+<span id="ui-afk-gold-hero">0</span> 💰</div>
-            </div>
-            <button class="afk-btn" id="ui-afk-btn">ЗАБРАТЬ</button>
-        </div>
-
-        <div class="hero-layout">
-            <div class="equip-col">
-                <div class="equip-slot empty" id="slot-head" data-sil="🪖" onclick="unequipSlot('head')"></div>
-                <div class="equip-slot empty" id="slot-chest" data-sil="🦺" onclick="unequipSlot('chest')"></div>
-                <div class="equip-slot empty" id="slot-belt" data-sil="🧪" onclick="unequipSlot('belt')"></div>
-                <div class="equip-slot empty" id="slot-boots" data-sil="👢" onclick="unequipSlot('boots')"></div>
-            </div>
-            <div class="hero-avatar-box"><img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar"></div>
-            <div class="equip-col">
-                <div class="equip-slot empty" id="slot-amulet" data-sil="🧿" onclick="unequipSlot('amulet')"></div>
-                <div class="equip-slot empty" id="slot-ring1" data-sil="💍" onclick="unequipSlot('ring1')"></div>
-                <div class="equip-slot empty" id="slot-ring2" data-sil="💍" onclick="unequipSlot('ring2')"></div>
-            </div>
-        </div>
-
-        <div class="weapons-row">
-            <div class="equip-slot empty" id="slot-weapon1" data-sil="⚔️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon1')"></div>
-            <div class="equip-slot empty" id="slot-weapon2" data-sil="🛡️" style="width: 52px; height: 52px;" onclick="unequipSlot('weapon2')"></div>
-        </div>
-
-        <div class="inventory-panel">
-            <div class="inventory-header"><span>🎒 Инвентарь</span><span id="ui-bag-capacity">0/10</span></div>
-            <div class="inventory-grid" id="ui-inventory-grid"></div>
-        </div>
-
-        <div class="stats-card">
-            <div class="stat-group-title">Боевые Характеристики</div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-size:12px; color:#e4e4e7;">❤️ HP: <b id="ui-hp-text">100/100</b></span>
-                <button class="heal-btn" onclick="healHero()" id="btn-heal">ЛЕЧИТЬ (-10💰)</button>
-            </div>
-            <div class="hp-bar-bg" style="margin-bottom:12px;"><div class="hp-bar-fill" id="ui-hp-bar"></div></div>
-            <div class="extended-stats-grid" id="ui-extended-stats"></div>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 3: КЛАССЫ -->
-    <div id="screen-classes" class="app-screen">
-        <div class="class-banner" style="margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
-        <div class="classes-gallery" id="ui-classes-gallery"></div>
-        <div id="ui-class-detail" style="height: 100%; display: flex; flex-direction: column;"></div>
-    </div>
-
-    <!-- ЭКРАН 4: КУЗНЕЦ -->
-    <div id="screen-smith" class="app-screen">
-        <div class="class-banner">⛏️ КУЗНИЦА ДРЕВНИХ</div>
-        <div class="smith-layout">
-            <div class="smith-slot-picker" id="smith-picker-box" onclick="openSmithItemPicker()">
-                <div style="font-size:24px;">🔨</div>
-                <div id="smith-picker-text" style="font-weight:bold; color:#a1a1aa; margin-top:4px;">Нажмите, чтобы выбрать вещь из инвентаря</div>
-            </div>
-            <div class="smith-upgrade-box" id="smith-upgrade-panel">
-                <div id="smith-item-name" style="font-weight:900; font-size:16px; color:#fbbf24;"></div>
-                <div id="smith-enhance-level" style="font-size:12px; color:#34d399; margin:4px 0;"></div>
-                <div id="smith-stats-preview" style="font-size:11px; color:#a1a1aa; background:#09090b; padding:10px; border-radius:6px; margin:10px 0; text-align:left;"></div>
-                <div style="display:flex; justify-content:space-between; font-size:11px;">
-                    <span>Шанс успеха: <b id="smith-chance" style="color:#34d399;">100%</b></span>
-                    <span>Цена: <b id="smith-cost" style="color:#fbbf24;">100💰</b></span>
-                </div>
-                <button class="smith-btn" onclick="executeEnhance()">УЛУЧШИТЬ ПРЕДМЕТ ⚒️</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ЛОГИКА И ДАННЫЕ -->
     <script>
-        const tg = window.Telegram.WebApp; tg.expand();
-        const STATIC_URL = "{{ url_for('static', filename='') }}";
+        const STATIC_URL = "static/"; 
         const GOD_MODE = false;
 
         // ВАЖНО: НОВЫЕ КЛЮЧИ СОХРАНЕНИЯ ДЛЯ СБРОСА БИТОЙ ПАМЯТИ
@@ -584,6 +393,7 @@
         loadGame();
 
         let currentScreen = "hero";
+        let shopMode = "buy";
         let previewClassId = "knight";
         let inspectInvIndex = null;
         let selectedSmithItem = null;
@@ -612,10 +422,10 @@
             let afkGold = Math.floor((elapsed / 60000) * hero.maxFloor);
             
             if (afkGold > 0) {
-                hero.gold += afkGold; hero.lastAfkTime = Date.now();
+                hero.gold += afkGold;
+                hero.lastAfkTime = Date.now();
                 saveGame(); updateUI();
                 if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                alert(`Ваши наемники вернулись из дозора!\nДобыто: +${afkGold} 💰`);
             }
         }
 
@@ -632,7 +442,12 @@
             item.enhance = 0;
 
             let roll = Math.random() * 100;
-            if (roll > 90) item.rarity = "relic"; else if (roll > 70) item.rarity = "legendary"; else if (roll > 40) item.rarity = "epic"; else if (roll > 15) item.rarity = "rare"; else item.rarity = "common";
+            if (roll > 90) item.rarity = "relic";
+            else if (roll > 70) item.rarity = "legendary";
+            else if (roll > 40) item.rarity = "epic";
+            else if (roll > 15) item.rarity = "rare";
+            else item.rarity = "common";
+
             item.name = (item.rarity === "relic" || item.rarity === "legendary") ? "✨ " + tpl.name : tpl.name;
 
             let numSubstats = { common: 0, rare: 1, epic: 2, legendary: 3, relic: 4 }[item.rarity];
@@ -662,8 +477,11 @@
             if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`;
             let imgId = item.id.split('_')[0]; 
             if (item.id.includes("shields_v2_")) { let parts = item.id.split('_'); imgId = parts[0] + "_" + parts[1] + "_" + parts[2]; }
+            
+            // Если нет картинки, покажем иконку
+            let iconHtml = `<div class="item-icon">${item.icon || '🛡️'}</div>`;
             let enhanceTag = (item.enhance && item.enhance > 0) ? `<div class="item-enhance-tag">+${item.enhance}</div>` : '';
-            return `${enhanceTag}<div class="item-img-wrapper"><img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';"></div>`;
+            return `${enhanceTag}<div class="item-img-wrapper"><img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.innerHTML='${iconHtml}';"></div>`;
         }
 
         function calculateStats() {
@@ -1024,11 +842,14 @@
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
             document.getElementById('screen-' + screenName).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            let navEl = document.getElementById('nav-' + (screenName === 'classes' ? 'class' : (screenName === 'smith' ? 'smith' : screenName)));
+            
+            let navEl = document.getElementById('nav-' + (screenName === 'classes' ? 'class' : (screenName === 'smith' ? 'smith' : (screenName === 'shop' ? 'shop' : screenName))));
             if(navEl) navEl.classList.add('active');
+            
             currentScreen = screenName;
             if(screenName === 'classes') previewClassId = hero.baseClass;
             if(screenName === 'PVE' && !enemy) initCombat();
+            if(screenName === 'shop') updateShopUI();
             updateUI();
         }
         function selectPreviewClass(id) { previewClassId = id; updateUI(); }
@@ -1036,12 +857,58 @@
 
         function generateScalingText(w) {
             let pills = [];
-            if (w.str_dmg > 0 || w.str_arm > 0) pills.push(`<div class="stat-pill"><span class="icon">💪 СИЛ ➔</span> <b>${w.str_dmg>0?'Урон':''} ${w.str_arm>0?'Броня':''}</b></div>`);
-            if (w.agi_dmg > 0 || w.agi_dodge > 0 || w.agi_block > 0) pills.push(`<div class="stat-pill"><span class="icon">🏃 ЛОВ ➔</span> <b>${w.agi_dmg>0?'Урон':''} ${w.agi_dodge>0?'Уворот':''} ${w.agi_block>0?'Блок':''}</b></div>`);
-            if (w.end_hp > 0) pills.push(`<div class="stat-pill"><span class="icon">❤️ ВЫН ➔</span> <b>HP</b></div>`);
-            if (w.mst_pen > 0 || w.mst_crit > 0 || w.mst_block > 0) pills.push(`<div class="stat-pill"><span class="icon">🎯 МСТ ➔</span> <b>${w.mst_pen>0?'Пробитие':''} ${w.mst_crit>0?'Крит':''} ${w.mst_block>0?'Блок':''}</b></div>`);
-            if (w.luk_cdmg > 0 || w.luk_crit > 0 || w.luk_dodge > 0) pills.push(`<div class="stat-pill"><span class="icon">🍀 УДЧ ➔</span> <b>${w.luk_cdmg>0?'Крит. Урон':''} ${w.luk_crit>0?'Крит Шанс':''} ${w.luk_dodge>0?'Уворот':''}</b></div>`);
+            if (w.str_dmg > 0 || w.str_arm > 0) pills.push(`<div class="stat-pill"><b>💪 СИЛ ➔</b> ${w.str_dmg>0?'Урон':''} ${w.str_arm>0?'Броня':''}</div>`);
+            if (w.agi_dmg > 0 || w.agi_dodge > 0 || w.agi_block > 0) pills.push(`<div class="stat-pill"><b>🏃 ЛОВ ➔</b> ${w.agi_dmg>0?'Урон':''} ${w.agi_dodge>0?'Уворот':''} ${w.agi_block>0?'Блок':''}</div>`);
+            if (w.end_hp > 0) pills.push(`<div class="stat-pill"><b>❤️ ВЫН ➔</b> HP</div>`);
+            if (w.mst_pen > 0 || w.mst_crit > 0 || w.mst_block > 0) pills.push(`<div class="stat-pill"><b>🎯 МСТ ➔</b> ${w.mst_pen>0?'Пробитие':''} ${w.mst_crit>0?'Крит':''} ${w.mst_block>0?'Блок':''}</div>`);
+            if (w.luk_cdmg > 0 || w.luk_crit > 0 || w.luk_dodge > 0) pills.push(`<div class="stat-pill"><b>🍀 УДЧ ➔</b> ${w.luk_cdmg>0?'Крит. Урон':''} ${w.luk_crit>0?'Крит Шанс':''} ${w.luk_dodge>0?'Уворот':''}</div>`);
             return pills.join('');
+        }
+
+        // === МАГАЗИН (ЛАВКА) ===
+        let shopMode = 'buy';
+        function setShopMode(mode) { shopMode = mode; updateShopUI(); }
+        function buyItem(itemId) { let item = ITEMS_DB[itemId]; if (hero.gold < item.price) return alert("Мало золота!"); if (hero.inventory.length >= 10) return alert("Сумка полна!"); hero.gold -= item.price; hero.inventory.push(itemId); saveGame(); updateUI(); updateShopUI(); }
+
+        function updateShopUI() {
+            let shopHtml = '';
+            document.getElementById("tab-buy").className = `shop-tab ${shopMode === 'buy' ? 'active' : ''}`;
+            document.getElementById("tab-sell").className = `shop-tab ${shopMode === 'sell' ? 'active-sell' : ''}`;
+
+            if (shopMode === 'buy') {
+                BASE_ITEMS_KEYS.forEach(itemId => {
+                    let item = ITEMS_DB[itemId];
+                    let canAfford = hero.gold >= item.price;
+                    shopHtml += `
+                        <div class="shop-item-card">
+                            <div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div>
+                            <div class="shop-item-info">
+                                <div class="shop-item-name">${item.name}</div>
+                                <div style="font-size:10px; color:#10b981;">Базовая вещь (Без доп. свойств)</div>
+                            </div>
+                            <button class="shop-btn" ${!canAfford?'disabled':''} onclick="buyItem('${item.id}')">💰 ${item.price}</button>
+                        </div>
+                    `;
+                });
+            } else {
+                if (hero.inventory.length === 0) shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Сумка пуста.</div>`;
+                else {
+                    hero.inventory.forEach((itemId, index) => {
+                        let item = ITEMS_DB[hero.inventory[index]];
+                        shopHtml += `
+                            <div class="shop-item-card">
+                                <div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div>
+                                <div class="shop-item-info">
+                                    <div class="shop-item-name">${item.name}</div>
+                                    <div style="font-size:10px; color:#a1a1aa;">${item.rarity.toUpperCase()}</div>
+                                </div>
+                                <button class="shop-btn btn-sell" onclick="sellItem(${index}); updateShopUI();">ПРОДАТЬ<br>💰 +50</button>
+                            </div>
+                        `;
+                    });
+                }
+            }
+            document.getElementById("ui-shop-list").innerHTML = shopHtml;
         }
 
         function updateUI() {
@@ -1106,10 +973,15 @@
                 document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp);
                 document.getElementById("combat-hero-maxhp").innerText = hero.finalStats.hp;
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
-                document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
+                
+                // ВАЖНО: ЗАЩИТА ОТ БИТЫХ КАРТИНОК И СЛОМАННОГО CSS
+                document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass] || "";
+                document.getElementById("combat-hero-img").onerror = function() { this.style.display='none'; this.parentElement.innerHTML = '<div style="font-size:40px;">👤</div>'; };
                 
                 document.getElementById("combat-enemy-name").innerText = enemy.name;
-                document.getElementById("combat-enemy-img").src = enemy.imgUrl;
+                document.getElementById("combat-enemy-img").src = enemy.imgUrl || "";
+                document.getElementById("combat-enemy-img").onerror = function() { this.style.display='none'; this.parentElement.innerHTML = '<div style="font-size:40px;">🧟</div>'; };
+
                 document.getElementById("entity-enemy-box").className = enemy.isBoss ? "combat-card boss" : "combat-card";
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
                 document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp;
