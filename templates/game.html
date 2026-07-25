@@ -7,10 +7,14 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; }
+        
+        /* БЕЗОПАСНЫЙ ГЛОБАЛЬНЫЙ ФОН */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0d0d0f; color: #e4e4e7; margin: 0; padding: 6px;
             font-size: 12px; padding-bottom: 24px; user-select: none;
+            background-image: linear-gradient(to bottom, rgba(13,13,15,0.85) 0%, rgba(13,13,15,1) 100%), url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
+            background-size: cover; background-position: center top; background-attachment: fixed;
         }
         
         /* === ТОП ПАНЕЛЬ === */
@@ -21,7 +25,6 @@
             margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
-        .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
         .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
@@ -54,14 +57,6 @@
         .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .floor-nav-btn:active { transform: scale(0.9); }
 
-        /* === ИДЕАЛЬНЫЙ ФОН ДЛЯ ВКЛАДКИ ГЕРОЯ === */
-        #screen-hero { position: relative; z-index: 1; }
-        #screen-hero::before {
-            content: ''; position: fixed; top: -30px; left: -30px; right: -30px; bottom: -30px;
-            background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}");
-            background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; pointer-events: none;
-        }
-
         /* === AFK СУНДУК === */
         .afk-box { 
             background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px);
@@ -82,6 +77,7 @@
         }
         .equip-slot:active { transform: scale(0.9); }
         .equip-slot.empty { background: rgba(5,5,5,0.7); border: 1px solid #1c1c1f; }
+        .equip-slot.blocked { border: 1px solid #450a0a; background: rgba(26,5,5,0.8); cursor: not-allowed; }
         .silhouette { font-size: 24px; opacity: 0.2; filter: grayscale(100%); text-shadow: 0 2px 4px #000; }
         .item-icon { font-size: 26px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); z-index: 2; position: relative;}
         .item-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit; overflow: hidden; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
@@ -108,7 +104,7 @@
         .inv-item:active { transform: scale(0.88); }
         .inv-item.empty { background: rgba(5,5,5,0.6); border: 1px solid #27272a; cursor: default; }
 
-        /* === СТАТЫ ГЕРОЯ === */
+        /* СТАТЫ */
         .stats-card { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; box-shadow: 0 8px 20px rgba(0,0,0,0.8); margin-bottom: 16px;}
         .stat-group-title { color: #d4d4d8; font-weight: bold; text-align: center; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px; text-shadow: 0 1px 2px #000;}
         .extended-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; color: #a1a1aa;}
@@ -120,7 +116,9 @@
         .heal-btn:active { transform: scale(0.9); }
 
         /* === PVE БОЕВКА (ИДЕАЛЬНАЯ ДИОРАМА) === */
-        .combat-arena { background: #0f172a; border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative; transition: background-image 0.5s ease;}
+        .combat-arena { 
+            background: #0f172a; border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); position: relative; transition: background-image 0.5s ease;
+        }
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
         .combat-header.boss { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); font-size: 16px; }
         
@@ -237,18 +235,12 @@
         .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(251,191,36,0.3);}
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
+        
         .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 8px; text-transform: uppercase;}
         .vic-loot-box { width: 72px; height: 72px; border-radius: 10px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239,68,68,0.5); position: relative; overflow: hidden;}
     </style>
 </head>
 <body>
-
-    <script>
-        const STATIC_URL = "{{ url_for('static', filename='') }}";
-        const GOD_MODE = false;
-        const SAVE_KEY_HERO = 'tg_rpg_hero_v10';
-        const SAVE_KEY_ITEMS = 'tg_rpg_items_v10';
-    </script>
 
     <div class="top-dashboard">
         <div class="resources">💰 <span id="ui-gold">5000</span> 💎 <span>12</span></div>
@@ -283,15 +275,11 @@
         </div>
     </div>
 
-    <!-- PVE БОЕВКА 4.0 -->
+    <!-- PVE БОЕВКА -->
     <div id="screen-PVE" class="app-screen">
-        <div class="class-banner" id="combat-floor-title">
-            <button class="floor-nav-btn" onclick="changeFloor(-1)">◀</button>
-            <span id="pve-floor-display" style="font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">ЭТАЖ 1</span>
-            <button class="floor-nav-btn" onclick="changeFloor(1)">▶</button>
-        </div>
-        
+        <div class="class-banner" id="combat-floor-title">БЕСКОНЕЧНАЯ БАШНЯ</div>
         <div class="combat-arena" id="arena-bg">
+            
             <div class="modal-overlay" id="vic-modal" style="position: absolute;">
                 <div class="vic-title">ЭТАЖ ПРОЙДЕН!</div>
                 <div id="vic-rewards-text" style="color: #e4e4e7; font-size: 14px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px #000;"></div>
@@ -431,7 +419,7 @@
     <div id="screen-classes" class="app-screen">
         <div class="class-banner" style="margin-bottom: 8px;">📜 ПАЛАТА ГЕРОЕВ</div>
         <div class="classes-gallery" id="ui-classes-gallery"></div>
-        <div id="ui-class-detail"></div>
+        <div id="ui-class-detail" style="height: 100%; display: flex; flex-direction: column;"></div>
     </div>
 
     <!-- ЭКРАН 4: КУЗНЕЦ -->
@@ -461,9 +449,11 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
         const GOD_MODE = false;
 
-        const ZONE_NAMES_RU = { "head": "Голову 🪖", "chest": "Торс 🦺", "legs": "Ноги 👢" };
-        const SAVE_KEY_HERO = 'tg_rpg_hero_v10';
-        const SAVE_KEY_ITEMS = 'tg_rpg_items_v10';
+        // ВАЖНО: НОВЫЕ КЛЮЧИ СОХРАНЕНИЯ ДЛЯ СБРОСА БИТОЙ ПАМЯТИ
+        const SAVE_KEY_HERO = 'tg_rpg_hero_v11';
+        const SAVE_KEY_ITEMS = 'tg_rpg_items_v11';
+
+        const ZONE_NAMES_RU = { "head": "Голову", "chest": "Торс", "legs": "Ноги" };
 
         const CLASS_AVATARS = {
             knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png",
@@ -505,48 +495,38 @@
             accuracy: "🎯 Меткость", resistance: "🔮 Сопротивление", counterChance: "⚔️ Контратака (%)"
         };
 
-        // ВАЖНО: ВОЗВРАЩЕНА ПОЛНАЯ БАЗА И ИЗОБРАЖЕНИЯ ПРЕДМЕТОВ!
+        // ВАЖНО: БАЗА ПРЕДМЕТОВ ВОССТАНОВЛЕНА
         let ITEMS_DB = {
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5 } },
-            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4 } },
-            "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10 } },
-            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, allowedClasses: ["knight", "ranger"], stats: { blockChance: 5 } },
-            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, allowedClasses: ["berserk", "knight", "ranger"], stats: { atk: 12 } },
+            "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, stats: { atk: 4 } },
+            "64755": { id: "64755", name: "Кольчуга Стражи", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10 } },
+            "65822": { id: "65822", name: "Круглый Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, stats: { blockChance: 5 } },
+            "61669": { id: "61669", name: "Боевой Топор", type: "weapon1", icon: "🪓", rarity: "rare", lvl: 2, price: 120, stats: { atk: 12 } },
             "60684": { id: "60684", name: "Синий Камзол", type: "chest", icon: "🧥", rarity: "rare", lvl: 2, price: 150, stats: { armor: 8 } },
             "54873": { id: "54873", name: "Шлем Наемника", type: "head", icon: "🪖", rarity: "common", lvl: 2, price: 100, stats: { armor: 10 } },
             "shields_v2_33": { id: "shields_v2_33", name: "Деревянный Тарч", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 2, price: 110, stats: { armor: 12 } },
             "25186": { id: "25186", name: "Изумрудное Кольцо", type: "ring", icon: "💍", rarity: "rare", lvl: 3, price: 300, stats: { lifesteal: 2 } },
-            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, allowedClasses: ["shadow", "ranger"], stats: { atk: 18 } },
+            "48635": { id: "48635", name: "Стальной Стилет", type: "weapon1", icon: "🗡️", rarity: "rare", lvl: 3, price: 210, stats: { atk: 18 } },
             "61409": { id: "61409", name: "Шлем Пехотинца", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 250, stats: { armor: 15 } },
-            "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], stats: { armor: 10 } },
-            "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], stats: { atk: 38 } },
+            "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, stats: { armor: 10 } },
+            "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, stats: { atk: 38 } },
             "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, stats: { armor: 18 } },
-            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], stats: { armor: 25 } },
-            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], stats: { atk: 42 } },
-            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], stats: { armor: 15 } },
-            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], stats: { armor: 38 } },
-            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], stats: { armor: 12 } },
-            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], stats: { atk: 55 } },
-            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], stats: { armor: 55 } },
-            "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], stats: { armor: 45 } },
-            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], stats: { atk: 85 } },
-            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], stats: { armor: 25 } },
+            "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, stats: { armor: 25 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, stats: { atk: 42 } },
+            "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, stats: { armor: 15 } },
+            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, stats: { armor: 38 } },
+            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, stats: { armor: 12 } },
+            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, stats: { atk: 55 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, stats: { armor: 55 } },
+            "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, stats: { armor: 45 } },
+            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, stats: { atk: 85 } },
+            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, stats: { armor: 25 } },
             "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, stats: { armor: 65 } },
-            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], stats: { armor: 60 } },
-            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], stats: { atk: 100 } },
-            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, stats: { armor: 75 } },
-            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], stats: { armor: 50 } },
-            "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, stats: { armor: 55 } },
-            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, stats: { armor: 15, hp: 150 } },
-            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, stats: { lifesteal: 10 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 9, price: 4000, allowedClasses: ["knight"], stats: { armor: 90 } },
-            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], stats: { armor: 65 } },
-            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", lvl: 10, price: 5500, allowedClasses: ["shadow"], stats: { armor: 80 } },
-            "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], stats: { armor: 120 } }
+            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, stats: { armor: 60 } }
         };
         const BASE_ITEMS_KEYS = Object.keys(ITEMS_DB);
 
-        // ВАЖНО: ВОЗВРАЩЕНЫ ИЗОБРАЖЕНИЯ МОНСТРОВ ВМЕСТО СМАЙЛОВ
+        // ВАЖНО: ВЕРНУЛ ИЗОБРАЖЕНИЯ МОНСТРОВ!
         const NORMAL_MOBS = [
             { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" },
             { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" },
@@ -556,7 +536,6 @@
             { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" },
             { id: 19, name: "Паук" }, { id: 20, name: "Пугало" }
         ];
-
         const BOSSES = {
             10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" },
             40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" },
@@ -578,18 +557,25 @@
             localStorage.setItem(SAVE_KEY_ITEMS, JSON.stringify(ITEMS_DB));
         }
 
+        // 100% ЗАЩИТА ОТ КРАШЕЙ ПРИ ЗАГРУЗКЕ
         function loadGame() {
             try {
                 let sItems = localStorage.getItem(SAVE_KEY_ITEMS);
                 if(sItems) Object.assign(ITEMS_DB, JSON.parse(sItems));
+                
                 let sHero = localStorage.getItem(SAVE_KEY_HERO);
                 if(sHero) { 
                     let parsed = JSON.parse(sHero);
-                    if(parsed && parsed.inventory) hero = parsed;
+                    if(parsed) {
+                        Object.assign(hero, parsed);
+                        if(!hero.equipment) hero.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null };
+                        if(!hero.inventory) hero.inventory = [];
+                        if(!hero.baseStats) hero.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
+                        if(!hero.finalStats) hero.finalStats = {};
+                    }
                 }
-            } catch (e) {
-                console.error("Сохранение повреждено, загружен новый профиль.");
-            }
+            } catch (e) { console.error("Сохранение сброшено."); }
+            
             if (!hero.lastAfkTime) hero.lastAfkTime = Date.now();
             if (!hero.defHistory) hero.defHistory = [];
             if (!hero.maxFloor) hero.maxFloor = hero.floor;
@@ -626,10 +612,10 @@
             let afkGold = Math.floor((elapsed / 60000) * hero.maxFloor);
             
             if (afkGold > 0) {
-                hero.gold += afkGold;
-                hero.lastAfkTime = Date.now();
+                hero.gold += afkGold; hero.lastAfkTime = Date.now();
                 saveGame(); updateUI();
                 if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                alert(`Ваши наемники вернулись из дозора!\nДобыто: +${afkGold} 💰`);
             }
         }
 
@@ -646,12 +632,7 @@
             item.enhance = 0;
 
             let roll = Math.random() * 100;
-            if (roll > 90) item.rarity = "relic";
-            else if (roll > 70) item.rarity = "legendary";
-            else if (roll > 40) item.rarity = "epic";
-            else if (roll > 15) item.rarity = "rare";
-            else item.rarity = "common";
-
+            if (roll > 90) item.rarity = "relic"; else if (roll > 70) item.rarity = "legendary"; else if (roll > 40) item.rarity = "epic"; else if (roll > 15) item.rarity = "rare"; else item.rarity = "common";
             item.name = (item.rarity === "relic" || item.rarity === "legendary") ? "✨ " + tpl.name : tpl.name;
 
             let numSubstats = { common: 0, rare: 1, epic: 2, legendary: 3, relic: 4 }[item.rarity];
@@ -687,8 +668,9 @@
 
         function calculateStats() {
             let cls = CLASSES[hero.baseClass];
+            if(!cls) { hero.baseClass = "knight"; cls = CLASSES["knight"]; }
+            
             let lvlBonus = hero.level - 1; 
-
             let totalBase = { str: hero.baseStats.str + (lvlBonus * 2), agi: hero.baseStats.agi + (lvlBonus * 2), end: hero.baseStats.end + (lvlBonus * 2), mst: hero.baseStats.mst + (lvlBonus * 2), luk: hero.baseStats.luk + (lvlBonus * 2) };
             let bonus = { atk: 0, armor: 0, hp: 0, critChance: 5, critDmg: 150, dodge: 0, blockChance: 0, armorPen: 0, lifesteal: 0, accuracy: 0, resistance: 0, counterChance: 0 };
 
@@ -696,7 +678,7 @@
                 let item = hero.equipment[slot];
                 if (item && item.id !== "blocked") {
                     let enhMult = 1 + ((item.enhance || 0) * 0.1); 
-                    if (item.stats) { for (let k in item.stats) bonus[k] = (bonus[k] || 0) + Math.ceil(item.stats[k] * enhMult); } // Fallback for old items
+                    if (item.stats) { for (let k in item.stats) bonus[k] = (bonus[k] || 0) + Math.ceil(item.stats[k] * enhMult); } 
                     if (item.mainStat) { for (let k in item.mainStat) bonus[k] = (bonus[k] || 0) + Math.ceil(item.mainStat[k] * enhMult); }
                     if (item.substats) { for (let k in item.substats) bonus[k] = (bonus[k] || 0) + Math.ceil(item.substats[k] * enhMult); }
                 }
@@ -1126,7 +1108,7 @@
                 document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.finalStats.hp)*100)}%`;
                 document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
                 
-                document.getElementById("combat-enemy-name").innerText = enemy.isBoss ? "👑 " + enemy.name : (enemy.isMiniBoss ? "☠️ " + enemy.name : enemy.name);
+                document.getElementById("combat-enemy-name").innerText = enemy.name;
                 document.getElementById("combat-enemy-img").src = enemy.imgUrl;
                 document.getElementById("entity-enemy-box").className = enemy.isBoss ? "combat-card boss" : "combat-card";
                 document.getElementById("combat-enemy-hp").innerText = Math.floor(enemy.hp);
