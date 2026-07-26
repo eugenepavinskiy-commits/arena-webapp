@@ -15,25 +15,18 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #050505; /* Темный фон для планшетов/ПК */
+            background-color: #050505;
             color: #e4e4e7; margin: 0; padding: 0;
             font-size: 12px; user-select: none; touch-action: manipulation;
             height: var(--vh); overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* ОСНОВНОЙ КАРКАС ИГРЫ (Responsive Design) */
         #app-container {
-            width: 100%;
-            max-width: 500px; /* Ограничение ширины для iPad и Desktop */
-            height: 100%;
-            background-color: #0d0d0f;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            width: 100%; max-width: 500px; height: 100%; background-color: #0d0d0f;
+            display: flex; flex-direction: column; position: relative;
             padding: calc(var(--safe-top) + 6px) 6px calc(var(--safe-bottom) + 6px) 6px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.9);
-            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9); overflow: hidden;
         }
 
         .blood-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: radial-gradient(circle, transparent 50%, rgba(153,27,27,0.4) 100%); z-index:90; pointer-events:none; opacity:0; transition: opacity 0.3s;}
@@ -41,11 +34,10 @@
         @keyframes pulse-blood { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         
         .top-dashboard {
-            flex-shrink: 0;
-            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; 
-            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden; z-index: 100;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
         .resources span { color: #fff; margin-right: 8px; }
@@ -55,47 +47,20 @@
         .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
         .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
 
-        .app-screens-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            padding-right: 2px;
-            scroll-behavior: smooth;
-            border-radius: 8px;
-        }
+        .app-screens-wrapper { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding-right: 2px; scroll-behavior: smooth; border-radius: 8px; }
         .app-screens-wrapper::-webkit-scrollbar { width: 4px; }
         .app-screens-wrapper::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
 
-        .nav-grid { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
-            margin-top: 10px; padding-top: 6px; border-top: 1px solid #27272a;
-            flex-shrink: 0; z-index: 50;
-        }
-        .nav-btn {
-            background: #121214; color: #71717a; border: 1px solid #27272a; 
-            height: 48px; display: flex; align-items: center; justify-content: center;
-            font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; 
-            font-weight: bold; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(255,255,255,0.02), 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px; text-align:center; line-height: 1.1; padding: 0 2px;
-        }
+        .nav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; padding-top: 6px; border-top: 1px solid #27272a; flex-shrink: 0; z-index: 50; }
+        .nav-btn { background: #121214; color: #71717a; border: 1px solid #27272a; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-weight: bold; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(255,255,255,0.02), 0 4px 6px rgba(0,0,0,0.5); letter-spacing: 0.5px; text-align:center; line-height: 1.1; padding: 0 2px; }
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); }
         
-        .app-screen { display: none; padding-bottom: 16px; min-height: 100%; width: 100%; animation: fadeIn 0.2s ease-out; }
+        .app-screen { display: none; padding-bottom: 20px; min-height: 100%; width: 100%; animation: fadeIn 0.2s ease-out; }
         .app-screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        #screen-PVE.active {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding-bottom: 0;
-            overflow: hidden;
-            background-color: #0d0d0f;
-            z-index: 10;
-        }
-
+        #screen-PVE.active { display: flex; flex-direction: column; position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding-bottom: 0; overflow: hidden; background-color: #0d0d0f; z-index: 10; }
         #screen-hero, #screen-boss { position: relative; padding: 6px; min-height: 100%; border-radius: 8px; z-index: 1; margin: -6px; margin-bottom: 0;}
         #screen-hero::before, #screen-boss::before { content: ''; position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}"); background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; }
 
@@ -123,7 +88,6 @@
         .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.7); animation: pulse-relic 1.5s infinite; }
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 4px #000; white-space: nowrap;}
         
-        /* 100% Адаптивный аватар героя */
         .hero-avatar-box { flex: 1; min-width: 0; aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center;}
         .hero-avatar-box .silhouette { position: absolute; font-size: clamp(60px, 15vw, 80px); z-index: 1; opacity: 0.3;}
         .hero-avatar { width: 100%; height: 100%; object-fit: contain; display: block; position: relative; z-index: 2; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.8)); animation: imgFadeIn 0.5s ease-out forwards;}
@@ -193,51 +157,25 @@
         .raid-btn { background: #ef4444; color: #fff; border: 1px solid #b91c1c; border-radius: 6px; padding: 0 8px; height: 38px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); width: 100%; }
         .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
-        /* === PVE БОЕВКА === */
-        .combat-arena { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            border: 1px solid #3f3f46; 
-            border-radius: 12px; 
-            padding: 8px; 
-            margin-bottom: 0; 
-            position: relative; 
-            overflow: hidden; 
-            transition: background-image 0.5s ease; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8); 
-            background-color: #0f172a; 
-        }
-        
+        .combat-arena { flex: 1; display: flex; flex-direction: column; border: 1px solid #3f3f46; border-radius: 12px; padding: 8px; margin-bottom: 0; position: relative; overflow: hidden; transition: background-image 0.5s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a; }
         .combat-header { flex-shrink: 0; text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
         .intent-box { flex-shrink: 0; background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 4px 8px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
-        .combat-entities { 
-            flex: 1; 
-            min-height: 0; 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; gap: 8px; 
-            border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; padding: 12px 8px; 
-            box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
-        }
+        .combat-entities { flex: 1; min-height: 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; gap: 8px; border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; padding: 12px 8px; box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; }
         .combat-entity-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; width: 48%; height: 100%; justify-content: center; z-index: 2; min-height: 0; }
-        
         .entity-name-plate { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; margin-bottom: 4px; }
         .entity-name-text { font-family: "Georgia", "Palatino Linotype", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
         .entity-lvl { flex-shrink: 0; color: #e4e4e7; font-size: 10px; font-weight: 900; padding: 2px 5px; background: linear-gradient(135deg, #7f1d1d, #450a0a); border-radius: 4px; border: 1px solid #ef4444; box-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: -apple-system, sans-serif; }
         .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
         .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
         
-        /* 100% Адаптивные аватары бойцов */
-        .combat-card { 
-            width: 100%; aspect-ratio: 1; min-height: 0; flex-shrink: 1;
-            position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
-        }
+        .combat-card { width: 100%; max-width: 160px; aspect-ratio: 1; min-height: 0; flex-shrink: 1; position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; }
         .card-avatar-wrap { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
         .card-avatar-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 15px rgba(0,0,0,0.8)); transition: filter 0.2s; position: relative; z-index: 2; animation: imgFadeIn 0.5s ease-out forwards;}
         .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
         
-        .entity-hp-plate { flex-shrink: 0; width: 100%; text-align: center; z-index: 10;}
+        .entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 160px; text-align: center; z-index: 10;}
         .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
         .hp-bar-outer { width: 100%; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
         .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
@@ -371,7 +309,6 @@
 
         <div id="blood-screen" class="blood-overlay"></div>
 
-        <!-- ТОП ПАНЕЛЬ -->
         <div class="top-dashboard">
             <div class="resources">
                 💰 <span id="ui-gold">5000</span> 💎 <span id="ui-gems">0</span>
@@ -384,13 +321,12 @@
             <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
         </div>
 
-        <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
         <div class="app-screens-wrapper">
 
             <div class="modal-overlay" id="item-inspect-modal">
                 <div class="vic-title" style="font-size:18px;" id="inspect-title">Осмотр Предмета</div>
                 <div class="vic-loot-box" id="inspect-icon-box" style="margin-top:10px; width:80px; height:80px;"></div>
-                <div id="inspect-stats-box" style="font-size:12px; color:#10b981; margin-bottom:16px; line-height:1.6; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid #27272a; width: 100%;"></div>
+                <div id="inspect-stats-box" style="font-size:12px; color:#10b981; margin-bottom:16px; line-height:1.6; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid #27272a; width: 100%; text-align: left;"></div>
                 <button class="modal-btn" id="btn-inspect-equip">НАДЕТЬ ШМОТКУ</button>
                 <button class="modal-btn danger" id="btn-inspect-sell">ПРОДАТЬ ЗА 💰 0</button>
                 <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
@@ -402,7 +338,7 @@
                 <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; border: 1px solid #3f3f46; margin-bottom: 15px; width: 100%;">
                     <div style="font-size:12px; color:#fbbf24; font-weight:bold; margin-bottom:10px; letter-spacing: 1px;">ВЫБИТ АРТЕФАКТ:</div>
                     <div class="vic-loot-box rarity-relic" id="vic-loot-box" style="width: 80px; height: 80px;"></div>
-                    <div id="vic-loot-name" style="font-size:13px; color:#fca5a5; font-weight:bold; margin-top:5px;"></div>
+                    <div id="vic-loot-name" style="font-size:13px; color:#fca5a5; font-weight:bold; margin-top:5px; text-align:center;"></div>
                 </div>
                 <button class="modal-btn" onclick="closeVictoryModal()">ПРОДОЛЖИТЬ ➔</button>
             </div>
@@ -500,7 +436,7 @@
                     </div>
                     <div class="hero-avatar-box">
                         <div class="silhouette">👤</div>
-                        <img src="" id="main-hero-avatar" alt="Герой" class="hero-avatar">
+                        <img src="" id="main-hero-avatar" alt="Герой">
                     </div>
                     <div class="equip-col">
                         <div class="equip-slot empty" id="slot-amulet" data-sil="🧿" onclick="unequipSlot('amulet')"></div>
@@ -672,6 +608,13 @@
             ]
         };
 
+        const SETS_DB = {
+            templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." },
+            bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." },
+            void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." },
+            storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." }
+        };
+
         const ITEMS_DB = {
             "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
             "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
@@ -688,26 +631,26 @@
             "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 38, armorPen: 10, agi: -2 } },
             "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, dropOnly: true, stats: { armor: 18, mst: 8, end: 3 } },
             "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
-            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, stats: { atk: 42, str: 5 } },
+            "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { atk: 42, str: 5 } },
             "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 15, end: 5 } },
-            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 38, blockChance: 12 } },
-            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 12, agi: 6, dodgeChance: 4 } },
-            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 55, str: 8, armorPen: 15 } },
-            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 55, end: 5, dodgeChance: -4 } },
+            "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { armor: 38, blockChance: 12 } },
+            "60697": { id: "60697", name: "Капюшон Тени", type: "head", icon: "🥋", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["shadow", "ranger"], dropOnly: true, setId: "void", stats: { armor: 12, agi: 6, dodgeChance: 4 } },
+            "47612": { id: "47612", name: "Боевой Молот", type: "weapon1", icon: "🔨", rarity: "legendary", lvl: 6, price: 1100, allowedClasses: ["knight", "berserk"], dropOnly: true, setId: "bloodied", stats: { atk: 55, str: 8, armorPen: 15 } },
+            "42069": { id: "42069", name: "Латный Доспех", type: "chest", icon: "🥋", rarity: "epic", lvl: 6, price: 1200, allowedClasses: ["knight", "berserk"], dropOnly: true, setId: "templar", stats: { armor: 55, end: 5, dodgeChance: -4 } },
             "shields_v2_37": { id: "shields_v2_37", name: "Щит Инквизиции", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 6, price: 1400, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 45, mst: 5, blockChance: 14 } },
-            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
-            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, stats: { armor: 25, agi: 8, dodgeChance: 4 } },
-            "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, stats: { armor: 65, end: 8, str: 4 } },
-            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 60, blockChance: 18, end: 6 } },
-            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { atk: 100, str: 15, critDmg: 25 } },
-            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, dropOnly: true, stats: { armor: 75, str: 10 } },
-            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], dropOnly: true, stats: { armor: 50, agi: 12, mst: 6 } },
+            "20152": { id: "20152", name: "Моргенштерн", type: "two_handed", icon: "🏏", rarity: "legendary", lvl: 7, price: 1800, allowedClasses: ["berserk"], dropOnly: true, setId: "bloodied", stats: { atk: 85, str: 12, critChance: 5, agi: -5 } },
+            "41139": { id: "41139", name: "Шлем Следопыта", type: "head", icon: "🪖", rarity: "epic", lvl: 7, price: 1600, allowedClasses: ["shadow", "ranger"], dropOnly: true, setId: "void", stats: { armor: 25, agi: 8, dodgeChance: 4 } },
+            "24119": { id: "24119", name: "Кольчуга Ветерана", type: "chest", icon: "🥋", rarity: "epic", lvl: 7, price: 1900, dropOnly: true, setId: "bloodied", stats: { armor: 65, end: 8, str: 4 } },
+            "shields_v2_38": { id: "shields_v2_38", name: "Эгида Доблести", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 7, price: 2100, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { armor: 60, blockChance: 18, end: 6 } },
+            "33616": { id: "33616", name: "Двуручный Меч Инквизитора", type: "two_handed", icon: "🗡️", rarity: "legendary", premium: true, lvl: 8, price: 2500, allowedClasses: ["knight", "berserk"], dropOnly: true, setId: "bloodied", stats: { atk: 100, str: 15, critDmg: 25 } },
+            "34215": { id: "34215", name: "Нагрудник Чемпиона", type: "chest", icon: "🦺", rarity: "epic", lvl: 8, price: 2000, dropOnly: true, setId: "templar", stats: { armor: 75, str: 10 } },
+            "17556": { id: "17556", name: "Мантия Странника", type: "chest", icon: "🧥", rarity: "epic", lvl: 8, price: 2400, allowedClasses: ["ranger", "shadow"], dropOnly: true, setId: "void", stats: { armor: 50, agi: 12, mst: 6 } },
             "50560": { id: "50560", name: "Багровая Роба", type: "chest", icon: "🥋", rarity: "epic", lvl: 8, price: 2600, dropOnly: true, stats: { armor: 55, mst: 15, luk: 5 } },
-            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, stats: { armor: 15, end: 20, mst: 10 } },
-            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
-            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
-            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 65, mst: 25, critChance: 8 } },
-            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
+            "17271": { id: "17271", name: "Рунный Пояс", type: "belt", icon: "➰", rarity: "legendary", lvl: 9, price: 3500, dropOnly: true, setId: "storm", stats: { armor: 15, end: 20, mst: 10 } },
+            "18824": { id: "18824", name: "Сапфировое Кольцо", type: "ring", icon: "💍", rarity: "legendary", lvl: 9, price: 3000, dropOnly: true, setId: "storm", stats: { mst: 18, critChance: 10, dodgeChance: 5 } },
+            "shields_v2_39": { id: "shields_v2_39", name: "Темный Бастион", type: "weapon2", icon: "🛡️", rarity: "legendary", premium: true, lvl: 9, price: 4000, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { armor: 90, atk: 25, blockChance: 20, end: -5 } },
+            "50113": { id: "50113", name: "Одеяние Культиста", type: "chest", icon: "🥋", rarity: "legendary", lvl: 9, price: 3800, allowedClasses: ["shadow"], dropOnly: true, setId: "void", stats: { armor: 65, mst: 25, critChance: 8 } },
+            "23579": { id: "23579", name: "Доспех Убийцы", type: "chest", icon: "🧥", rarity: "legendary", premium: true, lvl: 10, price: 5500, allowedClasses: ["shadow"], dropOnly: true, setId: "void", stats: { armor: 80, agi: 20, dodgeChance: 15, critDmg: 20 } },
             "shields_v2_40": { id: "shields_v2_40", name: "Щит Дракона", type: "weapon2", icon: "🛡️", rarity: "legendary", lvl: 10, price: 6000, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 120, blockChance: 25, end: 15, str: 10 } }
         };
         let SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
@@ -727,7 +670,7 @@
             equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
             inventory: ["90523", "64755"],
             talents: [],
-            finalStats: {}, combatStats: {}, deathDebuffEnd: 0 
+            finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {} 
         };
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
@@ -754,6 +697,8 @@
                 if(hero.nextTicketTime === undefined) hero.nextTicketTime = 0;
                 if(hero.unspentPoints === undefined) hero.unspentPoints = 0;
                 if(hero.talents === undefined || !Array.isArray(hero.talents)) hero.talents = []; 
+                if(hero.setCounts === undefined) hero.setCounts = {};
+                if(hero.flags === undefined) hero.flags = {};
             }
             previewClassId = hero.baseClass;
         }
@@ -763,7 +708,7 @@
 
         let enemy = null;
         let combatMode = 'pve';
-        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, undyingUsed: false, poisonStacks: 0, enemyTurns: 0 };
+        let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
         
         const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
         const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
@@ -841,6 +786,9 @@
             let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)]; newItem.name = `✨ ${prefix} ${baseItem.name}`;
             newItem.rarity = "relic"; newItem.premium = false; newItem.dropOnly = true;
             
+            let classSetMap = { "knight": "templar", "berserk": "bloodied", "shadow": "void", "ranger": "storm" };
+            if (Math.random() > 0.5) newItem.setId = classSetMap[hero.baseClass];
+
             let tierMult = 1 + (floor * 0.05); let rollQuality = 0.85 + (Math.random() * 0.40); let finalMult = tierMult * rollQuality;
             for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult));
             
@@ -854,7 +802,7 @@
         function initCombat() {
             combatMode = 'pve';
             enemy = generateEnemy(hero.floor);
-            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, undyingUsed: false, poisonStacks: 0, enemyTurns: 0 };
+            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
             calculateStats(true); 
             
             let title = document.getElementById("combat-stage-name");
@@ -890,7 +838,7 @@
                 stats: { atk: Math.floor(10 * statMult * bData.atkMult), armor: Math.floor(5 * statMult * bData.armMult), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }
             };
             
-            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, undyingUsed: false, poisonStacks: 0, enemyTurns: 0 };
+            combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
             calculateStats(true); 
             
             document.getElementById("combat-stage-name").innerText = `МИРОВОЙ БОСС`;
@@ -1011,7 +959,8 @@
             if (bIsBerserk) {
                 let missingHpPct = (hero.combatStats.hp - hero.hp) / hero.combatStats.hp;
                 let stacks = Math.floor(missingHpPct * 10);
-                if (hasTalent('b3b')) stacks *= 2; 
+                if (hasTalent('b3b')) stacks *= 2;
+                if (hero.flags.bloodied) stacks *= 2; 
                 baseAtk = Math.floor(baseAtk * (1 + stacks * 0.05));
                 cChance += stacks * 2;
                 if (hasTalent('b5b')) cDmg += Math.min(200, stacks * 20); 
@@ -1025,6 +974,7 @@
                 if (combatState.shadowCritReady) { cChance = 100; combatState.shadowCritReady = false; }
                 if (hasTalent('s1b') && defender.hp === defender.maxHp) cChance = 100; 
                 if (hasTalent('s5b') && defender.hp <= defender.maxHp * 0.2) return { dmg: 999999, rawDmg: 999999, type: 'crit' }; 
+                if (combatState.shadowCritReady && hero.flags.void) armPen += 99999;
             }
 
             if (bIsRangerAtk) {
@@ -1033,6 +983,7 @@
                 if (zAtk === 'head') {
                     if (hasTalent('r1a')) cChance += 30;
                     if (hasTalent('r4a')) cDmg += 50;
+                    if (hero.flags.storm) cDmg += 150;
                 }
             }
 
@@ -1077,6 +1028,7 @@
         function handleCombatWin() {
             enemy.hp = 0; 
             let lukDropMod = CLASSES[hero.baseClass].statWeights.luk_drop || 0.1;
+            if(hero.flags.storm) lukDropMod *= 2;
             
             if (enemy.isRaid) {
                 let gems = enemy.raidData.gemReward; 
@@ -1199,12 +1151,15 @@
                 
                 if (hasTalent('b1a') && hero.baseClass === 'berserk') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hRes.dmg * 0.15)); }
                 
+                if (combatState.bloodiedLifesteal) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + hRes.dmg); combatState.bloodiedLifesteal = false; showDmgPopup("entity-hero-box", `ЛЕЧЕНИЕ +${hRes.dmg}`, "log-sys"); }
+
                 triggerHitAnim("entity-enemy-box");
                 
                 if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); 
                 else if (hRes.type === "crit") { 
                     showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); 
                     if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
+                    if (hero.flags.storm && combatState.atkZone === 'head' && Math.random() < 0.3) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); }
                 } 
                 else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
                 
@@ -1239,6 +1194,7 @@
                         if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
                             combatState.shadowCritReady = true;
                             logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`);
+                            if (hero.flags.void) { combatState.poisonStacks++; logCombat(`<span class="log-skill">ФАНТОМ: Враг отравлен.</span>`); }
                             if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); } 
                             if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); } 
                         }
@@ -1250,6 +1206,11 @@
                             showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block");
                             logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`);
                             if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true; 
+                        }
+                        
+                        if ((eRes.type === "perfect_block" || eRes.type === "block") && hero.flags.templar) {
+                            hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.1));
+                            let refl = Math.floor(eRes.rawDmg * 0.5); enemy.hp -= refl; showDmgPopup("entity-enemy-box", `СВЕТ -${refl}`, "log-block");
                         }
 
                         if (eRes.type === "block" && hero.baseClass === 'knight' && hasTalent('k1a')) {
@@ -1274,7 +1235,10 @@
                         else if (eAtkZone === 'ENRAGE') logCombat(`<span class="log-dmg">ЯРОСТЬ БОССА УНИЧТОЖИЛА ВАС!</span>`);
                         
                         if (hero.hp <= 0 && !GOD_MODE) {
-                            if (hasTalent('b5a') && hero.baseClass === 'berserk' && !combatState.undyingUsed) {
+                            if (hero.flags.bloodied && !combatState.bloodiedUndying) {
+                                hero.hp = 1; combatState.bloodiedUndying = true; combatState.bloodiedLifesteal = true; logCombat(`<span class="log-sys">КРОВАВЫЙ ОСКАЛ! Вы выжили. След. удар лечит.</span>`); showDmgPopup("entity-hero-box", "ЖАЖДА!", "log-sys");
+                                planEnemyTurn();
+                            } else if (hasTalent('b5a') && hero.baseClass === 'berserk' && !combatState.undyingUsed) {
                                 hero.hp = 1; combatState.undyingUsed = true; logCombat(`<span class="log-sys">БЕССМЕРТИЕ! Вы выжили с 1 HP.</span>`); showDmgPopup("entity-hero-box", "СПАСЕН!", "log-sys");
                                 planEnemyTurn();
                             } else {
@@ -1295,7 +1259,18 @@
             document.getElementById("inspect-title").innerText = item.name;
             document.getElementById("inspect-icon-box").className = `vic-loot-box rarity-${item.rarity}`;
             document.getElementById("inspect-icon-box").innerHTML = renderItemIcon(item);
-            document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats) + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
+            
+            let setHtmlBlock = "";
+            if (item.setId && SETS_DB[item.setId]) {
+                let set = SETS_DB[item.setId]; let count = hero.setCounts[item.setId] || 0;
+                setHtmlBlock = `<div style="margin-top:8px; border-top:1px dotted #3f3f46; padding-top:6px; font-size:10px;">
+                    <b style="color:#fbbf24;">Сет: ${set.name} (${count}/4)</b><br>
+                    <span style="color:${count>=2?'#10b981':'#71717a'}">[2 шт] ${set.p2}</span><br>
+                    <span style="color:${count>=4?'#10b981':'#71717a'}">[4 шт] ${set.p4}</span>
+                </div>`;
+            }
+            
+            document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats) + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
             let sellPrice = Math.floor(item.price * 0.5); document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
             document.getElementById("btn-inspect-equip").onclick = function() { equipItem(inspectInvIndex); closeInspectModal(); };
             document.getElementById("btn-inspect-sell").onclick = function() { sellItem(inspectInvIndex); closeInspectModal(); };
@@ -1466,6 +1441,14 @@
         function calculateStats(isCombat = false) {
             let cls = CLASSES[hero.baseClass]; let lvlBonus = hero.level - 1; 
             
+            let setCounts = {};
+            for (let key in hero.equipment) {
+                let item = hero.equipment[key];
+                if (item && item.setId && item.id !== "blocked") { setCounts[item.setId] = (setCounts[item.setId] || 0) + 1; }
+            }
+            hero.setCounts = setCounts;
+            hero.flags = { templar: setCounts['templar'] >= 4, bloodied: setCounts['bloodied'] >= 4, void: setCounts['void'] >= 4, storm: setCounts['storm'] >= 4 };
+
             let total = { 
                 str: hero.baseStats.str + (cls.growth.str * lvlBonus), 
                 agi: hero.baseStats.agi + (cls.growth.agi * lvlBonus), 
@@ -1485,10 +1468,13 @@
                 }
             }
 
+            if (setCounts['storm'] >= 2) total.luk *= 2;
+
             let w = cls.statWeights;
             let hp = Math.floor(total.end * (w.end_hp || 10)); 
             if (hasTalent('k2a')) hp = Math.floor(hp * 1.25); 
             if (hasTalent('b2a')) hp = Math.floor(hp * 1.20); 
+            if (setCounts['bloodied'] >= 2) hp = Math.floor(hp * 1.20);
 
             if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; } 
             
@@ -1501,15 +1487,18 @@
             total.dodge += total.agi * (w.agi_dodge || 0) + total.luk * (w.luk_dodge || 0);
             if (hasTalent('s3a')) total.dodge += 15; 
             if (hasTalent('r3c')) total.dodge += 10; 
+            if (setCounts['void'] >= 2) total.dodge += 20;
             
             total.armorPen += total.mst * (w.mst_pen || 0);
             total.critDmg += total.mst * (w.mst_cdmg || 0);
             if (hasTalent('b2b')) total.critDmg += 50; 
+            if (setCounts['bloodied'] >= 2) total.critDmg += 50;
 
             total.armor += total.str * (w.str_arm || 0);
             if (hasTalent('k3a')) total.armor = Math.floor(total.armor * 1.5); 
             if (hasTalent('k5a') && hero.hp < hero.maxHp * 0.3) total.armor *= 2; 
-            
+            if (setCounts['templar'] >= 2) total.armor = Math.floor(total.armor * 1.25);
+
             total.blockChance += total.mst * (w.mst_block || 0);
             if (hasTalent('k4b')) total.blockChance += total.mst * 0.02; 
 
@@ -1518,8 +1507,11 @@
             total.dodge = Math.floor(total.dodge * cls.dodgeMult); 
             
             let dodgeCap = hasTalent('s1a') ? 90 : 75; 
+            if (setCounts['void'] >= 2) dodgeCap = 95;
             total.dodge = Math.min(dodgeCap, total.dodge); 
-            total.blockChance = Math.min(60, total.blockChance);
+            
+            let blockCap = setCounts['templar'] >= 2 ? 75 : 60;
+            total.blockChance = Math.min(blockCap, total.blockChance);
             
             if (hero.deathDebuffEnd > Date.now()) { total.armor = Math.floor(total.armor * 0.75); damage = Math.floor(damage * 0.75); }
             
@@ -1794,7 +1786,7 @@
                 document.getElementById("ui-class-detail").innerHTML = `
                     <div class="class-detail-card" style="border-color: ${selCls.color}40;">
                         <div class="class-detail-img-box">
-                            <div class="silhouette" style="position:absolute; font-size:80px; z-index:1; opacity:0.3;">👤</div>
+                            <div class="silhouette" style="position:absolute; font-size:60px; z-index:1; opacity:0.3;">👤</div>
                             <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
                             <div class="class-gradient-fade"></div>
                         </div>
