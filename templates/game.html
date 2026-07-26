@@ -8,7 +8,7 @@
     <style>
         :root { 
             --vh: var(--tg-viewport-stable-height, 100vh); 
-            --safe-top: var(--tg-content-safe-area-inset-top, env(safe-area-inset-top, 6px));
+            --safe-top: var(--tg-content-safe-area-inset-top, env(safe-area-inset-top, 12px));
             --safe-bottom: var(--tg-content-safe-area-inset-bottom, env(safe-area-inset-bottom, 24px));
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -16,7 +16,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0d0d0f; color: #e4e4e7; margin: 0; 
-            padding: var(--safe-top) 6px var(--safe-bottom) 6px;
+            padding: calc(var(--safe-top) + 10px) 6px var(--safe-bottom) 6px;
             font-size: 12px; user-select: none; touch-action: manipulation;
             min-height: var(--vh); overflow-x: hidden;
             display: flex; flex-direction: column;
@@ -28,8 +28,7 @@
             display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; 
-            margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
-            margin-top: 4px;
+            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
         .resources span { color: #fff; margin-right: 8px; }
@@ -48,6 +47,7 @@
             overflow-x: hidden;
             position: relative;
             padding-right: 2px;
+            padding-bottom: 32px; /* Фикс обрезания контента снизу */
             scroll-behavior: smooth;
         }
         .app-screens-wrapper::-webkit-scrollbar { width: 4px; }
@@ -56,8 +56,8 @@
         /* === НАВИГАЦИЯ === */
         .nav-grid { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
-            margin-top: auto; padding-top: 8px; border-top: 1px solid #27272a; 
-            flex-shrink: 0; z-index: 50; 
+            margin-top: auto; padding-top: 10px; border-top: 1px solid #27272a;
+            flex-shrink: 0; z-index: 50; padding-bottom: 4px;
         }
         .nav-btn {
             background: #121214; color: #71717a; border: 1px solid #27272a; 
@@ -75,7 +75,8 @@
         #screen-hero, #screen-boss { position: relative; margin: -6px; padding: 6px; min-height: 100%; border-radius: 8px; overflow: hidden; z-index: 1; }
         #screen-hero::before, #screen-boss::before { content: ''; position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}"); background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; }
 
-        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 8px 10px; text-align: center; margin-bottom: 12px; color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; }
+        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 8px 10px; text-align: center; margin-bottom: 12px; color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; position: relative; }
+        #ui-class-name { padding-right: 75px; } /* Запас места для кнопки СБРОС */
         .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 6px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 18px; }
         .floor-nav-btn:active { transform: scale(0.9); }
         .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -123,7 +124,9 @@
         .hp-bar-bg { width: 100%; height: 6px; background: #050505; border-radius: 3px; overflow: hidden; margin-top: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9); border: 1px solid #27272a;}
         .hp-bar-fill { height: 100%; background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(239,68,68,0.6);}
         .heal-btn { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border: 1px solid #064e3b; border-radius: 6px; font-size: 11px; padding: 0 16px; height: 44px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; margin-left: auto; }
-        .reset-btn { position: absolute; top: 10px; right: 10px; background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 10px; padding: 0 12px; height: 44px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10;}
+        
+        /* Кнопка сброса с исправленным позиционированием */
+        .reset-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; font-size: 10px; padding: 0 12px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10;}
 
         /* === КУЗНИЦА === */
         .forge-arena { background: #09090b; border: 1px solid #27272a; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 16px; box-shadow: inset 0 10px 30px rgba(0,0,0,0.9); position: relative; overflow: hidden;}
@@ -169,7 +172,7 @@
         .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
         /* === PVE БОЕВКА === */
-        .combat-arena { border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 10px; position: relative; overflow: hidden; transition: background-image 0.5s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a; }
+        .combat-arena { border: 1px solid #3f3f46; border-radius: 12px; padding: 10px; margin-bottom: 24px; position: relative; overflow: hidden; transition: background-image 0.5s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a; }
         .combat-header { text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
         .intent-box { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 6px 10px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
@@ -221,7 +224,7 @@
         .log-sys { color: #34d399; font-weight: bold; }
         .log-skill { color: #c084fc; font-weight: bold; }
 
-        .combat-dashboard { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 10px; margin-top: 10px; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05); }
+        .combat-dashboard { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 10px; margin-top: 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05); }
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
         .control-label { font-size: 9px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1;}
         .zone-group { display: flex; flex: 1; gap: 6px; }
@@ -243,7 +246,7 @@
         .btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 48px; display: flex; align-items: center; justify-content: center;}
         .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); border-radius: 8px; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
         .modal-overlay.show { display: flex; }
         .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 8px; text-transform: uppercase;}
         .vic-loot-box { width: 72px; height: 72px; border-radius: 10px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239,68,68,0.5); position: relative; overflow: hidden;}
