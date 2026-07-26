@@ -250,7 +250,7 @@
         .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
         .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
         
-        /* === ЭКРАН КЛАССОВ (ЭСТЕТИКА + PRELOADER) === */
+        /* === ЭКРАН КЛАССОВ === */
         .classes-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
         .classes-gallery::-webkit-scrollbar { display: none; }
         .class-icon-btn { flex: 0 0 auto; background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; border-radius: 8px; padding: 0 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; height: 48px; }
@@ -261,36 +261,29 @@
         /* Карточка героя */
         .class-detail-card { background: #121214; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.9); transition: border-color 0.3s ease, box-shadow 0.3s ease; position: relative;}
         
-        /* Контейнер картинки с шиммером */
         .class-detail-img-box { width: 100%; height: 320px; background: #09090b; position: relative; overflow: hidden; }
         
-        /* Скелетон (Шиммер) эффекта загрузки */
-        .skeleton-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; z-index: 1; transition: opacity 0.3s; }
-        .skeleton-loader.hidden { opacity: 0; pointer-events: none; }
+        /* Улучшенный Скелетон */
+        .skeleton-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite, hideSkeleton 0.5s 1s forwards; z-index: 1; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes hideSkeleton { to { opacity: 0; visibility: hidden; } }
 
-        /* Изображение с плавным появлением (cover убирает черные рамки) */
-        .class-preview-img { width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transform: scale(1.05); transition: opacity 0.5s ease, transform 3s ease-out; z-index: 2; position: relative; }
-        .class-preview-img.loaded { opacity: 1; transform: scale(1); }
+        /* Изображение плавно появляется через CSS, без JS */
+        .class-preview-img { width: 100%; height: 100%; object-fit: cover; object-position: top; animation: imgFadeIn 0.8s ease-out forwards; z-index: 2; position: relative; opacity: 0; }
+        @keyframes imgFadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
         
-        /* Градиентный фейд снизу, чтобы картинка красиво сливалась с контентом */
         .class-gradient-fade { position: absolute; bottom: 0; left: 0; width: 100%; height: 140px; background: linear-gradient(to top, #121214 0%, transparent 100%); z-index: 3; pointer-events: none; }
-
-        /* Блок контента наезжает на картинку */
         .class-detail-content { padding: 0 16px 16px 16px; margin-top: -30px; position: relative; z-index: 4; }
-        
         .class-detail-header { margin-bottom: 12px; }
         .class-detail-title { font-size: 20px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
         .class-detail-growth { font-size: 9px; color: #a1a1aa; margin-top: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
         .class-detail-lore { font-style: italic; color: #d4d4d8; font-size: 11px; margin-bottom: 16px; line-height: 1.5; border-left: 2px solid #3f3f46; padding-left: 10px; text-shadow: 0 1px 2px #000; font-family: "Georgia", serif;}
         
-        /* Неоновые полоски статов */
         .class-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid #27272a;}
         .c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
         .c-bar-row span { width: 85px; }
         .c-bar-wrap { flex: 1; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #18181b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); position: relative;}
         .c-bar-fill { height: 100%; border-radius: 3px; position: relative; transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-        /* Светящийся наконечник полоски */
         .c-bar-fill::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px; width: 4px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px inherit; }
         
         .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;}
@@ -674,7 +667,7 @@
                 if(hero.maxTickets === undefined) hero.maxTickets = 3;
                 if(hero.nextTicketTime === undefined) hero.nextTicketTime = 0;
                 if(hero.unspentPoints === undefined) hero.unspentPoints = 0;
-                if(hero.talents === undefined) hero.talents = [];
+                if(hero.talents === undefined || !Array.isArray(hero.talents)) hero.talents = []; // ИСПРАВЛЕНИЕ: Гарантируем, что это массив
             }
             previewClassId = hero.baseClass;
         }
@@ -686,7 +679,8 @@
         let combatMode = 'pve';
         let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, undyingUsed: false, poisonStacks: 0, enemyTurns: 0 };
         
-        const hasTalent = (id) => hero.talents.includes(id);
+        // ИСПРАВЛЕНИЕ: Железобетонная проверка талантов (предотвращает краш, если массива нет)
+        const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
         const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
         const NORMAL_MOBS = [ { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" }, { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" }, { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" }, { id: 10, name: "Червь" }, { id: 11, name: "Улитка" }, { id: 12, name: "Ведьма" }, { id: 13, name: "Вирм" }, { id: 14, name: "Стрелок" }, { id: 15, name: "Гаргулья" }, { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" }, { id: 19, name: "Паук" }, { id: 20, name: "Пугало" } ];
@@ -1234,8 +1228,15 @@
 
         function closeInspectModal() { document.getElementById("item-inspect-modal").classList.remove("show"); inspectInvIndex = null; }
 
+        // ИСПРАВЛЕНИЕ: Блокировка мертвого героя
         function openScreen(screenName) {
             if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents'].includes(screenName)) return alert("В разработке!");
+            
+            if ((screenName === 'PVE' || screenName === 'boss') && hero.hp <= 0 && !GOD_MODE) {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return alert("Герой мертв! Сначала вылечитесь в лагере.");
+            }
+
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
             setCls('screen-' + screenName, 'app-screen active');
@@ -1369,7 +1370,6 @@
             saveGame(); updateUI();
         }
 
-        // ВЫБОР ТАЛАНТА
         function pickTalent(tierIndex, talentId) {
             let tData = TALENTS_DATA[hero.baseClass][tierIndex];
             if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`);
@@ -1408,37 +1408,37 @@
 
             let w = cls.statWeights;
             let hp = Math.floor(total.end * (w.end_hp || 10)); 
-            if (hasTalent('k2a')) hp = Math.floor(hp * 1.25); // Талант Крепость
-            if (hasTalent('b2a')) hp = Math.floor(hp * 1.20); // Талант Толстая кожа
+            if (hasTalent('k2a')) hp = Math.floor(hp * 1.25); 
+            if (hasTalent('b2a')) hp = Math.floor(hp * 1.20); 
 
             if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; } 
             
             let damage = Math.floor(total.str * (w.str_dmg || 0) + total.agi * (w.agi_dmg || 0) + total.atk);
-            if (hasTalent('k1b')) damage += Math.floor(total.armor * 0.15); // Шипы рыцаря
+            if (hasTalent('k1b')) damage += Math.floor(total.armor * 0.15); 
             
             total.critChance += total.luk * (w.luk_crit || 0) + total.mst * (w.mst_crit || 0);
-            if (hasTalent('s3b')) total.critChance += 20; // Точность тени
+            if (hasTalent('s3b')) total.critChance += 20; 
             
             total.dodge += total.agi * (w.agi_dodge || 0) + total.luk * (w.luk_dodge || 0);
-            if (hasTalent('s3a')) total.dodge += 15; // Рефлекс тени
-            if (hasTalent('r3c')) total.dodge += 10; // Проворство
+            if (hasTalent('s3a')) total.dodge += 15; 
+            if (hasTalent('r3c')) total.dodge += 10; 
             
             total.armorPen += total.mst * (w.mst_pen || 0);
             total.critDmg += total.mst * (w.mst_cdmg || 0);
-            if (hasTalent('b2b')) total.critDmg += 50; // Жестокость
+            if (hasTalent('b2b')) total.critDmg += 50; 
 
             total.armor += total.str * (w.str_arm || 0);
-            if (hasTalent('k3a')) total.armor = Math.floor(total.armor * 1.5); // Сталь
-            if (hasTalent('k5a') && hero.hp < hero.maxHp * 0.3) total.armor *= 2; // Второе дыхание
+            if (hasTalent('k3a')) total.armor = Math.floor(total.armor * 1.5); 
+            if (hasTalent('k5a') && hero.hp < hero.maxHp * 0.3) total.armor *= 2; 
             
             total.blockChance += total.mst * (w.mst_block || 0);
-            if (hasTalent('k4b')) total.blockChance += total.mst * 0.02; // Тяжесть
+            if (hasTalent('k4b')) total.blockChance += total.mst * 0.02; 
 
             total.armor = Math.floor(total.armor * cls.armorMult); 
             total.critDmg = Math.floor(total.critDmg * cls.critDmgMult); 
             total.dodge = Math.floor(total.dodge * cls.dodgeMult); 
             
-            let dodgeCap = hasTalent('s1a') ? 90 : 75; // Ветер тени
+            let dodgeCap = hasTalent('s1a') ? 90 : 75; 
             total.dodge = Math.min(dodgeCap, total.dodge); 
             total.blockChance = Math.min(60, total.blockChance);
             
@@ -1697,7 +1697,7 @@
                     <div class="class-detail-card" style="border-color: ${selCls.color}40;">
                         <div class="class-detail-img-box">
                             <div class="skeleton-loader" id="class-skeleton-${previewClassId}"></div>
-                            <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img" onload="this.classList.add('loaded'); document.getElementById('class-skeleton-${previewClassId}').classList.add('hidden');">
+                            <img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img">
                             <div class="class-gradient-fade"></div>
                         </div>
                         <div class="class-detail-content">
