@@ -87,7 +87,7 @@
         .floor-nav-btn:active { transform: scale(0.9); }
         .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .hero-layout { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 24px; }
+        .hero-layout { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 24px; }
         .equip-col { display: flex; flex-direction: column; gap: 14px; width: 48px; justify-content: center;}
         .equip-slot { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, rgba(39,39,42,0.9) 0%, rgba(9,9,11,0.9) 80%); border: 1px solid #3f3f46; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 4px 8px rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         .equip-slot:active { transform: scale(0.9); }
@@ -105,8 +105,8 @@
         .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.7); animation: pulse-relic 1.5s infinite; }
         .slot-label { position: absolute; bottom: -16px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 4px #000;}
         
-        .hero-avatar-box { flex: 1; min-width: 120px; max-width: 260px; aspect-ratio: 1; background: #050505; border: 2px solid #27272a; border-radius: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;}
-        .hero-avatar-box .silhouette { position: absolute; font-size: 80px; z-index: 1; opacity: 0.3;}
+        .hero-avatar-box { flex: 1; min-width: 140px; max-width: 260px; aspect-ratio: 1; background: #050505; border: 2px solid #27272a; border-radius: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;}
+        .hero-avatar-box .silhouette { position: absolute; font-size: 60px; z-index: 1; opacity: 0.3;}
         .hero-avatar { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 2; transition: opacity 0.3s ease;}
         
         .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
@@ -149,10 +149,11 @@
         .btn-upgrade { width: 100%; background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%); color: #000; border: 1px solid #fcd34d; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); margin-top: 12px; display: flex; align-items: center; justify-content: center;}
         .btn-upgrade:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; box-shadow: none; cursor: not-allowed;}
 
-        .talent-tier { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #3f3f46; border-radius: 12px; margin-bottom: 16px; padding: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
-        .talent-tier.locked { border-color: #27272a; opacity: 0.6; }
-        .talent-tier.locked::after { content: '🔒 ТРЕБУЕТСЯ УР. ' attr(data-lvl); position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(5,5,5,0.8); display:flex; align-items:center; justify-content:center; font-weight:900; color:#a1a1aa; font-size:14px; z-index:10; backdrop-filter: blur(2px);}
-        .talent-tier-header { font-weight: 900; color: #fbbf24; margin-bottom: 12px; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 6px; text-shadow: 0 2px 4px #000; text-align: center; letter-spacing: 1px;}
+        .talent-tier { background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #3f3f46; border-radius: 12px; margin-bottom: 16px; padding: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.5); position: relative; }
+        .talent-tier.locked { border-color: #27272a; }
+        .talent-tier.locked .talent-options { opacity: 0.4; filter: grayscale(100%); pointer-events: none; }
+        .talent-lock-badge { font-size: 9px; color: #ef4444; background: rgba(69, 10, 10, 0.8); border: 1px solid #ef4444; border-radius: 4px; padding: 2px 6px; margin-left: 6px; display: inline-block; vertical-align: middle; text-shadow: none;}
+        .talent-tier-header { font-weight: 900; color: #fbbf24; margin-bottom: 8px; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #3f3f46; padding-bottom: 4px; text-shadow: 0 2px 4px #000; text-align: center; letter-spacing: 1px; display: flex; align-items: center; justify-content: center;}
         .talent-options { display: flex; gap: 8px; }
         .talent-btn { flex: 1; background: #121214; border: 2px solid #27272a; border-radius: 8px; padding: 10px 4px; color: #a1a1aa; text-align: center; cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); min-height: 80px; justify-content: flex-start;}
         .talent-btn:active { transform: scale(0.95); }
@@ -160,7 +161,7 @@
         .talent-btn.dimmed { opacity: 0.3; filter: grayscale(1); pointer-events: none; border-color: #18181b; }
         .talent-name { font-weight: 900; font-size: 11px; color: #e4e4e7; line-height: 1.1; }
         .talent-btn.selected .talent-name { color: #fbbf24; text-shadow: 0 1px 2px #000;}
-        .talent-desc { font-size: 9px; line-height: 1.3; }
+        .talent-desc { font-size: 9px; line-height: 1.3; color: #d4d4d8;}
 
         .raid-boss-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #3f3f46; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.2s; }
         .raid-boss-card:active { transform: scale(0.98); }
@@ -173,6 +174,7 @@
         .raid-btn { background: #ef4444; color: #fff; border: 1px solid #b91c1c; border-radius: 6px; padding: 0 8px; height: 44px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
+        /* === PVE БОЕВКА === */
         .combat-arena { 
             flex: 1; 
             display: flex; 
@@ -208,17 +210,17 @@
         .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
         
         .combat-card { 
-            width: 100%; max-width: 140px; aspect-ratio: 1; min-height: 0; flex-shrink: 1;
-            background: #050505; border: 2px solid #3f3f46; border-radius: 10px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 4px; 
+            width: 100%; max-width: 130px; aspect-ratio: 1; min-height: 0; flex-shrink: 1;
+            background: #050505; border: 2px solid #3f3f46; border-radius: 8px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
         }
         .combat-card.hero { border-color: #71717a; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 15px rgba(96, 165, 250, 0.15); }
         .combat-card.boss { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.8), 0 0 20px rgba(239,68,68,0.4); }
-        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; }
-        .card-avatar-img { width: 100%; height: 100%; object-fit: contain; background-color: #050505; filter: brightness(0.95); transition: filter 0.2s; }
+        .card-avatar-wrap { width: 100%; height: 100%; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .card-avatar-img { width: 100%; height: 100%; object-fit: contain; background-color: #050505; filter: brightness(0.95); transition: filter 0.2s; position: relative; z-index: 2;}
         .combat-card::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; border-radius: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.1); pointer-events: none; z-index: 5; }
         .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
         
-        .entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 140px; text-align: center; }
+        .entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 130px; text-align: center; }
         .hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
         .hp-bar-outer { width: 100%; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
         .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
@@ -245,7 +247,7 @@
         .dmg-popup { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
         @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
         
-        .combat-log-box { flex-shrink: 0; background: rgba(18, 18, 20, 0.9); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px; height: 80px; overflow-y: auto; font-size: 10px; line-height: 1.35; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); margin-bottom: 6px;}
+        .combat-log-box { flex-shrink: 0; background: rgba(18, 18, 20, 0.9); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px; height: 90px; overflow-y: auto; font-size: 10px; line-height: 1.35; color: #a1a1aa; box-shadow: inset 0 4px 10px rgba(0,0,0,0.8); margin-bottom: 6px;}
         .log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 2px; margin-bottom: 2px;}
         .log-dmg { color: #f87171; font-weight: bold; }
         .log-crit { color: #fbbf24; font-weight: bold; }
@@ -344,13 +346,12 @@
 <body>
 
     <script>
-        const STATIC_URL = "";
+        const STATIC_URL = "{{ url_for('static', filename='') }}";
         const GOD_MODE = false; 
     </script>
 
     <div id="blood-screen" class="blood-overlay"></div>
 
-    <!-- ТОП ПАНЕЛЬ (ФИКСИРОВАНА НАВЕРХУ) -->
     <div class="top-dashboard">
         <div class="resources">
             💰 <span id="ui-gold">5000</span> 💎 <span id="ui-gems">0</span>
@@ -363,7 +364,7 @@
         <div class="exp-bar-wrap"><div class="exp-bar-fill" id="ui-exp-bar" style="width: 0%;"></div></div>
     </div>
 
-    <!-- ОСНОВНОЙ СКРОЛЛИРУЕМЫЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ЭКРАНОВ -->
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР ДЛЯ ЭКРАНОВ И МОДАЛОК -->
     <div class="app-screens-wrapper">
 
         <div class="modal-overlay" id="item-inspect-modal">
@@ -405,8 +406,9 @@
                     <div class="combat-entity-wrapper">
                         <div class="entity-name-plate" id="combat-hero-name-plate"></div>
                         <div class="combat-card hero" id="entity-hero-box">
-                            <div class="card-avatar-wrap">
-                                <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой">
+                            <div class="card-avatar-wrap" style="display:flex; align-items:center; justify-content:center;">
+                                <div class="silhouette" style="position:absolute; font-size:60px; z-index:1; opacity:0.3;">👤</div>
+                                <img src="" id="combat-hero-img" class="card-avatar-img" alt="Герой" onerror="this.style.display='none'" onload="this.style.display='block'">
                                 <div class="slash-fx" id="hero-slash"></div>
                             </div>
                         </div>
@@ -422,8 +424,9 @@
                     <div class="combat-entity-wrapper">
                         <div class="entity-name-plate" id="combat-enemy-name-plate"></div>
                         <div class="combat-card" id="entity-enemy-box">
-                            <div class="card-avatar-wrap">
-                                <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр">
+                            <div class="card-avatar-wrap" style="display:flex; align-items:center; justify-content:center;">
+                                <div class="silhouette" style="position:absolute; font-size:60px; z-index:1; opacity:0.3;">👾</div>
+                                <img src="" id="combat-enemy-img" class="card-avatar-img" alt="Монстр" onerror="this.style.display='none'" onload="this.style.display='block'">
                                 <div class="status-icon" id="enemy-stun-icon">💫</div>
                                 <div class="slash-fx" id="enemy-slash"></div>
                             </div>
@@ -1521,6 +1524,32 @@
         function renderItemIcon(item) { if (!item) return ""; if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`; let imgId = item.id.split('_')[0]; if (item.id.includes("shields_v2_")) { let parts = item.id.split('_'); imgId = parts[0] + "_" + parts[1] + "_" + parts[2]; } return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.onerror=null; this.parentElement.outerHTML='<div class=\\'item-icon\\'>${item.icon}</div>';"></div>`; }
         function renderDurability(zoneKey) { let dur = combatState.zoneHealth[zoneKey]; if(dur === 3) return `<span class="dur-dot g"></span><span class="dur-dot g"></span><span class="dur-dot g"></span>`; if(dur === 2) return `<span class="dur-dot y"></span><span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`; if(dur === 1) return `<span class="dur-dot o"></span><span class="dur-dot" style="background:#27272a"></span><span class="dur-dot" style="background:#27272a"></span>`; return ``; }
 
+        function renderTalents() {
+            let html = '';
+            let tData = TALENTS_DATA[hero.baseClass];
+            tData.forEach((tier, index) => {
+                let isLocked = hero.level < tier.lvl;
+                let tierTalentIds = tier.opts.map(o => o.id);
+                let pickedTalent = hero.talents.find(t => tierTalentIds.includes(t));
+                
+                let lockBadge = isLocked ? `<span class="talent-lock-badge">🔒 УР. ${tier.lvl}</span>` : '';
+
+                let optsHtml = '';
+                tier.opts.forEach(opt => {
+                    let isSelected = pickedTalent === opt.id;
+                    let isDimmed = pickedTalent && !isSelected;
+                    let btnClass = `talent-btn ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`;
+                    optsHtml += `<div class="${btnClass}" onclick="pickTalent(${index}, '${opt.id}')"><div class="talent-name">${opt.n}</div><div class="talent-desc">${opt.d}</div></div>`;
+                });
+
+                html += `<div class="talent-tier ${isLocked ? 'locked' : ''}">
+                            <div class="talent-tier-header">ТИР ${index + 1} ${lockBadge}</div>
+                            <div class="talent-options">${optsHtml}</div>
+                         </div>`;
+            });
+            document.getElementById("ui-talents-container").innerHTML = html;
+        }
+
         function updateUI() {
             let bloodScreen = document.getElementById('blood-screen');
             if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
@@ -1611,7 +1640,7 @@
                 let isDebuff = hero.deathDebuffEnd > Date.now();
                 let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
 
-                let unspentHtml = hero.unspentPoints > 0 ? `<div style="background:#064e3b; color:#34d399; padding:6px; border-radius:6px; text-align:center; margin-bottom:8px; font-weight:bold; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">ОЧКОВ ХАРАКТЕРИСТИК: ${hero.unspentPoints}</div>` : '';
+                let unspentHtml = hero.unspentPoints > 0 ? `<div style="background:#064e3b; color:#34d399; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">ОЧКОВ ХАРАКТЕРИСТИК: ${hero.unspentPoints}</div>` : '';
                 
                 function renderStatRow(icon, name, key, val) {
                     let btn = hero.unspentPoints > 0 ? `<button class="stat-btn-add" onclick="addStat('${key}')">+</button>` : '';
@@ -1622,18 +1651,18 @@
                     <div class="stats-card">
                         ${unspentHtml}
                         <div class="stat-group-title">Базовые параметры</div>
-                        ${renderStatRow('⚔️', 'СИЛ', 'str', hero.finalStats.str)}
-                        ${renderStatRow('🏃', 'ЛОВ', 'agi', hero.finalStats.agi)}
-                        ${renderStatRow('❤️', 'ВЫН', 'end', hero.finalStats.end)}
-                        ${renderStatRow('🎯', 'МСТ', 'mst', hero.finalStats.mst)}
-                        ${renderStatRow('🍀', 'УДЧ', 'luk', hero.finalStats.luk)}
+                        ${renderStatRow('⚔️', 'Сила (СИЛ)', 'str', hero.finalStats.str)}
+                        ${renderStatRow('🏃', 'Ловкость (ЛОВ)', 'agi', hero.finalStats.agi)}
+                        ${renderStatRow('❤️', 'Выносл-ть (ВЫН)', 'end', hero.finalStats.end)}
+                        ${renderStatRow('🎯', 'Мастерство (МСТ)', 'mst', hero.finalStats.mst)}
+                        ${renderStatRow('🍀', 'Удача (УДЧ)', 'luk', hero.finalStats.luk)}
                     </div>
                     <div class="stats-card">
                         <div class="stat-group-title">Боевые параметры</div>
                         ${warnTxt}
                         <div class="stat-item" style="flex-direction:column; align-items:stretch;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
-                                <span>🩸 <b>${Math.floor(hero.hp)}/${hero.finalStats.hp}</b></span>${healBtnHtml}
+                                <span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>${healBtnHtml}
                             </div>
                             <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
                         </div>
@@ -1750,6 +1779,10 @@
                             <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 4px 15px ${selCls.color}40; border-color: ${selCls.color};` : ''}">${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}</button>
                         </div>
                     </div>`;
+            }
+
+            if (currentScreen === 'talents') {
+                renderTalents();
             }
         }
 
