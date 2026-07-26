@@ -26,13 +26,11 @@
             flex-shrink: 0;
             display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
-            padding: 6px 14px; border-radius: 8px; border: 1px solid #27272a; 
-            margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+            padding: 10px 14px; border-radius: 8px; border: 1px solid #27272a; 
+            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
         .resources span { color: #fff; margin-right: 8px; }
-        .tickets-badge { color: #fca5a5; font-size: 11px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; }
-        
         .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
@@ -83,9 +81,9 @@
         #screen-hero, #screen-boss { position: relative; margin: -6px; padding: 6px; min-height: 100%; border-radius: 8px; overflow: hidden; z-index: 1; }
         #screen-hero::before, #screen-boss::before { content: ''; position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}"); background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; }
 
-        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 6px 10px; text-align: center; margin-bottom: 8px; color: #d4d4d8; font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 8px 10px; text-align: center; margin-bottom: 12px; color: #d4d4d8; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; position: relative; }
         #ui-class-name { padding-right: 75px; }
-        .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 16px; }
+        .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 6px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 18px; }
         .floor-nav-btn:active { transform: scale(0.9); }
         .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
@@ -164,10 +162,12 @@
         .talent-btn.selected .talent-name { color: #fbbf24; text-shadow: 0 1px 2px #000;}
         .talent-desc { font-size: 9px; line-height: 1.3; }
 
+        /* === РЕЙДЫ НА БОССОВ (Улучшенная диорама) === */
         .raid-boss-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #3f3f46; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.2s; }
         .raid-boss-card:active { transform: scale(0.98); }
-        .raid-img-box { width: 100px; height: 100px; background: #000; position: relative; border-right: 1px solid #3f3f46; overflow: hidden; }
-        .raid-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
+        .raid-img-box { width: 100px; height: 100px; background: #050505; position: relative; border-right: 1px solid #3f3f46; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .raid-img-box::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.1); pointer-events: none; z-index: 5; }
+        .raid-img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0.95) drop-shadow(0 4px 10px rgba(0,0,0,0.8)); position: relative; z-index: 2; animation: imgFadeIn 0.5s ease-out forwards; }
         .raid-info { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .raid-name { font-weight: 900; font-size: 14px; color: #fbbf24; text-transform: uppercase; text-shadow: 0 2px 4px #000; margin-bottom: 4px;}
         .raid-desc { font-size: 10px; color: #a1a1aa; line-height: 1.4; margin-bottom: 8px; }
@@ -175,7 +175,6 @@
         .raid-btn { background: #ef4444; color: #fff; border: 1px solid #b91c1c; border-radius: 6px; padding: 0 8px; height: 44px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
-        /* === PVE БОЕВКА (ГИБКАЯ ДИОРАМА С ЗАЩИТОЙ IOS) === */
         .combat-arena { 
             flex: 1; 
             display: flex; 
@@ -197,6 +196,7 @@
         
         .combat-entities { 
             flex: 1; 
+            min-height: 0; 
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; gap: 8px; 
             border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; padding: 8px 6px; 
             box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
@@ -264,7 +264,7 @@
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
         .control-label { font-size: 9px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1;}
         .zone-group { display: flex; flex: 1; gap: 6px; }
-        .zone-btn { flex: 1; min-height: 38px; padding: 0 4px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s; }
+        .zone-btn { flex: 1; min-height: 48px; padding: 0 4px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s; }
         .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
         .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.4);}
         .durability-dots { display: flex; gap: 2px; }
@@ -277,9 +277,9 @@
         .zone-btn.broken .durability-dots { display: none; }
         
         .main-actions { display: flex; gap: 8px; margin-top: 2px; }
-        .btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 42px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 48px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .btn-skill-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
-        .btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 42px; display: flex; align-items: center; justify-content: center;}
+        .btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 48px; display: flex; align-items: center; justify-content: center;}
         .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
@@ -289,6 +289,59 @@
         .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 10px rgba(251,191,36,0.3); display: flex; align-items: center; justify-content: center;}
         .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
         .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
+        
+        .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; }
+        .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
+        .shop-tab { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
+        .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; }
+        .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; }
+        .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 0 12px; height: 44px; font-size: 12px; outline: none; appearance: none;}
+        .shop-list { display: flex; flex-direction: column; gap: 12px; }
+        .shop-item-card { display: flex; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 12px; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
+        .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
+        .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; }
+        .shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
+        .tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
+        .tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
+        
+        .shop-btn { background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; height: 40px; padding: 0 10px; min-width: 60px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+        .shop-btn.btn-buy { background: linear-gradient(180deg, #064e3b 0%, #022c22 100%); border-color: #10b981; color: #fff; }
+        .shop-btn.btn-sell { background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%); border-color: #ef4444; color: #fff; }
+        .shop-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; box-shadow: none; cursor: not-allowed; }
+
+        .classes-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
+        .classes-gallery::-webkit-scrollbar { display: none; }
+        .class-icon-btn { flex: 0 0 auto; background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; border-radius: 8px; padding: 0 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; height: 48px; }
+        .class-icon-btn.selected { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168,85,247,0.2), 0 4px 10px rgba(0,0,0,0.8); }
+        .class-icon-btn .icon { font-size: 16px; }
+        .class-icon-btn .name { font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        
+        .class-detail-card { background: transparent; border-radius: 12px; position: relative;}
+        .class-detail-img-box { width: 100%; height: 320px; background: transparent; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+        .class-detail-img-box .silhouette { position: absolute; font-size: 80px; z-index: 1; opacity: 0.3;}
+        
+        .class-preview-img { max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain; opacity: 0; animation: imgFadeIn 0.6s ease-out forwards; z-index: 2; position: relative; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.8)); }
+        
+        @keyframes imgFadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+        
+        .class-detail-content { padding: 0 16px 16px 16px; margin-top: 10px; position: relative; z-index: 4; background: #121214; border: 1px solid #27272a; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.9); }
+        
+        .class-detail-header { margin-bottom: 12px; padding-top: 16px; }
+        .class-detail-title { font-size: 20px; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+        .class-detail-growth { font-size: 9px; color: #a1a1aa; margin-top: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .class-detail-lore { font-style: italic; color: #d4d4d8; font-size: 11px; margin-bottom: 16px; line-height: 1.5; border-left: 2px solid #3f3f46; padding-left: 10px; text-shadow: 0 1px 2px #000; font-family: "Georgia", serif;}
+        
+        .class-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid #27272a;}
+        .c-bar-row { display: flex; align-items: center; font-size: 10px; color: #d4d4d8; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .c-bar-row span { width: 85px; }
+        .c-bar-wrap { flex: 1; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #18181b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); position: relative;}
+        .c-bar-fill { height: 100%; border-radius: 3px; position: relative; transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .c-bar-fill::after { content: ''; position: absolute; right: 0; top: -2px; bottom: -2px; width: 4px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px inherit; }
+        
+        .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;}
+        .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
     </style>
 </head>
 <body>
@@ -303,7 +356,7 @@
         const CLASSES={
             knight:{id:"knight",name:"Рыцарь",icon:"🛡️",color:"#fbbf24",lore:"Держит удар лучше, чем корпоративный сервер в пятницу. [Пассивка: Идеальный блок отражает 20% урона]",growth:{str:1,agi:0,end:1,mst:0,luk:0},statWeights:{str_dmg:1,str_arm:1,agi_dodge:0.2,end_hp:15,mst_block:1,mst_pen:0.5,luk_crit:0.2,luk_drop:0.1},skill:{name:"Эгида",desc:"Блокирует удар и Исцеляет 25% HP.",cd:3},bars:{dmg:40,def:100,diff:20},armorMult:1.25,critDmgMult:1.4,dodgeMult:0.9},
             berserk:{id:"berserk",name:"Берсерк",icon:"🪓",color:"#ef4444",lore:"Машина для переработки врагов. [Пассивка: Меньше HP - больше урон и крит]",growth:{str:2,agi:0,end:0,mst:0,luk:0},statWeights:{str_dmg:3,agi_dodge:0.5,end_hp:8,mst_pen:2,mst_cdmg:1,luk_crit:0.5,luk_drop:0.1},skill:{name:"Яростный Удар",desc:"Удар на x2.5 урона.",cd:3},bars:{dmg:100,def:30,diff:50},armorMult:0.85,critDmgMult:1.9,dodgeMult:1.0},
-            shadow:{id:"shadow",name:"Тень",icon:"🗡️",color:"#a855f7",lore:"Специалист по внезапным сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]",growth:{str:0,agi:1,end:0,mst:1,luk:0},statWeights:{str_dmg:0.5,agi_dmg:2,agi_dodge:1,end_hp:6,mst_cdmg:3,mst_pen:1,luk_crit:0.8,luk_dodge:0.5,luk_drop:0.1},skill:{name:"Вспышка Тени",desc:"Уворот + Крит на след. ход.",cd:3},bars:{dmg:85,def:20,diff:90},armorMult:1.0,critDmgMult:2.2,dodgeMult:1.3},
+            shadow:{id:"shadow",name:"Тень",icon:"🗡️",color:"#a855f7",lore:"Специалист по внезап сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]",growth:{str:0,agi:1,end:0,mst:1,luk:0},statWeights:{str_dmg:0.5,agi_dmg:2,agi_dodge:1,end_hp:6,mst_cdmg:3,mst_pen:1,luk_crit:0.8,luk_dodge:0.5,luk_drop:0.1},skill:{name:"Вспышка Тени",desc:"Уворот + Крит на след. ход.",cd:3},bars:{dmg:85,def:20,diff:90},armorMult:1.0,critDmgMult:2.2,dodgeMult:1.3},
             ranger:{id:"ranger",name:"Следопыт",icon:"🏹",color:"#10b981",lore:"Делегирует стрелы в уязвимые места. [Пассивка: Удача влияет на лут. Игнор 30% брони]",growth:{str:0,agi:1,end:0,mst:0,luk:1},statWeights:{str_dmg:1,agi_dmg:1.5,agi_dodge:0.5,end_hp:8,mst_pen:2,mst_crit:0.5,luk_crit:0.5,luk_drop:2.0},skill:{name:"Выстрел в Сердце",desc:"Оглушает врага на 1 ход.",cd:3},bars:{dmg:70,def:40,diff:60},armorMult:1.0,critDmgMult:1.8,dodgeMult:1.15}
         };
 
