@@ -31,8 +31,6 @@
         }
         .resources { font-weight: bold; color: #fbbf24; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 2; display: flex; align-items: center; gap: 8px;}
         .resources span { color: #fff; margin-right: 8px; }
-        .tickets-badge { color: #fca5a5; font-size: 11px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; }
-        
         .debuff-timer { background: #7f1d1d; color: #fca5a5; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444; font-weight: bold; display: none; text-shadow: none;}
         .progress-info { font-size:11px; color:#71717a; font-weight:bold; letter-spacing: 0.5px; text-transform:uppercase; z-index:2; text-align: right;}
         .progress-info span { color:#ffffff; text-shadow: 0 1px 3px #000; font-size:13px; }
@@ -343,7 +341,7 @@
 <body>
 
     <script>
-        const STATIC_URL = "{{ url_for('static', filename='') }}";
+        const STATIC_URL = "";
         const GOD_MODE = false; 
     </script>
 
@@ -583,9 +581,6 @@
         const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         const setCls = (id, val) => { const el = document.getElementById(id); if (el) el.className = val; };
-
-        const STATIC_URL = "{{ url_for('static', filename='') }}";
-        const GOD_MODE = false; 
 
         const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
         
@@ -962,10 +957,10 @@
 
         function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
             let dodgeChance = defender.dodge || 0;
-            if (!isHeroAtk && hasTalent('s5a')) dodgeChance = 50; 
+            if (!isHeroAtk && hasTalent('s5a')) dodgeChance = 50;
             
             if (Math.random() * 100 < dodgeChance) return { dmg: 0, rawDmg: 0, type: "dodge" };
-            if (!isHeroAtk && hasTalent('r5c') && Math.random() * 100 < 20) return { dmg: 0, rawDmg: 0, type: "dodge" }; 
+            if (!isHeroAtk && hasTalent('r5c') && Math.random() * 100 < 20) return { dmg: 0, rawDmg: 0, type: "dodge" };
             
             let baseAtk = attacker.damage || attacker.atk || 5; 
             let cChance = attacker.critChance || 5;
@@ -984,25 +979,25 @@
             if (bIsBerserk) {
                 let missingHpPct = (hero.combatStats.hp - hero.hp) / hero.combatStats.hp;
                 let stacks = Math.floor(missingHpPct * 10);
-                if (hasTalent('b3b')) stacks *= 2; 
+                if (hasTalent('b3b')) stacks *= 2;
                 baseAtk = Math.floor(baseAtk * (1 + stacks * 0.05));
                 cChance += stacks * 2;
-                if (hasTalent('b5b')) cDmg += Math.min(200, stacks * 20); 
-                if (hasTalent('b3c')) armPen += Math.floor(defender.armor * 0.3); 
-                if (hasTalent('b5c')) armPen += defender.armor; 
-                if (hasTalent('b2c') && combatState.zoneHealth[zAtk] === 0) baseAtk = Math.floor(baseAtk * 1.40); 
-                if (hasTalent('b1c')) combatState.zoneHealth[zAtk] = 0; 
+                if (hasTalent('b5b')) cDmg += Math.min(200, stacks * 20);
+                if (hasTalent('b3c')) armPen += Math.floor(defender.armor * 0.3);
+                if (hasTalent('b5c')) armPen += defender.armor;
+                if (hasTalent('b2c') && combatState.zoneHealth[zAtk] === 0) baseAtk = Math.floor(baseAtk * 1.40);
+                if (hasTalent('b1c')) combatState.zoneHealth[zAtk] = 0;
             }
 
             if (bIsShadowAtk) {
                 if (combatState.shadowCritReady) { cChance = 100; combatState.shadowCritReady = false; }
-                if (hasTalent('s1b') && defender.hp === defender.maxHp) cChance = 100; 
-                if (hasTalent('s5b') && defender.hp <= defender.maxHp * 0.2) return { dmg: 999999, rawDmg: 999999, type: 'crit' }; 
+                if (hasTalent('s1b') && defender.hp === defender.maxHp) cChance = 100;
+                if (hasTalent('s5b') && defender.hp <= defender.maxHp * 0.2) return { dmg: 999999, rawDmg: 999999, type: 'crit' };
             }
 
             if (bIsRangerAtk) {
-                armPen += Math.floor(defender.armor * 0.3); 
-                if (hasTalent('r2a')) armPen += defender.armor; 
+                armPen += Math.floor(defender.armor * 0.3);
+                if (hasTalent('r2a')) armPen += defender.armor;
                 if (zAtk === 'head') {
                     if (hasTalent('r1a')) cChance += 30;
                     if (hasTalent('r4a')) cDmg += 50;
@@ -1010,14 +1005,14 @@
             }
 
             if (isHeroAtk && hero.baseClass === 'knight') {
-                if (hasTalent('k1c')) armPen += Math.floor(defender.armor * 0.5); 
+                if (hasTalent('k1c')) armPen += Math.floor(defender.armor * 0.5);
             }
 
             if (!isHeroAtk) {
-                if (hasTalent('k4a') && hero.baseClass === 'knight') cChance = 0; 
-                if (hasTalent('b4a') && hero.baseClass === 'berserk') baseAtk = Math.floor(baseAtk * 0.8); 
-                if (hasTalent('r4c') && hero.baseClass === 'ranger' && attacker.isBoss) baseAtk = Math.floor(baseAtk * 0.85); 
-                if (hasTalent('s4c') && hero.baseClass === 'shadow' && combatState.poisonStacks > 0) baseAtk = Math.floor(baseAtk * 0.8); 
+                if (hasTalent('k4a') && hero.baseClass === 'knight') cChance = 0;
+                if (hasTalent('b4a') && hero.baseClass === 'berserk') baseAtk = Math.floor(baseAtk * 0.8);
+                if (hasTalent('r4c') && hero.baseClass === 'ranger' && attacker.isBoss) baseAtk = Math.floor(baseAtk * 0.85);
+                if (hasTalent('s4c') && hero.baseClass === 'shadow' && combatState.poisonStacks > 0) baseAtk = Math.floor(baseAtk * 0.8);
             }
 
             let isCrit = Math.random() * 100 < cChance; 
@@ -1040,8 +1035,8 @@
                 mitigation = bIsKnightDef ? Math.floor(defArmor * 0.7) : Math.floor(defArmor * 0.5); 
             }
 
-            if (isHeroAtk && hasTalent('s2b') && hero.baseClass === 'shadow') mitigation = Math.floor(defArmor * 0.5); 
-            if (isHeroAtk && hasTalent('k5c') && hero.baseClass === 'knight') mitigation = Math.floor(defArmor * 0.5); 
+            if (isHeroAtk && hasTalent('s2b') && hero.baseClass === 'shadow') mitigation = Math.floor(defArmor * 0.5);
+            if (isHeroAtk && hasTalent('k5c') && hero.baseClass === 'knight') mitigation = Math.floor(defArmor * 0.5);
             
             let finalDmg = Math.max(Math.floor(baseAtk * 0.15), baseAtk - mitigation); 
             return { dmg: finalDmg, rawDmg: baseAtk, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
@@ -1053,7 +1048,7 @@
             
             if (enemy.isRaid) {
                 let gems = enemy.raidData.gemReward; 
-                if (hasTalent('r3b')) gems = Math.floor(gems * 1.5); 
+                if (hasTalent('r3b')) gems = Math.floor(gems * 1.5);
                 hero.gems += gems; 
                 let goldGained = hero.level * 50 + 100; hero.gold += goldGained;
                 let droppedItem = null; let logMsg = "";
@@ -1077,14 +1072,14 @@
             } else {
                 let goldGained = 15 + (hero.floor * 5); let expGained = 20 + (hero.floor * 8);
                 if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
-                if (hasTalent('r1b')) goldGained *= 2; 
+                if (hasTalent('r1b')) goldGained *= 2;
                 hero.gold += goldGained; hero.exp += expGained;
                 
                 let droppedItem = null; 
                 let dropChance = (enemy.isBoss ? 100 : (enemy.isMiniBoss ? 35 : 1)) + (hero.combatStats.luk * lukDropMod); 
                 let isRelicDrop = enemy.isBoss || (enemy.isMiniBoss && Math.random() > 0.6);
                 
-                if (hasTalent('r2b')) isRelicDrop = Math.random() > 0.3; 
+                if (hasTalent('r2b')) isRelicDrop = Math.random() > 0.3;
 
                 let logMsg = "";
                 let processDrop = () => {
@@ -1106,7 +1101,7 @@
 
                 droppedItem = processDrop();
                 if (enemy.isBoss && hasTalent('r5b') && Math.random() < 0.2) {
-                    processDrop(); 
+                    processDrop();
                     logMsg += `<br><span style="color:#fbbf24">КЛАД: Выпал двойной лут!</span>`;
                 }
                 
@@ -1140,12 +1135,12 @@
                 if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5);
                 let poisonDmg = dmgPerStack * combatState.poisonStacks;
                 enemy.hp -= poisonDmg;
-                if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } 
+                if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); }
                 logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`);
                 showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill");
                 if (enemy.hp <= 0) handleCombatWin();
             }
-            if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
+            if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); }
         }
 
         function executeTurn() {
@@ -1177,7 +1172,7 @@
                 if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); 
                 else if (hRes.type === "crit") { 
                     showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); 
-                    if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
+                    if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); }
                 } 
                 else showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg");
                 
@@ -1186,7 +1181,7 @@
 
                 if (enemy.hp <= 0) { handleCombatWin(); } 
                 else {
-                    applyTurnEndEffects(); 
+                    applyTurnEndEffects();
                     if (enemy.hp <= 0) return;
 
                     if (isEnemyStunned) { 
@@ -1212,8 +1207,8 @@
                         if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
                             combatState.shadowCritReady = true;
                             logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`);
-                            if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); } 
-                            if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); } 
+                            if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); }
+                            if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); }
                         }
 
                         if (eRes.type === "perfect_block" && hero.baseClass === 'knight') {
@@ -1222,15 +1217,15 @@
                             enemy.hp -= reflectDmg;
                             showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block");
                             logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`);
-                            if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true; 
+                            if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true;
                         }
 
                         if (eRes.type === "block" && hero.baseClass === 'knight' && hasTalent('k1a')) {
-                            hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); 
+                            hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05));
                         }
 
                         if (eRes.dmg > 0) {
-                            if (!hasTalent('b4b')) combatState.combo = 0; 
+                            if (!hasTalent('b4b')) combatState.combo = 0;
                             if (eAtkZone !== 'ULTIMATUM' && eAtkZone !== 'ENRAGE' && eRes.type !== "perfect_block" && combatState.zoneHealth[eAtkZone] > 0) {
                                 combatState.zoneHealth[eAtkZone]--;
                                 if (combatState.zoneHealth[eAtkZone] === 0) { logCombat(`<span class="log-dmg">⚠️ БРОНЯ В ЗОНЕ '${zNameRu[eAtkZone].toUpperCase()}' ПОЛНОСТЬЮ РАЗРУШЕНА!</span>`); showDmgPopup("entity-hero-box", "СЛОМАНО!", "log-crit"); calculateStats(true); }
