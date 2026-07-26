@@ -6,24 +6,29 @@
     <title>Game - Лагерь героя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { 
-            --safe-top: var(--tg-content-safe-area-inset-top, env(safe-area-inset-top, 12px));
-            --safe-bottom: var(--tg-content-safe-area-inset-bottom, env(safe-area-inset-bottom, 24px));
-        }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* === УБИЙЦА ЧЕРНОГО ЭКРАНА: ЖЕСТКАЯ ИЗОЛЯЦИЯ === */
+        /* === АБСОЛЮТНАЯ КАПСУЛА: ЗАЩИТА ОТ ЧЕРНОГО ЭКРАНА === */
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0;
+            background-color: #0d0d0f;
+            overflow: hidden; /* Жестко блокируем резиновый скролл Safari */
+        }
+
         body {
-            position: fixed; inset: 0; /* Намертво крепим к краям устройства */
-            margin: 0; padding: calc(var(--safe-top) + 10px) 6px var(--safe-bottom) 6px;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0d0d0f; color: #e4e4e7; font-size: 12px; 
+            color: #e4e4e7; font-size: 12px; 
             user-select: none; touch-action: manipulation;
-            display: flex; flex-direction: column; overflow: hidden;
+            display: flex; flex-direction: column;
+            padding: 12px 6px 12px 6px; /* Безопасные отступы без вычислений */
         }
         
+        /* === ТОП ПАНЕЛЬ === */
         .top-dashboard {
-            flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, #18181b 0%, #121214 100%); 
             padding: 6px 14px; border-radius: 8px; border: 1px solid #27272a; 
             margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); position: relative; overflow: hidden;
@@ -36,17 +41,20 @@
         .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
         .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
 
+        /* === ЦЕНТРАЛЬНЫЙ СКРОЛЛ-КОНТЕЙНЕР === */
         .app-screens-wrapper {
-            flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
+            flex: 1; display: flex; flex-direction: column;
+            overflow-y: auto; overflow-x: hidden; position: relative;
             padding-right: 2px; min-height: 0; scroll-behavior: smooth;
         }
         .app-screens-wrapper::-webkit-scrollbar { width: 4px; }
         .app-screens-wrapper::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
 
+        /* === НАВИГАЦИЯ === */
         .nav-grid { 
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
-            margin-top: auto; padding-top: 10px; border-top: 1px solid #27272a;
-            flex-shrink: 0; z-index: 50; padding-bottom: 4px;
+            margin-top: auto; padding-top: 8px; border-top: 1px solid #27272a;
+            flex-shrink: 0; z-index: 50;
         }
         .nav-btn {
             background: #121214; color: #71717a; border: 1px solid #27272a; 
@@ -57,21 +65,20 @@
         .nav-btn:active { transform: scale(0.95); }
         .nav-btn.active { background: linear-gradient(180deg, #3b0764 0%, #18181b 100%); color: #e9d5ff; border-color: #9333ea; box-shadow: inset 0 2px 4px rgba(168, 85, 247, 0.2), 0 4px 10px rgba(0,0,0,0.8); }
         
-        .app-screen { display: none; padding-bottom: 80px; min-height: 100%; width: 100%; animation: fadeIn 0.2s ease-out; }
-        .app-screen.active { display: block; }
+        /* === УПРАВЛЕНИЕ ЭКРАНАМИ === */
+        .app-screen { display: none; width: 100%; animation: fadeIn 0.2s ease-out; padding-bottom: 40px; flex-direction: column; }
+        .app-screen.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ЖЕСТКАЯ ФИКСАЦИЯ БОЕВОГО ЭКРАНА БЕЗ СКРОЛЛА */
+        /* ЖЕСТКАЯ ФИКСАЦИЯ БОЕВОГО ЭКРАНА PVE БЕЗ СКРОЛЛА */
         #screen-PVE.active {
-            display: flex; flex-direction: column; position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0; padding-bottom: 0;
-            overflow: hidden; background-color: #0d0d0f; z-index: 10;
+            height: 100%; padding-bottom: 0; overflow: hidden;
         }
 
         #screen-hero, #screen-boss { position: relative; margin: -6px; padding: 6px; min-height: 100%; border-radius: 8px; overflow: hidden; z-index: 1; }
         #screen-hero::before, #screen-boss::before { content: ''; position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; background-image: url("{{ url_for('static', filename='begraund/1784901836658.png') }}"); background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; }
 
-        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 6px 10px; text-align: center; margin-bottom: 8px; color: #d4d4d8; font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .class-banner { background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; padding: 6px 10px; text-align: center; margin-bottom: 8px; color: #d4d4d8; font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; position: relative; flex-shrink: 0; }
         #ui-class-name { padding-right: 75px; }
         .floor-nav-btn { background: #18181b; border: 1px solid #3f3f46; color: #fbbf24; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 16px; }
         .floor-nav-btn:active { transform: scale(0.9); }
@@ -164,7 +171,7 @@
         .raid-btn { background: #ef4444; color: #fff; border: 1px solid #b91c1c; border-radius: 6px; padding: 0 8px; height: 44px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
-        /* === PVE БОЕВКА (ИДЕАЛЬНАЯ РЕЗИНА) === */
+        /* === PVE БОЕВКА (ИДЕАЛЬНАЯ РЕЗИНА ДЛЯ ЛЮБЫХ ЭКРАНОВ) === */
         .combat-arena { 
             flex: 1; min-height: 0;
             display: flex; flex-direction: column; 
@@ -178,12 +185,12 @@
         .intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
         
         .combat-entities { 
-            flex: 1; min-height: 0; 
+            flex: 1; min-height: 150px; /* Гарантируем, что блок не схлопнется */
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; gap: 8px; 
             border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; padding: 8px 6px; 
             box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
         }
-        .combat-entity-wrapper { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center; z-index: 2; }
+        .combat-entity-wrapper { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
         
         .entity-name-plate { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; margin-bottom: 4px; }
         .entity-name-text { font-family: "Georgia", "Palatino Linotype", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
@@ -191,9 +198,9 @@
         .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
         .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
         
-        /* РЕЗИНОВЫЕ КВАДРАТЫ (ИДЕАЛЬНО ДЛЯ IOS) */
+        /* РЕЗИНОВЫЕ КВАДРАТЫ (ЗАЩИТА ОТ СПЛЮЩИВАНИЯ НА IOS) */
         .combat-card { 
-            width: 38vw; height: 38vw; max-width: 140px; max-height: 140px; flex-shrink: 0;
+            width: 35vw; height: 35vw; max-width: 140px; max-height: 140px; flex-shrink: 0; /* Строгие пропорции без aspect-ratio */
             position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
             background: #050505; border: 2px solid #3f3f46; border-radius: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 6px 15px rgba(0,0,0,0.8); overflow: hidden;
         }
@@ -247,7 +254,7 @@
         .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
         .control-label { font-size: 9px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1;}
         .zone-group { display: flex; flex: 1; gap: 6px; }
-        .zone-btn { flex: 1; min-height: 48px; padding: 0 4px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s; }
+        .zone-btn { flex: 1; min-height: 38px; padding: 0 4px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s; }
         .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
         .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.4);}
         .durability-dots { display: flex; gap: 2px; }
@@ -260,9 +267,9 @@
         .zone-btn.broken .durability-dots { display: none; }
         
         .main-actions { display: flex; gap: 8px; margin-top: 2px; }
-        .btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 48px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 42px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
         .btn-skill-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
-        .btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 48px; display: flex; align-items: center; justify-content: center;}
+        .btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 42px; display: flex; align-items: center; justify-content: center;}
         .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 100; text-align: center; backdrop-filter: blur(5px);}
@@ -333,24 +340,90 @@
         const STATIC_URL = "{{ url_for('static', filename='') }}";
         const GOD_MODE = false; 
 
-        const CLASS_AVATARS={knight:STATIC_URL+"knight.png",berserk:STATIC_URL+"berserk.png",shadow:STATIC_URL+"shadow.png",ranger:STATIC_URL+"ranger.png"};
-        const imgCache={};for(let key in CLASS_AVATARS){imgCache[key]=new Image();imgCache[key].src=CLASS_AVATARS[key];}
+        const CLASS_AVATARS = {
+            knight: STATIC_URL + "knight.png",
+            berserk: STATIC_URL + "berserk.png",
+            shadow: STATIC_URL + "shadow.png",
+            ranger: STATIC_URL + "ranger.png"
+        };
+        
+        const imgCache = {};
+        for (let key in CLASS_AVATARS) {
+            imgCache[key] = new Image();
+            imgCache[key].src = CLASS_AVATARS[key];
+        }
 
-        const CLASSES={
-            knight:{id:"knight",name:"Рыцарь",icon:"🛡️",color:"#fbbf24",lore:"Держит удар лучше, чем корпоративный сервер в пятницу. [Пассивка: Идеальный блок отражает 20% урона]",growth:{str:1,agi:0,end:1,mst:0,luk:0},statWeights:{str_dmg:1,str_arm:1,agi_dodge:0.2,end_hp:15,mst_block:1,mst_pen:0.5,luk_crit:0.2,luk_drop:0.1},skill:{name:"Эгида",desc:"Блокирует удар и Исцеляет 25% HP.",cd:3},bars:{dmg:40,def:100,diff:20},armorMult:1.25,critDmgMult:1.4,dodgeMult:0.9},
-            berserk:{id:"berserk",name:"Берсерк",icon:"🪓",color:"#ef4444",lore:"Машина для переработки врагов. [Пассивка: Меньше HP - больше урон и крит]",growth:{str:2,agi:0,end:0,mst:0,luk:0},statWeights:{str_dmg:3,agi_dodge:0.5,end_hp:8,mst_pen:2,mst_cdmg:1,luk_crit:0.5,luk_drop:0.1},skill:{name:"Яростный Удар",desc:"Удар на x2.5 урона.",cd:3},bars:{dmg:100,def:30,diff:50},armorMult:0.85,critDmgMult:1.9,dodgeMult:1.0},
-            shadow:{id:"shadow",name:"Тень",icon:"🗡️",color:"#a855f7",lore:"Специалист по внезапным сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]",growth:{str:0,agi:1,end:0,mst:1,luk:0},statWeights:{str_dmg:0.5,agi_dmg:2,agi_dodge:1,end_hp:6,mst_cdmg:3,mst_pen:1,luk_crit:0.8,luk_dodge:0.5,luk_drop:0.1},skill:{name:"Вспышка Тени",desc:"Уворот + Крит на след. ход.",cd:3},bars:{dmg:85,def:20,diff:90},armorMult:1.0,critDmgMult:2.2,dodgeMult:1.3},
-            ranger:{id:"ranger",name:"Следопыт",icon:"🏹",color:"#10b981",lore:"Делегирует стрелы в уязвимые места. [Пассивка: Удача влияет на лут. Игнор 30% брони]",growth:{str:0,agi:1,end:0,mst:0,luk:1},statWeights:{str_dmg:1,agi_dmg:1.5,agi_dodge:0.5,end_hp:8,mst_pen:2,mst_crit:0.5,luk_crit:0.5,luk_drop:2.0},skill:{name:"Выстрел в Сердце",desc:"Оглушает врага на 1 ход.",cd:3},bars:{dmg:70,def:40,diff:60},armorMult:1.0,critDmgMult:1.8,dodgeMult:1.15}
+        const CLASSES = {
+            knight: { 
+                id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", 
+                lore: "Держит удар лучше, чем корпоративный сервер в пятницу. [Пассивка: Идеальный блок отражает 20% урона]", 
+                growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, 
+                statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, 
+                skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, 
+                bars: { dmg: 40, def: 100, diff: 20 }, 
+                armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 
+            },
+            berserk: { 
+                id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", 
+                lore: "Машина для переработки врагов. [Пассивка: Меньше HP - больше урон и крит]", 
+                growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, 
+                statWeights: { str_dmg: 3, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, 
+                skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, 
+                bars: { dmg: 100, def: 30, diff: 50 }, 
+                armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 
+            },
+            shadow: { 
+                id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", 
+                lore: "Специалист по внезапным сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]", 
+                growth: { str: 0, agi: 1, end: 0, mst: 1, luk: 0 }, 
+                statWeights: { str_dmg: 0.5, agi_dmg: 2, agi_dodge: 1, end_hp: 6, mst_cdmg: 3, mst_pen: 1, luk_crit: 0.8, luk_dodge: 0.5, luk_drop: 0.1 }, 
+                skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, 
+                bars: { dmg: 85, def: 20, diff: 90 }, 
+                armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 
+            },
+            ranger: { 
+                id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", 
+                lore: "Делегирует стрелы в уязвимые места. [Пассивка: Удача влияет на лут. Игнор 30% брони]", 
+                growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, 
+                statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, 
+                skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, 
+                bars: { dmg: 70, def: 40, diff: 60 }, 
+                armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 
+            }
         };
 
-        const TALENTS_DATA={
-            knight:[{lvl:20,opts:[{id:'k1a',n:'Бастион',d:'Блок лечит 5% HP'},{id:'k1b',n:'Шипы',d:'+15% Брони к Урону'},{id:'k1c',n:'Молот',d:'Игнор 50% Брони'}]},{lvl:40,opts:[{id:'k2a',n:'Крепость',d:'+25% Макс HP'},{id:'k2b',n:'Возмездие',d:'Идеал. блок: возврат 50% урона'},{id:'k2c',n:'Шок',d:'Блок: 25% шанс оглушить'}]},{lvl:60,opts:[{id:'k3a',n:'Сталь',d:'+50% Брони'},{id:'k3b',n:'Ярость',d:'Урон +20%'},{id:'k3c',n:'Святость',d:'Навык лечит 50% HP'}]},{lvl:80,opts:[{id:'k4a',n:'Иммунитет',d:'Иммунитет к критам'},{id:'k4b',n:'Тяжесть',d:'МСТ дает +2% Блока'},{id:'k4c',n:'Рвение',d:'КД навыка -1 ход'}]},{lvl:100,opts:[{id:'k5a',n:'Второе дыхание',d:'<30% HP: Броня x2'},{id:'k5b',n:'Зеркало',d:'Идеал. блок: возврат 100% урона'},{id:'k5c',n:'Кара',d:'Удары игнорируют блок'}]}],
-            berserk:[{lvl:20,opts:[{id:'b1a',n:'Вампир',d:'Лечит 15% от урона'},{id:'b1b',n:'Гнев',d:'Комбо растет x2 быстрее'},{id:'b1c',n:'Крушитель',d:'Ломает броню с 1 удара'}]},{lvl:40,opts:[{id:'b2a',n:'Толстая кожа',d:'+20% Макс HP'},{id:'b2b',n:'Жестокость',d:'+50% Крит Урон'},{id:'b2c',n:'Палач',d:'+40% урона по сломанному'}]},{lvl:60,opts:[{id:'b3a',n:'Регенерация',d:'+5 HP каждый ход'},{id:'b3b',n:'Агония',d:'Бонус от ран x2'},{id:'b3c',n:'Пробитие',d:'+30% Игнор брони'}]},{lvl:80,opts:[{id:'b4a',n:'Стойкость',d:'Входящий урон -20%'},{id:'b4b',n:'Транс',d:'Комбо не сбрасывается от урона'},{id:'b4c',n:'Кровоточивость',d:'Криты бьют зону x3'}]},{lvl:100,opts:[{id:'b5a',n:'Бессмертие',d:'Выживает с 1 HP (1 раз)'},{id:'b5b',n:'Аватар',d:'Крит урон до +200% при лоу HP'},{id:'b5c',n:'Резня',d:'100% Игнор брони'}]}],
-            shadow:[{lvl:20,opts:[{id:'s1a',n:'Ветер',d:'Кап уворота 90%'},{id:'s1b',n:'Убийца',d:'100% крит по фулл HP'},{id:'s1c',n:'Яд',d:'Яд: -5% HP врага за ход'}]},{lvl:40,opts:[{id:'s2a',n:'Тень',d:'Уворот лечит 5% HP'},{id:'s2b',n:'Призрак',d:'Игнор блока врага'},{id:'s2c',n:'Пиявка',d:'Яд лечит Тень'}]},{lvl:60,opts:[{id:'s3a',n:'Рефлекс',d:'+15% Уворот'},{id:'s3b',n:'Точность',d:'+20% Крит шанс'},{id:'s3c',n:'Токсин',d:'Яд бьет на +50% сильнее'}]},{lvl:80,opts:[{id:'s4a',n:'Контратака',d:'Уворот бьет 100% урона'},{id:'s4b',n:'Ассасин',d:'КД навыка -1 ход'},{id:'s4c',n:'Слабость',d:'Яд режет урон врага на 20%'}]},{lvl:100,opts:[{id:'s5a',n:'Мираж',d:'50% шанс увернуться всегда'},{id:'s5b',n:'Казнь',d:'Ваншот врага <20% HP'},{id:'s5c',n:'Эпидемия',d:'Яд стакается до 3 раз'}]}],
-            ranger:[{lvl:20,opts:[{id:'r1a',n:'Снайпер',d:'В голову: +30% крит шанс'},{id:'r1b',n:'Мародер',d:'Золото x2'},{id:'r1c',n:'Ловчий',d:'Замедление (пропуск 3-го хода)'}]},{lvl:40,opts:[{id:'r2a',n:'Пронзание',d:'Криты игнорят 100% брони'},{id:'r2b',n:'Искатель',d:'Шанс Реликвии +50%'},{id:'r2c',n:'Ловушка',d:'Ульта босса позже на 3 хода'}]},{lvl:60,opts:[{id:'r3a',n:'Мощь',d:'Урон +20%'},{id:'r3b',n:'Жадность',d:'Алмазы с рейдов +50%'},{id:'r3c',n:'Проворство',d:'+10% Уворот'}]},{lvl:80,opts:[{id:'r4a',n:'Хедшот',d:'В голову: +50% Крит Урон'},{id:'r4b',n:'Торгаш',d:'Цены в Лавке -20%'},{id:'r4c',n:'Подавление',d:'Урон боссов -15%'}]},{lvl:100,opts:[{id:'r5a',n:'Меткость',d:'Навык режет броню босса навсегда'},{id:'r5b',n:'Клад',d:'20% шанс на х2 Реликвии с босса'},{id:'r5c',n:'Ослепление',d:'Враг мажет с шансом 20%'}]}]
+        const TALENTS_DATA = {
+            knight: [
+                {lvl:20, opts:[{id:'k1a',n:'Бастион',d:'Блок лечит 5% HP'},{id:'k1b',n:'Шипы',d:'+15% Брони к Урону'},{id:'k1c',n:'Молот',d:'Игнор 50% Брони'}]},
+                {lvl:40, opts:[{id:'k2a',n:'Крепость',d:'+25% Макс HP'},{id:'k2b',n:'Возмездие',d:'Идеал. блок: возврат 50% урона'},{id:'k2c',n:'Шок',d:'Блок: 25% шанс оглушить'}]},
+                {lvl:60, opts:[{id:'k3a',n:'Сталь',d:'+50% Брони'},{id:'k3b',n:'Ярость',d:'Урон +20%'},{id:'k3c',n:'Святость',d:'Навык лечит 50% HP'}]},
+                {lvl:80, opts:[{id:'k4a',n:'Иммунитет',d:'Иммунитет к критам'},{id:'k4b',n:'Тяжесть',d:'МСТ дает +2% Блока'},{id:'k4c',n:'Рвение',d:'КД навыка -1 ход'}]},
+                {lvl:100, opts:[{id:'k5a',n:'Второе дыхание',d:'<30% HP: Броня x2'},{id:'k5b',n:'Зеркало',d:'Идеал. блок: возврат 100% урона'},{id:'k5c',n:'Кара',d:'Удары игнорируют блок'}]}
+            ],
+            berserk: [
+                {lvl:20, opts:[{id:'b1a',n:'Вампир',d:'Лечит 15% от урона'},{id:'b1b',n:'Гнев',d:'Комбо растет x2 быстрее'},{id:'b1c',n:'Крушитель',d:'Ломает броню с 1 удара'}]},
+                {lvl:40, opts:[{id:'b2a',n:'Толстая кожа',d:'+20% Макс HP'},{id:'b2b',n:'Жестокость',d:'+50% Крит Урон'},{id:'b2c',n:'Палач',d:'+40% урона по сломанному'}]},
+                {lvl:60, opts:[{id:'b3a',n:'Регенерация',d:'+5 HP каждый ход'},{id:'b3b',n:'Агония',d:'Бонус от ран x2'},{id:'b3c',n:'Пробитие',d:'+30% Игнор брони'}]},
+                {lvl:80, opts:[{id:'b4a',n:'Стойкость',d:'Входящий урон -20%'},{id:'b4b',n:'Транс',d:'Комбо не сбрасывается от урона'},{id:'b4c',n:'Кровоточивость',d:'Криты бьют зону x3'}]},
+                {lvl:100, opts:[{id:'b5a',n:'Бессмертие',d:'Выживает с 1 HP (1 раз)'},{id:'b5b',n:'Аватар',d:'Крит урон до +200% при лоу HP'},{id:'b5c',n:'Резня',d:'100% Игнор брони'}]}
+            ],
+            shadow: [
+                {lvl:20, opts:[{id:'s1a',n:'Ветер',d:'Кап уворота 90%'},{id:'s1b',n:'Убийца',d:'100% крит по фулл HP'},{id:'s1c',n:'Яд',d:'Яд: -5% HP врага за ход'}]},
+                {lvl:40, opts:[{id:'s2a',n:'Тень',d:'Уворот лечит 5% HP'},{id:'s2b',n:'Призрак',d:'Игнор блока врага'},{id:'s2c',n:'Пиявка',d:'Яд лечит Тень'}]},
+                {lvl:60, opts:[{id:'s3a',n:'Рефлекс',d:'+15% Уворот'},{id:'s3b',n:'Точность',d:'+20% Крит шанс'},{id:'s3c',n:'Токсин',d:'Яд бьет на +50% сильнее'}]},
+                {lvl:80, opts:[{id:'s4a',n:'Контратака',d:'Уворот бьет 100% урона'},{id:'s4b',n:'Ассасин',d:'КД навыка -1 ход'},{id:'s4c',n:'Слабость',d:'Яд режет урон врага на 20%'}]},
+                {lvl:100, opts:[{id:'s5a',n:'Мираж',d:'50% шанс увернуться всегда'},{id:'s5b',n:'Казнь',d:'Ваншот врага <20% HP'},{id:'s5c',n:'Эпидемия',d:'Яд стакается до 3 раз'}]}
+            ],
+            ranger: [
+                {lvl:20, opts:[{id:'r1a',n:'Снайпер',d:'В голову: +30% крит шанс'},{id:'r1b',n:'Мародер',d:'Золото x2'},{id:'r1c',n:'Ловчий',d:'Замедление (пропуск 3-го хода)'}]},
+                {lvl:40, opts:[{id:'r2a',n:'Пронзание',d:'Криты игнорят 100% брони'},{id:'r2b',n:'Искатель',d:'Шанс Реликвии +50%'},{id:'r2c',n:'Ловушка',d:'Ульта босса позже на 3 хода'}]},
+                {lvl:60, opts:[{id:'r3a',n:'Мощь',d:'Урон +20%'},{id:'r3b',n:'Жадность',d:'Алмазы с рейдов +50%'},{id:'r3c',n:'Проворство',d:'+10% Уворот'}]},
+                {lvl:80, opts:[{id:'r4a',n:'Хедшот',d:'В голову: +50% Крит Урон'},{id:'r4b',n:'Торгаш',d:'Цены в Лавке -20%'},{id:'r4c',n:'Подавление',d:'Урон боссов -15%'}]},
+                {lvl:100, opts:[{id:'r5a',n:'Меткость',d:'Навык режет броню босса навсегда'},{id:'r5b',n:'Клад',d:'20% шанс на х2 Реликвии с босса'},{id:'r5c',n:'Ослепление',d:'Враг мажет с шансом 20%'}]}
+            ]
         };
 
-        const ITEMS_DB={
+        const ITEMS_DB = {
             "90523":{id:"90523",name:"Ржавая Кирка",type:"weapon1",icon:"⛏️",rarity:"common",lvl:1,price:30,stats:{atk:5,armorPen:2}},
             "86389":{id:"86389",name:"Железный Кинжал",type:"weapon1",icon:"🗡️",rarity:"common",lvl:1,price:40,allowedClasses:["shadow","ranger"],stats:{atk:4,critChance:3}},
             "64755":{id:"64755",name:"Гвардейская Кольчуга",type:"chest",icon:"👕",rarity:"common",lvl:1,price:50,stats:{armor:10,dodgeChance:-1}},
