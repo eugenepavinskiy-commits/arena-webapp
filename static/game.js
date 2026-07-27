@@ -1,7 +1,7 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (ПРОБИВНОЙ WEB AUDIO API) ===
+// === АУДИО ДВИЖОК ===
 const STATIC_URL = "static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
@@ -40,44 +40,29 @@ function unlockAudio() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     let buffer = audioCtx.createBuffer(1, 1, 22050);
     let source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioCtx.destination);
-    source.start(0);
+    source.buffer = buffer; source.connect(audioCtx.destination); source.start(0);
     audioUnlocked = true;
-    document.removeEventListener('touchstart', unlockAudio);
-    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio); document.removeEventListener('click', unlockAudio);
 }
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true }); document.addEventListener('click', unlockAudio, { once: true });
 
 function playSFX(id) {
     if (sfxMuted || !SFX_BUFFERS[id]) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
     try {
-        let source = audioCtx.createBufferSource();
-        source.buffer = SFX_BUFFERS[id];
-        let gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0.6;
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        source.start(0);
+        let source = audioCtx.createBufferSource(); source.buffer = SFX_BUFFERS[id];
+        let gainNode = audioCtx.createGain(); gainNode.gain.value = 0.6;
+        source.connect(gainNode); gainNode.connect(audioCtx.destination); source.start(0);
     } catch(e) {}
 }
 
-window.toggleMute = function() { 
-    sfxMuted = !sfxMuted; 
-    if (!sfxMuted) playSFX('click'); 
-    updateUI(); 
-};
+window.toggleMute = function() { sfxMuted = !sfxMuted; if (!sfxMuted) playSFX('click'); updateUI(); };
 
 // === ВИЗУАЛЬНАЯ БАЗА (VFX & LOTTIE) ===
 const VFX_DB = {
-    attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
-    attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
-    knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
-    berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
-    shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
-    ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" 
+    attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" 
 };
 
 function playLottieEffect(targetId, animationUrl, extraClass = "") {
@@ -87,15 +72,8 @@ function playLottieEffect(targetId, animationUrl, extraClass = "") {
     anim.addEventListener('complete', () => { fxContainer.remove(); anim.destroy(); });
 }
 
-function shakeScreen() {
-    let app = document.getElementById("app-container");
-    if(app) { app.classList.remove("shake-hard"); void app.offsetWidth; app.classList.add("shake-hard"); setTimeout(() => app.classList.remove("shake-hard"), 350); }
-}
-
-function triggerSkillVFX(elementId, vfxClass) {
-    let el = document.getElementById(elementId);
-    if(el) { el.classList.remove(vfxClass); void el.offsetWidth; el.classList.add(vfxClass); setTimeout(() => el.classList.remove(vfxClass), 500); }
-}
+function shakeScreen() { let app = document.getElementById("app-container"); if(app) { app.classList.remove("shake-hard"); void app.offsetWidth; app.classList.add("shake-hard"); setTimeout(() => app.classList.remove("shake-hard"), 350); } }
+function triggerSkillVFX(elementId, vfxClass) { let el = document.getElementById(elementId); if(el) { el.classList.remove(vfxClass); void el.offsetWidth; el.classList.add(vfxClass); setTimeout(() => el.classList.remove(vfxClass), 500); } }
 
 const GOD_MODE = false; 
 
@@ -118,7 +96,13 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
+// === ДОБАВИЛИ РАСХОДНИКИ (ЗЕЛЬЯ И СВИТКИ) ===
 const ITEMS_DB = {
+    "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", rarity: "rare", lvl: 1, price: 80, desc: "Восстанавливает 100 HP. Применяется в бою без траты хода." },
+    "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", rarity: "epic", lvl: 5, price: 250, desc: "Восстанавливает 250 HP. Применяется в бою без траты хода." },
+    "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 🔥 урона мгновенно (не тратит ход)." },
+    "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 ❄️ урона мгновенно (не тратит ход)." },
+
     "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
     "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
     "64755": { id: "64755", name: "Гвардейская Кольчуга", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, stats: { armor: 10, dodgeChance: -1 } },
@@ -304,6 +288,50 @@ function selectZone(type, zone) { if(type === 'atk') combatState.atkZone = zone;
 function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
 function logCombat(text) { let logBox = document.getElementById("combat-log"); if (logBox) { logBox.innerHTML += `<div class="log-entry">${text}</div>`; while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild); logBox.scrollTop = logBox.scrollHeight; } }
 
+// === ЛОГИКА РАСХОДНИКОВ (БЫСТРЫЙ ПОЯС) ===
+function useConsumable(itemId) {
+    if (hero.hp <= 0 && !GOD_MODE) return;
+    let invIndex = hero.inventory.indexOf(itemId);
+    if (invIndex === -1) return;
+    
+    let item = ITEMS_DB[itemId];
+    if (!item || item.type !== 'consumable') return;
+    
+    if (item.subtype === 'heal' && hero.hp >= hero.combatStats.hp) {
+        return alert("Здоровье уже полное!");
+    }
+    
+    playSFX('skill');
+    
+    if (item.subtype === 'heal') {
+        hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power);
+        showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys");
+        logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`);
+    } else if (item.subtype.startsWith('dmg_')) {
+        let elem = item.subtype.split('_')[1];
+        let rawDmg = item.power;
+        let res = enemy.stats[`res_${elem}`] || 0;
+        let finalDmg = Math.floor(rawDmg * (1 - res/100));
+        if (finalDmg < 0) finalDmg = 0;
+        
+        enemy.hp -= finalDmg;
+        if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg);
+        
+        let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️';
+        showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit");
+        triggerHitAnim("entity-enemy-box");
+        shakeScreen();
+        
+        logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`);
+    }
+    
+    hero.inventory.splice(invIndex, 1);
+    saveGame();
+    
+    if (enemy.hp <= 0) { setTimeout(() => handleCombatWin(), 400); } 
+    else { updateUI(); }
+}
+
 function useClassSkill() {
     if (combatState.skillCooldown > 0 || hero.hp <= 0) return; 
     let cls = CLASSES[hero.baseClass]; combatState.skillCooldown = hasTalent('k4c') || hasTalent('s4b') ? cls.skill.cd - 1 : cls.skill.cd;
@@ -391,10 +419,10 @@ function handleCombatWin() {
         let goldGained = hero.level * 50 + 100; hero.gold += goldGained; let droppedItem = null; let logMsg = "";
         if (enemy.raidData.dropRelic) {
             droppedItem = generateBossDrop(hero.level);
-            if (hero.inventory.length < 10) hero.inventory.push(droppedItem.id);
+            if (hero.inventory.length < 15) hero.inventory.push(droppedItem.id);
             else {
                 let cheapestIdx = 0; let minPrice = ITEMS_DB[hero.inventory[0]].price || 0;
-                for(let i=1; i<10; i++) { let p = ITEMS_DB[hero.inventory[i]].price || 0; if(p < minPrice) { minPrice = p; cheapestIdx = i; } }
+                for(let i=1; i<15; i++) { let p = ITEMS_DB[hero.inventory[i]].price || 0; if(p < minPrice) { minPrice = p; cheapestIdx = i; } }
                 if (minPrice < droppedItem.price) { let soldItem = ITEMS_DB[hero.inventory[cheapestIdx]]; hero.gold += Math.floor(soldItem.price * 0.5); logMsg = `<br>Выброшен ${soldItem.name} ради Реликвии!`; hero.inventory[cheapestIdx] = droppedItem.id; } 
                 else { let sellP = Math.floor(droppedItem.price * 0.5); hero.gold += sellP; logMsg = `<br>Сумка полна! Реликвия продана за ${sellP}💰.`; droppedItem = null; }
             }
@@ -416,11 +444,11 @@ function handleCombatWin() {
             let dItem = null;
             if (Math.random() * 100 <= dropChance) {
                 if (isRelicDrop) dItem = generateBossDrop(hero.floor); else { let pool = SHOP_ASSORTMENT.filter(id => !ITEMS_DB[id].dropOnly); dItem = ITEMS_DB[pool[Math.floor(Math.random() * pool.length)]]; }
-                if (hero.inventory.length < 10) hero.inventory.push(dItem.id);
+                if (hero.inventory.length < 15) hero.inventory.push(dItem.id);
                 else {
                     if (dItem.rarity === 'relic') {
                         let cheapestIdx = 0; let minPrice = ITEMS_DB[hero.inventory[0]].price || 0;
-                        for(let i=1; i<10; i++) { let p = ITEMS_DB[hero.inventory[i]].price || 0; if(p < minPrice) { minPrice = p; cheapestIdx = i; } }
+                        for(let i=1; i<15; i++) { let p = ITEMS_DB[hero.inventory[i]].price || 0; if(p < minPrice) { minPrice = p; cheapestIdx = i; } }
                         if (minPrice < dItem.price) { let soldItem = ITEMS_DB[hero.inventory[cheapestIdx]]; hero.gold += Math.floor(soldItem.price * 0.5); logMsg += `<br>Выброшен ${soldItem.name} ради Реликвии!`; hero.inventory[cheapestIdx] = dItem.id; } 
                         else { let sellP = Math.floor(dItem.price * 0.5); hero.gold += sellP; logMsg += `<br>Реликвия продана за ${sellP}💰.`; dItem = null; }
                     } else { let sellP = Math.floor(dItem.price * 0.5); hero.gold += sellP; logMsg += `<br>Вещь продана за ${sellP}💰.`; dItem = null; }
@@ -454,16 +482,12 @@ function applyTurnEndEffects() {
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
 
-// === НОВАЯ ТАКТИЧЕСКАЯ БОЕВКА (СТРОГО ПО ОЧЕРЕДИ БЕЗ НАЛОЖЕНИЯ ЗВУКОВ) ===
 function executeTurn() {
     if (!combatState.atkZone || !combatState.defZone) return;
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-    // Гасим кнопку немедленно, чтобы не нажать дважды
-    let heroAtkZone = combatState.atkZone;
-    let heroDefZone = combatState.defZone;
-    resetCombatZones(); 
-    updateUI(); 
+    let heroAtkZone = combatState.atkZone; let heroDefZone = combatState.defZone;
+    resetCombatZones(); updateUI(); 
 
     let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)", "ENRAGE": "ЯРОСТЬ (ИНСТАКИЛЛ)"};
     let eAtkZone = enemy.nextAtkZone; let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
@@ -472,13 +496,10 @@ function executeTurn() {
     let isEnemyStunned = combatState.enemyStunned; combatState.enemyTurns++;
     if (hasTalent('r1c') && hero.baseClass === 'ranger' && combatState.enemyTurns % 3 === 0) { isEnemyStunned = true; logCombat(`<span class="log-sys">ЛОВЧИЙ! Враг замедлен и пропускает ход.</span>`); }
 
-    // --- 1. АТАКА ГЕРОЯ ---
     let hRes = calcDmg(hero.combatStats, enemy.stats, heroAtkZone, eDefZone, true);
-    playSFX('dodge'); // Звук замаха (МГНОВЕННО ПО КЛИКУ)
-    triggerClashAnim(true, false);
+    playSFX('dodge'); triggerClashAnim(true, false);
 
     setTimeout(() => {
-        // Удар прилетел (через 250мс)
         enemy.hp -= hRes.dmg;
         if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
         
@@ -487,37 +508,25 @@ function executeTurn() {
 
         triggerHitAnim("entity-enemy-box"); playLottieEffect("entity-enemy-box", VFX_DB.attack_hero); 
         
-        // Звуки удара ГЕРОЯ (никаких конфликтов)
         if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
         else if (hRes.type === "crit") { 
             shakeScreen(); showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); playSFX('crit');
             if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
             if (hero.flags.storm && heroAtkZone === 'head' && Math.random() < 0.3) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); }
-        } else if (hRes.type === "block" || hRes.type === "perfect_block") {
-            showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); playSFX('block');
-        } else {
-            showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); playSFX('hit');
-        }
+        } else if (hRes.type === "block" || hRes.type === "perfect_block") { showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); playSFX('block');
+        } else { showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); playSFX('hit'); }
         
         let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
         logCombat(`Вы ударили в ${zNameRu[heroAtkZone]}: -${hRes.dmg} HP${comboTxt}${hRes.elemLog}.`);
         updateUI();
 
-        // --- 2. ПАУЗА И ПРОВЕРКА НА ХОД ВРАГА ---
-        if (enemy.hp <= 0) { 
-            setTimeout(() => handleCombatWin(), 400); 
-        } 
+        if (enemy.hp <= 0) { setTimeout(() => handleCombatWin(), 400); } 
         else {
             applyTurnEndEffects(); 
             if (enemy.hp <= 0) return;
 
-            if (isEnemyStunned) { 
-                logCombat(`<span class="log-sys">${enemy.name} пропускает ход.</span>`); 
-                combatState.enemyStunned = false; 
-                saveGame(); updateUI(); 
-            } 
+            if (isEnemyStunned) { logCombat(`<span class="log-sys">${enemy.name} пропускает ход.</span>`); combatState.enemyStunned = false; saveGame(); updateUI(); } 
             else {
-                // --- 3. АТАКА ВРАГА (С задержкой 500мс) ---
                 setTimeout(() => {
                     let forceDodge = hero.baseClass === 'shadow' && combatState.skillCooldown === (CLASSES.shadow.skill.cd - 1); let eRes;
                     
@@ -533,33 +542,32 @@ function executeTurn() {
 
                     if (!GOD_MODE) hero.hp -= eRes.dmg; 
 
-                    playSFX('dodge'); // Замах ВРАГА
-                    triggerClashAnim(false, true); 
+                    playSFX('dodge'); triggerClashAnim(false, true); 
 
                     setTimeout(() => {
-                        // Удар врага прилетел
                         triggerHitAnim("entity-hero-box"); if(eRes.dmg > 0) playLottieEffect("entity-hero-box", VFX_DB.attack_enemy); 
 
                         if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
-                            combatState.shadowCritReady = true; logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`);
+                            combatState.shadowCritReady = true; logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`); playSFX('dodge');
                             if (hero.flags.void) { combatState.poisonStacks++; logCombat(`<span class="log-skill">ФАНТОМ: Враг отравлен.</span>`); }
                             if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; if(enemy.isRaid) addQuestProgress('boss_dmg', hero.combatStats.damage); showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); playSFX('crit'); } 
                             if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); } 
                         }
-
-                        if (eRes.type === "perfect_block" && hero.baseClass === 'knight') {
+                        else if (eRes.type === "perfect_block" && hero.baseClass === 'knight') {
                             let rPct = hasTalent('k5b') ? 1.0 : (hasTalent('k2b') ? 0.5 : 0.2); let reflectDmg = Math.floor((enemy.stats.atk || 10) * rPct); enemy.hp -= reflectDmg;
                             if(enemy.isRaid) addQuestProgress('boss_dmg', reflectDmg); showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block"); logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`); playSFX('block');
                             if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true; 
                         }
+                        else if (eRes.type === "block" || eRes.type === "perfect_block") { showDmgPopup("entity-hero-box", `БЛОК -${eRes.dmg}`, "log-block"); playSFX('block'); }
+                        else if (eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { if (eRes.type !== "dodge") { showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit"); playSFX('crit'); } else { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); } }
+                        else if (eRes.type === "dodge") { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
+                        else { showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg"); playSFX('hit'); }
                         
                         if ((eRes.type === "perfect_block" || eRes.type === "block") && hero.flags.templar) {
                             hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.1));
                             let refl = Math.floor(eRes.rawDmg * 0.5); enemy.hp -= refl; if(enemy.isRaid) addQuestProgress('boss_dmg', refl); showDmgPopup("entity-enemy-box", `СВЕТ -${refl}`, "log-block");
                         }
-
                         if (eRes.type === "block" && hero.baseClass === 'knight' && hasTalent('k1a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); }
-
                         if (eRes.dmg > 0) {
                             if (!hasTalent('b4b')) combatState.combo = 0; 
                             if (eAtkZone !== 'ULTIMATUM' && eAtkZone !== 'ENRAGE' && eRes.type !== "perfect_block" && combatState.zoneHealth[eAtkZone] > 0) {
@@ -567,13 +575,6 @@ function executeTurn() {
                                 if (combatState.zoneHealth[eAtkZone] === 0) { logCombat(`<span class="log-dmg">⚠️ БРОНЯ В ЗОНЕ '${zNameRu[eAtkZone].toUpperCase()}' ПОЛНОСТЬЮ РАЗРУШЕНА!</span>`); showDmgPopup("entity-hero-box", "СЛОМАНО!", "log-crit"); calculateStats(true); }
                             }
                         }
-
-                        // Звуки удара ВРАГА
-                        if (eRes.type === "dodge") { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
-                        else if (eRes.type === "perfect_block") { showDmgPopup("entity-hero-box", `ПЕРФЕКТ! -${eRes.dmg}`, "log-block"); logCombat(`<span class="log-block">ПЕРФЕКТ БЛОК! +1 КОМБО!</span>`); combatState.combo++; if (combatState.skillCooldown > 0) combatState.skillCooldown--; playSFX('block'); } 
-                        else if (eAtkZone === 'ENRAGE') { showDmgPopup("entity-hero-box", `СМЕРТЬ!`, "log-crit"); playSFX('crit'); }
-                        else if (eAtkZone === 'ULTIMATUM' && eRes.type !== "dodge") { showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit"); playSFX('crit'); }
-                        else { showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg"); playSFX('hit'); }
 
                         if (eAtkZone !== 'ULTIMATUM' && eAtkZone !== 'ENRAGE') logCombat(`${enemy.name} бьет в ${zNameRu[eAtkZone]}: -${eRes.dmg} HP${eRes.elemLog}.`);
                         else if (eAtkZone === 'ENRAGE') logCombat(`<span class="log-dmg">ЯРОСТЬ БОССА УНИЧТОЖИЛА ВАС!</span>`);
@@ -584,15 +585,14 @@ function executeTurn() {
                             else { 
                                 hero.hp = 0; hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; if(!enemy.isRaid && hero.floor > 1) hero.floor--; 
                                 logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`); calculateStats(); 
-                                playSFX('death'); updateUI();
-                                setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000); 
+                                playSFX('death'); updateUI(); setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000); 
                             }
                         } else { planEnemyTurn(); saveGame(); updateUI(); }
-                    }, 250); // Конец анимации врага
-                }, 500); // Конец паузы перед ходом врага
+                    }, 250); 
+                }, 500); 
             }
         }
-    }, 250); // Конец анимации героя
+    }, 250); 
 }
 
 function openInspectModal(invIndex) {
@@ -607,7 +607,21 @@ function openInspectModal(invIndex) {
     
     document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats).join(' • ') + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
     let sellPrice = Math.floor(item.price * 0.5); document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
-    document.getElementById("btn-inspect-equip").onclick = function() { equipItem(inspectInvIndex); closeInspectModal(); };
+    
+    // Блокируем кнопку "Надеть", если это зелье или свиток
+    let eqBtn = document.getElementById("btn-inspect-equip");
+    if(item.type === 'consumable') {
+        eqBtn.innerText = "ИСПОЛЬЗОВАТЬ В БОЮ";
+        eqBtn.style.background = "#52525b";
+        eqBtn.style.boxShadow = "none";
+        eqBtn.onclick = null;
+    } else {
+        eqBtn.innerText = "НАДЕТЬ";
+        eqBtn.style.background = "#fbbf24";
+        eqBtn.style.boxShadow = "0 4px 10px rgba(251,191,36,0.3)";
+        eqBtn.onclick = function() { equipItem(inspectInvIndex); closeInspectModal(); };
+    }
+    
     document.getElementById("btn-inspect-sell").onclick = function() { sellItem(inspectInvIndex); closeInspectModal(); };
     document.getElementById("item-inspect-modal").classList.add("show");
 }
@@ -629,7 +643,7 @@ function selectPreviewClass(classId) { playSFX('click'); previewClassId = classI
 function changeClass(classKey) {
     if (hero.baseClass === classKey) return; if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
     let itemsToUnequip = []; for (let slot in hero.equipment) { let item = hero.equipment[slot]; if (item && item.id !== "blocked" && item.allowedClasses && !item.allowedClasses.includes(classKey)) itemsToUnequip.push(slot); }
-    let neededSlots = (hero.inventory.length + itemsToUnequip.length) - 10; if (neededSlots > 0) return alert(`Для смены класса нужно снять несовместимые вещи. Освободите ${neededSlots} мест в сумке!`);
+    let neededSlots = (hero.inventory.length + itemsToUnequip.length) - 15; if (neededSlots > 0) return alert(`Для смены класса нужно снять несовместимые вещи. Освободите ${neededSlots} мест в сумке!`);
     if(!confirm("Внимание! При смене класса ВСЕ ВЫБРАННЫЕ ТАЛАНТЫ БУДУТ СБРОШЕНЫ. Продолжить?")) return;
     itemsToUnequip.forEach(slot => { let item = hero.equipment[slot]; if (item && item.id !== "blocked") hero.inventory.push(item.id); hero.equipment[slot] = null; if (item && item.type === 'two_handed') hero.equipment.weapon2 = null; });
     hero.gold -= 5000; hero.baseClass = classKey; hero.talents = []; calculateStats(); playSFX('coins'); saveGame(); openScreen('hero');
@@ -639,10 +653,11 @@ function equipItem(invIndex) {
     if (currentScreen === 'PVE' || (enemy && enemy.hp > 0 && hero.hp > 0)) return alert("Нельзя менять снаряжение прямо во время боя!");
     let itemId = hero.inventory[invIndex]; if (!itemId) return; let item = ITEMS_DB[itemId];
     if (item.lvl > hero.level) return alert(`Нужен Ур. ${item.lvl}! Вы пока Ур. ${hero.level}.`); if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert(`Этот предмет не подходит для вашего класса!`);
+    if (item.type === 'consumable') return alert("Расходники используются только в бою из Быстрого пояса!");
     let targetSlot = item.type;
     if (item.type === 'two_handed') {
         let w1 = hero.equipment.weapon1; let w2 = hero.equipment.weapon2; let needsExtraSlot = (w1 && w2 && w2.id !== "blocked");
-        if (needsExtraSlot && hero.inventory.length >= 10) return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
+        if (needsExtraSlot && hero.inventory.length >= 15) return alert("Освободите 1 место в сумке, чтобы снять текущие оружие и щит!");
         hero.inventory.splice(invIndex, 1); if (w1) hero.inventory.push(w1.id); if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id);
         hero.equipment.weapon1 = item; hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
         calculateStats(); saveGame(); updateUI(); return;
@@ -657,12 +672,12 @@ function equipItem(invIndex) {
 function unequipSlot(slotKey) {
     playSFX('click');
     if (currentScreen === 'PVE' || (enemy && enemy.hp > 0 && hero.hp > 0)) return alert("Нельзя снимать снаряжение во время боя!");
-    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 10) return alert("Сумка полна!");
+    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 15) return alert("Сумка полна!");
     if (item.type === 'two_handed') { hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; } else { hero.inventory.push(item.id); hero.equipment[slotKey] = null; }
     calculateStats(); saveGame(); updateUI();
 }
 function addStat(statKey) { if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); calculateStats(); saveGame(); updateUI(); } }
-function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert("Предмет не для вашего класса!"); if (hero.inventory.length >= 10) return alert("Сумка полна!"); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
+function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert("Предмет не для вашего класса!"); if (hero.inventory.length >= 15) return alert("Сумка полна!"); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
 function sellItem(invIndex) { let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return; hero.gold += Math.floor(item.price * 0.5); hero.inventory.splice(invIndex, 1); playSFX('coins'); saveGame(); updateUI(); }
 function healHero() {
     if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!"); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let cost = Math.max(10, Math.floor(missingHp * 0.5));
@@ -822,6 +837,25 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor;
         document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
+        // === ИНЖЕКЦИЯ БЫСТРОГО ПОЯСА ===
+        let dashboard = document.querySelector('.combat-dashboard');
+        let belt = document.getElementById('quick-belt');
+        if(!belt) { belt = document.createElement('div'); belt.id = 'quick-belt'; belt.className = 'quick-belt'; dashboard.insertBefore(belt, dashboard.firstChild); }
+        
+        let consCounts = {};
+        hero.inventory.forEach((id) => {
+            let it = ITEMS_DB[id];
+            if(it && it.type === 'consumable') { if(!consCounts[id]) consCounts[id] = {count: 0, item: it}; consCounts[id].count++; }
+        });
+        
+        let beltHtml = '';
+        for(let id in consCounts) {
+            let data = consCounts[id];
+            beltHtml += `<div class="belt-item rarity-${data.item.rarity}" onclick="useConsumable('${id}')">${data.item.icon}<span class="belt-item-count">${data.count}</span></div>`;
+        }
+        if(beltHtml === '') beltHtml = `<div style="font-size:10px; color:#71717a; text-align:center; width:100%; font-weight:bold; margin-bottom: 4px;">ПОЯС ПУСТ. КУПИТЕ ЗЕЛЬЯ В ЛАВКЕ.</div>`;
+        belt.innerHTML = beltHtml;
+
         let btnSkill = document.getElementById("btn-use-skill");
         if (combatState.skillCooldown > 0) { btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">Скилл</span>КД (${combatState.skillCooldown})`; btnSkill.disabled = true; btnSkill.style.filter = "grayscale(100%) opacity(0.5)"; } 
         else { let cls = CLASSES[hero.baseClass]; btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0 && !GOD_MODE; btnSkill.style.filter = "none"; }
@@ -852,9 +886,9 @@ function updateUI() {
             }
         });
 
-        document.getElementById("ui-bag-capacity").innerText = `${hero.inventory.length}/10`;
+        document.getElementById("ui-bag-capacity").innerText = `${hero.inventory.length}/15`;
         let invHtml = '';
-        for (let i = 0; i < 10; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } }
+        for (let i = 0; i < 15; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } }
         document.getElementById("ui-inventory-grid").innerHTML = invHtml;
 
         let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100)); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let healCost = Math.max(10, Math.floor(missingHp * 0.5));
@@ -936,7 +970,7 @@ function updateUI() {
 
     if (currentScreen === 'blacksmith') {
         let forgeHtml = '';
-        for (let i = 0; i < 10; i++) { 
+        for (let i = 0; i < 15; i++) { 
             if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } 
             else { forgeHtml += `<div class="inv-item empty"></div>`; } 
         }
