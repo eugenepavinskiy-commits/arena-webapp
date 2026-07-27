@@ -1,7 +1,7 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (ПРОБИВНОЙ WEB AUDIO API) ===
+// === АУДИО ДВИЖОК (БРОНЕБОЙНЫЙ WEB AUDIO С МИНИМАЛЬНОЙ ЗАДЕРЖКОЙ) ===
 const STATIC_URL = "static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
@@ -17,8 +17,13 @@ const SFX_FILES = {
 };
 
 let sfxMuted = false;
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
+let audioCtx;
+try {
+    // Флаг 'interactive' заставляет ядро Android выдавать звук мгновенно
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+} catch (e) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); // Фолбэк для старых устройств
+}
 const SFX_BUFFERS = {};
 let audioUnlocked = false;
 
@@ -457,6 +462,8 @@ function applyTurnEndEffects() {
 function executeTurn() {
     if (!combatState.atkZone || !combatState.defZone) return;
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
+    playSFX('dodge'); // ЗВУК ЗАМАХА ПРОИГРЫВАЕТСЯ МГНОВЕННО (ЭТО УБИРАЕТ ОЩУЩЕНИЕ ЗАДЕРЖКИ)
 
     let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)", "ENRAGE": "ЯРОСТЬ (ИНСТАКИЛЛ)"};
     let eAtkZone = enemy.nextAtkZone; let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
