@@ -102,6 +102,7 @@ html, body {
     display: flex; align-items: center; justify-content: center; 
 }
 
+/* === РЕЙДЫ (СИЛУЭТЫ БЕЗ РАМОК) === */
 .raid-img-box {
     width: 90px;
     height: 90px;
@@ -109,14 +110,26 @@ html, body {
     min-height: 90px;
     border-radius: 8px;
     flex-shrink: 0;
-    background: radial-gradient(circle, rgba(239,68,68,0.15) 0%, transparent 70%);
-    border-right: 1px solid #3f3f46;
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    overflow: visible;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+.raid-img { 
+    object-fit: contain; 
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.95)); 
+    z-index: 2; 
+    animation: imgFadeIn 0.5s ease-out forwards; 
+    max-width: 100%; 
+    max-height: 100%;
+    transform: scale(1.15);
+}
+
+.raid-img-box::after { display: none; }
 
 .hero-avatar-box { flex: 1 1 0%; min-width: 0; min-height: 0; max-width: 260px; }
 .hero-avatar-box .silhouette { font-size: 80px; z-index: 1; opacity: 0.3; position: absolute; }
@@ -190,9 +203,6 @@ html, body {
 .raid-boss-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #ef4444; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; padding: 10px; gap: 12px; box-shadow: inset 0 0 15px rgba(239,68,68,0.1), 0 8px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); transition: transform 0.2s; }
 .raid-boss-card:active { transform: scale(0.98); }
 
-.raid-img { object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.9)); z-index: 2; animation: imgFadeIn 0.5s ease-out forwards; max-width:100%; max-height:100%;}
-.raid-img-box::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; box-shadow: inset 0 0 20px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.1); pointer-events: none; z-index: 5; }
-
 .raid-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
 .raid-name { font-weight: 900; font-size: 14px; color: #fbbf24; text-transform: uppercase; text-shadow: 0 2px 4px #000; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;}
 .raid-desc { font-size: 9px; color: #a1a1aa; line-height: 1.3; margin-bottom: 4px; }
@@ -200,7 +210,7 @@ html, body {
 .raid-btn { background: #ef4444; color: #fff; border: 1px solid #b91c1c; border-radius: 6px; padding: 0 8px; height: 38px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); width: 100%;}
 .raid-btn:disabled { background: #27272a; color: #71717a; border-color: #3f3f46; box-shadow: none; }
 
-/* === PVE БОЕВКА === */
+/* === PVE БОЕВКА (СИЛУЭТЫ БЕЗ РАМОК) === */
 .combat-arena { 
     flex: 1; display: flex; flex-direction: column; border: 1px solid #3f3f46; border-radius: 12px; padding: 8px; margin-bottom: 0; position: relative; overflow: hidden; transition: background-image 0.5s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a; min-height: 0;
 }
