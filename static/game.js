@@ -1,9 +1,9 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (SFX) ===
+// === АУДИО ДВИЖОК (ПРОБИВАЕТ БЛОКИРОВКИ МОБИЛЬНЫХ БРАУЗЕРОВ) ===
 const STATIC_URL = "./static/";
-const SFX_DB = {
+const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
     hit: STATIC_URL + "sounds/hit.mp3",
     crit: STATIC_URL + "sounds/crit.mp3",
@@ -16,14 +16,59 @@ const SFX_DB = {
     death: STATIC_URL + "sounds/death.mp3"
 };
 
+const SFX_PLAYERS = {};
 let sfxMuted = false;
-function playSFX(id) {
-    if (sfxMuted || !SFX_DB[id]) return;
-    let a = new Audio(SFX_DB[id]);
-    a.volume = 0.6;
-    a.play().catch(e => { /* Игнорируем ошибку, если браузер заблокировал звук до первого клика */ });
+let audioUnlocked = false;
+
+// Предзагрузка звуков
+for (let key in SFX_FILES) {
+    let audio = new Audio(SFX_FILES[key]);
+    audio.volume = 0.6;
+    audio.preload = "auto";
+    SFX_PLAYERS[key] = audio;
 }
-window.toggleMute = function() { sfxMuted = !sfxMuted; updateUI(); };
+
+// Секретный трюк: Разблокировка звукового контекста при первом касании экрана
+document.addEventListener('touchstart', function unlockAudio() {
+    if (!audioUnlocked) {
+        for (let key in SFX_PLAYERS) {
+            SFX_PLAYERS[key].play().then(() => {
+                SFX_PLAYERS[key].pause();
+                SFX_PLAYERS[key].currentTime = 0;
+            }).catch(e => { /* Игнорируем системные ошибки */ });
+        }
+        audioUnlocked = true;
+        document.removeEventListener('touchstart', unlockAudio);
+    }
+}, { once: true });
+
+// Разблокировка для кликов мышью (если играют с ПК)
+document.addEventListener('click', function unlockAudioClick() {
+    if (!audioUnlocked) {
+        for (let key in SFX_PLAYERS) {
+            SFX_PLAYERS[key].play().then(() => {
+                SFX_PLAYERS[key].pause();
+                SFX_PLAYERS[key].currentTime = 0;
+            }).catch(e => { });
+        }
+        audioUnlocked = true;
+        document.removeEventListener('click', unlockAudioClick);
+    }
+}, { once: true });
+
+function playSFX(id) {
+    if (sfxMuted || !SFX_PLAYERS[id]) return;
+    // Клонируем звук, чтобы они могли звучать одновременно (например, удары подряд)
+    let sound = SFX_PLAYERS[id].cloneNode();
+    sound.volume = 0.6;
+    sound.play().catch(e => console.log("Браузер заблокировал звук:", e));
+}
+
+window.toggleMute = function() { 
+    sfxMuted = !sfxMuted; 
+    if (!sfxMuted) playSFX('click'); // Проверяем звук при включении
+    updateUI(); 
+};
 
 // === ВИЗУАЛЬНАЯ БАЗА (VFX & LOTTIE) ===
 const VFX_DB = {
