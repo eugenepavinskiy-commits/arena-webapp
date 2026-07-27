@@ -1,7 +1,7 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (БРОНЕБОЙНЫЙ WEB AUDIO С МИНИМАЛЬНОЙ ЗАДЕРЖКОЙ) ===
+// === АУДИО ДВИЖОК (ПРОБИВНОЙ WEB AUDIO API) ===
 const STATIC_URL = "static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
@@ -17,13 +17,8 @@ const SFX_FILES = {
 };
 
 let sfxMuted = false;
-let audioCtx;
-try {
-    // Флаг 'interactive' заставляет ядро Android выдавать звук мгновенно
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
-} catch (e) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); // Фолбэк для старых устройств
-}
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext({ latencyHint: 'interactive' });
 const SFX_BUFFERS = {};
 let audioUnlocked = false;
 
@@ -463,8 +458,6 @@ function executeTurn() {
     if (!combatState.atkZone || !combatState.defZone) return;
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-    playSFX('dodge'); // ЗВУК ЗАМАХА ПРОИГРЫВАЕТСЯ МГНОВЕННО (ЭТО УБИРАЕТ ОЩУЩЕНИЕ ЗАДЕРЖКИ)
-
     let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)", "ENRAGE": "ЯРОСТЬ (ИНСТАКИЛЛ)"};
     let eAtkZone = enemy.nextAtkZone; let eDefZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)];
     if (combatState.skillCooldown > 0) combatState.skillCooldown--;
@@ -472,10 +465,18 @@ function executeTurn() {
     let isEnemyStunned = combatState.enemyStunned; combatState.enemyTurns++;
     if (hasTalent('r1c') && hero.baseClass === 'ranger' && combatState.enemyTurns % 3 === 0) { isEnemyStunned = true; logCombat(`<span class="log-sys">ЛОВЧИЙ! Враг замедлен и пропускает ход.</span>`); }
 
+    // --- МГНОВЕННЫЙ РАСЧЕТ И ЗВУК ИГРОКА (УБИРАЕТ ЗАДЕРЖКУ НАЖАТИЯ) ---
+    let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone, true);
+    if (hRes.type === "dodge") { playSFX('dodge'); }
+    else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); }
+    else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); }
+    else { playSFX('hit'); }
+
     triggerClashAnim(true, !isEnemyStunned);
 
+    // --- АНИМАЦИОННАЯ ПАУЗА (ТОЛЬКО ДЛЯ ВИЗУАЛА) ---
     setTimeout(() => {
-        let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone, true); enemy.hp -= hRes.dmg;
+        enemy.hp -= hRes.dmg;
         if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
         
         if (hasTalent('b1a') && hero.baseClass === 'berserk') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hRes.dmg * 0.15)); }
@@ -483,15 +484,15 @@ function executeTurn() {
 
         triggerHitAnim("entity-enemy-box"); playLottieEffect("entity-enemy-box", VFX_DB.attack_hero); 
         
-        if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
+        if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); }
         else if (hRes.type === "crit") { 
-            shakeScreen(); showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); playSFX('crit');
+            showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); 
             if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
             if (hero.flags.storm && combatState.atkZone === 'head' && Math.random() < 0.3) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); }
         } else if (hRes.type === "block" || hRes.type === "perfect_block") {
-            showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); playSFX('block');
+            showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); 
         } else {
-            showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); playSFX('hit');
+            showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); 
         }
         
         let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
@@ -520,6 +521,7 @@ function executeTurn() {
 
                 triggerHitAnim("entity-hero-box"); if(eRes.dmg > 0) playLottieEffect("entity-hero-box", VFX_DB.attack_enemy); 
 
+                // --- ЗВУК ВРАГА ПРОИГРЫВАЕТСЯ С ЗАДЕРЖКОЙ (ТАК КАК ЭТО ЕГО ОЧЕРЕДЬ) ---
                 if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
                     combatState.shadowCritReady = true; logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`);
                     if (hero.flags.void) { combatState.poisonStacks++; logCombat(`<span class="log-skill">ФАНТОМ: Враг отравлен.</span>`); }
