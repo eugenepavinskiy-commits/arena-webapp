@@ -445,6 +445,24 @@ html, body {
 .elem-dark { color: #a855f7; font-weight: bold; text-shadow: 0 1px 3px #000; }
 .elem-holy { color: #fbbf24; font-weight: bold; text-shadow: 0 1px 3px #000; }
 .stat-resist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; border: 1px inset #27272a; margin-top: 6px;}
+/* === БЫСТРЫЙ ПОЯС (РАСХОДНИКИ В БОЮ) === */
+.quick-belt { 
+    display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid #27272a; 
+    padding-bottom: 10px; overflow-x: auto; scrollbar-width: none;
+}
+.quick-belt::-webkit-scrollbar { display: none; }
+.belt-item { 
+    background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; 
+    width: 44px; height: 44px; font-size: 22px; display: flex; align-items: center; justify-content: center; 
+    cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.5); flex-shrink: 0;
+}
+.belt-item:active { transform: scale(0.9); }
+.belt-item-count { 
+    position: absolute; bottom: -4px; right: -4px; background: #ef4444; color: #fff; 
+    font-size: 9px; padding: 2px 5px; border-radius: 6px; font-weight: bold; 
+    border: 1px solid #7f1d1d; box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
+
 
 
 /* === АДАПТИВНАЯ УСУШКА ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ (iPhone XS, SE, etc) === */
