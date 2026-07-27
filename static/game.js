@@ -135,7 +135,7 @@ const ITEMS_DB = {
     "52433": { id: "52433", name: "Шлем Гладиатора", type: "head", icon: "🪖", rarity: "rare", lvl: 3, price: 270, allowedClasses: ["berserk", "knight"], dropOnly: true, stats: { armor: 10, str: 3 } },
     "23564": { id: "23564", name: "Тяжелый Чекан", type: "two_handed", icon: "⛏️", rarity: "epic", lvl: 4, price: 450, allowedClasses: ["berserk"], dropOnly: true, stats: { atk: 38, armorPen: 10, agi: -2 } },
     "52995": { id: "52995", name: "Пепельная Ряса", type: "chest", icon: "🥋", rarity: "epic", lvl: 4, price: 350, dropOnly: true, stats: { armor: 18, mst: 8, end: 3 } },
-    "shields_v2_34": { id: "shields_v2_34", name: "Стальной Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
+    "shields_v2_34": { id: "shields_v2_34", name: "Стальный Щит", type: "weapon2", icon: "🛡️", rarity: "rare", lvl: 4, price: 380, allowedClasses: ["knight"], dropOnly: true, stats: { armor: 25, blockChance: 10 } },
     "35056": { id: "35056", name: "Длинный Меч", type: "weapon1", icon: "⚔️", rarity: "epic", lvl: 5, price: 800, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { atk: 42, str: 5 } },
     "51613": { id: "51613", name: "Стальные Сапоги", type: "boots", icon: "👢", rarity: "epic", lvl: 5, price: 750, allowedClasses: ["knight", "berserk"], dropOnly: true, stats: { armor: 15, end: 5 } },
     "42540": { id: "42540", name: "Рыцарский Щит", type: "weapon2", icon: "🛡️", rarity: "epic", lvl: 5, price: 850, allowedClasses: ["knight"], dropOnly: true, setId: "templar", stats: { armor: 38, blockChance: 12 } },
@@ -162,6 +162,13 @@ const ITEMS_DB = {
 let SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
 const PREFIXES = ["Древний", "Проклятый", "Пылающий", "Забытый", "Рунный", "Теневой", "Божественный"];
 
+// === БАЗА КВЕСТОВ ===
+const DAILY_QUESTS = {
+    "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 },
+    "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 },
+    "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 }
+};
+
 // --- КОНЕЦ ЧАСТИ 1 ---
 let currentScreen = "hero";
 let shopMode = "buy";
@@ -177,10 +184,10 @@ let hero = {
     equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null },
     inventory: ["90523", "64755"],
     talents: [],
-    finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {} 
+    finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {},
+    questDate: "", quests: {} // Поля для сохранения квестов
 };
 
-// Подхватываем имя из Telegram, если запущено внутри мессенджера
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
 // === БЕЗОПАСНЫЕ СОХРАНЕНИЯ ===
@@ -193,7 +200,7 @@ function saveGame() {
         for(let key in ITEMS_DB) { if((ITEMS_DB[key].rarity === 'relic' || key.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
         localStorage.setItem('tg_rpg_custom_items', JSON.stringify(customItems));
     } catch (e) {
-        console.error("Ошибка сохранения. Вероятно, включен приватный режим браузера.", e);
+        console.error("Ошибка сохранения.", e);
     }
 }
 
@@ -213,6 +220,8 @@ function loadGame() {
             if(hero.talents === undefined || !Array.isArray(hero.talents)) hero.talents = []; 
             if(hero.setCounts === undefined) hero.setCounts = {};
             if(hero.flags === undefined) hero.flags = {};
+            if(hero.quests === undefined) hero.quests = {};
+            if(hero.questDate === undefined) hero.questDate = "";
         }
         previewClassId = hero.baseClass;
     } catch(e) {}
@@ -220,6 +229,44 @@ function loadGame() {
 
 function hardReset() { if(confirm("Вы уверены? Весь прогресс будет удален!")) { localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items'); location.reload(); } }
 loadGame();
+
+// === ЛОГИКА КВЕСТОВ ===
+function checkDailyQuests() {
+    let today = new Date().toDateString();
+    if (hero.questDate !== today) {
+        hero.questDate = today;
+        hero.quests = {
+            "kill_mobs": { progress: 0, claimed: false },
+            "forge_upg": { progress: 0, claimed: false },
+            "boss_dmg": { progress: 0, claimed: false }
+        };
+        saveGame();
+    }
+}
+
+function addQuestProgress(qId, amount) {
+    if (!hero.quests || !hero.quests[qId]) return;
+    if (hero.quests[qId].claimed) return;
+    hero.quests[qId].progress += amount;
+    let target = DAILY_QUESTS[qId].target;
+    if (hero.quests[qId].progress > target) hero.quests[qId].progress = target;
+    saveGame();
+}
+
+function claimQuest(qId) {
+    let q = hero.quests[qId];
+    let def = DAILY_QUESTS[qId];
+    if (!q || q.claimed || q.progress < def.target) return;
+    
+    q.claimed = true;
+    hero.gems += def.rewardGems;
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    saveGame();
+    updateUI();
+}
+
+// Запускаем проверку квестов при загрузке
+checkDailyQuests();
 
 let enemy = null;
 let combatMode = 'pve';
@@ -239,7 +286,6 @@ const RAID_BOSSES = [
 
 function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
-// Глобальный таймер (Штрафы и билеты рейдов)
 setInterval(() => {
     if (hero.tickets < hero.maxTickets) {
         if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
@@ -431,16 +477,19 @@ function useClassSkill() {
     } 
     else if (hero.baseClass === 'berserk') { 
         let dmg = Math.floor(hero.combatStats.damage * 2.5); enemy.hp -= dmg; 
+        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
         triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
         logCombat(`<span class="log-skill">Вы применили СКИЛЛ! -${dmg} HP.</span>`); 
     } 
     else if (hero.baseClass === 'shadow') { 
         let dmg = Math.floor(hero.combatStats.damage * 1.8); enemy.hp -= dmg; 
+        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
         triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
         logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Уворот активен.</span>`); 
     } 
     else if (hero.baseClass === 'ranger') { 
         let dmg = Math.floor(hero.combatStats.damage * 1.5); enemy.hp -= dmg; 
+        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
         combatState.enemyStunned = true; triggerHitAnim("entity-enemy-box"); 
         showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block"); 
         if (hasTalent('r5a') && enemy.isBoss) { enemy.stats.armor = Math.floor(enemy.stats.armor * 0.9); logCombat(`<span class="log-skill">СКИЛЛ! Броня босса снижена на 10%.</span>`); }
@@ -569,6 +618,9 @@ function handleCombatWin() {
             else { lootBox.style.display = "none"; }
         }
     } else {
+        // === ПРОГРЕСС КВЕСТА: Убить мобов ===
+        addQuestProgress('kill_mobs', 1);
+
         let goldGained = 15 + (hero.floor * 5); let expGained = 20 + (hero.floor * 8);
         if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
         if (hasTalent('r1b')) goldGained *= 2; 
@@ -634,6 +686,7 @@ function applyTurnEndEffects() {
         if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5);
         let poisonDmg = dmgPerStack * combatState.poisonStacks;
         enemy.hp -= poisonDmg;
+        if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg);
         if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } 
         logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`);
         showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill");
@@ -664,10 +717,12 @@ function executeTurn() {
         let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone, true); 
         enemy.hp -= hRes.dmg;
         
+        // === ПРОГРЕСС КВЕСТА: Урон боссам ===
+        if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
+        
         if (hasTalent('b1a') && hero.baseClass === 'berserk') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hRes.dmg * 0.15)); }
         if (combatState.bloodiedLifesteal) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + hRes.dmg); combatState.bloodiedLifesteal = false; showDmgPopup("entity-hero-box", `ЛЕЧЕНИЕ +${hRes.dmg}`, "log-sys"); }
 
-        // ВЫЗОВ АНИМАЦИИ LOTTIE ПРИ УДАРЕ ПО ВРАГУ
         triggerHitAnim("entity-enemy-box");
         playLottieEffect("entity-enemy-box", "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json"); 
         
@@ -707,7 +762,6 @@ function executeTurn() {
 
                 if (!GOD_MODE) hero.hp -= eRes.dmg; 
 
-                // ВЫЗОВ АНИМАЦИИ LOTTIE ПРИ УДАРЕ ПО ГЕРОЮ
                 triggerHitAnim("entity-hero-box");
                 if(eRes.dmg > 0) playLottieEffect("entity-hero-box", "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json"); 
 
@@ -715,7 +769,11 @@ function executeTurn() {
                     combatState.shadowCritReady = true;
                     logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`);
                     if (hero.flags.void) { combatState.poisonStacks++; logCombat(`<span class="log-skill">ФАНТОМ: Враг отравлен.</span>`); }
-                    if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); } 
+                    if (hasTalent('s4a')) { 
+                        enemy.hp -= hero.combatStats.damage; 
+                        if(enemy.isRaid) addQuestProgress('boss_dmg', hero.combatStats.damage);
+                        showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); 
+                    } 
                     if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); } 
                 }
 
@@ -723,6 +781,7 @@ function executeTurn() {
                     let rPct = hasTalent('k5b') ? 1.0 : (hasTalent('k2b') ? 0.5 : 0.2);
                     let reflectDmg = Math.floor((enemy.stats.atk || 10) * rPct);
                     enemy.hp -= reflectDmg;
+                    if(enemy.isRaid) addQuestProgress('boss_dmg', reflectDmg);
                     showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block");
                     logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`);
                     if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true; 
@@ -730,7 +789,9 @@ function executeTurn() {
                 
                 if ((eRes.type === "perfect_block" || eRes.type === "block") && hero.flags.templar) {
                     hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.1));
-                    let refl = Math.floor(eRes.rawDmg * 0.5); enemy.hp -= refl; showDmgPopup("entity-enemy-box", `СВЕТ -${refl}`, "log-block");
+                    let refl = Math.floor(eRes.rawDmg * 0.5); enemy.hp -= refl; 
+                    if(enemy.isRaid) addQuestProgress('boss_dmg', refl);
+                    showDmgPopup("entity-enemy-box", `СВЕТ -${refl}`, "log-block");
                 }
 
                 if (eRes.type === "block" && hero.baseClass === 'knight' && hasTalent('k1a')) {
@@ -799,7 +860,7 @@ function openInspectModal(invIndex) {
 function closeInspectModal() { document.getElementById("item-inspect-modal").classList.remove("show"); inspectInvIndex = null; }
 
 function openScreen(screenName) {
-    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents'].includes(screenName)) return alert("В разработке!");
+    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests'].includes(screenName)) return alert("В разработке!");
     
     if ((screenName === 'PVE' || screenName === 'boss') && hero.hp <= 0 && !GOD_MODE) {
         if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
@@ -936,6 +997,10 @@ function upgradeItem() {
     for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15));
     
     ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
+    
+    // === ПРОГРЕСС КВЕСТА: Ковка ===
+    addQuestProgress('forge_upg', 1);
+
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     
     let anvil = document.getElementById("forge-anvil");
@@ -1094,6 +1159,36 @@ function updateUI() {
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' ? 'disabled' : ''}>▶</button>`;
     let titleEl = document.getElementById("combat-floor-title"); if(titleEl) titleEl.innerHTML = floorNavHtml;
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
+
+    // === ОТРИСОВКА КВЕСТОВ ===
+    if (currentScreen === 'quests') {
+        checkDailyQuests();
+        let html = '';
+        for (let qId in DAILY_QUESTS) {
+            let def = DAILY_QUESTS[qId];
+            let q = hero.quests[qId] || { progress: 0, claimed: false };
+            let pct = Math.min(100, (q.progress / def.target) * 100);
+            let btnHtml = '';
+            
+            if (q.claimed) {
+                btnHtml = `<div class="quest-btn claimed">ВЫПОЛНЕНО</div>`;
+            } else if (q.progress >= def.target) {
+                btnHtml = `<div class="quest-btn ready" onclick="claimQuest('${qId}')">ЗАБРАТЬ НАГРАДУ</div>`;
+            } else {
+                btnHtml = `<div class="quest-btn">${Math.floor(q.progress)} / ${def.target}</div>`;
+            }
+            
+            html += `
+                <div class="quest-card">
+                    <div class="quest-header"><span>${def.name}</span><span class="quest-reward">+${def.rewardGems} 💎</span></div>
+                    <div class="quest-desc">${def.desc}</div>
+                    <div class="quest-progress-wrap"><div class="quest-progress-fill" style="width: ${pct}%"></div></div>
+                    ${btnHtml}
+                </div>
+            `;
+        }
+        document.getElementById("ui-quests-list").innerHTML = html;
+    }
 
     if (currentScreen === 'PVE' && enemy) {
         let arenaOuter = document.getElementById("arena-bg"); arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`; arenaOuter.style.backgroundSize = 'cover'; arenaOuter.style.backgroundPosition = 'center';
@@ -1332,5 +1427,3 @@ function updateUI() {
 
 calculateStats(); 
 updateUI();
-
-
