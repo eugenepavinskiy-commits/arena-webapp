@@ -216,43 +216,89 @@ let hero = {
 
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
+// === БЕЗОПАСНЫЕ СОХРАНЕНИЯ (ЛОКАЛЬНЫЕ + ОБЛАКО TELEGRAM) ===
 function saveGame() {
     try {
-        localStorage.setItem('tg_rpg_hero', JSON.stringify(hero));
+        let heroStr = JSON.stringify(hero);
+        localStorage.setItem('tg_rpg_hero', heroStr);
+        
         let activeItemIds = [...hero.inventory];
         for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
         let customItems = {};
         for(let key in ITEMS_DB) { if((ITEMS_DB[key].rarity === 'relic' || key.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
-        localStorage.setItem('tg_rpg_custom_items', JSON.stringify(customItems));
+        let itemsStr = JSON.stringify(customItems);
+        
+        localStorage.setItem('tg_rpg_custom_items', itemsStr);
+
+        // Дублируем сохранение в официальное облако Telegram (работает между смартфонами и ПК)
+        if (window.tg && tg.CloudStorage) {
+            tg.CloudStorage.setItem('tg_rpg_hero', heroStr);
+            tg.CloudStorage.setItem('tg_rpg_custom_items', itemsStr);
+        }
     } catch (e) {
         console.error("Ошибка сохранения.", e);
     }
 }
 
-function loadGame() {
-    try {
-        let savedHero = localStorage.getItem('tg_rpg_hero');
-        let savedItems = localStorage.getItem('tg_rpg_custom_items');
-        if(savedItems) { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); SHOP_ASSORTMENT = Object.keys(ITEMS_DB); }
-        if(savedHero) { 
-            hero = JSON.parse(savedHero); 
-            if(isNaN(hero.hp)) hero.hp = 100; 
-            if(hero.gems === undefined) hero.gems = 0;
-            if(hero.tickets === undefined) hero.tickets = 3;
-            if(hero.maxTickets === undefined) hero.maxTickets = 3;
-            if(hero.nextTicketTime === undefined) hero.nextTicketTime = 0;
-            if(hero.unspentPoints === undefined) hero.unspentPoints = 0;
-            if(hero.talents === undefined || !Array.isArray(hero.talents)) hero.talents = []; 
-            if(hero.setCounts === undefined) hero.setCounts = {};
-            if(hero.flags === undefined) hero.flags = {};
-            if(hero.quests === undefined) hero.quests = {};
-            if(hero.questDate === undefined) hero.questDate = "";
-        }
-        previewClassId = hero.baseClass;
-    } catch(e) {}
+function applyLoadedSave(savedHero, savedItems) {
+    if(savedItems) { 
+        let parsedItems = JSON.parse(savedItems); 
+        Object.assign(ITEMS_DB, parsedItems); 
+        SHOP_ASSORTMENT = Object.keys(ITEMS_DB); 
+    }
+    if(savedHero) { 
+        let h = JSON.parse(savedHero); 
+        if(isNaN(h.hp)) h.hp = 100; 
+        if(h.gems === undefined) h.gems = 0;
+        if(h.tickets === undefined) h.tickets = 3;
+        if(h.maxTickets === undefined) h.maxTickets = 3;
+        if(h.nextTicketTime === undefined) h.nextTicketTime = 0;
+        if(h.unspentPoints === undefined) h.unspentPoints = 0;
+        if(h.talents === undefined || !Array.isArray(h.talents)) h.talents = []; 
+        if(h.setCounts === undefined) h.setCounts = {};
+        if(h.flags === undefined) h.flags = {};
+        if(h.quests === undefined) h.quests = {};
+        if(h.questDate === undefined) h.questDate = "";
+        hero = h;
+    }
+    previewClassId = hero.baseClass;
+    calculateStats();
+    updateUI();
 }
 
-function hardReset() { if(confirm("Вы уверены? Весь прогресс будет удален!")) { localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items'); location.reload(); } }
+function loadGame() {
+    // 1. Мгновенная загрузка из памяти телефона (чтобы игрок не ждал)
+    try {
+        let localHero = localStorage.getItem('tg_rpg_hero');
+        let localItems = localStorage.getItem('tg_rpg_custom_items');
+        applyLoadedSave(localHero, localItems);
+    } catch(e) {}
+
+    // 2. Фоновая загрузка из Облака Telegram (синхронизация прогресса с других устройств)
+    if (window.tg && tg.CloudStorage) {
+        tg.CloudStorage.getItem('tg_rpg_hero', function(err, cloudHero) {
+            if (!err && cloudHero) {
+                tg.CloudStorage.getItem('tg_rpg_custom_items', function(err2, cloudItems) {
+                    if (!err2) {
+                        applyLoadedSave(cloudHero, cloudItems);
+                    }
+                });
+            }
+        });
+    }
+}
+
+function hardReset() { 
+    if(confirm("Вы уверены? Весь прогресс будет удален навсегда!")) { 
+        localStorage.removeItem('tg_rpg_hero'); 
+        localStorage.removeItem('tg_rpg_custom_items'); 
+        if (window.tg && tg.CloudStorage) {
+            tg.CloudStorage.removeItem('tg_rpg_hero');
+            tg.CloudStorage.removeItem('tg_rpg_custom_items');
+        }
+        location.reload(); 
+    } 
+}
 loadGame();
 
 function checkDailyQuests() {
