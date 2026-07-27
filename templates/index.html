@@ -10,8 +10,8 @@
     <!-- Подключение Lottie для крутых эффектов (магия, удары) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     
-    <!-- Версия 5 для жесткого сброса кэша на iPhone -->
-    <link rel="stylesheet" href="/static/style.css?v=46">
+    <!-- Версия 8 для жесткого сброса кэша -->
+    <link rel="stylesheet" href="/static/style.css?v=8">
 </head>
 <body>
 
@@ -120,6 +120,13 @@
                 <div id="ui-raid-list"></div>
             </div>
 
+            <!-- ЭКРАН: КВЕСТЫ (НОВОЕ) -->
+            <div id="screen-quests" class="app-screen">
+                <div class="class-banner">ЕЖЕДНЕВНЫЕ ПОРУЧЕНИЯ</div>
+                <div style="text-align:center; font-size:10px; color:#a1a1aa; margin-bottom:12px;">Задания обновляются каждый день.</div>
+                <div id="ui-quests-list"></div>
+            </div>
+
             <!-- ЭКРАН: PVE БОЙ -->
             <div id="screen-PVE" class="app-screen">
                 <div class="class-banner" id="combat-floor-title" style="margin-bottom:0; justify-content:space-between; padding: 4px 10px;"></div>
@@ -194,6 +201,7 @@
             </div>
         </div>
 
+        <!-- 8 КНОПОК НАВИГАЦИИ С КВЕСТАМИ -->
         <div class="nav-grid">
             <div id="nav-hero" class="nav-btn active" onclick="openScreen('hero')">🛡️<br>Герой</div>
             <div id="nav-talents" class="nav-btn" onclick="openScreen('talents')">✨<br>Таланты</div>
@@ -202,6 +210,7 @@
             <div id="nav-blacksmith" class="nav-btn" onclick="openScreen('blacksmith')">⚒️<br>Кузня</div>
             <div id="nav-shop" class="nav-btn" onclick="openScreen('shop')">💰<br>Лавка</div>
             <div id="nav-class" class="nav-btn" onclick="openScreen('classes')">🏛️<br>Класс</div>
+            <div id="nav-quests" class="nav-btn" onclick="openScreen('quests')">📜<br>Квесты</div>
         </div>
     </div>
 
@@ -232,7 +241,7 @@
         <button class="modal-btn" onclick="closeVictoryModal()" style="max-width: 250px;">ПРОДОЛЖИТЬ</button>
     </div>
 
-    <!-- Версия 5 для JS файла -->
-    <script src="/static/game.js?v=5"></script>
+    <!-- Версия 8 для JS файла -->
+    <script src="/static/game.js?v=8"></script>
 </body>
 </html>
