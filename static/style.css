@@ -398,6 +398,16 @@ html, body {
 
 .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;}
 .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
+/* === КВЕСТЫ === */
+.quest-card { background: rgba(18, 18, 20, 0.85); border: 1px solid #3f3f46; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.quest-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 13px; color: #e4e4e7; }
+.quest-reward { color: #fbbf24; font-size: 11px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46;}
+.quest-desc { font-size: 10px; color: #a1a1aa; line-height: 1.3;}
+.quest-progress-wrap { width: 100%; height: 6px; background: #050505; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; position: relative; margin: 2px 0;}
+.quest-progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); transition: width 0.3s; box-shadow: 0 0 8px rgba(59,130,246,0.6);}
+.quest-btn { background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-radius: 6px; padding: 10px; font-weight: bold; font-size: 11px; text-transform: uppercase; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.quest-btn.ready { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border-color: #10b981; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
+.quest-btn.claimed { background: #09090b; color: #52525b; border-color: #27272a; cursor: not-allowed; box-shadow: none; }
 
 /* === АДАПТИВНАЯ УСУШКА ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ (iPhone XS, SE, etc) === */
 @media (max-height: 700px) {
