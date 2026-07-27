@@ -5,12 +5,23 @@ if (window.Telegram && window.Telegram.WebApp) {
     tg.expand();
 }
 
-// === ИНИЦИАЛИЗАЦИЯ LOTTIE ===
-function playLottieEffect(targetId, animationUrl) {
+// === ВИЗУАЛЬНАЯ БАЗА (VFX & LOTTIE) ===
+const VFX_DB = {
+    attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    
+    // В будущем ты сможешь заменить эти ссылки на свои Lottie-анимации для каждого класса!
+    knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", 
+    ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" 
+};
+
+function playLottieEffect(targetId, animationUrl, extraClass = "") {
     let targetNode = document.getElementById(targetId);
     if (!targetNode) return;
     let fxContainer = document.createElement('div');
-    fxContainer.className = 'lottie-fx-layer';
+    fxContainer.className = 'lottie-fx-layer ' + extraClass;
     targetNode.appendChild(fxContainer);
 
     let anim = lottie.loadAnimation({
@@ -21,10 +32,27 @@ function playLottieEffect(targetId, animationUrl) {
         path: animationUrl 
     });
 
-    anim.addEventListener('complete', () => {
-        fxContainer.remove();
-        anim.destroy();
-    });
+    anim.addEventListener('complete', () => { fxContainer.remove(); anim.destroy(); });
+}
+
+function shakeScreen() {
+    let app = document.getElementById("app-container");
+    if(app) {
+        app.classList.remove("shake-hard");
+        void app.offsetWidth;
+        app.classList.add("shake-hard");
+        setTimeout(() => app.classList.remove("shake-hard"), 350);
+    }
+}
+
+function triggerSkillVFX(elementId, vfxClass) {
+    let el = document.getElementById(elementId);
+    if(el) {
+        el.classList.remove(vfxClass);
+        void el.offsetWidth;
+        el.classList.add(vfxClass);
+        setTimeout(() => el.classList.remove(vfxClass), 500);
+    }
 }
 
 const STATIC_URL = "./static/";
@@ -162,14 +190,12 @@ const ITEMS_DB = {
 let SHOP_ASSORTMENT = Object.keys(ITEMS_DB);
 const PREFIXES = ["Древний", "Проклятый", "Пылающий", "Забытый", "Рунный", "Теневой", "Божественный"];
 
-// === БАЗА КВЕСТОВ ===
 const DAILY_QUESTS = {
     "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 },
     "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 },
     "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 }
 };
 
-// --- КОНЕЦ ЧАСТИ 1 ---
 let currentScreen = "hero";
 let shopMode = "buy";
 let previewClassId = "knight";
@@ -185,12 +211,11 @@ let hero = {
     inventory: ["90523", "64755"],
     talents: [],
     finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {},
-    questDate: "", quests: {} // Поля для сохранения квестов
+    questDate: "", quests: {} 
 };
 
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
-// === БЕЗОПАСНЫЕ СОХРАНЕНИЯ ===
 function saveGame() {
     try {
         localStorage.setItem('tg_rpg_hero', JSON.stringify(hero));
@@ -230,7 +255,6 @@ function loadGame() {
 function hardReset() { if(confirm("Вы уверены? Весь прогресс будет удален!")) { localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items'); location.reload(); } }
 loadGame();
 
-// === ЛОГИКА КВЕСТОВ ===
 function checkDailyQuests() {
     let today = new Date().toDateString();
     if (hero.questDate !== today) {
@@ -265,7 +289,6 @@ function claimQuest(qId) {
     updateUI();
 }
 
-// Запускаем проверку квестов при загрузке
 checkDailyQuests();
 
 let enemy = null;
@@ -469,6 +492,8 @@ function useClassSkill() {
     combatState.skillCooldown = hasTalent('k4c') || hasTalent('s4b') ? cls.skill.cd - 1 : cls.skill.cd;
     
     if (hero.baseClass === 'knight') { 
+        triggerSkillVFX("entity-hero-box", "vfx-knight");
+        playLottieEffect("entity-hero-box", VFX_DB.knight_skill, "scale-up");
         let healPct = hasTalent('k3c') ? 0.50 : 0.25;
         let heal = Math.floor(hero.combatStats.hp * healPct); 
         hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); 
@@ -476,18 +501,25 @@ function useClassSkill() {
         logCombat(`<span class="log-skill">Вы применили СКИЛЛ! +${heal} HP.</span>`); 
     } 
     else if (hero.baseClass === 'berserk') { 
+        triggerSkillVFX("entity-enemy-box", "vfx-berserk");
+        playLottieEffect("entity-enemy-box", VFX_DB.berserk_skill, "scale-huge");
+        shakeScreen(); 
         let dmg = Math.floor(hero.combatStats.damage * 2.5); enemy.hp -= dmg; 
         if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
-        triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
+        showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
         logCombat(`<span class="log-skill">Вы применили СКИЛЛ! -${dmg} HP.</span>`); 
     } 
     else if (hero.baseClass === 'shadow') { 
+        triggerSkillVFX("entity-hero-box", "vfx-shadow");
+        playLottieEffect("entity-enemy-box", VFX_DB.shadow_skill, "scale-up");
         let dmg = Math.floor(hero.combatStats.damage * 1.8); enemy.hp -= dmg; 
         if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
-        triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
+        showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); 
         logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Уворот активен.</span>`); 
     } 
     else if (hero.baseClass === 'ranger') { 
+        triggerSkillVFX("entity-hero-box", "vfx-ranger");
+        playLottieEffect("entity-enemy-box", VFX_DB.ranger_skill, "scale-up");
         let dmg = Math.floor(hero.combatStats.damage * 1.5); enemy.hp -= dmg; 
         if (enemy.isRaid) addQuestProgress('boss_dmg', dmg);
         combatState.enemyStunned = true; triggerHitAnim("entity-enemy-box"); 
@@ -618,7 +650,6 @@ function handleCombatWin() {
             else { lootBox.style.display = "none"; }
         }
     } else {
-        // === ПРОГРЕСС КВЕСТА: Убить мобов ===
         addQuestProgress('kill_mobs', 1);
 
         let goldGained = 15 + (hero.floor * 5); let expGained = 20 + (hero.floor * 8);
@@ -717,17 +748,17 @@ function executeTurn() {
         let hRes = calcDmg(hero.combatStats, enemy.stats, combatState.atkZone, eDefZone, true); 
         enemy.hp -= hRes.dmg;
         
-        // === ПРОГРЕСС КВЕСТА: Урон боссам ===
         if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
         
         if (hasTalent('b1a') && hero.baseClass === 'berserk') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hRes.dmg * 0.15)); }
         if (combatState.bloodiedLifesteal) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + hRes.dmg); combatState.bloodiedLifesteal = false; showDmgPopup("entity-hero-box", `ЛЕЧЕНИЕ +${hRes.dmg}`, "log-sys"); }
 
         triggerHitAnim("entity-enemy-box");
-        playLottieEffect("entity-enemy-box", "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json"); 
+        playLottieEffect("entity-enemy-box", VFX_DB.attack_hero); 
         
         if (hRes.type === "dodge") showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); 
         else if (hRes.type === "crit") { 
+            shakeScreen(); // Экран трясется при твоем КРИТЕ
             showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); 
             if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
             if (hero.flags.storm && combatState.atkZone === 'head' && Math.random() < 0.3) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); }
@@ -751,7 +782,9 @@ function executeTurn() {
                 
                 if (eAtkZone === 'ENRAGE') {
                     eRes = { dmg: 99999, rawDmg: 99999, type: "crit" };
+                    shakeScreen();
                 } else if (eAtkZone === 'ULTIMATUM') { 
+                    shakeScreen();
                     let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.5); 
                     if (forceDodge) eRes = { dmg: 0, rawDmg: 0, type: "dodge" }; 
                     else { let mitigation = Math.floor(hero.combatStats.armor * 0.2); let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation); eRes = { dmg: finalDmg, rawDmg: baseAtk, type: "crit" }; } 
@@ -763,7 +796,7 @@ function executeTurn() {
                 if (!GOD_MODE) hero.hp -= eRes.dmg; 
 
                 triggerHitAnim("entity-hero-box");
-                if(eRes.dmg > 0) playLottieEffect("entity-hero-box", "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json"); 
+                if(eRes.dmg > 0) playLottieEffect("entity-hero-box", VFX_DB.attack_enemy); 
 
                 if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
                     combatState.shadowCritReady = true;
@@ -997,8 +1030,6 @@ function upgradeItem() {
     for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15));
     
     ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
-    
-    // === ПРОГРЕСС КВЕСТА: Ковка ===
     addQuestProgress('forge_upg', 1);
 
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -1160,7 +1191,6 @@ function updateUI() {
     let titleEl = document.getElementById("combat-floor-title"); if(titleEl) titleEl.innerHTML = floorNavHtml;
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
-    // === ОТРИСОВКА КВЕСТОВ ===
     if (currentScreen === 'quests') {
         checkDailyQuests();
         let html = '';
