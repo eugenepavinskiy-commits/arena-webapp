@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Game - Лагерь героя</title>
+    <!-- Подключение Telegram SDK и Lottie -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <!-- ПОДКЛЮЧЕНИЕ НАШЕГО ФАЙЛА СТИЛЕЙ -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app-container">
+        <div id="blood-screen" class="blood-overlay"></div>
+        <div class="top-dashboard">
+            <div class="resources">
+                💰<span id="ui-gold">0</span> 
+                💎<span id="ui-gems">0</span>
+            </div>
+            <div id="ui-debuff-timer" class="debuff-timer"></div>
+            <div class="progress-info">
+                Ур. <span id="ui-top-lvl">1</span> 
+                (Эт. <span id="ui-top-floor">1</span>)
+                <br><span id="ui-top-exp" style="font-size:9px; color:#a1a1aa; text-shadow:none;">0/100</span>
+            </div>
+            <div class="exp-bar-wrap"><div id="ui-exp-bar" class="exp-bar-fill" style="width: 0%;"></div></div>
+        </div>
+
+        <div class="app-screens-wrapper">
+            <!-- ЭКРАН: ГЕРОЙ -->
+            <div id="screen-hero" class="app-screen active">
+                <div class="class-banner" id="ui-class-name">ГЕРОЙ</div>
+                <div class="hero-layout">
+                    <div class="equip-col">
+                        <div id="slot-head" class="equip-slot empty" onclick="unequipSlot('head')"></div>
+                        <div id="slot-chest" class="equip-slot empty" onclick="unequipSlot('chest')"></div>
+                        <div id="slot-belt" class="equip-slot empty" onclick="unequipSlot('belt')"></div>
+                        <div id="slot-boots" class="equip-slot empty" onclick="unequipSlot('boots')"></div>
+                    </div>
+                    <div class="hero-avatar-box">
+                        <img id="main-hero-avatar" class="hero-avatar" src="">
+                    </div>
+                    <div class="equip-col">
+                        <div id="slot-amulet" class="equip-slot empty" onclick="unequipSlot('amulet')"></div>
+                        <div id="slot-ring1" class="equip-slot empty" onclick="unequipSlot('ring1')"></div>
+                        <div id="slot-ring2" class="equip-slot empty" onclick="unequipSlot('ring2')"></div>
+                    </div>
+                </div>
+                <div class="weapons-row">
+                    <div id="slot-weapon1" class="equip-slot empty" onclick="unequipSlot('weapon1')" style="width: 64px; max-width: 64px; height: 64px;"></div>
+                    <div id="slot-weapon2" class="equip-slot empty" onclick="unequipSlot('weapon2')" style="width: 64px; max-width: 64px; height: 64px;"></div>
+                </div>
+                
+                <div class="inventory-panel">
+                    <div class="inventory-header"><span>Сумка (<span id="ui-bag-capacity">0/10</span>)</span></div>
+                    <div class="inventory-grid" id="ui-inventory-grid"></div>
+                </div>
+
+                <div class="stats-two-column" id="ui-stats-container"></div>
+            </div>
+
+            <!-- ЭКРАН: ТАЛАНТЫ -->
+            <div id="screen-talents" class="app-screen">
+                <div class="class-banner">ТАЛАНТЫ КЛАССА</div>
+                <div id="ui-talents-container"></div>
+            </div>
+
+            <!-- ЭКРАН: КУЗНИЦА -->
+            <div id="screen-blacksmith" class="app-screen">
+                <div class="class-banner">КУЗНИЦА</div>
+                <div class="forge-arena">
+                    <div id="forge-anvil" class="anvil-icon">⚒️</div>
+                    <div id="clash-spark-fx" class="forge-sparks"></div>
+                    <div style="font-size:10px; color:#a1a1aa; font-weight:bold; margin-bottom:10px;">Выберите предмет для улучшения (+15% к статам)</div>
+                    <div class="inventory-grid" id="ui-forge-grid"></div>
+                </div>
+                <div id="forge-details-panel" class="forge-details">
+                    <div style="font-weight:900; color:#fbbf24; font-size:14px; margin-bottom:4px; text-transform:uppercase;" id="f-item-name">-</div>
+                    <div style="font-size:10px; color:#a1a1aa; margin-bottom:10px;" id="f-item-lvl">Ур. -</div>
+                    <div id="f-item-stats"></div>
+                    <button id="btn-forge-upgrade" class="btn-upgrade" onclick="upgradeItem()">КОВАТЬ</button>
+                </div>
+            </div>
+
+            <!-- ЭКРАН: ЛАВКА -->
+            <div id="screen-shop" class="app-screen">
+                <div class="class-banner">ТОРГОВЕЦ</div>
+                <div class="shop-controls">
+                    <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy'); document.getElementById('tab-sell').classList.remove('active-sell'); this.classList.add('active');">КУПИТЬ</div>
+                    <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell'); document.getElementById('tab-buy').classList.remove('active'); this.classList.add('active-sell');">ПРОДАТЬ</div>
+                </div>
+                <div class="shop-filters" id="shop-filters">
+                    <select class="shop-select" id="filter-class" onchange="updateUI()">
+                        <option value="all">Все классы</option>
+                        <option value="my_class" selected>Мой класс</option>
+                    </select>
+                </div>
+                <div class="shop-list" id="ui-shop-list"></div>
+            </div>
+
+            <!-- ЭКРАН: КЛАССЫ -->
+            <div id="screen-classes" class="app-screen">
+                <div class="class-banner">АКАДЕМИЯ</div>
+                <div class="classes-gallery" id="ui-classes-gallery"></div>
+                <div id="ui-class-detail"></div>
+            </div>
+
+            <!-- ЭКРАН: РЕЙДЫ -->
+            <div id="screen-boss" class="app-screen">
+                <div class="class-banner" style="margin-bottom:4px;">МИРОВЫЕ БОССЫ</div>
+                <div style="text-align:center; font-size:11px; font-weight:bold; color:#a1a1aa; margin-bottom:12px;">
+                    Билеты рейда: <span id="ui-raid-tickets" style="color:#fbbf24">3/3</span><br>
+                    <span id="ui-ticket-timer" style="font-size:9px;"></span>
+                </div>
+                <div id="ui-raid-list"></div>
+            </div>
+
+            <!-- ЭКРАН: PVE БОЙ -->
+            <div id="screen-PVE" class="app-screen">
+                <div class="class-banner" id="combat-floor-title" style="margin-bottom:0; justify-content:space-between; padding: 4px 10px;"></div>
+                <div class="combat-arena" id="arena-bg">
+                    <div id="combat-stage-name" class="combat-header">ОБЫЧНЫЙ ВРАГ</div>
+                    <div class="combat-entities" id="combat-entities-box">
+                        <div id="combat-intent" class="intent-box"></div>
+                        <div id="combo-display" class="combo-meter"></div>
+                        
+                        <div class="combat-entity-wrapper">
+                            <div class="entity-name-plate" id="combat-hero-name-plate"></div>
+                            <div id="entity-hero-box" class="combat-card hero">
+                                <div class="card-avatar-wrap"><img id="combat-hero-img" class="card-avatar-img"></div>
+                                <div id="hero-slash" class="slash-fx"></div>
+                            </div>
+                            <div class="entity-hp-plate">
+                                <div class="hp-text-plate"><span id="combat-hero-hp"></span> / <span id="combat-hero-maxhp"></span></div>
+                                <div class="hp-bar-outer"><div id="combat-hero-hp-bar" class="hp-bar-inner hero-hp-fill" style="width: 100%;"></div></div>
+                                <div class="combat-mini-stats"><span>⚔️ <span id="combat-hero-atk-val"></span></span> <span>🛡️ <span id="combat-hero-arm-val"></span></span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="combat-vs">VS</div>
+                        
+                        <div class="combat-entity-wrapper">
+                            <div class="entity-name-plate" id="combat-enemy-name-plate"></div>
+                            <div id="entity-enemy-box" class="combat-card">
+                                <div class="card-avatar-wrap"><img id="combat-enemy-img" class="card-avatar-img"></div>
+                                <div id="enemy-stun-icon" class="status-icon">💫</div>
+                                <div id="enemy-slash" class="slash-fx"></div>
+                            </div>
+                            <div class="entity-hp-plate">
+                                <div class="hp-text-plate"><span id="combat-enemy-hp"></span> / <span id="combat-enemy-maxhp"></span></div>
+                                <div class="hp-bar-outer"><div id="combat-enemy-hp-bar" class="hp-bar-inner enemy-hp-fill" style="width: 100%;"></div></div>
+                                <div id="enemy-rage-bg" class="boss-rage-bg"><div id="enemy-rage-bar" class="boss-rage-fill" style="width: 0%;"></div></div>
+                                <div class="combat-mini-stats"><span>⚔️ <span id="combat-enemy-atk-val"></span></span> <span>🛡️ <span id="combat-enemy-arm-val"></span></span></div>
+                            </div>
+                        </div>
+
+                        <div id="combat-log" class="combat-log-box"></div>
+                    </div>
+
+                    <div class="combat-dashboard">
+                        <div class="control-row">
+                            <div class="control-label">АТАКА</div>
+                            <div class="zone-group">
+                                <div id="btn-atk-head" class="zone-btn atk" onclick="selectZone('atk', 'head')">Голова</div>
+                                <div id="btn-atk-chest" class="zone-btn atk" onclick="selectZone('atk', 'chest')">Торс</div>
+                                <div id="btn-atk-legs" class="zone-btn atk" onclick="selectZone('atk', 'legs')">Ноги</div>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <div class="control-label">БЛОК</div>
+                            <div class="zone-group">
+                                <div id="btn-def-head" class="zone-btn def" onclick="selectZone('def', 'head')">
+                                    Голова <div id="dur-head" class="durability-dots"></div> <div class="dur-text">СЛОМАНО</div>
+                                </div>
+                                <div id="btn-def-chest" class="zone-btn def" onclick="selectZone('def', 'chest')">
+                                    Торс <div id="dur-chest" class="durability-dots"></div> <div class="dur-text">СЛОМАНО</div>
+                                </div>
+                                <div id="btn-def-legs" class="zone-btn def" onclick="selectZone('def', 'legs')">
+                                    Ноги <div id="dur-legs" class="durability-dots"></div> <div class="dur-text">СЛОМАНО</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="main-actions">
+                            <button id="btn-use-skill" class="btn-skill-compact" onclick="useClassSkill()"></button>
+                            <button id="btn-execute-turn" class="btn-exe-compact" onclick="executeTurn()">ВЫБЕРИТЕ ЗОНЫ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-grid">
+            <div id="nav-hero" class="nav-btn active" onclick="openScreen('hero')">🛡️<br>Герой</div>
+            <div id="nav-talents" class="nav-btn" onclick="openScreen('talents')">✨<br>Таланты</div>
+            <div id="nav-PVE" class="nav-btn" onclick="openScreen('PVE')">⚔️<br>В БОЙ</div>
+            <div id="nav-boss" class="nav-btn" onclick="openScreen('boss')">🐉<br>Рейды</div>
+            <div id="nav-blacksmith" class="nav-btn" onclick="openScreen('blacksmith')">⚒️<br>Кузня</div>
+            <div id="nav-shop" class="nav-btn" onclick="openScreen('shop')">💰<br>Лавка</div>
+            <div id="nav-class" class="nav-btn" onclick="openScreen('classes')">🏛️<br>Класс</div>
+        </div>
+    </div>
+
+    <!-- Модалки -->
+    <div id="item-inspect-modal" class="modal-overlay">
+        <div style="background:#121214; border:1px solid #3f3f46; border-radius:12px; padding:20px; width:100%; max-width:320px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.9);">
+            <div id="inspect-title" style="font-weight:900; font-size:16px; margin-bottom:12px; color:#fbbf24;"></div>
+            <div style="display:flex; justify-content:center; margin-bottom:12px;">
+                <div id="inspect-icon-box" class="vic-loot-box" style="width:80px; height:80px; margin:0;"></div>
+            </div>
+            <div id="inspect-stats-box" style="font-size:12px; color:#d4d4d8; margin-bottom:16px; line-height:1.5;"></div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button id="btn-inspect-equip" class="modal-btn">НАДЕТЬ / ИСПОЛЬЗОВАТЬ</button>
+                <button id="btn-inspect-sell" class="modal-btn danger">ПРОДАТЬ</button>
+                <button class="modal-btn secondary" onclick="closeInspectModal()">ЗАКРЫТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="vic-modal" class="modal-overlay">
+        <div class="vic-title" id="vic-title-text">ЭТАЖ ПРОЙДЕН!</div>
+        <div style="font-size:12px; color:#a1a1aa; margin-bottom:16px; font-weight:bold; line-height:1.5;" id="vic-rewards-text"></div>
+        <div id="vic-loot-container" style="display:none; flex-direction:column; align-items:center; width:100%;">
+            <div style="font-size:10px; color:#fbbf24; font-weight:bold; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Найдена вещь!</div>
+            <div id="vic-loot-box" class="vic-loot-box"></div>
+            <div id="vic-loot-name" style="font-weight:bold; font-size:14px; color:#e4e4e7; margin-bottom:16px;"></div>
+        </div>
+        <button class="modal-btn" onclick="closeVictoryModal()" style="max-width: 250px;">ПРОДОЛЖИТЬ</button>
+    </div>
+
+    <!-- ПОДКЛЮЧЕНИЕ НАШЕГО ФАЙЛА ЛОГИКИ -->
+    <script src="game.js"></script>
+</body>
+</html>
