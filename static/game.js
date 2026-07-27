@@ -1,7 +1,7 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК ===
+// === АУДИО ДВИЖОК (ПРОБИВНОЙ WEB AUDIO С МГНОВЕННЫМ ОТКЛИКОМ) ===
 const STATIC_URL = "static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
@@ -76,15 +76,14 @@ function shakeScreen() { let app = document.getElementById("app-container"); if(
 function triggerSkillVFX(elementId, vfxClass) { let el = document.getElementById(elementId); if(el) { el.classList.remove(vfxClass); void el.offsetWidth; el.classList.add(vfxClass); setTimeout(() => el.classList.remove(vfxClass), 500); } }
 
 const GOD_MODE = false; 
-
 const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 const imgCache = {}; for (let key in CLASS_AVATARS) { imgCache[key] = new Image(); imgCache[key].src = CLASS_AVATARS[key]; }
 
 const CLASSES = {
-    knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу. [Пассивка: Идеальный блок отражает 20% урона]", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
-    berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов. [Пассивка: Меньше HP - больше урон и крит]", growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, statWeights: { str_dmg: 3, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
-    shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции. [Пассивка: Уворот дает 100% крит на след. удар]", growth: { str: 0, agi: 1, end: 0, mst: 1, luk: 0 }, statWeights: { str_dmg: 0.5, agi_dmg: 2, agi_dodge: 1, end_hp: 6, mst_cdmg: 3, mst_pen: 1, luk_crit: 0.8, luk_dodge: 0.5, luk_drop: 0.1 }, skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, bars: { dmg: 85, def: 20, diff: 90 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 },
-    ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Делегирует стрелы в уязвимые места. [Пассивка: Удача влияет на лут. Игнор 30% брони]", growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
+    knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу.", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
+    berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов.", growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, statWeights: { str_dmg: 3, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
+    shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 1, end: 0, mst: 1, luk: 0 }, statWeights: { str_dmg: 0.5, agi_dmg: 2, agi_dodge: 1, end_hp: 6, mst_cdmg: 3, mst_pen: 1, luk_crit: 0.8, luk_dodge: 0.5, luk_drop: 0.1 }, skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, bars: { dmg: 85, def: 20, diff: 90 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 },
+    ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Делегирует стрелы в уязвимые места.", growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
 };
 
 const TALENTS_DATA = {
@@ -96,12 +95,12 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
-// === ДОБАВИЛИ РАСХОДНИКИ (ЗЕЛЬЯ И СВИТКИ) ===
+// === ВОТ ЭТИ ЗЕЛЬЯ Я ЗАБЫЛ В ПРОШЛЫЙ РАЗ! ИЗ-ЗА НИХ КРАШИЛАСЬ ЛАВКА ===
 const ITEMS_DB = {
-    "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", rarity: "rare", lvl: 1, price: 80, desc: "Восстанавливает 100 HP. Применяется в бою без траты хода." },
-    "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", rarity: "epic", lvl: 5, price: 250, desc: "Восстанавливает 250 HP. Применяется в бою без траты хода." },
-    "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 🔥 урона мгновенно (не тратит ход)." },
-    "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 ❄️ урона мгновенно (не тратит ход)." },
+    "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", rarity: "rare", lvl: 1, price: 80, desc: "Восстанавливает 100 HP. Применяется в бою без траты хода.", stats: {} },
+    "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", rarity: "epic", lvl: 5, price: 250, desc: "Восстанавливает 250 HP. Применяется в бою без траты хода.", stats: {} },
+    "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 🔥 урона мгновенно (не тратит ход).", stats: {} },
+    "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", rarity: "epic", lvl: 1, price: 150, desc: "Наносит 150 ❄️ урона мгновенно (не тратит ход).", stats: {} },
 
     "90523": { id: "90523", name: "Ржавая Кирка", type: "weapon1", icon: "⛏️", rarity: "common", lvl: 1, price: 30, stats: { atk: 5, armorPen: 2 } },
     "86389": { id: "86389", name: "Железный Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, allowedClasses: ["shadow", "ranger"], stats: { atk: 4, critChance: 3 } },
@@ -288,7 +287,6 @@ function selectZone(type, zone) { if(type === 'atk') combatState.atkZone = zone;
 function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
 function logCombat(text) { let logBox = document.getElementById("combat-log"); if (logBox) { logBox.innerHTML += `<div class="log-entry">${text}</div>`; while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild); logBox.scrollTop = logBox.scrollHeight; } }
 
-// === ЛОГИКА РАСХОДНИКОВ (БЫСТРЫЙ ПОЯС) ===
 function useConsumable(itemId) {
     if (hero.hp <= 0 && !GOD_MODE) return;
     let invIndex = hero.inventory.indexOf(itemId);
@@ -497,7 +495,14 @@ function executeTurn() {
     if (hasTalent('r1c') && hero.baseClass === 'ranger' && combatState.enemyTurns % 3 === 0) { isEnemyStunned = true; logCombat(`<span class="log-sys">ЛОВЧИЙ! Враг замедлен и пропускает ход.</span>`); }
 
     let hRes = calcDmg(hero.combatStats, enemy.stats, heroAtkZone, eDefZone, true);
-    playSFX('dodge'); triggerClashAnim(true, false);
+    
+    // МГНОВЕННЫЙ ЗВУК ТВОЕГО УДАРА
+    if (hRes.type === "dodge") { playSFX('dodge'); }
+    else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); }
+    else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); }
+    else { playSFX('hit'); }
+    
+    triggerClashAnim(true, false);
 
     setTimeout(() => {
         enemy.hp -= hRes.dmg;
@@ -508,13 +513,13 @@ function executeTurn() {
 
         triggerHitAnim("entity-enemy-box"); playLottieEffect("entity-enemy-box", VFX_DB.attack_hero); 
         
-        if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
+        if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); }
         else if (hRes.type === "crit") { 
-            shakeScreen(); showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); playSFX('crit');
+            showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); 
             if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } 
             if (hero.flags.storm && heroAtkZone === 'head' && Math.random() < 0.3) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); }
-        } else if (hRes.type === "block" || hRes.type === "perfect_block") { showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); playSFX('block');
-        } else { showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); playSFX('hit'); }
+        } else if (hRes.type === "block" || hRes.type === "perfect_block") { showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); 
+        } else { showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); }
         
         let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : '';
         logCombat(`Вы ударили в ${zNameRu[heroAtkZone]}: -${hRes.dmg} HP${comboTxt}${hRes.elemLog}.`);
@@ -542,13 +547,19 @@ function executeTurn() {
 
                     if (!GOD_MODE) hero.hp -= eRes.dmg; 
 
-                    playSFX('dodge'); triggerClashAnim(false, true); 
+                    // МГНОВЕННЫЙ ЗВУК УДАРА ВРАГА
+                    if (eRes.type === "dodge") { playSFX('dodge'); }
+                    else if (eRes.type === "crit" || eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { playSFX('crit'); }
+                    else if (eRes.type === "block" || eRes.type === "perfect_block") { playSFX('block'); }
+                    else { playSFX('hit'); }
+
+                    triggerClashAnim(false, true); 
 
                     setTimeout(() => {
                         triggerHitAnim("entity-hero-box"); if(eRes.dmg > 0) playLottieEffect("entity-hero-box", VFX_DB.attack_enemy); 
 
                         if (eRes.type === "dodge" && hero.baseClass === 'shadow') {
-                            combatState.shadowCritReady = true; logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`); playSFX('dodge');
+                            combatState.shadowCritReady = true; logCombat(`<span class="log-skill">ТАНЦОР СМЕРТИ! След. удар крит.</span>`); 
                             if (hero.flags.void) { combatState.poisonStacks++; logCombat(`<span class="log-skill">ФАНТОМ: Враг отравлен.</span>`); }
                             if (hasTalent('s4a')) { enemy.hp -= hero.combatStats.damage; if(enemy.isRaid) addQuestProgress('boss_dmg', hero.combatStats.damage); showDmgPopup("entity-enemy-box", `КОНТР -${hero.combatStats.damage}`, "log-crit"); playSFX('crit'); } 
                             if (hasTalent('s2a')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.05)); } 
@@ -558,10 +569,10 @@ function executeTurn() {
                             if(enemy.isRaid) addQuestProgress('boss_dmg', reflectDmg); showDmgPopup("entity-enemy-box", `ОТРАЖЕНО -${reflectDmg}`, "log-block"); logCombat(`<span class="log-block">ЭГИДА! Отражено ${reflectDmg} урона.</span>`); playSFX('block');
                             if (hasTalent('k2c') && Math.random() < 0.25) combatState.enemyStunned = true; 
                         }
-                        else if (eRes.type === "block" || eRes.type === "perfect_block") { showDmgPopup("entity-hero-box", `БЛОК -${eRes.dmg}`, "log-block"); playSFX('block'); }
-                        else if (eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { if (eRes.type !== "dodge") { showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit"); playSFX('crit'); } else { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); } }
-                        else if (eRes.type === "dodge") { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); playSFX('dodge'); }
-                        else { showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg"); playSFX('hit'); }
+                        else if (eRes.type === "block" || eRes.type === "perfect_block") { showDmgPopup("entity-hero-box", `БЛОК -${eRes.dmg}`, "log-block"); }
+                        else if (eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { if (eRes.type !== "dodge") { showDmgPopup("entity-hero-box", `УЛЬТА! -${eRes.dmg}`, "log-crit"); } else { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); } }
+                        else if (eRes.type === "dodge") { showDmgPopup("entity-hero-box", "УВОРОТ", "log-dodge"); }
+                        else { showDmgPopup("entity-hero-box", `-${eRes.dmg}`, "log-dmg"); }
                         
                         if ((eRes.type === "perfect_block" || eRes.type === "block") && hero.flags.templar) {
                             hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(hero.combatStats.hp * 0.1));
@@ -585,7 +596,8 @@ function executeTurn() {
                             else { 
                                 hero.hp = 0; hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; if(!enemy.isRaid && hero.floor > 1) hero.floor--; 
                                 logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`); calculateStats(); 
-                                playSFX('death'); updateUI(); setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000); 
+                                playSFX('death'); updateUI();
+                                setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000); 
                             }
                         } else { planEnemyTurn(); saveGame(); updateUI(); }
                     }, 250); 
@@ -608,7 +620,6 @@ function openInspectModal(invIndex) {
     document.getElementById("inspect-stats-box").innerHTML = formatStats(item.stats).join(' • ') + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
     let sellPrice = Math.floor(item.price * 0.5); document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
     
-    // Блокируем кнопку "Надеть", если это зелье или свиток
     let eqBtn = document.getElementById("btn-inspect-equip");
     if(item.type === 'consumable') {
         eqBtn.innerText = "ИСПОЛЬЗОВАТЬ В БОЮ";
@@ -754,6 +765,7 @@ function calculateStats(isCombat = false) {
 
 function formatStats(stats) {
     let res = [];
+    if(!stats) return res;
     if(stats.atk) res.push(`Урон ${stats.atk>0?'+':''}${stats.atk}`); if(stats.armor) res.push(`Броня ${stats.armor>0?'+':''}${stats.armor}`);
     if(stats.str) res.push(`СИЛ ${stats.str>0?'+':''}${stats.str}`); if(stats.agi) res.push(`ЛОВ ${stats.agi>0?'+':''}${stats.agi}`);
     if(stats.end) res.push(`ВЫН ${stats.end>0?'+':''}${stats.end}`); if(stats.mst) res.push(`МСТ ${stats.mst>0?'+':''}${stats.mst}`);
@@ -837,7 +849,7 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor;
         document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        // === ИНЖЕКЦИЯ БЫСТРОГО ПОЯСА ===
+        // ИНЖЕКЦИЯ БЫСТРОГО ПОЯСА В БОЙ
         let dashboard = document.querySelector('.combat-dashboard');
         let belt = document.getElementById('quick-belt');
         if(!belt) { belt = document.createElement('div'); belt.id = 'quick-belt'; belt.className = 'quick-belt'; dashboard.insertBefore(belt, dashboard.firstChild); }
