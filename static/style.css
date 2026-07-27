@@ -89,9 +89,8 @@ html, body {
 .floor-nav-btn:active { transform: scale(0.9); }
 .floor-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-.hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px; width: 100%; overflow: hidden; }
-
-/* === ИСПРАВЛЕНИЕ ОТСТУПОВ === Увеличили gap до 20px */
+/* === ИСПРАВЛЕНИЕ КОНТЕЙНЕРА: Разрешаем выходить за рамки (overflow: visible) и даем подушку снизу === */
+.hero-layout { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px; width: 100%; overflow: visible; padding-bottom: 15px; }
 .equip-col { display: flex; flex-direction: column; gap: 20px; width: 48px; flex-shrink: 0; justify-content: center;}
 .equip-slot { width: 100%; max-width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; background: radial-gradient(circle, rgba(39,39,42,0.9) 0%, rgba(9,9,11,0.9) 80%); border: 1px solid #3f3f46; box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.95), 0 4px 8px rgba(0,0,0,0.5); backdrop-filter: blur(4px);}
 .equip-slot:active { transform: scale(0.9); }
@@ -154,11 +153,8 @@ html, body {
 .rarity-epic { border-color: #a855f7; box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.5); }
 .rarity-legendary { border-color: #f59e0b; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.6); animation: pulse-leg 2s infinite; }
 .rarity-relic { border-color: #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.7); animation: pulse-relic 1.5s infinite; }
-
-/* === ИСПРАВЛЕНИЕ ПОЗИЦИИ === Опустили на -14px вместо -16px */
 .slot-label { position: absolute; bottom: -14px; font-size: 8px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 4px #000; white-space: nowrap; z-index: 10;}
 
-/* === ИСПРАВЛЕНИЕ НИЖНЕГО ОТСТУПА ОРУЖИЯ === */
 .weapons-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 28px; }
 
 .inventory-panel { background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border-radius: 8px; padding: 14px; border: 1px solid #3f3f46; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
