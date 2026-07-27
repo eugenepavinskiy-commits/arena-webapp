@@ -439,6 +439,13 @@ html, body {
 
 @keyframes vfx-ranger { 0% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(2) drop-shadow(0 0 30px #10b981); transform: scale(0.95); } 100% { filter: brightness(1); transform: scale(1); } }
 .vfx-ranger { animation: vfx-ranger 0.3s ease-out; z-index: 10; }
+/* === СТИХИИ (ELEMENTS) === */
+.elem-fire { color: #ef4444; font-weight: bold; text-shadow: 0 1px 3px #000; }
+.elem-ice { color: #3b82f6; font-weight: bold; text-shadow: 0 1px 3px #000; }
+.elem-dark { color: #a855f7; font-weight: bold; text-shadow: 0 1px 3px #000; }
+.elem-holy { color: #fbbf24; font-weight: bold; text-shadow: 0 1px 3px #000; }
+.stat-resist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; border: 1px inset #27272a; margin-top: 6px;}
+
 
 /* === АДАПТИВНАЯ УСУШКА ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ (iPhone XS, SE, etc) === */
 @media (max-height: 700px) {
