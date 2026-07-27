@@ -1,7 +1,7 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (ПРОБИВАЕТ БЛОКИРОВКИ МОБИЛЬНЫХ БРАУЗЕРОВ) ===
+// === АУДИО ДВИЖОК (WEB AUDIO API ДЛЯ АНДРОИД И IOS) ===
 const STATIC_URL = "./static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
@@ -16,57 +16,50 @@ const SFX_FILES = {
     death: STATIC_URL + "sounds/death.mp3"
 };
 
-const SFX_PLAYERS = {};
 let sfxMuted = false;
-let audioUnlocked = false;
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+const SFX_BUFFERS = {};
 
-// Предзагрузка звуков
-for (let key in SFX_FILES) {
-    let audio = new Audio(SFX_FILES[key]);
-    audio.volume = 0.6;
-    audio.preload = "auto";
-    SFX_PLAYERS[key] = audio;
+// Загружаем звуки в память телефона
+async function initAudio() {
+    for (let key in SFX_FILES) {
+        try {
+            let response = await fetch(SFX_FILES[key]);
+            let arrayBuffer = await response.arrayBuffer();
+            let audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+            SFX_BUFFERS[key] = audioBuffer;
+        } catch(e) { console.log("Не удалось загрузить звук:", key); }
+    }
 }
+initAudio();
 
-// Секретный трюк: Разблокировка звукового контекста при первом касании экрана
-document.addEventListener('touchstart', function unlockAudio() {
-    if (!audioUnlocked) {
-        for (let key in SFX_PLAYERS) {
-            SFX_PLAYERS[key].play().then(() => {
-                SFX_PLAYERS[key].pause();
-                SFX_PLAYERS[key].currentTime = 0;
-            }).catch(e => { /* Игнорируем системные ошибки */ });
-        }
-        audioUnlocked = true;
-        document.removeEventListener('touchstart', unlockAudio);
-    }
-}, { once: true });
-
-// Разблокировка для кликов мышью (если играют с ПК)
-document.addEventListener('click', function unlockAudioClick() {
-    if (!audioUnlocked) {
-        for (let key in SFX_PLAYERS) {
-            SFX_PLAYERS[key].play().then(() => {
-                SFX_PLAYERS[key].pause();
-                SFX_PLAYERS[key].currentTime = 0;
-            }).catch(e => { });
-        }
-        audioUnlocked = true;
-        document.removeEventListener('click', unlockAudioClick);
-    }
-}, { once: true });
+// Снимаем блокировку браузера при первом касании/клике
+function unlockAudio() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('click', unlockAudio);
+}
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
 
 function playSFX(id) {
-    if (sfxMuted || !SFX_PLAYERS[id]) return;
-    // Клонируем звук, чтобы они могли звучать одновременно (например, удары подряд)
-    let sound = SFX_PLAYERS[id].cloneNode();
-    sound.volume = 0.6;
-    sound.play().catch(e => console.log("Браузер заблокировал звук:", e));
+    if (sfxMuted || !SFX_BUFFERS[id]) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    let source = audioCtx.createBufferSource();
+    source.buffer = SFX_BUFFERS[id];
+    let gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.6; // Громкость 60%
+    
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    source.start(0);
 }
 
 window.toggleMute = function() { 
     sfxMuted = !sfxMuted; 
-    if (!sfxMuted) playSFX('click'); // Проверяем звук при включении
+    if (!sfxMuted) playSFX('click'); 
     updateUI(); 
 };
 
