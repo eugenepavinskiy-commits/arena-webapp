@@ -1,8 +1,8 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// === АУДИО ДВИЖОК (WEB AUDIO API ДЛЯ АНДРОИД И IOS) ===
-const STATIC_URL = "./static/";
+// === АУДИО ДВИЖОК (ПРОБИВНОЙ WEB AUDIO API) ===
+const STATIC_URL = "static/";
 const SFX_FILES = {
     click: STATIC_URL + "sounds/click.mp3",
     hit: STATIC_URL + "sounds/hit.mp3",
@@ -20,23 +20,30 @@ let sfxMuted = false;
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 const SFX_BUFFERS = {};
+let audioUnlocked = false;
 
-// Загружаем звуки в память телефона
 async function initAudio() {
     for (let key in SFX_FILES) {
         try {
             let response = await fetch(SFX_FILES[key]);
+            if (!response.ok) continue;
             let arrayBuffer = await response.arrayBuffer();
             let audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
             SFX_BUFFERS[key] = audioBuffer;
-        } catch(e) { console.log("Не удалось загрузить звук:", key); }
+        } catch(e) { console.error("Ошибка звука:", key, e); }
     }
 }
 initAudio();
 
-// Снимаем блокировку браузера при первом касании/клике
 function unlockAudio() {
+    if (audioUnlocked) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    let buffer = audioCtx.createBuffer(1, 1, 22050);
+    let source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start(0);
+    audioUnlocked = true;
     document.removeEventListener('touchstart', unlockAudio);
     document.removeEventListener('click', unlockAudio);
 }
@@ -46,15 +53,15 @@ document.addEventListener('click', unlockAudio, { once: true });
 function playSFX(id) {
     if (sfxMuted || !SFX_BUFFERS[id]) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    
-    let source = audioCtx.createBufferSource();
-    source.buffer = SFX_BUFFERS[id];
-    let gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.6; // Громкость 60%
-    
-    source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    source.start(0);
+    try {
+        let source = audioCtx.createBufferSource();
+        source.buffer = SFX_BUFFERS[id];
+        let gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.6;
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start(0);
+    } catch(e) {}
 }
 
 window.toggleMute = function() { 
