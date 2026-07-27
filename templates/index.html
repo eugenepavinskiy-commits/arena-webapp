@@ -10,8 +10,8 @@
     <!-- Подключение Lottie для крутых эффектов (магия, удары) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     
-    <!-- МАГИЯ ЗДЕСЬ: Добавили ?v=4, чтобы Telegram принудительно скачал новый CSS -->
-    <link rel="stylesheet" href="/static/style.css?v=2">
+    <!-- Версия 5 для жесткого сброса кэша на iPhone -->
+    <link rel="stylesheet" href="/static/style.css?v=5">
 </head>
 <body>
 
@@ -37,23 +37,23 @@
                 <div class="class-banner" id="ui-class-name">ГЕРОЙ</div>
                 <div class="hero-layout">
                     <div class="equip-col">
-                        <div id="slot-head" class="equip-slot empty" onclick="unequipSlot('head')"></div>
-                        <div id="slot-chest" class="equip-slot empty" onclick="unequipSlot('chest')"></div>
-                        <div id="slot-belt" class="equip-slot empty" onclick="unequipSlot('belt')"></div>
-                        <div id="slot-boots" class="equip-slot empty" onclick="unequipSlot('boots')"></div>
+                        <div id="slot-head" class="equip-slot empty" onclick="unequipSlot('head')" data-sil="🪖"></div>
+                        <div id="slot-chest" class="equip-slot empty" onclick="unequipSlot('chest')" data-sil="🥋"></div>
+                        <div id="slot-belt" class="equip-slot empty" onclick="unequipSlot('belt')" data-sil="➰"></div>
+                        <div id="slot-boots" class="equip-slot empty" onclick="unequipSlot('boots')" data-sil="👢"></div>
                     </div>
                     <div class="hero-avatar-box">
                         <img id="main-hero-avatar" class="hero-avatar" src="">
                     </div>
                     <div class="equip-col">
-                        <div id="slot-amulet" class="equip-slot empty" onclick="unequipSlot('amulet')"></div>
-                        <div id="slot-ring1" class="equip-slot empty" onclick="unequipSlot('ring1')"></div>
-                        <div id="slot-ring2" class="equip-slot empty" onclick="unequipSlot('ring2')"></div>
+                        <div id="slot-amulet" class="equip-slot empty" onclick="unequipSlot('amulet')" data-sil="📿"></div>
+                        <div id="slot-ring1" class="equip-slot empty" onclick="unequipSlot('ring1')" data-sil="💍"></div>
+                        <div id="slot-ring2" class="equip-slot empty" onclick="unequipSlot('ring2')" data-sil="💍"></div>
                     </div>
                 </div>
                 <div class="weapons-row">
-                    <div id="slot-weapon1" class="equip-slot empty" onclick="unequipSlot('weapon1')" style="width: 64px; max-width: 64px; height: 64px;"></div>
-                    <div id="slot-weapon2" class="equip-slot empty" onclick="unequipSlot('weapon2')" style="width: 64px; max-width: 64px; height: 64px;"></div>
+                    <div id="slot-weapon1" class="equip-slot empty" onclick="unequipSlot('weapon1')" data-sil="⚔️" style="width: 64px; max-width: 64px; height: 64px;"></div>
+                    <div id="slot-weapon2" class="equip-slot empty" onclick="unequipSlot('weapon2')" data-sil="🛡️" style="width: 64px; max-width: 64px; height: 64px;"></div>
                 </div>
                 
                 <div class="inventory-panel">
@@ -232,7 +232,7 @@
         <button class="modal-btn" onclick="closeVictoryModal()" style="max-width: 250px;">ПРОДОЛЖИТЬ</button>
     </div>
 
-    <!-- И здесь добавляем ?v=2 для JS файла -->
-    <script src="/static/game.js?v=2"></script>
+    <!-- Версия 5 для JS файла -->
+    <script src="/static/game.js?v=5"></script>
 </body>
 </html>
