@@ -56,14 +56,23 @@ function playLottieEffect(targetId, animationUrl, extraClass = "") {
 function shakeScreen() { let app = document.getElementById("app-container"); if(app) { app.classList.remove("shake-hard"); void app.offsetWidth; app.classList.add("shake-hard"); setTimeout(() => app.classList.remove("shake-hard"), 350); } }
 function triggerSkillVFX(elementId, vfxClass) { let el = document.getElementById(elementId); if(el) { el.classList.remove(vfxClass); void el.offsetWidth; el.classList.add(vfxClass); setTimeout(() => el.classList.remove(vfxClass), 500); } }
 
-const GOD_MODE = false; 
-let isTurnExecuting = false; 
+
 
 const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 const imgCache = {}; for (let key in CLASS_AVATARS) { imgCache[key] = new Image(); imgCache[key].src = CLASS_AVATARS[key]; }
 
 const CLASSES = {
-    knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу.", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
+    knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Держит удар лучше, чем корпоративный сервер в пятницу.", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, crlet GOD_MODE = false; 
+let isTurnExecuting = false; 
+
+// === АДМИН-ПАНЕЛЬ ===
+const ADMIN_ID = 7495831046; // Твой Telegram ID
+if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    if (tg.initDataUnsafe.user.id === ADMIN_ID) {
+        GOD_MODE = true; // Включаем бессмертие и 999k ХП для тебя!
+    }
+}
+itDmgMult: 1.4, dodgeMult: 0.9 },
     berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Машина для переработки врагов.", growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, statWeights: { str_dmg: 3, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
     shadow: { id: "shadow", name: "Тень", icon: "🗡️", color: "#a855f7", lore: "Специалист по внезапным сокращениям популяции.", growth: { str: 0, agi: 1, end: 0, mst: 1, luk: 0 }, statWeights: { str_dmg: 0.5, agi_dmg: 2, agi_dodge: 1, end_hp: 6, mst_cdmg: 3, mst_pen: 1, luk_crit: 0.8, luk_dodge: 0.5, luk_drop: 0.1 }, skill: { name: "Вспышка Тени", desc: "Уворот + Крит на след. ход.", cd: 3 }, bars: { dmg: 85, def: 20, diff: 90 }, armorMult: 1.0, critDmgMult: 2.2, dodgeMult: 1.3 },
     ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Делегирует стрелы в уязвимые места.", growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
