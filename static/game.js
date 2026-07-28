@@ -185,7 +185,6 @@ let enemy = null;
 let combatMode = 'pve'; 
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 
-// === ПАМЯТЬ БОЯ (чтобы PVE и PVP не пересекались) ===
 let savedPveEnemy = null;
 let savedPveState = null;
 
@@ -256,8 +255,6 @@ function initCombat() {
 
 function startRaid(bossId) {
     if (hero.tickets < 1) return alert("Нет билетов рейда!"); if (hero.hp <= 0) return alert("Герой мертв!"); hero.tickets--; saveGame(); playSFX('click');
-    
-    // Сохраняем PVE-монстра
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     
     let bData = RAID_BOSSES.find(b => b.id === bossId); combatMode = 'raid'; let statMult = 1 + (hero.level * 0.1); 
@@ -272,8 +269,6 @@ function startRaid(bossId) {
 function startPvP() {
     if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв! Вылечитесь в лагере.");
     playSFX('click');
-    
-    // Сохраняем PVE-монстра
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     
     combatMode = 'pvp';
@@ -728,7 +723,6 @@ function closeInspectModal() { playSFX('click'); document.getElementById("item-i
 function openScreen(screenName) {
     if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating'].includes(screenName)) return alert("В разработке!");
     
-    // Блокируем переход по вкладкам во время Рейда или ПвП
     if ((combatMode === 'pvp' || combatMode === 'raid') && screenName !== 'PVE') {
         return alert("Сначала завершите текущий специальный бой!");
     }
@@ -753,7 +747,6 @@ function openScreen(screenName) {
     
     updateUI();
 }
-
 function setShopMode(mode) { playSFX('click'); shopMode = mode; updateUI(); }
 function selectPreviewClass(classId) { playSFX('click'); previewClassId = classId; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 function changeClass(classKey) {
@@ -907,7 +900,6 @@ function updateUI() {
     
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
-    // Арена
     if (currentScreen === 'arena') {
         let elRating = document.getElementById("ui-pvp-rating");
         if(elRating) elRating.innerText = hero.rating;
@@ -965,8 +957,18 @@ function updateUI() {
         let bossIcon = enemy.isBoss ? "👑 " : (enemy.isMiniBoss ? "☠️ " : ""); let enemyCleanName = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", ""); let enemyLvlTag = "";
         if(enemy.isRaid || enemy.isPlayer) { enemyLvlTag = `<span class="entity-lvl boss">УР. ${enemy.floor}</span>`; } else if(enemy.isBoss) { enemyLvlTag = `<span class="entity-lvl boss">БОСС ${enemy.floor}</span>`; } else if(enemy.isMiniBoss) { enemyLvlTag = `<span class="entity-lvl elite">ЭЛИТА ${enemy.floor}</span>`; } else { enemyLvlTag = `<span class="entity-lvl">УР. ${enemy.floor}</span>`; }
 
-        document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; document.getElementById("combat-enemy-img").src = enemy.imgUrl;
-        if(enemy.isBoss || enemy.isPlayer) document.getElementById("entity-enemy-box").className = "combat-card boss"; else document.getElementById("entity-enemy-box").className = "combat-card";
+        document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; 
+        document.getElementById("combat-enemy-img").src = enemy.imgUrl;
+        
+        // === ИСПРАВЛЕННЫЙ БЛОК CSS КЛАССОВ ===
+        let enemyWrapper = document.getElementById("entity-enemy-box");
+        if (enemyWrapper) {
+            enemyWrapper.className = "combat-entity-wrapper"; 
+            let enemyCard = enemyWrapper.querySelector(".combat-card");
+            if (enemyCard) {
+                enemyCard.className = (enemy.isBoss || enemy.isPlayer) ? "combat-card boss" : "combat-card";
+            }
+        }
 
         let isHeroDead = hero.hp <= 0 && !GOD_MODE;
         if (GOD_MODE) { document.getElementById("combat-hero-hp").innerText = "GOD MODE"; document.getElementById("combat-hero-maxhp").innerText = "999K"; } else { document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp); document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; }
