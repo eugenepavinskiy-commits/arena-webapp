@@ -136,19 +136,6 @@ const MOCK_PLAYERS = [
     {name: "Arthur", cls: "knight", img: "knight.png"}, {name: "Legolas", cls: "ranger", img: "ranger.png"},
     {name: "DarkLord", cls: "berserk", img: "berserk.png"}
 ];
-
-const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
-
-let currentScreen = "hero"; let shopMode = "buy"; let previewClassId = "knight"; let inspectInvIndex = null; let forgeSelectedIndex = null; 
-
-let enemy = null; 
-let combatMode = 'pve'; 
-let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
-let savedPveEnemy = null; let savedPveState = null;
-
-let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["90523", "64755"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {} };
-if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
-
 function saveGame() {
     try {
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
@@ -156,7 +143,7 @@ function saveGame() {
         let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].rarity === 'relic' || key.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
         let itemsStr = JSON.stringify(customItems); localStorage.setItem('tg_rpg_custom_items', itemsStr);
         if (window.tg && tg.CloudStorage) { tg.CloudStorage.setItem('tg_rpg_hero', heroStr); tg.CloudStorage.setItem('tg_rpg_custom_items', itemsStr); }
-    } catch (e) {}
+    } catch (e) { console.error("Ошибка сохранения.", e); }
 }
 
 function applyLoadedSave(savedHero, savedItems) {
@@ -245,7 +232,8 @@ function startRaid(bossId) {
     document.getElementById('screen-PVE').classList.add('active'); 
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
     document.getElementById('nav-PVE').classList.add('active');
-    currentScreen = 'PVE'; updateUI();
+    currentScreen = 'PVE'; 
+    updateUI();
 }
 
 function startPvP() {
@@ -276,7 +264,8 @@ function startPvP() {
     document.getElementById('screen-PVE').classList.add('active'); 
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
     document.getElementById('nav-PVE').classList.add('active');
-    currentScreen = 'PVE'; updateUI();
+    currentScreen = 'PVE'; 
+    updateUI();
 }
 
 function planEnemyTurn() {
@@ -477,8 +466,16 @@ function handleCombatWin() {
 
 function closeVictoryModal() { 
     playSFX('click'); document.getElementById("vic-modal").classList.remove("show"); 
-    if (combatMode === 'pvp') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } openScreen('arena'); } 
-    else if (combatMode === 'raid') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } openScreen('boss'); } 
+    if (combatMode === 'pvp') { 
+        combatMode = 'pve'; 
+        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } 
+        openScreen('arena'); 
+    } 
+    else if (combatMode === 'raid') { 
+        combatMode = 'pve'; 
+        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } 
+        openScreen('boss'); 
+    } 
     else { initCombat(); } 
 }
 
@@ -494,7 +491,6 @@ function applyTurnEndEffects() {
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
 
-// === ЦИКЛ БОЯ (С ЗАЩИТОЙ ОТ ПРИЗРАЧНЫХ КЛИКОВ) ===
 function executeTurn() {
     if (isTurnExecuting) return; // ЗАЩИТА: Если бой уже идет, игнорируем любые клики
     if (!combatState.atkZone || !combatState.defZone) return;
@@ -637,7 +633,8 @@ function executeTurn() {
                                         openScreen('arena'); 
                                     }, 2000); 
                                 } else {
-                                    hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; if(combatMode === 'pve' && hero.floor > 1) hero.floor--; 
+                                    hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
+                                    if(combatMode === 'pve' && hero.floor > 1) hero.floor--; 
                                     logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`); calculateStats(); 
                                     playSFX('death'); updateUI(); saveGame();
                                     isTurnExecuting = false;
@@ -915,12 +912,13 @@ function updateUI() {
         document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; 
         document.getElementById("combat-enemy-img").src = enemy.imgUrl;
         
-        // ФИКС КАРТОЧЕК В PVE
         let enemyWrapper = document.getElementById("entity-enemy-box");
         if (enemyWrapper) {
             enemyWrapper.className = "combat-entity-wrapper"; 
             let enemyCard = enemyWrapper.querySelector(".combat-card");
-            if (enemyCard) { enemyCard.className = (enemy.isBoss || enemy.isPlayer) ? "combat-card boss" : "combat-card"; }
+            if (enemyCard) {
+                enemyCard.className = (enemy.isBoss || enemy.isPlayer) ? "combat-card boss" : "combat-card";
+            }
         }
 
         let isHeroDead = hero.hp <= 0 && !GOD_MODE;
@@ -1144,3 +1142,15 @@ function updateUI() {
 }
 
 loadGame();
+
+const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
+
+let currentScreen = "hero"; let shopMode = "buy"; let previewClassId = "knight"; let inspectInvIndex = null; let forgeSelectedIndex = null; 
+
+let enemy = null; 
+let combatMode = 'pve'; 
+let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+let savedPveEnemy = null; let savedPveState = null;
+
+let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["90523", "64755"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {} };
+if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
