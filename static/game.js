@@ -175,7 +175,6 @@ function loadGame() {
 
 function hardReset() { if(confirm("Вы уверены? Весь прогресс будет удален навсегда!")) { localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items'); if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); tg.CloudStorage.removeItem('tg_rpg_custom_items'); } location.reload(); } }
 loadGame();
-
 function checkDailyQuests() { let today = new Date().toDateString(); if (hero.questDate !== today) { hero.questDate = today; hero.quests = { "kill_mobs": { progress: 0, claimed: false }, "forge_upg": { progress: 0, claimed: false }, "boss_dmg": { progress: 0, claimed: false } }; saveGame(); } }
 function addQuestProgress(qId, amount) { if (!hero.quests || !hero.quests[qId]) return; if (hero.quests[qId].claimed) return; hero.quests[qId].progress += amount; let target = DAILY_QUESTS[qId].target; if (hero.quests[qId].progress > target) hero.quests[qId].progress = target; saveGame(); }
 function claimQuest(qId) { let q = hero.quests[qId]; let def = DAILY_QUESTS[qId]; if (!q || q.claimed || q.progress < def.target) return; q.claimed = true; hero.gems += def.rewardGems; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
@@ -185,66 +184,9 @@ let enemy = null;
 let combatMode = 'pve'; 
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 
+// === ПАМЯТЬ БОЯ (чтобы PVE и PVP не пересекались) ===
 let savedPveEnemy = null;
 let savedPveState = null;
-
-const NORMAL_MOBS = [ { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" }, { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" }, { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" }, { id: 10, name: "Червь" }, { id: 11, name: "Улитка" }, { id: 12, name: "Ведьма" }, { id: 13, name: "Вирм" }, { id: 14, name: "Стрелок" }, { id: 15, name: "Гаргулья" }, { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" }, { id: 19, name: "Паук" }, { id: 20, name: "Пугало" } ];
-const BOSSES = { 10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" }, 40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" }, 70: { id: 27, name: "Голем" }, 80: { id: 28, name: "Гидра" }, 90: { id: 29, name: "Механоид" }, 100: { id: 30, name: "Суккуб" } };
-
-const RAID_BOSSES = [
-    { id: "raid_1", name: "Костяной Голем", imgId: 27, diff: "Легкий", desc: "Уязвимая груда камней.", hpMult: 3, atkMult: 1.2, armMult: 1, gemReward: 2, dropRelic: false, res_fire: 50, res_ice: -20 },
-    { id: "raid_2", name: "Архилич Тьмы", imgId: 21, diff: "Средний", desc: "Бьет тьмой. Уязвим к свету.", hpMult: 5, atkMult: 1.8, armMult: 1.5, gemReward: 5, dropRelic: false, dmg_dark: 30, res_dark: 80, res_holy: -50 },
-    { id: "raid_3", name: "Древний Дракон", imgId: 17, diff: "Хардкор", desc: "Дышит огнем. Гарант. реликвия.", hpMult: 8, atkMult: 2.5, armMult: 2, gemReward: 10, dropRelic: true, dmg_fire: 50, res_fire: 80, res_ice: -50 }
-];
-
-const MOCK_PLAYERS = [
-    {name: "ShadowFiend", cls: "shadow", img: "shadow.png"}, {name: "Guts", cls: "berserk", img: "berserk.png"},
-    {name: "Arthur", cls: "knight", img: "knight.png"}, {name: "Legolas", cls: "ranger", img: "ranger.png"},
-    {name: "DarkLord", cls: "berserk", img: "berserk.png"}
-];
-
-function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
-
-setInterval(() => {
-    if (hero.tickets < hero.maxTickets) {
-        if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
-        if (Date.now() >= hero.nextTicketTime) { hero.tickets++; if (hero.tickets < hero.maxTickets) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; else hero.nextTicketTime = 0; saveGame(); updateUI(); }
-    }
-    let bloodScreen = document.getElementById('blood-screen');
-    if (hero.deathDebuffEnd > Date.now()) { let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; let el = document.getElementById('ui-debuff-timer'); if(el) { el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`; el.style.display = 'block'; } if(bloodScreen) bloodScreen.classList.add('active'); } 
-    else { let el = document.getElementById('ui-debuff-timer'); if(el && hero.deathDebuffEnd !== 0) { el.style.display = 'none'; hero.deathDebuffEnd = 0; if(bloodScreen) bloodScreen.classList.remove('active'); calculateStats(); updateUI(); } }
-    let tTimer = document.getElementById("ui-ticket-timer");
-    if (tTimer) { if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов"; else { let left = Math.ceil((hero.nextTicketTime - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; tTimer.innerText = `До следующего: ${m}:${s<10?'0':''}${s}`; } }
-}, 1000);
-
-function generateEnemy(floorLevel) {
-    let isMegaBoss = floorLevel % 10 === 0; let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
-    let mobData; if (isMegaBoss) { let bossKey = floorLevel > 100 ? 100 : floorLevel; mobData = BOSSES[bossKey] || BOSSES[10]; } else { let normalFloorCount = floorLevel - Math.floor(floorLevel / 10); let mobIndex = (normalFloorCount - 1) % NORMAL_MOBS.length; mobData = NORMAL_MOBS[mobIndex]; }
-    let name = mobData.name; let mobImgUrl = `${STATIC_URL}mobs/B_${mobData.id}_high_resolution.png`; let bgImg = isMegaBoss ? 'throne.png' : 'grave.png'; let bgUrl = `${STATIC_URL}begraund/${bgImg}`;
-    if (isMegaBoss) name = "👑 " + name; else if (isMiniBoss) name = "☠️ " + name + " (Элита)";
-    let statMult = 1 + (floorLevel * 0.04); let hp = Math.floor((30 + floorLevel * 12) * statMult); let atk = Math.floor((6 + floorLevel * 3) * statMult); let armor = Math.floor(floorLevel * 1.2);
-    if (isMiniBoss) { hp = Math.floor(hp * 1.5); atk = Math.floor(atk * 1.3); } if (isMegaBoss) { hp = Math.floor(hp * 2.5); atk = Math.floor(atk * 1.6); armor = Math.floor(armor * 1.5); }
-    let baseEnemy = { name: name, floor: floorLevel, imgUrl: mobImgUrl, bgUrl: bgUrl, isBoss: isMegaBoss, isMiniBoss: isMiniBoss, isRaid: false, hp: hp, maxHp: hp, nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: atk, armor: armor, critChance: 5, dodge: 4, armorPen: Math.floor(floorLevel / 2) } };
-    if (isMegaBoss || isMiniBoss) { let elems = ['fire', 'ice', 'dark', 'holy']; let randElem = elems[Math.floor(Math.random() * elems.length)]; baseEnemy.stats[`dmg_${randElem}`] = Math.floor(floorLevel * 1.5); baseEnemy.stats[`res_${randElem}`] = 50; let weakMap = { fire:'ice', ice:'fire', dark:'holy', holy:'dark' }; baseEnemy.stats[`res_${weakMap[randElem]}`] = -30; }
-    return baseEnemy;
-}
-
-function changeFloor(dir) { hero.floor += dir; if (hero.floor < 1) hero.floor = 1; if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor; playSFX('click'); saveGame(); initCombat(); }
-
-function generateBossDrop(floor, specificId = null) {
-    let maxLvl = Math.max(1, Math.ceil(floor / 10)); let baseId = specificId;
-    if (!baseId) { let pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl <= maxLvl); if(pool.length === 0) pool = SHOP_ASSORTMENT.filter(id => ITEMS_DB[id].lvl === 1); baseId = pool[Math.floor(Math.random() * pool.length)]; }
-    let baseItem = ITEMS_DB[baseId]; let newItem = JSON.parse(JSON.stringify(baseItem));
-    newItem.id = baseId + "_" + Date.now(); let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)]; newItem.name = `✨ ${prefix} ${baseItem.name}`; newItem.rarity = "relic"; newItem.premium = false; newItem.dropOnly = true;
-    let classSetMap = { "knight": "templar", "berserk": "bloodied", "shadow": "void", "ranger": "storm" }; if (Math.random() > 0.5) newItem.setId = classSetMap[hero.baseClass];
-    let tierMult = 1 + (floor * 0.05); let rollQuality = 0.85 + (Math.random() * 0.40); let finalMult = tierMult * rollQuality;
-    for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult));
-    let possibleSubstats = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg'].filter(s => !newItem.stats[s]); 
-    if(possibleSubstats.length > 0) { let sub = possibleSubstats[Math.floor(Math.random() * possibleSubstats.length)]; newItem.stats[sub] = (sub.includes('Chance') || sub === 'critDmg') ? Math.floor(5 * finalMult) : Math.floor(3 * finalMult); }
-    let elemTypes = ['fire', 'ice', 'dark', 'holy'];
-    if (Math.random() > 0.6) { let el = elemTypes[Math.floor(Math.random() * elemTypes.length)]; if (newItem.type.includes('weapon')) newItem.stats[`dmg_${el}`] = Math.floor(15 * finalMult); else newItem.stats[`res_${el}`] = Math.floor(25 * finalMult); }
-    newItem.lvl = floor; newItem.price = Math.floor(baseItem.price * finalMult * 2.5); newItem.desc = `Трофей ${floor} этажа. Качество: ${Math.floor(rollQuality*100)}%`; ITEMS_DB[newItem.id] = newItem; return newItem;
-}
 
 function initCombat() {
     combatMode = 'pve'; enemy = generateEnemy(hero.floor); combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
@@ -263,7 +205,15 @@ function startRaid(bossId) {
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
     calculateStats(true); 
     document.getElementById("enemy-rage-bg").style.display = "block"; document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Рейд начался! У вас только 15 ходов!</div>`;
-    planEnemyTurn(); document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); currentScreen = 'PVE'; updateUI();
+    planEnemyTurn(); 
+    
+    // Принудительный перевод экрана
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); 
+    document.getElementById('screen-PVE').classList.add('active'); 
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-PVE').classList.add('active');
+    currentScreen = 'PVE'; 
+    updateUI();
 }
 
 function startPvP() {
@@ -293,10 +243,14 @@ function startPvP() {
     
     document.getElementById("enemy-rage-bg").style.display = "none";
     document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой на Арене начался!</div>`;
-    
     planEnemyTurn(); 
+    
+    // Принудительный перевод экрана и кнопок
     document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); 
     document.getElementById('screen-PVE').classList.add('active'); 
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-PVE').classList.add('active');
+    
     currentScreen = 'PVE'; 
     updateUI();
 }
@@ -960,7 +914,7 @@ function updateUI() {
         document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; 
         document.getElementById("combat-enemy-img").src = enemy.imgUrl;
         
-        // === ИСПРАВЛЕННЫЙ БЛОК CSS КЛАССОВ ===
+        // === ВАЖНЫЙ ФИКС CSS КЛАССОВ ===
         let enemyWrapper = document.getElementById("entity-enemy-box");
         if (enemyWrapper) {
             enemyWrapper.className = "combat-entity-wrapper"; 
