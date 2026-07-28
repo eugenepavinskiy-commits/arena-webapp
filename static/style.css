@@ -64,7 +64,7 @@ html, body {
 
 /* === НАВИГАЦИЯ НИЖНЯЯ === */
 .nav-grid { 
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; 
+    display: grid; gap: 6px; 
     padding-top: 8px; border-top: 1px solid #27272a; flex-shrink: 0; z-index: 50; 
     padding-bottom: max(env(safe-area-inset-bottom, 24px), var(--tg-content-safe-area-inset-bottom, 24px));
     background-color: #0d0d0f; 
@@ -413,6 +413,25 @@ html, body {
     font-size: 9px; padding: 2px 5px; border-radius: 6px; font-weight: bold; 
     border: 1px solid #7f1d1d; box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
 }
+
+/* === АРЕНА PvP === */
+.pvp-player-card {
+    background: #121214; border: 1px solid #3f3f46; border-radius: 8px;
+    display: flex; align-items: center; padding: 10px; gap: 12px;
+}
+.pvp-player-card.top-1 { border-color: #fbbf24; background: linear-gradient(90deg, rgba(251,191,36,0.1) 0%, transparent 100%); }
+.pvp-player-card.top-2 { border-color: #94a3b8; }
+.pvp-player-card.top-3 { border-color: #b45309; }
+.pvp-rank { font-size: 18px; font-weight: 900; color: #71717a; width: 24px; text-align: center; flex-shrink: 0; }
+.top-1 .pvp-rank { color: #fbbf24; }
+.top-2 .pvp-rank { color: #94a3b8; }
+.top-3 .pvp-rank { color: #b45309; }
+.pvp-avatar { width: 40px; height: 40px; border-radius: 6px; border: 1px solid #27272a; object-fit: cover; flex-shrink: 0; }
+.pvp-info { flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.pvp-name { font-size: 14px; font-weight: bold; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pvp-stats { font-size: 10px; color: #a1a1aa; }
+.pvp-rating { font-size: 14px; font-weight: 900; color: #fbbf24; flex-shrink: 0; }
+
 
 /* === АДАПТИВНОСТЬ ПОД МАЛЕНЬКИЕ ЭКРАНЫ === */
 @media (max-height: 700px) {
