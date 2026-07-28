@@ -181,58 +181,28 @@ function addQuestProgress(qId, amount) { if (!hero.quests || !hero.quests[qId]) 
 function claimQuest(qId) { let q = hero.quests[qId]; let def = DAILY_QUESTS[qId]; if (!q || q.claimed || q.progress < def.target) return; q.claimed = true; hero.gems += def.rewardGems; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
 checkDailyQuests();
 
-let enemy = null; let combatMode = 'pve'; let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+let enemy = null; 
+let combatMode = 'pve'; 
+let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 
-// === ПВП АРЕНА (БОТЫ-ФАНТОМЫ) ===
+// === ПАМЯТЬ БОЯ (чтобы PVE и PVP не пересекались) ===
+let savedPveEnemy = null;
+let savedPveState = null;
+
+const NORMAL_MOBS = [ { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" }, { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" }, { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" }, { id: 10, name: "Червь" }, { id: 11, name: "Улитка" }, { id: 12, name: "Ведьма" }, { id: 13, name: "Вирм" }, { id: 14, name: "Стрелок" }, { id: 15, name: "Гаргулья" }, { id: 16, name: "Мурлок" }, { id: 17, name: "Дракон" }, { id: 18, name: "Акула" }, { id: 19, name: "Паук" }, { id: 20, name: "Пугало" } ];
+const BOSSES = { 10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" }, 40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" }, 70: { id: 27, name: "Голем" }, 80: { id: 28, name: "Гидра" }, 90: { id: 29, name: "Механоид" }, 100: { id: 30, name: "Суккуб" } };
+
+const RAID_BOSSES = [
+    { id: "raid_1", name: "Костяной Голем", imgId: 27, diff: "Легкий", desc: "Уязвимая груда камней.", hpMult: 3, atkMult: 1.2, armMult: 1, gemReward: 2, dropRelic: false, res_fire: 50, res_ice: -20 },
+    { id: "raid_2", name: "Архилич Тьмы", imgId: 21, diff: "Средний", desc: "Бьет тьмой. Уязвим к свету.", hpMult: 5, atkMult: 1.8, armMult: 1.5, gemReward: 5, dropRelic: false, dmg_dark: 30, res_dark: 80, res_holy: -50 },
+    { id: "raid_3", name: "Древний Дракон", imgId: 17, diff: "Хардкор", desc: "Дышит огнем. Гарант. реликвия.", hpMult: 8, atkMult: 2.5, armMult: 2, gemReward: 10, dropRelic: true, dmg_fire: 50, res_fire: 80, res_ice: -50 }
+];
+
 const MOCK_PLAYERS = [
     {name: "ShadowFiend", cls: "shadow", img: "shadow.png"}, {name: "Guts", cls: "berserk", img: "berserk.png"},
     {name: "Arthur", cls: "knight", img: "knight.png"}, {name: "Legolas", cls: "ranger", img: "ranger.png"},
     {name: "DarkLord", cls: "berserk", img: "berserk.png"}
 ];
-
-function startPvP() {
-    if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв! Вылечитесь в лагере.");
-    playSFX('click');
-    combatMode = 'pvp';
-    
-    let bot = MOCK_PLAYERS[Math.floor(Math.random() * MOCK_PLAYERS.length)];
-    let statMult = 1 + (hero.level * 0.1);
-    
-    enemy = {
-        name: bot.name + " (Игрок)",
-        floor: hero.level,
-        imgUrl: STATIC_URL + bot.img,
-        bgUrl: STATIC_URL + "begraund/throne.png",
-        isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true,
-        hp: Math.floor(hero.combatStats.hp * 0.9), 
-        maxHp: Math.floor(hero.combatStats.hp * 0.9),
-        nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)],
-        turnCounter: 0,
-        stats: { 
-            atk: Math.floor(hero.combatStats.damage * 0.8), 
-            armor: Math.floor(hero.combatStats.armor * 0.8), 
-            critChance: 10, dodge: 5, armorPen: Math.floor(hero.level)
-        },
-        ratingReward: 25 + Math.floor(Math.random()*10)
-    };
-    
-    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
-    calculateStats(true);
-    
-    document.getElementById("combat-stage-name").innerText = `PVP АРЕНА`; 
-    document.getElementById("combat-stage-name").className = "combat-header boss"; 
-    document.getElementById("enemy-rage-bg").style.display = "none";
-    document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой на Арене начался!</div>`;
-    
-    planEnemyTurn(); 
-    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); 
-    document.getElementById('screen-PVE').classList.add('active'); 
-    currentScreen = 'PVE'; 
-    updateUI();
-}
-
-const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
-const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
 function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.25, lvl - 1)); }
 
@@ -280,18 +250,60 @@ function generateBossDrop(floor, specificId = null) {
 function initCombat() {
     combatMode = 'pve'; enemy = generateEnemy(hero.floor); combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
     calculateStats(true); let title = document.getElementById("combat-stage-name"); document.getElementById("enemy-rage-bg").style.display = "none";
-    if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";} else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss";} else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header";}
-    document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`; planEnemyTurn(); updateUI();
+    if (title) { if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";} else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss";} else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header";} }
+    let log = document.getElementById("combat-log"); if (log) log.innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`; planEnemyTurn(); updateUI();
 }
 
 function startRaid(bossId) {
     if (hero.tickets < 1) return alert("Нет билетов рейда!"); if (hero.hp <= 0) return alert("Герой мертв!"); hero.tickets--; saveGame(); playSFX('click');
+    
+    // Сохраняем PVE-монстра
+    if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
+    
     let bData = RAID_BOSSES.find(b => b.id === bossId); combatMode = 'raid'; let statMult = 1 + (hero.level * 0.1); 
     enemy = { name: "Рейд: " + bData.name, floor: hero.level, imgUrl: `${STATIC_URL}mobs/B_${bData.imgId}_high_resolution.png`, bgUrl: `${STATIC_URL}begraund/throne.png`, isBoss: true, isMiniBoss: false, isRaid: true, raidData: bData, hp: Math.floor(100 * statMult * bData.hpMult), maxHp: Math.floor(100 * statMult * bData.hpMult), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(10 * statMult * bData.atkMult), armor: Math.floor(5 * statMult * bData.armMult), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) } };
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { if (bData[`dmg_${el}`]) enemy.stats[`dmg_${el}`] = Math.floor(bData[`dmg_${el}`] * statMult); if (bData[`res_${el}`]) enemy.stats[`res_${el}`] = bData[`res_${el}`]; });
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
-    calculateStats(true); document.getElementById("combat-stage-name").innerText = `МИРОВОЙ БОСС`; document.getElementById("combat-stage-name").className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block"; document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Рейд начался! У вас فقط 15 ходов!</div>`;
+    calculateStats(true); 
+    document.getElementById("enemy-rage-bg").style.display = "block"; document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Рейд начался! У вас только 15 ходов!</div>`;
     planEnemyTurn(); document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); currentScreen = 'PVE'; updateUI();
+}
+
+function startPvP() {
+    if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв! Вылечитесь в лагере.");
+    playSFX('click');
+    
+    // Сохраняем PVE-монстра
+    if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
+    
+    combatMode = 'pvp';
+    let bot = MOCK_PLAYERS[Math.floor(Math.random() * MOCK_PLAYERS.length)];
+    
+    enemy = {
+        name: bot.name,
+        floor: hero.level,
+        imgUrl: STATIC_URL + bot.img,
+        bgUrl: STATIC_URL + "begraund/throne.png",
+        isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true,
+        hp: Math.floor(hero.combatStats.hp * 0.9), 
+        maxHp: Math.floor(hero.combatStats.hp * 0.9),
+        nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)],
+        turnCounter: 0,
+        stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) },
+        ratingReward: 25 + Math.floor(Math.random()*10)
+    };
+    
+    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+    calculateStats(true);
+    
+    document.getElementById("enemy-rage-bg").style.display = "none";
+    document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой на Арене начался!</div>`;
+    
+    planEnemyTurn(); 
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); 
+    document.getElementById('screen-PVE').classList.add('active'); 
+    currentScreen = 'PVE'; 
+    updateUI();
 }
 
 function planEnemyTurn() {
@@ -303,6 +315,7 @@ function planEnemyTurn() {
 
 function updateIntentDisplay() {
     let el = document.getElementById("combat-intent");
+    if(!el) return;
     if (enemy.nextAtkZone === 'ENRAGE') { el.innerHTML = `⚠️ <span style="color:#ef4444;">БОСС ВПАЛ В БЕЗУМИЕ! СМЕРТЬ НЕМИНУЕМА!</span>`; el.className = "intent-box ultimatum"; } 
     else if (enemy.nextAtkZone === 'ULTIMATUM') { el.innerHTML = `☠️ <span style="color:#fca5a5;">БОСС ГОТОВИТ УЛЬТИМАТУМ ПО ВСЕМ ЗОНАМ!</span>`; el.className = "intent-box ultimatum"; } 
     else { el.innerHTML = `🗡️ <span style="color:#a1a1aa;">Враг выжидает и готовится к удару...</span>`; el.className = "intent-box"; }
@@ -511,7 +524,22 @@ function handleCombatWin() {
     saveGame(); document.getElementById("vic-modal").classList.add("show"); updateUI(); 
 }
 
-function closeVictoryModal() { playSFX('click'); document.getElementById("vic-modal").classList.remove("show"); if (combatMode === 'pvp') openScreen('arena'); else if (combatMode === 'raid') openScreen('boss'); else initCombat(); }
+function closeVictoryModal() { 
+    playSFX('click'); 
+    document.getElementById("vic-modal").classList.remove("show"); 
+    
+    if (combatMode === 'pvp') {
+        combatMode = 'pve';
+        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
+        openScreen('arena'); 
+    } else if (combatMode === 'raid') {
+        combatMode = 'pve';
+        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
+        openScreen('boss'); 
+    } else { 
+        initCombat(); 
+    } 
+}
 
 function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') {
@@ -630,21 +658,32 @@ function executeTurn() {
                             else if (hasTalent('b5a') && hero.baseClass === 'berserk' && !combatState.undyingUsed) { hero.hp = 1; combatState.undyingUsed = true; logCombat(`<span class="log-sys">БЕССМЕРТИЕ! Вы выжили с 1 HP.</span>`); showDmgPopup("entity-hero-box", "СПАСЕН!", "log-sys"); planEnemyTurn(); saveGame(); updateUI(); } 
                             else { 
                                 hero.hp = 0; 
-                                
-                                // === СМЕРТЬ В PVP (ШТРАФ РЕЙТИНГА) ===
                                 if(combatMode === 'pvp') {
                                     let ratingLost = 10 + Math.floor(Math.random()*10);
                                     hero.rating = Math.max(0, hero.rating - ratingLost);
                                     logCombat(`<span class="log-dmg">Вы проиграли на Арене. Рейтинг -${ratingLost} 🏆</span>`);
                                     playSFX('death'); updateUI(); saveGame();
-                                    setTimeout(() => { alert(`Поражение! Вы потеряли ${ratingLost} рейтинга.`); enemy = null; openScreen('arena'); }, 2000); 
-                                } 
-                                // === СМЕРТЬ В PVE ===
-                                else {
-                                    hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; if(!enemy.isRaid && hero.floor > 1) hero.floor--; 
+                                    setTimeout(() => { 
+                                        alert(`Поражение! Вы потеряли ${ratingLost} рейтинга.`); 
+                                        combatMode = 'pve';
+                                        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
+                                        openScreen('arena'); 
+                                    }, 2000); 
+                                } else {
+                                    hero.deathDebuffEnd = Date.now() + 10 * 60 * 1000; 
+                                    if(combatMode === 'pve' && hero.floor > 1) hero.floor--; 
                                     logCombat(`<span class="log-dmg">💀 ВЫ ПОГИБЛИ. Получено ТЯЖЕЛОЕ РАНЕНИЕ на 10 минут.</span>`); calculateStats(); 
-                                    playSFX('death'); updateUI();
-                                    setTimeout(() => { alert("Вы были повержены и отступаете в Лагерь..."); enemy = null; combatMode = 'pve'; openScreen('hero'); }, 2000); 
+                                    playSFX('death'); updateUI(); saveGame();
+                                    setTimeout(() => { 
+                                        alert("Вы были повержены и отступаете в Лагерь..."); 
+                                        if (combatMode === 'raid') {
+                                            combatMode = 'pve';
+                                            if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
+                                        } else {
+                                            enemy = null; 
+                                        }
+                                        openScreen('hero'); 
+                                    }, 2000); 
                                 }
                             }
                         } else { planEnemyTurn(); saveGame(); updateUI(); }
@@ -688,15 +727,33 @@ function closeInspectModal() { playSFX('click'); document.getElementById("item-i
 
 function openScreen(screenName) {
     if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating'].includes(screenName)) return alert("В разработке!");
-    if ((screenName === 'PVE' || screenName === 'boss') && hero.hp <= 0 && !GOD_MODE) { if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); return alert("Герой мертв! Сначала вылечитесь в лагере."); }
+    
+    // Блокируем переход по вкладкам во время Рейда или ПвП
+    if ((combatMode === 'pvp' || combatMode === 'raid') && screenName !== 'PVE') {
+        return alert("Сначала завершите текущий специальный бой!");
+    }
+
+    if ((screenName === 'PVE' || screenName === 'boss' || screenName === 'arena') && hero.hp <= 0 && !GOD_MODE) { 
+        if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); 
+        return alert("Герой мертв! Сначала вылечитесь в лагере."); 
+    }
+
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
     playSFX('click');
-    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-' + screenName).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-' + (screenName === 'classes' ? 'class' : screenName)).classList.add('active');
-    currentScreen = screenName; let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
-    if(screenName === 'classes') previewClassId = hero.baseClass; if(screenName === 'PVE' && (!enemy || enemy.isRaid)) initCombat(); if(screenName === 'blacksmith') forgeSelectedIndex = null; 
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); 
+    document.getElementById('screen-' + screenName).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); 
+    if(document.getElementById('nav-' + screenName)) document.getElementById('nav-' + screenName).classList.add('active');
+    currentScreen = screenName; 
+    let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
+    
+    if(screenName === 'classes') previewClassId = hero.baseClass; 
+    if(screenName === 'PVE' && !enemy) initCombat(); 
+    if(screenName === 'blacksmith') forgeSelectedIndex = null; 
+    
     updateUI();
 }
+
 function setShopMode(mode) { playSFX('click'); shopMode = mode; updateUI(); }
 function selectPreviewClass(classId) { playSFX('click'); previewClassId = classId; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 function changeClass(classKey) {
@@ -835,7 +892,7 @@ function renderTalents() {
         tier.opts.forEach(opt => { let isSelected = pickedTalent === opt.id; let isDimmed = pickedTalent && !isSelected; let btnClass = `talent-btn ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`; optsHtml += `<div class="${btnClass}" onclick="pickTalent(${index}, '${opt.id}')"><div class="talent-name">${opt.n}</div><div class="talent-desc">${opt.d}</div></div>`; });
         html += `<div class="talent-tier ${isLocked ? 'locked' : ''}"><div class="talent-tier-header">ТИР ${index + 1} ${lockBadge}</div><div class="talent-options">${optsHtml}</div></div>`;
     });
-    document.getElementById("ui-talents-container").innerHTML = html;
+    let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
 }
 
 function updateUI() {
@@ -847,7 +904,7 @@ function updateUI() {
     document.getElementById("ui-top-lvl").innerText = hero.level;
     
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' ? 'disabled' : ''}>▶</button>`;
-    let titleEl = document.getElementById("combat-floor-title"); if(titleEl) titleEl.innerHTML = floorNavHtml;
+    
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
     // Арена
@@ -877,6 +934,19 @@ function updateUI() {
     }
 
     if (currentScreen === 'PVE' && enemy) {
+        let titleEl = document.getElementById("combat-floor-title"); 
+        if(titleEl) {
+            if (combatMode === 'pvp' || combatMode === 'raid') { titleEl.style.display = 'none'; } 
+            else { titleEl.style.display = 'flex'; titleEl.innerHTML = floorNavHtml; }
+        }
+
+        let stageNameEl = document.getElementById("combat-stage-name");
+        if(stageNameEl) {
+            if (combatMode === 'pvp') { stageNameEl.innerText = "PVP АРЕНА"; stageNameEl.className = "combat-header boss"; } 
+            else if (combatMode === 'raid') { stageNameEl.innerText = "МИРОВОЙ БОСС"; stageNameEl.className = "combat-header boss"; } 
+            else { stageNameEl.innerText = enemy.isBoss ? "МЕГА-БОСС" : (enemy.isMiniBoss ? "ЭЛИТНЫЙ ВРАГ" : "ОБЫЧНЫЙ ВРАГ"); stageNameEl.className = enemy.isBoss || enemy.isMiniBoss ? "combat-header boss" : "combat-header"; }
+        }
+
         let arenaOuter = document.getElementById("arena-bg"); arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`; arenaOuter.style.backgroundSize = 'cover'; arenaOuter.style.backgroundPosition = 'center';
         let diorama = document.getElementById("combat-entities-box"); diorama.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.9) 100%), url('${enemy.bgUrl}')`; diorama.style.backgroundSize = 'cover'; diorama.style.backgroundPosition = 'center';
         
@@ -893,10 +963,10 @@ function updateUI() {
         let heroLvlHtml = `<span class="entity-lvl">УР. ${hero.level}</span>`; document.getElementById("combat-hero-name-plate").innerHTML = `<span class="entity-name-text">${hero.name}</span>${heroLvlHtml}`; document.getElementById("combat-hero-img").src = CLASS_AVATARS[hero.baseClass];
         
         let bossIcon = enemy.isBoss ? "👑 " : (enemy.isMiniBoss ? "☠️ " : ""); let enemyCleanName = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", ""); let enemyLvlTag = "";
-        if(enemy.isRaid) { enemyLvlTag = `<span class="entity-lvl boss">УР. ${enemy.floor}</span>`; } else if(enemy.isBoss) { enemyLvlTag = `<span class="entity-lvl boss">БОСС ${enemy.floor}</span>`; } else if(enemy.isMiniBoss) { enemyLvlTag = `<span class="entity-lvl elite">ЭЛИТА ${enemy.floor}</span>`; } else { enemyLvlTag = `<span class="entity-lvl">УР. ${enemy.floor}</span>`; }
+        if(enemy.isRaid || enemy.isPlayer) { enemyLvlTag = `<span class="entity-lvl boss">УР. ${enemy.floor}</span>`; } else if(enemy.isBoss) { enemyLvlTag = `<span class="entity-lvl boss">БОСС ${enemy.floor}</span>`; } else if(enemy.isMiniBoss) { enemyLvlTag = `<span class="entity-lvl elite">ЭЛИТА ${enemy.floor}</span>`; } else { enemyLvlTag = `<span class="entity-lvl">УР. ${enemy.floor}</span>`; }
 
         document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; document.getElementById("combat-enemy-img").src = enemy.imgUrl;
-        if(enemy.isBoss) document.getElementById("entity-enemy-box").className = "combat-card boss"; else document.getElementById("entity-enemy-box").className = "combat-card";
+        if(enemy.isBoss || enemy.isPlayer) document.getElementById("entity-enemy-box").className = "combat-card boss"; else document.getElementById("entity-enemy-box").className = "combat-card";
 
         let isHeroDead = hero.hp <= 0 && !GOD_MODE;
         if (GOD_MODE) { document.getElementById("combat-hero-hp").innerText = "GOD MODE"; document.getElementById("combat-hero-maxhp").innerText = "999K"; } else { document.getElementById("combat-hero-hp").innerText = Math.floor(hero.hp); document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; }
@@ -939,8 +1009,8 @@ function updateUI() {
     if (currentScreen === 'hero') {
         let cls = CLASSES[hero.baseClass];
         let muteBtn = `<span style="cursor:pointer; filter:grayscale(${sfxMuted?'100%':'0%'}) opacity(${sfxMuted?'0.5':'1'}); padding: 0 8px; font-size:16px;" onclick="toggleMute()">${sfxMuted?'🔇':'🔊'}</span>`;
-        document.getElementById("ui-class-name").innerHTML = `<button class="reset-btn" onclick="hardReset()">СБРОС</button> ${muteBtn} ${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
-        document.getElementById("main-hero-avatar").src = CLASS_AVATARS[hero.baseClass];
+        let cn = document.getElementById("ui-class-name"); if(cn) cn.innerHTML = `<button class="reset-btn" onclick="hardReset()">СБРОС</button> ${muteBtn} ${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
+        let av = document.getElementById("main-hero-avatar"); if(av) av.src = CLASS_AVATARS[hero.baseClass];
 
         let isCombat = currentScreen === 'PVE' && enemy; let skipHead = isCombat && combatState.zoneHealth.head === 0; let skipChest = isCombat && combatState.zoneHealth.chest === 0; let skipLegs = isCombat && combatState.zoneHealth.legs === 0;
 
@@ -956,10 +1026,10 @@ function updateUI() {
             }
         });
 
-        document.getElementById("ui-bag-capacity").innerText = `${hero.inventory.length}/15`;
+        let bc = document.getElementById("ui-bag-capacity"); if(bc) bc.innerText = `${hero.inventory.length}/15`;
         let invHtml = '';
         for (let i = 0; i < 15; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } }
-        document.getElementById("ui-inventory-grid").innerHTML = invHtml;
+        let ig = document.getElementById("ui-inventory-grid"); if(ig) ig.innerHTML = invHtml;
 
         let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100)); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let healCost = Math.max(10, Math.floor(missingHp * 0.5));
         let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-${healCost}💰)</button>` : ``;
@@ -980,7 +1050,8 @@ function updateUI() {
             </div>
         `;
 
-        document.getElementById("ui-stats-container").innerHTML = `
+        let sc = document.getElementById("ui-stats-container");
+        if(sc) sc.innerHTML = `
             <div class="stats-card">
                 ${unspentHtml}
                 <div class="stat-group-title">Базовые параметры</div>
@@ -1044,7 +1115,7 @@ function updateUI() {
             if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } 
             else { forgeHtml += `<div class="inv-item empty"></div>`; } 
         }
-        document.getElementById("ui-forge-grid").innerHTML = forgeHtml;
+        let fg = document.getElementById("ui-forge-grid"); if(fg) fg.innerHTML = forgeHtml;
 
         let dPanel = document.getElementById("forge-details-panel"); let btnUpg = document.getElementById("btn-forge-upgrade");
         if (forgeSelectedIndex !== null && hero.inventory[forgeSelectedIndex]) {
@@ -1056,9 +1127,9 @@ function updateUI() {
                 statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`;
             }
             document.getElementById("f-item-stats").innerHTML = statHtml;
-            btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || item.lvl >= 20; if (item.lvl >= 20) btnUpg.innerText = "МАКСИМАЛЬНЫЙ УРОВЕНЬ";
-            dPanel.classList.add("show");
-        } else { dPanel.classList.remove("show"); }
+            if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || item.lvl >= 20; if (item.lvl >= 20) btnUpg.innerText = "МАКСИМАЛЬНЫЙ УРОВЕНЬ"; }
+            if(dPanel) dPanel.classList.add("show");
+        } else { if(dPanel) dPanel.classList.remove("show"); }
     }
 
     if (currentScreen === 'shop') {
