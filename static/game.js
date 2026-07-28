@@ -1,7 +1,6 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
-// Получение ID игрока
 const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "local_test_user";
 
 // === АУДИО ДВИЖОК ===
@@ -58,7 +57,7 @@ function shakeScreen() { let app = document.getElementById("app-container"); if(
 function triggerSkillVFX(elementId, vfxClass) { let el = document.getElementById(elementId); if(el) { el.classList.remove(vfxClass); void el.offsetWidth; el.classList.add(vfxClass); setTimeout(() => el.classList.remove(vfxClass), 500); } }
 
 const GOD_MODE = false; 
-let isTurnExecuting = false; // ЖЕСТКАЯ ЗАЩИТА ОТ КЛИКОВ
+let isTurnExecuting = false; 
 
 const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 const imgCache = {}; for (let key in CLASS_AVATARS) { imgCache[key] = new Image(); imgCache[key].src = CLASS_AVATARS[key]; }
@@ -142,14 +141,20 @@ const MOCK_PLAYERS = [
 
 const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
 
-let currentScreen = "hero"; let shopMode = "buy"; let previewClassId = "knight"; let inspectInvIndex = null; let forgeSelectedIndex = null; 
+// === СЛУЧАЙНЫЕ СОБЫТИЯ (ПРОКЛЯТИЯ ЗАБЕГА) ===
+const BOSS_EVENTS = [
+    { id: "blood_pact", title: "Кровавый Контракт", desc: "Древний алтарь требует жертвы. Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
+    { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными. Работает на всех этажах.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
+    { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Идеально для уклонения. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
+    { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты. Работает на всех этажах.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
+];
 
-let enemy = null; 
-let combatMode = 'pve'; 
+let currentScreen = "hero"; let shopMode = "buy"; let previewClassId = "knight"; let inspectInvIndex = null; let forgeSelectedIndex = null; 
+let enemy = null; let combatMode = 'pve'; 
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 let savedPveEnemy = null; let savedPveState = null;
 
-let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["90523", "64755"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {} };
+let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["90523", "64755"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {} };
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
@@ -161,39 +166,18 @@ async function syncSaveToServer() {
         await fetch('/api/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: String(getUserId()),
-                name: hero.name,
-                class_id: hero.baseClass,
-                level: hero.level,
-                rating: hero.rating,
-                hero_data: JSON.stringify(hero)
-            })
+            body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) })
         });
-    } catch (e) { console.warn("Сервер недоступен, играем оффлайн."); }
+    } catch (e) {}
 }
 
 function buildLeaderboardHTML(players) {
     let html = '';
     players.forEach((p, index) => {
-        let rank = index + 1;
-        let cardClass = "pvp-player-card";
-        if (rank === 1) cardClass += " top-1";
-        else if (rank === 2) cardClass += " top-2";
-        else if (rank === 3) cardClass += " top-3";
-
+        let rank = index + 1; let cardClass = "pvp-player-card";
+        if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3";
         let avatarCls = p.cls || 'knight';
-        html += `
-            <div class="${cardClass}">
-                <div class="pvp-rank">${rank}</div>
-                <img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar">
-                <div class="pvp-info">
-                    <div class="pvp-name">${p.name}</div>
-                    <div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div>
-                </div>
-                <div class="pvp-rating">🏆 ${p.rating}</div>
-            </div>
-        `;
+        html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`;
     });
     return html;
 }
@@ -213,6 +197,7 @@ function applyLoadedSave(savedHero, savedItems) {
     if(savedHero) { 
         let h = JSON.parse(savedHero); if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(h.talents === undefined || !Array.isArray(h.talents)) h.talents = []; if(h.setCounts === undefined) h.setCounts = {}; if(h.flags === undefined) h.flags = {}; if(h.quests === undefined) h.quests = {}; if(h.questDate === undefined) h.questDate = "";
         if(h.rating === undefined) h.rating = 1000;
+        if(h.activeAltar === undefined) h.activeAltar = null; if(h.altarOffers === undefined) h.altarOffers = {};
         if (!Array.isArray(h.inventory)) h.inventory = [];
         hero = h;
     }
@@ -224,10 +209,7 @@ async function loadGame() {
     if (window.tg && tg.CloudStorage) { tg.CloudStorage.getItem('tg_rpg_hero', function(err, cloudHero) { if (!err && cloudHero) { tg.CloudStorage.getItem('tg_rpg_custom_items', function(err2, cloudItems) { if (!err2) applyLoadedSave(cloudHero, cloudItems); }); } }); }
     try {
         let res = await fetch(`/api/load/${getUserId()}`);
-        if (res.ok) {
-            let data = await res.json();
-            if (data.status === "ok" && data.hero_data) applyLoadedSave(data.hero_data, localStorage.getItem('tg_rpg_custom_items'));
-        }
+        if (res.ok) { let data = await res.json(); if (data.status === "ok" && data.hero_data) applyLoadedSave(data.hero_data, localStorage.getItem('tg_rpg_custom_items')); }
     } catch(e) {}
 }
 
@@ -282,11 +264,69 @@ function generateBossDrop(floor, specificId = null) {
     newItem.lvl = floor; newItem.price = Math.floor(baseItem.price * finalMult * 2.5); newItem.desc = `Трофей ${floor} этажа. Качество: ${Math.floor(rollQuality*100)}%`; ITEMS_DB[newItem.id] = newItem; return newItem;
 }
 
+// === НОВАЯ ЛОГИКА СОБЫТИЙ ПЕРЕД БОССОМ С АНТИ-АБУЗОМ ===
 function initCombat() {
-    combatMode = 'pve'; enemy = generateEnemy(hero.floor); combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
-    calculateStats(true); let title = document.getElementById("combat-stage-name"); document.getElementById("enemy-rage-bg").style.display = "none";
+    combatMode = 'pve'; enemy = generateEnemy(hero.floor); 
+    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+    calculateStats(true); 
+
+    if (enemy.isBoss && !hero.activeAltar) {
+        if (!hero.altarOffers) hero.altarOffers = {};
+        if (!hero.altarOffers[hero.floor]) {
+            hero.altarOffers[hero.floor] = BOSS_EVENTS[Math.floor(Math.random() * BOSS_EVENTS.length)].id;
+            saveGame();
+        }
+        updateUI(); 
+        showBossEventModal(hero.altarOffers[hero.floor]);
+    } else {
+        startCombatProper();
+    }
+}
+
+function showBossEventModal(eventId) {
+    let event = BOSS_EVENTS.find(e => e.id === eventId);
+    let overlay = document.createElement('div');
+    overlay.id = "boss-event-overlay";
+    overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(5px); transition: opacity 0.2s ease-in-out;";
+    overlay.innerHTML = `
+        <div style="background:#18181b; border:1px solid #3f3f46; border-radius:16px; padding:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.8); max-width:320px; width:100%;">
+            <div style="font-size:40px; margin-bottom:10px;">🔮</div>
+            <div style="color:#fbbf24; font-size:18px; font-weight:900; margin-bottom:10px; text-shadow: 0 0 10px rgba(251,191,36,0.5);">${event.title}</div>
+            <div style="color:#a1a1aa; font-size:13px; margin-bottom:15px; line-height:1.4;">${event.desc}</div>
+            <div style="background:#27272a; padding:10px; border-radius:8px; margin-bottom:20px; display:flex; flex-direction:column; gap:6px; text-align:left; border: 1px solid #3f3f46;">
+                <div style="color:#34d399; font-size:12px; font-weight:bold;">🟢 ${event.buffText}</div>
+                <div style="color:#ef4444; font-size:12px; font-weight:bold;">🔴 ${event.debuffText}</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button style="flex:1; padding:12px; background:#fbbf24; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(251,191,36,0.3);" onclick="acceptBossEvent('${event.id}')">Принять</button>
+                <button style="flex:1; padding:12px; background:#3f3f46; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="declineBossEvent()">Отказаться</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+window.acceptBossEvent = function(eventId) {
+    let el = document.getElementById("boss-event-overlay"); if(el) el.remove();
+    hero.activeAltar = eventId;
+    saveGame();
+    playSFX('skill');
+    startCombatProper();
+};
+
+window.declineBossEvent = function() {
+    let el = document.getElementById("boss-event-overlay"); if(el) el.remove();
+    playSFX('click');
+    startCombatProper();
+};
+
+function startCombatProper() {
+    calculateStats(true); 
+    if (hero.hp > hero.combatStats.hp && !GOD_MODE) hero.hp = hero.combatStats.hp; 
+    let title = document.getElementById("combat-stage-name"); document.getElementById("enemy-rage-bg").style.display = "none";
     if (title) { if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";} else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss";} else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header";} }
-    let log = document.getElementById("combat-log"); if (log) log.innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`; planEnemyTurn(); updateUI();
+    let log = document.getElementById("combat-log"); if (log) log.innerHTML = `<div class="log-entry log-sys">Сражение начинается!</div>`; 
+    planEnemyTurn(); updateUI();
 }
 
 function startRaid(bossId) {
@@ -681,6 +721,7 @@ function executeTurn() {
                                 isTurnExecuting = false;
                             } 
                             else { 
+                                hero.activeAltar = null; hero.altarOffers = {}; // СБРОС ПРОКЛЯТИЯ!
                                 hero.hp = 0; 
                                 if(combatMode === 'pvp') {
                                     let ratingLost = 10 + Math.floor(Math.random()*10); hero.rating = Math.max(0, hero.rating - ratingLost); 
@@ -767,7 +808,7 @@ function openScreen(screenName) {
     let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
     
     if(screenName === 'classes') previewClassId = hero.baseClass; 
-    if(screenName === 'PVE' && !enemy) initCombat(); 
+    if(screenName === 'PVE' && (!enemy || enemy.isRaid || enemy.isPlayer)) initCombat(); 
     if(screenName === 'blacksmith') forgeSelectedIndex = null; 
     
     updateUI();
@@ -876,11 +917,19 @@ function calculateStats(isCombat = false) {
     let blockCap = setCounts['templar'] >= 2 ? 75 : 60; total.blockChance = Math.min(blockCap, total.blockChance);
     if (hero.deathDebuffEnd > Date.now()) { total.armor = Math.floor(total.armor * 0.75); damage = Math.floor(damage * 0.75); }
     
+    // === ПРИМЕНЕНИЕ АЛТАРЯ К СТАТАМ ===
+    let tempStats = { hp: hp, damage: damage, armor: total.armor, dodge: parseFloat(total.dodge), critChance: parseFloat(total.critChance) };
+    if (hero.activeAltar) {
+        let ev = BOSS_EVENTS.find(e => e.id === hero.activeAltar);
+        if (ev) ev.apply(tempStats);
+    }
+    hp = tempStats.hp; damage = tempStats.damage; total.armor = tempStats.armor; total.dodge = tempStats.dodge; total.critChance = tempStats.critChance;
+
     if (!isCombat) { 
         hero.maxHp = hp; if (hero.hp > hero.maxHp && !GOD_MODE) hero.hp = hero.maxHp; 
-        hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy }; 
+        hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: (typeof total.critChance === 'number' ? total.critChance.toFixed(1) : total.critChance), critDmg: total.critDmg, dodge: (typeof total.dodge === 'number' ? total.dodge.toFixed(1) : total.dodge), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy }; 
     }
-    hero.combatStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: total.critChance.toFixed(1), critDmg: total.critDmg, dodge: total.dodge.toFixed(1), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy };
+    hero.combatStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: (typeof total.critChance === 'number' ? total.critChance.toFixed(1) : total.critChance), critDmg: total.critDmg, dodge: (typeof total.dodge === 'number' ? total.dodge.toFixed(1) : total.dodge), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy };
 }
 
 function formatStats(stats) {
@@ -927,7 +976,6 @@ function updateUI() {
     
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
-    // === БЛОК РЕЙТИНГА ===
     if (currentScreen === 'rating') {
         let topContainer = document.getElementById("ui-global-top");
         if (!topContainer) {
@@ -1122,6 +1170,12 @@ function updateUI() {
 
         let isDebuff = hero.deathDebuffEnd > Date.now();
         let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
+        
+        let altarTxt = '';
+        if (hero.activeAltar) {
+            let ev = BOSS_EVENTS.find(e => e.id === hero.activeAltar);
+            if (ev) altarTxt = `<div style="background:#4c0519; color:#fca5a5; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px dashed #be123c; box-shadow: 0 0 10px rgba(190, 18, 60, 0.3);">🔮 АКТИВНО ПРОКЛЯТИЕ ЗАБЕГА:<br><span style="font-size:11px; color:#fff;">${ev.title}</span></div>`;
+        }
 
         let unspentHtml = hero.unspentPoints > 0 ? `<div style="background:#064e3b; color:#34d399; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">ОЧКОВ ХАРАКТЕРИСТИК: ${hero.unspentPoints}</div>` : '';
         
@@ -1149,6 +1203,7 @@ function updateUI() {
             </div>
             <div class="stats-card">
                 <div class="stat-group-title">Боевые параметры</div>
+                ${altarTxt}
                 ${warnTxt}
                 <div class="stat-item" style="flex-direction:column; align-items:stretch;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
@@ -1292,5 +1347,4 @@ function updateUI() {
     if (currentScreen === 'talents') { renderTalents(); }
 }
 
-// САМЫЙ ГЛАВНЫЙ ВЫЗОВ - только в самом конце!
 loadGame();
