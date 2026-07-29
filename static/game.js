@@ -34,6 +34,7 @@ const ADMIN_ID = 7495831046;
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) { if (String(tg.initDataUnsafe.user.id) === String(ADMIN_ID)) { GOD_MODE = true; } }
 
 const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
+const imgCache = {}; for (let key in CLASS_AVATARS) { imgCache[key] = new Image(); imgCache[key].src = CLASS_AVATARS[key]; }
 
 const CLASSES = {
     knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Танк-Рефлект. Выносливость повышает мощь Шипов.", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
@@ -51,6 +52,7 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
+// БАЗА ПРЕДМЕТОВ С ТОЧНЫМИ ИМЕНАМИ КАРТИНОК ДЛЯ РАСХОДНИКОВ И ПУЛАМИ ДЛЯ ШМОТОК
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
@@ -69,24 +71,24 @@ const ITEMS_DB = {
 
 let SHOP_ASSORTMENT = Object.keys(ITEMS_DB).filter(id => ITEMS_DB[id].inShop);
 const PREFIXES = ["Древний", "Проклятый", "Пылающий", "Забытый", "Рунный", "Теневой", "Божественный"];
-const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
 
 const NORMAL_MOBS = [ { id: 1, name: "Гвардеец" }, { id: 2, name: "Змей" }, { id: 3, name: "Жаба" }, { id: 4, name: "Кентавр" }, { id: 5, name: "Воин" }, { id: 6, name: "Единорог" }, { id: 7, name: "Палач" }, { id: 8, name: "Ифрит" }, { id: 9, name: "Минотавр" }, { id: 10, name: "Червь" } ];
 const BOSSES = { 10: { id: 21, name: "Тень" }, 20: { id: 22, name: "Око" }, 30: { id: 23, name: "Мимик" }, 40: { id: 24, name: "Смерч" }, 50: { id: 25, name: "Терраск" }, 60: { id: 26, name: "Вендиго" }, 70: { id: 27, name: "Голем" }, 80: { id: 28, name: "Гидра" }, 90: { id: 29, name: "Механоид" }, 100: { id: 30, name: "Суккуб" } };
 
 const RAID_BOSSES = [
-    { id: "raid_1", name: "Костяной Голем", imgId: 27, diff: "Легкий", desc: "Шанс на Эпический сет по Уровню.", hpMult: 3, atkMult: 1.2, armMult: 1, gemReward: 2, res_fire: 50, res_ice: -20 },
-    { id: "raid_2", name: "Архилич Тьмы", imgId: 21, diff: "Средний", desc: "Шанс на Легендарный сет по Уровню.", hpMult: 5, atkMult: 1.8, armMult: 1.5, gemReward: 5, dmg_dark: 30, res_dark: 80, res_holy: -50 },
-    { id: "raid_3", name: "Древний Дракон", imgId: 17, diff: "Хардкор", desc: "Шанс на Реликтовый сет по Уровню.", hpMult: 8, atkMult: 2.5, armMult: 2, gemReward: 10, dmg_fire: 50, res_fire: 80, res_ice: -50 }
+    { id: "raid_1", name: "Костяной Голем", imgId: 27, diff: "Легкий", desc: "Гарант: Эпический сет по Уровню.", hpMult: 3, atkMult: 1.2, armMult: 1, gemReward: 2, res_fire: 50, res_ice: -20 },
+    { id: "raid_2", name: "Архилич Тьмы", imgId: 21, diff: "Средний", desc: "Гарант: Легендарный сет по Уровню.", hpMult: 5, atkMult: 1.8, armMult: 1.5, gemReward: 5, dmg_dark: 30, res_dark: 80, res_holy: -50 },
+    { id: "raid_3", name: "Древний Дракон", imgId: 17, diff: "Хардкор", desc: "Гарант: Реликтовый сет по Уровню.", hpMult: 8, atkMult: 2.5, armMult: 2, gemReward: 10, dmg_fire: 50, res_fire: 80, res_ice: -50 }
 ];
 
 const MOCK_PLAYERS = [ {name: "ShadowFiend", cls: "shadow", img: "shadow.png"}, {name: "Guts", cls: "berserk", img: "berserk.png"}, {name: "Arthur", cls: "knight", img: "knight.png"} ];
+
 const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
 
 const BOSS_EVENTS = [
-    { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
+    { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
     { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
-    { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
+    { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
     { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
 ];
 
@@ -101,40 +103,82 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.ini
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
+// === ГЕНЕРАТОРЫ ЛУТА С РАНДОМОМ ИЗ imgPool ===
+const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
+
 function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, isRaid = false) {
     let baseItem = ITEMS_DB[baseTemplateId]; if(!baseItem) return null;
     let newItem = JSON.parse(JSON.stringify(baseItem));
+    
     newItem.id = baseTemplateId + "_" + Date.now() + Math.floor(Math.random()*1000);
-    if (baseItem.imgPool && baseItem.imgPool.length > 0) newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
+    
+    // РАНДОМНАЯ КАРТИНКА ИЗ ПУЛА ШМОТОК
+    if (baseItem.imgPool && baseItem.imgPool.length > 0) {
+        newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
+    }
+
     newItem.lvl = targetLevel; newItem.inShop = false; newItem.dropOnly = true;
+    
     let rarities = { "common": 1.0, "rare": 1.3, "epic": 1.7, "legendary": 2.2, "relic": 3.0 };
     newItem.rarity = rarity; let rMult = rarities[rarity] || 1.0;
-    let statMult = 1 + (targetLevel * 0.1); let finalMult = statMult * rMult * (0.85 + Math.random() * 0.3);
+    
+    let statMult = 1 + (targetLevel * 0.1); 
+    let finalMult = statMult * rMult * (0.85 + Math.random() * 0.3);
+
     for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * finalMult));
+
     let extraStatsCount = { "common": 0, "rare": 1, "epic": 2, "legendary": 3, "relic": 4 }[rarity] || 0;
     let possibleStats = SECONDARY_STATS.filter(s => !newItem.stats[s]);
     for(let i=0; i<extraStatsCount; i++) {
         if(possibleStats.length === 0) break;
-        let idx = Math.floor(Math.random() * possibleStats.length); let statName = possibleStats[idx]; possibleStats.splice(idx, 1);
-        let sVal = 0; if (statName.startsWith('dmg_')) sVal = Math.floor(10 * finalMult); else if (statName.startsWith('res_')) sVal = Math.min(75, Math.floor(15 * finalMult)); else if (['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns'].includes(statName)) sVal = Math.floor(5 * finalMult); else if (statName === 'critDmg') sVal = Math.floor(15 * finalMult); else sVal = Math.floor(3 * finalMult);
+        let idx = Math.floor(Math.random() * possibleStats.length);
+        let statName = possibleStats[idx]; possibleStats.splice(idx, 1);
+        let sVal = (statName.includes('Chance') || statName==='critDmg' || statName==='lifesteal' || statName==='counter' || statName==='thorns') ? Math.floor(5 * finalMult) : Math.floor(3 * finalMult);
         newItem.stats[statName] = sVal;
     }
-    let setChance = 0; if (isRaid) setChance = 25; else if (isBoss) setChance = 5; 
-    if (Math.random() * 100 < setChance) { let classSetMap = { "knight": "templar", "berserk": "bloodied", "shadow": "void", "ranger": "storm" }; newItem.setId = classSetMap[hero.baseClass]; newItem.name = `✨ [СЕТ] ${baseItem.name}`; } else if (isBoss || isRaid) { let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)]; newItem.name = `✨ ${prefix} ${baseItem.name}`; }
+
+    if(isBoss) { let prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)]; newItem.name = `✨ ${prefix} ${baseItem.name}`; }
+    if(isRaid) { let classSetMap = { "knight": "templar", "berserk": "bloodied", "shadow": "void", "ranger": "storm" }; newItem.setId = classSetMap[hero.baseClass]; }
+
     newItem.price = Math.floor(baseItem.price * finalMult * 2.5); ITEMS_DB[newItem.id] = newItem; return newItem;
 }
 
 function generateLootDrop(enemyObj) {
     let dropChance = 0; let rarity = "common"; let isBoss = false; let isRaid = false;
-    let uckBonus = hero.combatStats.luk * (CLASSES[hero.baseClass].statWeights.luk_drop || 0.1); if(hero.flags.storm) uckBonus *= 2;
-    if (enemyObj.isRaid) { dropChance = 100; isRaid = true; isBoss = true; if(enemyObj.raidData.id === "raid_1") rarity = "epic"; else if(enemyObj.raidData.id === "raid_2") rarity = "legendary"; else rarity = "relic"; } else if (enemyObj.isBoss) { dropChance = 100; isBoss = true; let r = Math.random() * 100; if(r < 10) rarity = "relic"; else if(r < 50) rarity = "legendary"; else rarity = "epic"; } else if (enemyObj.isMiniBoss) { dropChance = 30 + (uckBonus * 2); let r = Math.random() * 100; if(r < 10) rarity = "legendary"; else if(r < 40) rarity = "epic"; else rarity = "rare"; } else { dropChance = 2 + uckBonus; let r = Math.random() * 100; if(r < 1) rarity = "epic"; else if(r < 20) rarity = "rare"; else rarity = "common"; }
-    if (Math.random() * 100 <= dropChance) { let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass))); if(pool.length === 0) return null; let baseTemplate = pool[Math.floor(Math.random() * pool.length)]; let targetLevel = enemyObj.floor; if(isRaid) { targetLevel = Math.floor(hero.level / 20) * 20; if (targetLevel === 0) targetLevel = 1; } return createDynamicItem(baseTemplate, targetLevel, rarity, isBoss, isRaid); }
+    let uckBonus = hero.combatStats.luk * (CLASSES[hero.baseClass].statWeights.luk_drop || 0.1);
+    if(hero.flags.storm) uckBonus *= 2;
+
+    if (enemyObj.isRaid) {
+        dropChance = 100; isRaid = true; isBoss = true;
+        if(enemyObj.raidData.id === "raid_1") rarity = "epic";
+        else if(enemyObj.raidData.id === "raid_2") rarity = "legendary";
+        else rarity = "relic";
+    } else if (enemyObj.isBoss) {
+        dropChance = 100; isBoss = true; let r = Math.random() * 100;
+        if(r < 10) rarity = "relic"; else if(r < 50) rarity = "legendary"; else rarity = "epic";
+    } else if (enemyObj.isMiniBoss) {
+        dropChance = 30 + (uckBonus * 2); let r = Math.random() * 100;
+        if(r < 10) rarity = "legendary"; else if(r < 40) rarity = "epic"; else rarity = "rare";
+    } else {
+        dropChance = 2 + uckBonus; let r = Math.random() * 100;
+        if(r < 1) rarity = "epic"; else if(r < 20) rarity = "rare"; else rarity = "common";
+    }
+
+    if (Math.random() * 100 <= dropChance) {
+        let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass)));
+        if(pool.length === 0) return null;
+        let baseTemplate = pool[Math.floor(Math.random() * pool.length)];
+        
+        let targetLevel = enemyObj.floor;
+        if(isRaid) { targetLevel = Math.floor(hero.level / 20) * 20; if (targetLevel === 0) targetLevel = 1; }
+        
+        return createDynamicItem(baseTemplate, targetLevel, rarity, isBoss, isRaid);
+    }
     return null;
 }
 
 async function syncSaveToServer() { try { await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); } catch (e) {} }
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
-
 function saveGame() {
     try {
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
@@ -147,20 +191,22 @@ function saveGame() {
 }
 
 function applyLoadedSave(savedHero, savedItems) {
-    if(savedItems) { try { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); } catch(e){} }
+    if(savedItems) { try { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); } catch(e) {} }
     if(savedHero) { 
         try {
             let h = JSON.parse(savedHero); 
             if (h && typeof h === 'object') {
-                if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(h.talents === undefined || !Array.isArray(h.talents)) h.talents = []; if(h.setCounts === undefined) h.setCounts = {}; if(h.flags === undefined) h.flags = {}; if(h.quests === undefined) h.quests = {}; if(h.questDate === undefined) h.questDate = "";
-                if(h.rating === undefined) h.rating = 1000;
-                if(h.activeAltar === undefined) h.activeAltar = null; if(h.altarOffers === undefined) h.altarOffers = {};
-                if (!Array.isArray(h.inventory)) h.inventory = [];
-                hero = h;
+                if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(!Array.isArray(h.talents)) h.talents = []; if(!h.setCounts) h.setCounts = {}; if(!h.flags) h.flags = {}; if(!h.quests) h.quests = {}; if(!h.questDate) h.questDate = ""; if(h.rating === undefined) h.rating = 1000; if(!h.baseClass || !CLASSES[h.baseClass]) h.baseClass = 'knight'; if(!Array.isArray(h.inventory)) h.inventory = []; if(!h.equipment) h.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }; if(!h.baseStats) h.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
+                for(let k in h) { if(h[k] !== undefined) hero[k] = h[k]; }
             }
         } catch(e) { console.error("Ошибка чтения сейва", e); }
     }
-    previewClassId = hero.baseClass; calculateStats(); updateUI();
+    previewClassId = hero.baseClass; 
+    try { calculateStats(); updateUI(); } catch(e) { 
+        console.error("Критический сбой рендера:", e); localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items');
+        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); }
+        alert("Критическая ошибка сейва. Кэш сброшен, игра перезапускается."); location.reload();
+    }
 }
 
 async function loadGame() {
@@ -291,7 +337,7 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     let elemDmgTotal = 0; let elemLog = [];
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { let rawElemDmg = attacker[`dmg_${el}`] || 0; if (rawElemDmg > 0) { let res = defender[`res_${el}`] || 0; let actualElemDmg = Math.floor(rawElemDmg * (1 - res/100)); if (actualElemDmg > 0) { elemDmgTotal += actualElemDmg; let icon = el==='fire'?'🔥':el==='ice'?'❄️':el==='dark'?'☠️':'☀️'; elemLog.push(`+${actualElemDmg}${icon}`); } } });
     let finalDmg = physDmg + elemDmgTotal; let eLogStr = elemLog.length > 0 ? ` <span style="font-size:10px;">(${elemLog.join(' ')})</span>` : '';
-    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "normal")) };
+    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
 }
 
 function handleCombatWin() {
@@ -327,7 +373,6 @@ function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
-
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
@@ -478,97 +523,22 @@ function healHero() {
 function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 
 function upgradeItem() {
-    if (forgeSelectedIndex === null) return; 
-    let itemId = hero.inventory[forgeSelectedIndex]; 
-    let item = ITEMS_DB[itemId]; 
-    
+    if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
     let upgCount = item.upgradeCount || 0;
     if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
-    
-    let chances = [90, 80, 70, 60, 50, 40, 30, 20, 15, 10];
-    let successChance = chances[upgCount];
-    
     let cost = item.lvl * item.price * 2; 
     if (hero.gold < cost) return alert("Не хватает золота!"); 
     hero.gold -= cost; 
-
-    if (!item.upgBase) { item.upgBase = { stats: JSON.parse(JSON.stringify(item.stats)), lvl: item.lvl, price: item.price }; }
-
-    let anvil = document.getElementById("forge-anvil"); 
-    if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } 
-
-    let roll = Math.random() * 100;
     let newItem = JSON.parse(JSON.stringify(item)); 
     if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); }
-
-    if (roll <= successChance) {
-        newItem.lvl += 1; 
-        newItem.upgradeCount = upgCount + 1; 
-        newItem.price = Math.floor(newItem.price * 1.5); 
-        for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
-        if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
-        playSFX('forge'); 
-        setTimeout(() => alert(`УСПЕХ! Предмет заточен на +${newItem.upgradeCount}`), 100);
-    } else {
-        newItem.stats = JSON.parse(JSON.stringify(newItem.upgBase.stats));
-        newItem.lvl = newItem.upgBase.lvl;
-        newItem.price = newItem.upgBase.price;
-        newItem.upgradeCount = 0;
-        if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); 
-        playSFX('hit'); 
-        setTimeout(() => alert("НЕУДАЧА! Заточка сорвалась. Предмет сброшен до базового уровня."), 100);
-    }
-
-    ITEMS_DB[newItem.id] = newItem; 
-    hero.inventory[forgeSelectedIndex] = newItem.id; 
+    newItem.lvl += 1; 
+    newItem.upgradeCount = upgCount + 1; 
+    newItem.price = Math.floor(newItem.price * 1.5); 
+    for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
+    ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
     addQuestProgress('forge_upg', 1); 
-    saveGame(); updateUI();
-}
-
-function rerollItemStats() {
-    if (forgeSelectedIndex === null) return; 
-    let itemId = hero.inventory[forgeSelectedIndex]; 
-    let item = ITEMS_DB[itemId];
-    if (item.type === 'consumable') return;
-    
-    let gemCost = 5; 
-    if (hero.gems < gemCost) return alert(`Нужно ${gemCost} 💎 для реролла!`);
-    if (!confirm(`Реролл случайных характеристик за ${gemCost} 💎? Базовые статы и уровень заточки сохранятся.`)) return;
-
-    hero.gems -= gemCost;
-
-    let extraStatsCount = { "common": 0, "rare": 1, "epic": 2, "legendary": 3, "relic": 4 }[item.rarity] || 0;
-    let baseItem = null;
-    for(let key in ITEMS_DB) { if (item.id.startsWith(key + "_") && !ITEMS_DB[key].dropOnly) { baseItem = ITEMS_DB[key]; break; } }
-    if(!baseItem) { let fallback = { "weapon1": "base_sword", "weapon2": "base_shield", "chest": "base_chest", "head": "base_head", "boots": "base_boots", "ring": "base_ring", "belt": "base_belt" }; baseItem = ITEMS_DB[fallback[item.type]]; }
-
-    let targetLevel = item.upgBase ? item.upgBase.lvl : item.lvl;
-    let rarities = { "common": 1.0, "rare": 1.3, "epic": 1.7, "legendary": 2.2, "relic": 3.0 };
-    let statMult = 1 + (targetLevel * 0.1); let finalMult = statMult * (rarities[item.rarity] || 1.0) * (0.85 + Math.random() * 0.3);
-
-    let newStats = {};
-    for (let s in baseItem.stats) newStats[s] = Math.max(1, Math.ceil(baseItem.stats[s] * finalMult));
-
-    let possibleStats = SECONDARY_STATS.filter(s => !newStats[s]);
-    for(let i=0; i<extraStatsCount; i++) {
-        if(possibleStats.length === 0) break;
-        let idx = Math.floor(Math.random() * possibleStats.length); let statName = possibleStats[idx]; possibleStats.splice(idx, 1);
-        let sVal = 0; if (statName.startsWith('dmg_')) sVal = Math.floor(10 * finalMult); else if (statName.startsWith('res_')) sVal = Math.min(75, Math.floor(15 * finalMult)); else if (['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns'].includes(statName)) sVal = Math.floor(5 * finalMult); else if (statName === 'critDmg') sVal = Math.floor(15 * finalMult); else sVal = Math.floor(3 * finalMult);
-        newStats[statName] = sVal;
-    }
-
-    if (item.upgBase) {
-        item.upgBase.stats = JSON.parse(JSON.stringify(newStats));
-        let upgCount = item.upgradeCount || 0;
-        for(let k=0; k<upgCount; k++) { for (let s in newStats) newStats[s] = Math.max(1, Math.ceil(newStats[s] * 1.15)); }
-    }
-    
-    let newItem = JSON.parse(JSON.stringify(item));
-    newItem.stats = newStats;
-    ITEMS_DB[newItem.id] = newItem; 
-    hero.inventory[forgeSelectedIndex] = newItem.id;
-
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
+    let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } 
     playSFX('forge'); saveGame(); updateUI();
 }
 
@@ -835,23 +805,15 @@ function updateUI() {
     if (currentScreen === 'blacksmith') {
         let forgeHtml = '';
         for (let i = 0; i < 15; i++) { 
-            let itemId = hero.inventory[i];
-            let item = itemId ? ITEMS_DB[itemId] : null;
-            if (item && item.type !== 'consumable') { 
-                let selClass = forgeSelectedIndex === i ? 'selected' : ''; 
-                forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; 
-            } else if (item && item.type === 'consumable') { 
-                forgeHtml += `<div class="inv-item empty" style="opacity:0.2;">${renderItemIcon(item)}</div>`; 
-            } else { 
-                forgeHtml += `<div class="inv-item empty"></div>`; 
-            } 
+            if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } else { forgeHtml += `<div class="inv-item empty"></div>`; } } 
+            else { forgeHtml += `<div class="inv-item empty"></div>`; } 
         }
         let fg = document.getElementById("ui-forge-grid"); if(fg) fg.innerHTML = forgeHtml;
 
         let dPanel = document.getElementById("forge-details-panel"); let btnUpg = document.getElementById("btn-forge-upgrade");
         if (forgeSelectedIndex !== null && hero.inventory[forgeSelectedIndex]) {
             let item = ITEMS_DB[hero.inventory[forgeSelectedIndex]]; 
-            if (item && item.type !== 'consumable') {
+            if (item) {
                 let cost = item.lvl * item.price * 2; let nextLvl = item.lvl + 1;
                 document.getElementById("f-item-name").innerText = item.name; document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`;
                 let statHtml = "";
@@ -862,21 +824,10 @@ function updateUI() {
                 document.getElementById("f-item-stats").innerHTML = statHtml;
                 
                 let upgCount = item.upgradeCount || 0;
-                let chances = [90, 80, 70, 60, 50, 40, 30, 20, 15, 10];
-                let chance = chances[upgCount] || 10;
-
-                if(btnUpg) { 
-                    btnUpg.innerHTML = `КОВАТЬ (💰 ${cost}) <span style="font-size:11px; display:block; color:#fca5a5;">Шанс успеха: ${chance}%</span>`; 
-                    btnUpg.disabled = hero.gold < cost || upgCount >= 10; 
-                    if (upgCount >= 10) btnUpg.innerHTML = "ПРЕДЕЛ КОВКИ"; 
-                }
+                if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || upgCount >= 10; if (upgCount >= 10) btnUpg.innerText = "ПРЕДЕЛ КОВКИ"; }
                 
-                let rerollContainer = document.getElementById("forge-reroll-container");
-                if (!rerollContainer) { rerollContainer = document.createElement("div"); rerollContainer.id = "forge-reroll-container"; dPanel.appendChild(rerollContainer); }
-                rerollContainer.innerHTML = `<button style="width:100%; margin-top:10px; padding:12px; background:#3b0764; border:1px solid #7e22ce; border-radius:8px; color:#e9d5ff; font-weight:bold; font-size:14px;" onclick="rerollItemStats()">РЕРОЛЛ СТАТОВ (💎 5)</button>`;
-
                 if(dPanel) dPanel.classList.add("show");
-            } else { if(dPanel) dPanel.classList.remove("show"); }
+            }
         } else { if(dPanel) dPanel.classList.remove("show"); }
     }
 
@@ -930,4 +881,5 @@ function updateUI() {
     if (currentScreen === 'talents') { renderTalents(); }
 }
 
+// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
 loadGame();
