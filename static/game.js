@@ -52,6 +52,7 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
+// БАЗА ПРЕДМЕТОВ С ТОЧНЫМИ ИМЕНАМИ КАРТИНОК ДЛЯ РАСХОДНИКОВ И ПУЛАМИ ДЛЯ ШМОТОК
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
@@ -65,7 +66,6 @@ const ITEMS_DB = {
     "base_head": { id: "base_head", name: "Шлем", type: "head", icon: "🪖", rarity: "common", lvl: 1, price: 40, inShop: false, stats: { armor: 6 }, imgPool: ["54873", "61409", "52433", "60697", "41139"] },
     "base_boots": { id: "base_boots", name: "Обувь", type: "boots", icon: "👢", rarity: "common", lvl: 1, price: 35, inShop: false, stats: { armor: 4 }, imgPool: ["51613"] },
     "base_ring": { id: "base_ring", name: "Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 1, price: 60, inShop: false, stats: { luk: 2 }, imgPool: ["25186", "18824"] },
-    "base_amulet": { id: "base_amulet", name: "Амулет", type: "amulet", icon: "📿", rarity: "common", lvl: 1, price: 65, inShop: false, stats: { mst: 3 }, imgPool: ["25186", "18824"] },
     "base_belt": { id: "base_belt", name: "Пояс", type: "belt", icon: "➰", rarity: "common", lvl: 1, price: 55, inShop: false, stats: { end: 2 }, imgPool: ["17271"] }
 };
 
@@ -103,12 +103,6 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.ini
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
-// === ОЧИСТКА ИНВЕНТАРЯ (GARBAGE COLLECTOR) ===
-function cleanInventory() {
-    if (!hero || !hero.inventory) return;
-    hero.inventory = hero.inventory.filter(id => id && ITEMS_DB[id]);
-}
-
 // === ГЕНЕРАТОРЫ ЛУТА С РАНДОМОМ ИЗ imgPool ===
 const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
 
@@ -118,10 +112,9 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
     
     newItem.id = baseTemplateId + "_" + Date.now() + Math.floor(Math.random()*1000);
     
+    // РАНДОМНАЯ КАРТИНКА ИЗ ПУЛА ШМОТОК
     if (baseItem.imgPool && baseItem.imgPool.length > 0) {
         newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
-    } else {
-        newItem.imageId = baseTemplateId;
     }
 
     newItem.lvl = targetLevel; newItem.inShop = false; newItem.dropOnly = true;
@@ -188,7 +181,6 @@ async function syncSaveToServer() { try { await fetch('/api/save', { method: 'PO
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
 function saveGame() {
     try {
-        cleanInventory();
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
         let activeItemIds = [...hero.inventory]; for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
         let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
@@ -209,7 +201,6 @@ function applyLoadedSave(savedHero, savedItems) {
             }
         } catch(e) { console.error("Ошибка чтения сейва", e); }
     }
-    cleanInventory();
     previewClassId = hero.baseClass; 
     try { calculateStats(); updateUI(); } catch(e) { 
         console.error("Критический сбой рендера:", e); localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items');
@@ -311,7 +302,7 @@ function useConsumable(itemId) {
     playSFX('skill');
     if (item.subtype === 'heal') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys"); logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`); } 
     else if (item.subtype.startsWith('dmg_')) { let elem = item.subtype.split('_')[1]; let rawDmg = item.power; let res = enemy.stats[`res_${elem}`] || 0; let finalDmg = Math.floor(rawDmg * (1 - res/100)); if (finalDmg < 0) finalDmg = 0; enemy.hp -= finalDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg); let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️'; showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit"); triggerHitAnim("entity-enemy-box"); shakeScreen(); logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`); }
-    hero.inventory.splice(invIndex, 1); cleanInventory(); saveGame();
+    hero.inventory.splice(invIndex, 1); saveGame();
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
 }
 
@@ -346,11 +337,11 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     let elemDmgTotal = 0; let elemLog = [];
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { let rawElemDmg = attacker[`dmg_${el}`] || 0; if (rawElemDmg > 0) { let res = defender[`res_${el}`] || 0; let actualElemDmg = Math.floor(rawElemDmg * (1 - res/100)); if (actualElemDmg > 0) { elemDmgTotal += actualElemDmg; let icon = el==='fire'?'🔥':el==='ice'?'❄️':el==='dark'?'☠️':'☀️'; elemLog.push(`+${actualElemDmg}${icon}`); } } });
     let finalDmg = physDmg + elemDmgTotal; let eLogStr = elemLog.length > 0 ? ` <span style="font-size:10px;">(${elemLog.join(' ')})</span>` : '';
-    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "normal")) };
+    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
 }
 
 function handleCombatWin() {
-    enemy.hp = 0; playSFX('win'); cleanInventory();
+    enemy.hp = 0; playSFX('win');
     if (combatMode === 'pvp') {
         hero.rating += enemy.ratingReward; let goldGained = 150; hero.gold += goldGained;
         document.getElementById("vic-title-text").innerText = "ПОБЕДА НА АРЕНЕ!"; document.getElementById("vic-rewards-text").innerHTML = `Рейтинг: <span style="color:#fbbf24">+${enemy.ratingReward} 🏆</span><br>Золото: +${goldGained} 💰`;
@@ -368,7 +359,7 @@ function handleCombatWin() {
         let lootBox = document.getElementById("vic-loot-container"); if (lootBox) { if (droppedItem) { lootBox.style.display = "flex"; document.getElementById("vic-loot-box").className = `vic-loot-box rarity-${droppedItem.rarity}`; document.getElementById("vic-loot-box").innerHTML = renderItemIcon(droppedItem); document.getElementById("vic-loot-name").innerText = droppedItem.name; } else { lootBox.style.display = "none"; } }
         if (!isRaid && hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
     }
-    cleanInventory(); saveGame(); document.getElementById("vic-modal").classList.add("show"); updateUI(); 
+    saveGame(); document.getElementById("vic-modal").classList.add("show"); updateUI(); 
 }
 
 function closeVictoryModal() { 
@@ -382,7 +373,6 @@ function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
-
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
@@ -486,7 +476,6 @@ function setShopMode(mode) { playSFX('click'); shopMode = mode; updateUI(); }
 function selectPreviewClass(classId) { playSFX('click'); previewClassId = classId; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 function changeClass(classKey) {
     if (hero.baseClass === classKey) return; if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
-    cleanInventory();
     let itemsToUnequip = []; for (let slot in hero.equipment) { let item = hero.equipment[slot]; if (item && item.id !== "blocked" && item.allowedClasses && !item.allowedClasses.includes(classKey)) itemsToUnequip.push(slot); }
     let neededSlots = (hero.inventory.length + itemsToUnequip.length) - 15; if (neededSlots > 0) return alert(`Освободите ${neededSlots} мест в сумке для снятия вещей!`);
     if(!confirm("Внимание! При смене класса ВСЕ ВЫБРАННЫЕ ТАЛАНТЫ БУДУТ СБРОШЕНЫ. Продолжить?")) return;
@@ -504,45 +493,37 @@ function equipItem(invIndex) {
     let targetSlot = item.type;
     if (item.type === 'two_handed') {
         let w1 = hero.equipment.weapon1; let w2 = hero.equipment.weapon2; let needsExtraSlot = (w1 && w2 && w2.id !== "blocked");
-        cleanInventory();
         if (needsExtraSlot && hero.inventory.length >= 15) return alert("Освободите 1 место в сумке!");
         hero.inventory.splice(invIndex, 1); if (w1) hero.inventory.push(w1.id); if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id);
         hero.equipment.weapon1 = item; hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
-        calculateStats(); cleanInventory(); saveGame(); updateUI(); return;
+        calculateStats(); saveGame(); updateUI(); return;
     }
-    if ((targetSlot === 'weapon1' || targetSlot === 'weapon2') && hero.equipment.weapon1 && hero.equipment.weapon1.type === 'two_handed') { let twoHandedItem = hero.equipment.weapon1; hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; hero.inventory.splice(invIndex, 1); hero.inventory.push(twoHandedItem.id); hero.equipment[targetSlot] = item; calculateStats(); cleanInventory(); saveGame(); updateUI(); return; }
+    if ((targetSlot === 'weapon1' || targetSlot === 'weapon2') && hero.equipment.weapon1 && hero.equipment.weapon1.type === 'two_handed') { let twoHandedItem = hero.equipment.weapon1; hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; hero.inventory.splice(invIndex, 1); hero.inventory.push(twoHandedItem.id); hero.equipment[targetSlot] = item; calculateStats(); saveGame(); updateUI(); return; }
     if (item.type === 'ring') targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
-    let oldItem = hero.equipment[targetSlot]; hero.equipment[targetSlot] = item; hero.inventory.splice(invIndex, 1); if (oldItem && oldItem.id !== "blocked") hero.inventory.push(oldItem.id); calculateStats(); cleanInventory(); saveGame(); updateUI();
+    let oldItem = hero.equipment[targetSlot]; hero.equipment[targetSlot] = item; hero.inventory.splice(invIndex, 1); if (oldItem && oldItem.id !== "blocked") hero.inventory.push(oldItem.id); calculateStats(); saveGame(); updateUI();
 }
 
 function unequipSlot(slotKey) {
     playSFX('click'); 
     if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя снимать снаряжение на Арене или в Рейде!");
     if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
-    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; 
-    cleanInventory();
-    if (hero.inventory.length >= 15) return alert("Сумка полна!");
-    if (item.type === 'two_handed') { hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; } else { hero.inventory.push(item.id); hero.equipment[slotKey] = null; } calculateStats(); cleanInventory(); saveGame(); updateUI();
+    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 15) return alert("Сумка полна!");
+    if (item.type === 'two_handed') { hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; } else { hero.inventory.push(item.id); hero.equipment[slotKey] = null; } calculateStats(); saveGame(); updateUI();
 }
 
 function addStat(statKey) { if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); calculateStats(); saveGame(); updateUI(); } }
-function buyItem(itemId) { cleanInventory(); let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (hero.inventory.length >= 15) return alert("Сумка полна!"); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); cleanInventory(); saveGame(); updateUI(); }
-function sellItem(invIndex) { let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return; hero.gold += Math.floor(item.price * 0.5); hero.inventory.splice(invIndex, 1); playSFX('coins'); cleanInventory(); saveGame(); updateUI(); }
+function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (hero.inventory.length >= 15) return alert("Сумка полна!"); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
+function sellItem(invIndex) { let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return; hero.gold += Math.floor(item.price * 0.5); hero.inventory.splice(invIndex, 1); playSFX('coins'); saveGame(); updateUI(); }
 function healHero() {
     if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!"); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let cost = Math.max(10, Math.floor(missingHp * 0.5));
     if (hero.gold < cost) { if (hero.gold > 0) { let affordableHeal = hero.gold * 2; hero.hp += affordableHeal; hero.gold = 0; alert(`Золота хватило лишь на частичное лечение (+${affordableHeal} HP).`); playSFX('coins'); saveGame(); updateUI(); } else { alert(`У вас нет золота!`); } return; }
     hero.gold -= cost; hero.hp = hero.finalStats.hp; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI();
 }
 
-function selectForgeItem(idx) { 
-    if(hero.inventory[idx] && ITEMS_DB[hero.inventory[idx]] && ITEMS_DB[hero.inventory[idx]].type === 'consumable') return alert("Нельзя ковать расходники!");
-    forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); 
-}
+function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 
 function upgradeItem() {
     if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
-    if (!item) return;
-    if (item.type === 'consumable') return alert("Нельзя ковать расходники!");
     let upgCount = item.upgradeCount || 0;
     if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
     let cost = item.lvl * item.price * 2; 
@@ -558,7 +539,7 @@ function upgradeItem() {
     addQuestProgress('forge_upg', 1); 
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
     let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } 
-    playSFX('forge'); cleanInventory(); saveGame(); updateUI();
+    playSFX('forge'); saveGame(); updateUI();
 }
 
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
@@ -641,9 +622,9 @@ function renderItemIcon(item) {
     } 
     
     let folder = item.type; 
-    let fallbackHTML = `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon || '📦'}</div>`;
+    let fallbackHTML = `<div class=&quot;item-icon&quot; style=&quot;font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;&quot;>${item.icon || '📦'}</div>`;
     
-    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML='${fallbackHTML.replace(/"/g, '&quot;')}'"></div>`; 
+    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML='${fallbackHTML}'"></div>`; 
 }
 
 function renderDurability(zoneKey) { let dur = combatState.zoneHealth[zoneKey]; if(dur === 3) return `<span class="dur-dot g"></span><span class="dur-dot g"></span><span class="dur-dot g"></span>`; if(dur === 2) return `<span class="dur-dot y"></span><span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`; if(dur === 1) return `<span class="dur-dot o"></span><span class="dur-dot" style="background:#27272a"></span><span class="dur-dot" style="background:#27272a"></span>`; return ``; }
@@ -660,7 +641,6 @@ function renderTalents() {
 }
 
 function updateUI() {
-    cleanInventory(); 
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
@@ -825,19 +805,7 @@ function updateUI() {
     if (currentScreen === 'blacksmith') {
         let forgeHtml = '';
         for (let i = 0; i < 15; i++) { 
-            if (i < hero.inventory.length) { 
-                let item = ITEMS_DB[hero.inventory[i]]; 
-                if (item) { 
-                    let isConsumable = item.type === 'consumable';
-                    let selClass = forgeSelectedIndex === i ? 'selected' : ''; 
-                    let blockedClass = isConsumable ? 'blocked' : '';
-                    let styleAttr = isConsumable ? 'style="filter: grayscale(100%) opacity(0.4); pointer-events: none;"' : '';
-                    
-                    forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass} ${blockedClass}" ${styleAttr} onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; 
-                } else { 
-                    forgeHtml += `<div class="inv-item empty"></div>`; 
-                } 
-            } 
+            if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } else { forgeHtml += `<div class="inv-item empty"></div>`; } } 
             else { forgeHtml += `<div class="inv-item empty"></div>`; } 
         }
         let fg = document.getElementById("ui-forge-grid"); if(fg) fg.innerHTML = forgeHtml;
