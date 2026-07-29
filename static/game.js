@@ -102,7 +102,6 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.ini
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
-// Полный пул всех возможных статов (включая стихии)
 const SECONDARY_STATS = [
     'str', 'agi', 'end', 'mst', 'luk', 
     'critChance', 'dodgeChance', 'armorPen', 'critDmg', 
@@ -149,7 +148,6 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
         newItem.stats[statName] = sVal;
     }
 
-    // БАЛАНС СЕТОВ: 25% с Рейдов, 5% с Мега-Боссов
     let setChance = 0;
     if (isRaid) setChance = 25; 
     else if (isBoss) setChance = 5; 
@@ -197,7 +195,6 @@ function generateLootDrop(enemyObj) {
 
 async function syncSaveToServer() { try { await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); } catch (e) {} }
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
-// Коэффициент 1.15 (спасение от стены гринда)
 function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.15, lvl - 1)); }
 
 function saveGame() {
@@ -212,11 +209,48 @@ function saveGame() {
 }
 
 function applyLoadedSave(savedHero, savedItems) {
-    if(savedItems) { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); }
-    if(savedHero) { 
-        let h = JSON.parse(savedHero); if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(h.talents === undefined || !Array.isArray(h.talents)) h.talents = []; if(h.setCounts === undefined) h.setCounts = {}; if(h.flags === undefined) h.flags = {}; if(h.quests === undefined) h.quests = {}; if(h.questDate === undefined) h.questDate = ""; if(h.rating === undefined) h.rating = 1000; if(h.activeAltar === undefined) h.activeAltar = null; if(h.altarOffers === undefined) h.altarOffers = {}; if (!Array.isArray(h.inventory)) h.inventory = []; hero = h;
+    if(savedItems) { 
+        try { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); } catch(e) {}
     }
-    previewClassId = hero.baseClass; calculateStats(); updateUI();
+    if(savedHero) { 
+        try {
+            let h = JSON.parse(savedHero); 
+            if (h && typeof h === 'object') {
+                if(isNaN(h.hp)) h.hp = 100;
+                if(h.gems === undefined) h.gems = 0;
+                if(h.tickets === undefined) h.tickets = 3;
+                if(h.maxTickets === undefined) h.maxTickets = 3;
+                if(h.nextTicketTime === undefined) h.nextTicketTime = 0;
+                if(h.unspentPoints === undefined) h.unspentPoints = 0;
+                if(!Array.isArray(h.talents)) h.talents = [];
+                if(!h.setCounts) h.setCounts = {};
+                if(!h.flags) h.flags = {};
+                if(!h.quests) h.quests = {};
+                if(!h.questDate) h.questDate = "";
+                if(h.rating === undefined) h.rating = 1000;
+                if(!h.baseClass || !CLASSES[h.baseClass]) h.baseClass = 'knight';
+                if(!Array.isArray(h.inventory)) h.inventory = [];
+                if(!h.equipment) h.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null };
+                if(!h.baseStats) h.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
+                
+                for(let k in h) { if(h[k] !== undefined) hero[k] = h[k]; }
+            }
+        } catch(e) { console.error("Ошибка чтения сейва", e); }
+    }
+    
+    previewClassId = hero.baseClass; 
+    
+    try { 
+        calculateStats(); 
+        updateUI(); 
+    } catch(e) { 
+        console.error("Критический сбой рендера:", e);
+        localStorage.removeItem('tg_rpg_hero'); 
+        localStorage.removeItem('tg_rpg_custom_items');
+        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); }
+        alert("Критическая ошибка сейва. Кэш сброшен, игра перезапускается.");
+        location.reload();
+    }
 }
 
 async function loadGame() {
