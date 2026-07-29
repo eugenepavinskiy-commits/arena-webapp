@@ -66,7 +66,6 @@ const ITEMS_DB = {
     "base_head": { id: "base_head", name: "Шлем", type: "head", icon: "🪖", rarity: "common", lvl: 1, price: 40, inShop: false, stats: { armor: 6 }, imgPool: ["54873", "61409", "52433", "60697", "41139"] },
     "base_boots": { id: "base_boots", name: "Обувь", type: "boots", icon: "👢", rarity: "common", lvl: 1, price: 35, inShop: false, stats: { armor: 4 }, imgPool: ["51613"] },
     "base_ring": { id: "base_ring", name: "Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 1, price: 60, inShop: false, stats: { luk: 2 }, imgPool: ["25186", "18824"] },
-    "base_amulet": { id: "base_amulet", name: "Амулет", type: "amulet", icon: "📿", rarity: "common", lvl: 1, price: 65, inShop: false, stats: { mst: 3 }, imgPool: ["25186", "18824"] },
     "base_belt": { id: "base_belt", name: "Пояс", type: "belt", icon: "➰", rarity: "common", lvl: 1, price: 55, inShop: false, stats: { end: 2 }, imgPool: ["17271"] }
 };
 
@@ -104,12 +103,6 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.ini
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
-function cleanInventory() {
-    if (hero && hero.inventory) {
-        hero.inventory = hero.inventory.filter(id => id != null && id !== "" && id !== "blocked");
-    }
-}
-
 // === ГЕНЕРАТОРЫ ЛУТА С РАНДОМОМ ИЗ imgPool ===
 const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
 
@@ -119,10 +112,9 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
     
     newItem.id = baseTemplateId + "_" + Date.now() + Math.floor(Math.random()*1000);
     
+    // РАНДОМНАЯ КАРТИНКА ИЗ ПУЛА ШМОТОК
     if (baseItem.imgPool && baseItem.imgPool.length > 0) {
         newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
-    } else {
-        newItem.imageId = baseTemplateId;
     }
 
     newItem.lvl = targetLevel; newItem.inShop = false; newItem.dropOnly = true;
@@ -189,7 +181,6 @@ async function syncSaveToServer() { try { await fetch('/api/save', { method: 'PO
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
 function saveGame() {
     try {
-        cleanInventory();
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
         let activeItemIds = [...hero.inventory]; for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
         let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
@@ -346,7 +337,7 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     let elemDmgTotal = 0; let elemLog = [];
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { let rawElemDmg = attacker[`dmg_${el}`] || 0; if (rawElemDmg > 0) { let res = defender[`res_${el}`] || 0; let actualElemDmg = Math.floor(rawElemDmg * (1 - res/100)); if (actualElemDmg > 0) { elemDmgTotal += actualElemDmg; let icon = el==='fire'?'🔥':el==='ice'?'❄️':el==='dark'?'☠️':'☀️'; elemLog.push(`+${actualElemDmg}${icon}`); } } });
     let finalDmg = physDmg + elemDmgTotal; let eLogStr = elemLog.length > 0 ? ` <span style="font-size:10px;">(${elemLog.join(' ')})</span>` : '';
-    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "normal")) };
+    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
 }
 
 function handleCombatWin() {
@@ -382,7 +373,6 @@ function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
-
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
@@ -530,16 +520,10 @@ function healHero() {
     hero.gold -= cost; hero.hp = hero.finalStats.hp; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI();
 }
 
-function selectForgeItem(idx) { 
-    let itemId = hero.inventory[idx];
-    if (itemId && ITEMS_DB[itemId] && ITEMS_DB[itemId].type === 'consumable') return alert("Нельзя ковать расходники!");
-    forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); 
-}
+function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 
 function upgradeItem() {
     if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
-    if (!item) return;
-    if (item.type === 'consumable') return alert("Нельзя ковать расходники!");
     let upgCount = item.upgradeCount || 0;
     if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
     let cost = item.lvl * item.price * 2; 
@@ -638,9 +622,9 @@ function renderItemIcon(item) {
     } 
     
     let folder = item.type; 
-    let fallbackHTML = `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon || '📦'}</div>`;
+    let fallbackHTML = `<div class=&quot;item-icon&quot; style=&quot;font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;&quot;>${item.icon || '📦'}</div>`;
     
-    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML='${fallbackHTML.replace(/"/g, '&quot;')}'"></div>`; 
+    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML='${fallbackHTML}'"></div>`; 
 }
 
 function renderDurability(zoneKey) { let dur = combatState.zoneHealth[zoneKey]; if(dur === 3) return `<span class="dur-dot g"></span><span class="dur-dot g"></span><span class="dur-dot g"></span>`; if(dur === 2) return `<span class="dur-dot y"></span><span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`; if(dur === 1) return `<span class="dur-dot o"></span><span class="dur-dot" style="background:#27272a"></span><span class="dur-dot" style="background:#27272a"></span>`; return ``; }
@@ -656,14 +640,7 @@ function renderTalents() {
     let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
 }
 
-function cleanInventory() {
-    if (hero && hero.inventory) {
-        hero.inventory = hero.inventory.filter(id => id != null && id !== "" && id !== "blocked");
-    }
-}
-
 function updateUI() {
-    cleanInventory();
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
@@ -828,19 +805,7 @@ function updateUI() {
     if (currentScreen === 'blacksmith') {
         let forgeHtml = '';
         for (let i = 0; i < 15; i++) { 
-            if (i < hero.inventory.length) { 
-                let item = ITEMS_DB[hero.inventory[i]]; 
-                if (item) { 
-                    let isConsumable = item.type === 'consumable';
-                    let selClass = forgeSelectedIndex === i ? 'selected' : ''; 
-                    let blockedClass = isConsumable ? 'blocked' : '';
-                    let styleAttr = isConsumable ? 'style="filter: grayscale(100%) opacity(0.4); pointer-events: none;"' : '';
-                    
-                    forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass} ${blockedClass}" ${styleAttr} onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; 
-                } else { 
-                    forgeHtml += `<div class="inv-item empty"></div>`; 
-                } 
-            } 
+            if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } else { forgeHtml += `<div class="inv-item empty"></div>`; } } 
             else { forgeHtml += `<div class="inv-item empty"></div>`; } 
         }
         let fg = document.getElementById("ui-forge-grid"); if(fg) fg.innerHTML = forgeHtml;
