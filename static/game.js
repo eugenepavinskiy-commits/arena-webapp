@@ -88,7 +88,7 @@ const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстро�
 
 const BOSS_EVENTS = [
     { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
-    { id: "iron_will", title: "Желез Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
+    { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
     { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
     { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
 ];
@@ -380,14 +380,10 @@ function closeVictoryModal() {
     else { initCombat(); } 
 }
 
-// === КОНЕЦ ЧАСТИ 1 ===
-// === НАЧАЛО ЧАСТИ 2 ===
-
 function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
-
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
@@ -547,7 +543,7 @@ function selectForgeItem(idx) {
 function upgradeItem() {
     if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
     if (!item) return;
-    if (item.type === 'consumable') return alert("Нельзя ковать расходники!"); // Жесткий блок от читерства
+    if (item.type === 'consumable') return alert("Нельзя ковать расходники!");
     let upgCount = item.upgradeCount || 0;
     if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
     let cost = item.lvl * item.price * 2; 
@@ -920,5 +916,3 @@ function updateUI() {
 
 // ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
 loadGame();
-
-// === КОНЕЦ ЧАСТИ 2 ===
