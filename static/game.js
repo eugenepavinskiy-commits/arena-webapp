@@ -317,7 +317,8 @@ function handleCombatWin() {
         if (!isRaid && hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
     }
     saveGame(); document.getElementById("vic-modal").classList.add("show"); updateUI(); 
-}function executeTurn() {
+}
+function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
         if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -816,5 +817,4 @@ function updateUI() {
 
 // ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
 loadGame();
-
 
