@@ -29,6 +29,7 @@ function triggerSkillVFX(elementId, vfxClass) { let el = document.getElementById
 
 let GOD_MODE = false; let isTurnExecuting = false; 
 
+// === АДМИН-ПАНЕЛЬ ===
 const ADMIN_ID = 7495831046;
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) { if (String(tg.initDataUnsafe.user.id) === String(ADMIN_ID)) { GOD_MODE = true; } }
 
@@ -80,12 +81,13 @@ const RAID_BOSSES = [
 ];
 
 const MOCK_PLAYERS = [ {name: "ShadowFiend", cls: "shadow", img: "shadow.png"}, {name: "Guts", cls: "berserk", img: "berserk.png"}, {name: "Arthur", cls: "knight", img: "knight.png"} ];
+
 const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
 
 const BOSS_EVENTS = [
-    { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
+    { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
     { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
-    { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
+    { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
     { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
 ];
 
@@ -146,35 +148,21 @@ function saveGame() {
     } catch (e) { console.error("Ошибка сохранения.", e); }
 }
 
-// АНТИ-КРАШ СИСТЕМА ДЛЯ СТАРЫХ СЕЙВОВ
 function applyLoadedSave(savedHero, savedItems) {
     if(savedItems) { try { let parsedItems = JSON.parse(savedItems); Object.assign(ITEMS_DB, parsedItems); } catch(e){} }
     if(savedHero) { 
         try {
             let h = JSON.parse(savedHero); 
-            if (h && typeof h === 'object') {
-                if (h.baseStats) hero.baseStats = { ...hero.baseStats, ...h.baseStats };
-                if (h.equipment) hero.equipment = { ...hero.equipment, ...h.equipment };
-                for(let k in h) { if(k !== 'baseStats' && k !== 'equipment' && h[k] !== undefined && h[k] !== null) { hero[k] = h[k]; } }
-                if (!Array.isArray(hero.inventory)) hero.inventory = [];
-                if (!Array.isArray(hero.talents)) hero.talents = [];
-                if (isNaN(hero.hp) || hero.hp === null) hero.hp = 100;
-            }
+            if (h.baseStats) hero.baseStats = { ...hero.baseStats, ...h.baseStats };
+            if (h.equipment) hero.equipment = { ...hero.equipment, ...h.equipment };
+            for(let k in h) { if(k !== 'baseStats' && k !== 'equipment' && h[k] !== undefined && h[k] !== null) { hero[k] = h[k]; } }
+            if (!Array.isArray(hero.inventory)) hero.inventory = [];
+            if (!Array.isArray(hero.talents)) hero.talents = [];
+            if (isNaN(hero.hp) || hero.hp === null) hero.hp = 100;
         } catch(e) { console.error("Ошибка чтения сейва", e); }
     }
-    
-    if (!CLASSES[hero.baseClass]) hero.baseClass = 'knight';
     previewClassId = hero.baseClass; 
-    
-    try { 
-        calculateStats(); 
-        updateUI(); 
-    } catch(e) { 
-        console.error("Критический сбой рендера из-за старого сейва. Делаем жесткий сброс для спасения игры.", e); 
-        localStorage.removeItem('tg_rpg_hero'); 
-        alert("Обнаружено повреждение сохранения. Игра была сброшена, чтобы избежать зависания экрана.");
-        location.reload(); 
-    }
+    try { calculateStats(); updateUI(); } catch(e) { console.error("Сбой рендера из-за старого сейва. Делаем мягкий сброс статов.", e); hero.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }; calculateStats(); updateUI(); }
 }
 
 async function loadGame() {
@@ -196,6 +184,8 @@ setInterval(() => {
     else { let el = document.getElementById('ui-debuff-timer'); if(el && hero.deathDebuffEnd !== 0) { el.style.display = 'none'; hero.deathDebuffEnd = 0; if(bloodScreen) bloodScreen.classList.remove('active'); calculateStats(); updateUI(); } }
     let tTimer = document.getElementById("ui-ticket-timer"); if (tTimer) { if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов"; else { let left = Math.ceil((hero.nextTicketTime - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; tTimer.innerText = `До следующего: ${m}:${s<10?'0':''}${s}`; } }
 }, 1000);
+function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.15, lvl - 1)); }
+
 function generateEnemy(floorLevel) {
     let isMegaBoss = floorLevel % 10 === 0; let isMiniBoss = floorLevel % 5 === 0 && !isMegaBoss;
     let mobData; if (isMegaBoss) { let bossKey = floorLevel > 100 ? 100 : floorLevel; mobData = BOSSES[bossKey] || BOSSES[10]; } else { let normalFloorCount = floorLevel - Math.floor(floorLevel / 10); let mobIndex = (normalFloorCount - 1) % NORMAL_MOBS.length; mobData = NORMAL_MOBS[mobIndex]; }
@@ -941,4 +931,5 @@ function updateUI() {
     if (currentScreen === 'talents') { renderTalents(); }
 }
 
+// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
 loadGame();
