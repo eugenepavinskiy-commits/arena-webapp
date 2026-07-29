@@ -530,7 +530,6 @@ function openInspectModal(invIndex) {
     
     let setHtmlBlock = ""; if (item.setId && SETS_DB[item.setId]) { let set = SETS_DB[item.setId]; let count = hero.setCounts[item.setId] || 0; setHtmlBlock = `<div style="margin-top:8px; border-top:1px dotted #3f3f46; padding-top:6px; font-size:10px;"><b style="color:#fbbf24;">Сет: ${set.name} (${count}/4)</b><br><span style="color:${count>=2?'#10b981':'#71717a'}">[2 шт] ${set.p2}</span><br><span style="color:${count>=4?'#10b981':'#71717a'}">[4 шт] ${set.p4}</span></div>`; }
     
-    // БЕЛЫЙ ЦВЕТ И ТЕНЬ ДЛЯ СТАТОВ
     document.getElementById("inspect-stats-box").innerHTML = `<div style="color: #f4f4f5; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">` + formatStats(item.stats).join(' • ') + `</div>` + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
     
     let sellPrice = Math.floor(item.price * 0.5); document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
@@ -564,7 +563,6 @@ function changeClass(classKey) {
     hero.gold -= 5000; hero.baseClass = classKey; hero.talents = []; calculateStats(); playSFX('coins'); saveGame(); openScreen('hero');
 }
 
-// Оптимизированная фаза подготовки (переодеваться можно до первого удара)
 function equipItem(invIndex) {
     playSFX('click'); 
     if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя менять снаряжение на Арене или в Рейде!");
@@ -604,12 +602,27 @@ function healHero() {
     hero.gold -= cost; hero.hp = hero.finalStats.hp; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI();
 }
 function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
+
 function upgradeItem() {
-    if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; let cost = item.lvl * item.price * 2; 
-    if (hero.gold < cost) return alert("Не хватает золота!"); if (item.lvl >= 20) return alert("Максимальный уровень предмета достигнут!");
-    hero.gold -= cost; let newItem = JSON.parse(JSON.stringify(item)); if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); }
-    newItem.lvl += 1; newItem.price = Math.floor(newItem.price * 1.5); for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; addQuestProgress('forge_upg', 1); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } playSFX('forge'); saveGame(); updateUI();
+    if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
+    let upgCount = item.upgradeCount || 0;
+    if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
+    let cost = item.lvl * item.price * 2; 
+    if (hero.gold < cost) return alert("Не хватает золота!"); 
+    hero.gold -= cost; 
+    let newItem = JSON.parse(JSON.stringify(item)); 
+    if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); }
+    newItem.lvl += 1; 
+    newItem.upgradeCount = upgCount + 1; 
+    newItem.price = Math.floor(newItem.price * 1.5); 
+    for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
+    ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
+    addQuestProgress('forge_upg', 1); 
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
+    let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } 
+    playSFX('forge'); saveGame(); updateUI();
 }
+
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
 
 function calculateStats(isCombat = false) {
@@ -683,7 +696,6 @@ function formatStats(stats) {
 
 function getSlotName(slotId) { return {head:"Шлем", chest:"Броня", belt:"Пояс", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId]; }
 
-// Новая умная функция отрисовки по папкам
 function renderItemIcon(item) { 
     if (!item) return ""; 
     if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`; 
@@ -901,7 +913,10 @@ function updateUI() {
                     statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`;
                 }
                 document.getElementById("f-item-stats").innerHTML = statHtml;
-                if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || item.lvl >= 20; if (item.lvl >= 20) btnUpg.innerText = "МАКС. УРОВЕНЬ"; }
+                
+                let upgCount = item.upgradeCount || 0;
+                if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || upgCount >= 10; if (upgCount >= 10) btnUpg.innerText = "ПРЕДЕЛ КОВКИ"; }
+                
                 if(dPanel) dPanel.classList.add("show");
             }
         } else { if(dPanel) dPanel.classList.remove("show"); }
