@@ -52,7 +52,6 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
-// БАЗА ПРЕДМЕТОВ С ТОЧНЫМИ ИМЕНАМИ КАРТИНОК ДЛЯ РАСХОДНИКОВ И ПУЛАМИ ДЛЯ ШМОТОК
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
@@ -661,7 +660,7 @@ function renderTalents() {
 }
 
 function updateUI() {
-    cleanInventory(); // Страховка при ререндере
+    cleanInventory(); 
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
