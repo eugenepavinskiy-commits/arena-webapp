@@ -128,12 +128,52 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
 }
 
 function generateLootDrop(enemyObj) {
-    let dropChance = 0; let rarity = "common"; let isBoss = false; let isRaid = false;
-    let uckBonus = hero.combatStats.luk * (CLASSES[hero.baseClass].statWeights.luk_drop || 0.1); if(hero.flags.storm) uckBonus *= 2;
-    if (enemyObj.isRaid) { dropChance = 100; isRaid = true; isBoss = true; if(enemyObj.raidData.id === "raid_1") rarity = "epic"; else if(enemyObj.raidData.id === "raid_2") rarity = "legendary"; else rarity = "relic"; } else if (enemyObj.isBoss) { dropChance = 100; isBoss = true; let r = Math.random() * 100; if(r < 10) rarity = "relic"; else if(r < 50) rarity = "legendary"; else rarity = "epic"; } else if (enemyObj.isMiniBoss) { dropChance = 30 + (uckBonus * 2); let r = Math.random() * 100; if(r < 10) rarity = "legendary"; else if(r < 40) rarity = "epic"; else rarity = "rare"; } else { dropChance = 2 + uckBonus; let r = Math.random() * 100; if(r < 1) rarity = "epic"; else if(r < 20) rarity = "rare"; else rarity = "common"; }
-    if (Math.random() * 100 <= dropChance) { let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass))); if(pool.length === 0) return null; let baseTemplate = pool[Math.floor(Math.random() * pool.length)]; let targetLevel = enemyObj.floor; if(isRaid) { targetLevel = Math.floor(hero.level / 20) * 20; if (targetLevel === 0) targetLevel = 1; } return createDynamicItem(baseTemplate, targetLevel, rarity, isBoss, isRaid); }
+    let dropChance = 0; 
+    let rarity = "common"; 
+    let uckBonus = hero.combatStats.luk * (CLASSES[hero.baseClass].statWeights.luk_drop || 0.1); 
+    if(hero.flags.storm) uckBonus *= 2;
+
+    if (enemyObj.isRaid) {
+        dropChance = 100; 
+        if(enemyObj.raidData.id === "raid_1") rarity = "epic"; 
+        else if(enemyObj.raidData.id === "raid_2") rarity = "legendary"; 
+        else rarity = "relic";
+    } else if (enemyObj.isBoss) {
+        dropChance = 100; 
+        let r = Math.random() * 100;
+        if(r < 10) rarity = "relic"; 
+        else if(r < 50) rarity = "legendary"; 
+        else rarity = "epic";
+    } else if (enemyObj.isMiniBoss) {
+        dropChance = 30 + (uckBonus * 2); 
+        let r = Math.random() * 100;
+        if(r < 10) rarity = "legendary"; 
+        else if(r < 40) rarity = "epic"; 
+        else rarity = "rare";
+    } else {
+        dropChance = 2 + uckBonus; 
+        let r = Math.random() * 100;
+        if(r < 1) rarity = "epic"; 
+        else if(r < 20) rarity = "rare"; 
+        else rarity = "common";
+    }
+
+    if (Math.random() * 100 <= dropChance) {
+        let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass)));
+        if(pool.length === 0) return null;
+        let baseTemplate = pool[Math.floor(Math.random() * pool.length)];
+        let targetLevel = enemyObj.floor; 
+        if(enemyObj.isRaid) { 
+            targetLevel = Math.floor(hero.level / 20) * 20; 
+            if (targetLevel === 0) targetLevel = 1; 
+        }
+        return createDynamicItem(baseTemplate, targetLevel, rarity, enemyObj.isBoss, enemyObj.isRaid);
+    }
     return null;
 }
+
+
+
 
 async function syncSaveToServer() { try { await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); } catch (e) {} }
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
