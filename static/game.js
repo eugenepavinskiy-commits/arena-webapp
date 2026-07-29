@@ -515,7 +515,8 @@ async function loadGame() {
             }
         } 
     } catch(e) {}
-}function hardReset() { 
+}
+function hardReset() { 
     if(confirm("СБРОС ПРОГРЕССА НАВСЕГДА! Вы уверены?")) { 
         localStorage.removeItem('tg_rpg_hero'); 
         localStorage.removeItem('tg_rpg_custom_items'); 
@@ -904,7 +905,9 @@ function logCombat(text) {
         logBox.innerHTML += `<div class="log-entry">${text}</div>`; 
         while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild); 
         logBox.scrollTop = logBox.scrollHeight; 
-    } function useConsumable(itemId) {
+    } 
+}
+function useConsumable(itemId) {
     if (isTurnExecuting || hero.hp <= 0 && !GOD_MODE) return;
     let invIndex = hero.inventory.indexOf(itemId); 
     if (invIndex === -1) return;
@@ -2033,6 +2036,3 @@ function updateUI() {
 
 // ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ
 loadGame();
-
-}
-9
