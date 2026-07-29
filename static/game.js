@@ -119,7 +119,6 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
     
     newItem.id = baseTemplateId + "_" + Date.now() + Math.floor(Math.random()*1000);
     
-    // РАНДОМНАЯ КАРТИНКА ИЗ ПУЛА ШМОТОК ИЛИ БАЗОВАЯ
     if (baseItem.imgPool && baseItem.imgPool.length > 0) {
         newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
     } else {
@@ -379,6 +378,7 @@ function closeVictoryModal() {
     else if (combatMode === 'raid') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } openScreen('boss'); } 
     else { initCombat(); } 
 }
+
 function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
@@ -661,7 +661,7 @@ function renderTalents() {
 }
 
 function updateUI() {
-    cleanInventory();
+    cleanInventory(); // Страховка при ререндере
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
