@@ -1,10 +1,10 @@
-// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Анти-баг Telegram и Идеальные пропорции) ===
+// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Идеальная Арена и ХП бары) ===
 const UI_PATCH = `
 <style>
-/* 1. ЖЕСТКАЯ ФИКСАЦИЯ АРЕНЫ (Защита от черного экрана в боте) */
+/* 1. ЖЕСТКАЯ ФИКСАЦИЯ АРЕНЫ */
 #combat-entities-box { 
-    flex: 1 0 220px !important; /* Гарантирует, что арена не сожмется */
-    min-height: 220px !important; 
+    flex: 1 0 240px !important; 
+    min-height: 240px !important; 
     position: relative !important; 
     display: flex !important; 
     flex-direction: row !important; 
@@ -18,49 +18,48 @@ const UI_PATCH = `
     width: 48% !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important; 
+    justify-content: flex-start !important; 
     align-items: center !important;
 }
 
 .combat-card { 
-    flex: 1 1 auto !important; 
     width: 100% !important;
+    height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important; 
+    justify-content: flex-start !important; 
     align-items: center !important;
 }
 
-/* 2. ИДЕАЛЬНЫЕ АВАТАРЫ */
+/* 2. УВЕЛИЧИВАЕМ АВАТАРЫ И ПРИЖИМАЕМ К ИМЕНИ */
 .combat-card img { 
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    max-height: 140px !important; 
+    max-height: 170px !important; 
     max-width: 100% !important;
     object-fit: contain !important; 
-    margin: 4px auto !important; 
     position: relative !important; 
     z-index: 1 !important; 
 }
 
-/* 3. ОБЕРТКА ДЛЯ ЛОГА И ЗЕЛИЙ (В один ряд) */
+/* 3. ОБЕРТКА ДЛЯ ЛОГА И ЗЕЛИЙ (Увеличено под 2 строчки) */
 #log-belt-wrapper {
     display: flex !important;
     flex-direction: row !important;
-    gap: 8px !important;
+    gap: 10px !important;
     align-items: stretch !important;
-    margin-top: 6px !important;
-    height: 52px !important;
+    margin-top: 8px !important;
+    height: 56px !important; 
     width: 100% !important;
     box-sizing: border-box !important;
 }
 
-/* 4. ПАНЕЛЬ РАСХОДНИКОВ (Слева от лога) */
+/* 4. ПАНЕЛЬ РАСХОДНИКОВ (2 слота) */
 #quick-belt { 
     position: static !important; 
     display: flex !important; 
     flex-direction: row !important; 
-    gap: 6px !important; 
+    gap: 8px !important; 
     background: transparent !important; 
     border: none !important; 
     padding: 0 !important; 
@@ -69,8 +68,8 @@ const UI_PATCH = `
 }
 
 .belt-item { 
-    width: 46px !important; 
-    height: 46px !important; 
+    width: 48px !important; 
+    height: 48px !important; 
     background: rgba(18,18,20,0.95) !important; 
     border: 1px solid #52525b !important; 
     border-radius: 8px !important; 
@@ -81,22 +80,24 @@ const UI_PATCH = `
     box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important; 
     cursor: pointer; 
     position: relative !important; 
+    overflow: hidden !important;
 }
 .belt-item:active { transform: scale(0.9); }
 .belt-item-count { 
     position: absolute !important; 
-    bottom: -4px !important; 
-    right: -4px !important; 
+    bottom: 2px !important; 
+    right: 2px !important; 
     font-size: 10px !important; 
-    padding: 2px 6px !important; 
+    padding: 2px 5px !important; 
     background: #ef4444 !important; 
-    border-radius: 8px !important; 
+    border-radius: 6px !important; 
     border: 1px solid #18181b !important; 
     font-weight: bold !important; 
     color: white !important; 
+    z-index: 10 !important;
 }
 
-/* 5. ЛОГ БОЯ (Справа от зелий, 2 строчки) */
+/* 5. ЛОГ БОЯ */
 #combat-log { 
     flex: 1 !important;
     height: auto !important; 
@@ -109,13 +110,13 @@ const UI_PATCH = `
     display: flex !important; 
     flex-direction: column !important; 
     justify-content: flex-end !important; 
-    line-height: 1.3 !important;
+    line-height: 1.4 !important;
 }
 
-/* 6. ПРЕМИАЛЬНЫЕ ПЛАШКИ СТАТОВ (Урон/Броня) */
+/* 6. ПРЕМИАЛЬНЫЕ ПЛАШКИ СТАТОВ */
 .combat-stat-badge {
     background: linear-gradient(180deg, #27272a 0%, #18181b 100%) !important; 
-    padding: 4px 0 !important; 
+    padding: 6px 0 !important; 
     width: 100% !important; 
     border-radius: 6px !important; 
     border: 1px solid #52525b !important; 
@@ -123,14 +124,12 @@ const UI_PATCH = `
     gap: 15px !important; 
     justify-content: center !important; 
     align-items: center !important; 
-    margin-top: 4px !important; 
-    font-size: 13px !important; 
+    font-size: 14px !important; 
     font-weight: 900 !important; 
     color: #fff !important; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important;
 }
 
-/* Оптимизация кнопок */
 .combat-dashboard { padding-top: 4px !important; gap: 4px !important; flex-shrink: 0 !important; }
 .zone-btn { height: 38px !important; min-height: 38px !important; font-size: 10px !important; }
 .combat-action-row { margin-top: 2px !important; gap: 6px !important; }
@@ -194,7 +193,7 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
-// БАЗА ПРЕДМЕТОВ
+// БАЗА ПРЕДМЕТОВ (УМНАЯ НУМЕРАЦИЯ)
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
@@ -844,26 +843,26 @@ function renderItemIcon(item) {
     let imgId = item.imageId;
     let folder = item.type; 
 
+    // Сверхнадежный загрузчик иконок (чтобы не было багов с битыми ссылками)
     if (folder === 'consumable') {
         imgId = item.id.replace(/_\d+(_upg_\d+)?$/, ''); 
-        let fallback = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '🧪'}</div>`;
-        return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/consumable/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallback)}')"></div>`;
+        return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative;">
+            <img src="${STATIC_URL}items/consumable/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width:100%; height:100%; object-fit:contain; border-radius: 6px; position:relative; z-index:2;">
+            <div style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; background:#18181b; border-radius:6px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '📦'}</div>
+        </div>`;
     }
 
     if (!imgId || !imgId.includes("_")) {
         let baseId = item.id.replace(/_\d+(_upg_\d+)?$/, '');
         let baseItem = ITEMS_DB[baseId];
-        if (baseItem && baseItem.imgPrefix) {
-            imgId = baseItem.imgPrefix + "_1"; 
-            item.imageId = imgId; 
-        } else {
-            imgId = "default_1";
-        }
+        if (baseItem && baseItem.imgPrefix) { imgId = baseItem.imgPrefix + "_1"; item.imageId = imgId; } else { imgId = "default_1"; }
     }
     
     if (folder === 'two_handed') folder = 'two_handed'; 
-    let fallbackHTML = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '📦'}</div>`;
-    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallbackHTML)}')"></div>`; 
+    return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative;">
+            <img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width:100%; height:100%; object-fit:contain; position:relative; z-index:2;">
+            <div style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '📦'}</div>
+        </div>`; 
 }
 
 function renderDurability(zoneKey) { let dur = combatState.zoneHealth[zoneKey]; if(dur === 3) return `<span class="dur-dot g"></span><span class="dur-dot g"></span><span class="dur-dot g"></span>`; if(dur === 2) return `<span class="dur-dot y"></span><span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`; if(dur === 1) return `<span class="dur-dot o"></span><span class="dur-dot" style="background:#27272a"></span><span class="dur-dot" style="background:#27272a"></span>`; return ``; }
@@ -1000,22 +999,53 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; 
         document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        // ПРИМЕНЯЕМ НОВЫЕ КЛАССЫ СТАТОВ
+        // ПРИМЕНЯЕМ ПОРЯДОК: 1.Имя -> 2.Картинка -> 3.Урон/Броня -> 4.ХП(Текст) -> 5.ХП(Бар)
         let heroAtkNode = document.getElementById("combat-hero-atk-val");
         if(heroAtkNode && heroAtkNode.parentElement) { 
-            heroAtkNode.parentElement.style.cssText = ""; 
-            heroAtkNode.parentElement.className = "combat-stat-badge"; 
+            let badge = heroAtkNode.parentElement;
+            badge.className = "combat-stat-badge"; 
+            badge.style.order = "3";
+            badge.style.marginBottom = "8px";
+            badge.style.marginTop = "0px";
         }
         let enemyAtkNode = document.getElementById("combat-enemy-atk-val");
         if(enemyAtkNode && enemyAtkNode.parentElement) { 
-            enemyAtkNode.parentElement.style.cssText = "";
-            enemyAtkNode.parentElement.className = "combat-stat-badge"; 
+            let badge = enemyAtkNode.parentElement;
+            badge.className = "combat-stat-badge"; 
+            badge.style.order = "3";
+            badge.style.marginBottom = "8px";
+            badge.style.marginTop = "0px";
         }
         
         let heroNameNode = document.getElementById("combat-hero-name-plate");
-        if(heroNameNode) heroNameNode.style.cssText = "margin: 0; font-size: 15px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(251,191,36,0.6); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
+        if(heroNameNode) { heroNameNode.style.order = "1"; heroNameNode.style.marginBottom = "6px"; }
         let enemyNameNode = document.getElementById("combat-enemy-name-plate");
-        if(enemyNameNode) enemyNameNode.style.cssText = "margin: 0; font-size: 15px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(239,68,68,0.6); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
+        if(enemyNameNode) { enemyNameNode.style.order = "1"; enemyNameNode.style.marginBottom = "6px"; }
+
+        let heroImgNode = document.getElementById("combat-hero-img");
+        if(heroImgNode) { heroImgNode.style.order = "2"; }
+        let enemyImgNode = document.getElementById("combat-enemy-img");
+        if(enemyImgNode) { enemyImgNode.style.order = "2"; }
+
+        let heroHpText = document.getElementById("combat-hero-hp");
+        if (heroHpText && heroHpText.parentNode) { 
+            heroHpText.parentNode.style.order = "4"; 
+            heroHpText.parentNode.style.fontSize = "11px"; 
+            heroHpText.parentNode.style.fontWeight = "bold"; 
+            heroHpText.parentNode.style.marginBottom = "6px";
+        }
+        let enemyHpText = document.getElementById("combat-enemy-hp");
+        if (enemyHpText && enemyHpText.parentNode) { 
+            enemyHpText.parentNode.style.order = "4"; 
+            enemyHpText.parentNode.style.fontSize = "11px"; 
+            enemyHpText.parentNode.style.fontWeight = "bold"; 
+            enemyHpText.parentNode.style.marginBottom = "6px";
+        }
+
+        let heroHpBarWrapper = document.getElementById("combat-hero-hp-bar");
+        if (heroHpBarWrapper && heroHpBarWrapper.parentNode) { heroHpBarWrapper.parentNode.style.order = "5"; }
+        let enemyHpBarWrapper = document.getElementById("combat-enemy-hp-bar");
+        if (enemyHpBarWrapper && enemyHpBarWrapper.parentNode) { enemyHpBarWrapper.parentNode.style.order = "5"; }
 
         // ВСТРАИВАЕМ ПАНЕЛЬ РАСХОДНИКОВ СЛЕВА ОТ ЛОГА БОЯ
         let dashboard = document.querySelector('.combat-dashboard'); 
@@ -1026,19 +1056,14 @@ function updateUI() {
             logWrapper = document.createElement("div");
             logWrapper.id = "log-belt-wrapper";
             logNode.parentNode.insertBefore(logWrapper, logNode);
-            
             let beltNode = document.createElement("div");
             beltNode.id = "quick-belt";
-            
             logWrapper.appendChild(beltNode);
             logWrapper.appendChild(logNode);
         }
         
-        // Удаляем старый пояс, если он забаговался и висит в диораме
         let oldBeltInDiorama = diorama.querySelector('#quick-belt');
-        if (oldBeltInDiorama && oldBeltInDiorama.parentNode === diorama) {
-            oldBeltInDiorama.remove();
-        }
+        if (oldBeltInDiorama && oldBeltInDiorama.parentNode === diorama) oldBeltInDiorama.remove();
         
         let belt = document.getElementById('quick-belt'); 
         if (belt) {
@@ -1052,14 +1077,24 @@ function updateUI() {
                 }
             });
             
+            // Фильтруем: стараемся показать 1 зелье и 1 свиток
+            let potions = distinctConsumables.filter(c => c.subtype === 'heal');
+            let scrolls = distinctConsumables.filter(c => c.subtype.startsWith('dmg_'));
+            let displayItems = [];
+            if (potions.length > 0) displayItems.push(potions[0]);
+            if (scrolls.length > 0) displayItems.push(scrolls[0]);
+            for (let c of distinctConsumables) {
+                if (displayItems.length >= 2) break;
+                if (!displayItems.includes(c)) displayItems.push(c);
+            }
+            
             let beltHtml = '';
-            for(let i=0; i < Math.min(2, distinctConsumables.length); i++) {
-                let it = distinctConsumables[i];
+            displayItems.forEach(it => {
                 let count = counts[it.id];
                 let isUsed = (it.subtype === 'heal' && combatState.potionUsed) || (it.subtype.startsWith('dmg_') && combatState.scrollUsed);
                 let filter = isUsed ? "grayscale(100%) opacity(0.3)" : "none";
                 beltHtml += `<div class="belt-item rarity-${it.rarity}" style="filter: ${filter}; pointer-events: ${isUsed ? 'none' : 'auto'};" onclick="useConsumable('${it.id}')">${renderItemIcon(it)}<span class="belt-item-count">${count}</span></div>`;
-            }
+            });
             belt.innerHTML = beltHtml;
         }
         
