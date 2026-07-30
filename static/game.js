@@ -1,3 +1,29 @@
+// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Оптимизация под мобильные экраны) ===
+const UI_PATCH = `
+<style>
+/* Делаем арену растягиваемой, чтобы аватары были большими */
+#combat-entities-box { flex: 1 1 auto !important; min-height: 180px !important; position: relative !important; }
+.combat-card { height: 100% !important; min-height: 0 !important; justify-content: flex-end !important; }
+.combat-card img { max-height: 100% !important; object-fit: contain !important; }
+
+/* Плавающий пояс зелий над ареной (слева внизу) */
+#quick-belt { position: absolute !important; bottom: 5px !important; left: 5px !important; display: flex !important; gap: 5px !important; z-index: 50 !important; background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+.belt-item { width: 34px !important; height: 34px !important; background: rgba(18,18,20,0.85) !important; border: 1px solid #3f3f46 !important; border-radius: 6px !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 18px !important; box-shadow: 0 4px 10px rgba(0,0,0,0.6) !important; }
+.belt-item-count { bottom: -4px !important; right: -4px !important; font-size: 9px !important; }
+
+/* Компактные кнопки зон и лог боя */
+.combat-dashboard { padding-top: 5px !important; gap: 5px !important; flex-shrink: 0 !important; }
+.zone-btn { height: 38px !important; min-height: 38px !important; font-size: 9px !important; padding: 2px !important; }
+.combat-action-row { margin-top: 2px !important; gap: 5px !important; }
+.btn-use-skill, #btn-execute-turn { height: 42px !important; min-height: 42px !important; }
+#combat-log { height: 38px !important; font-size: 11px !important; padding: 4px !important; margin-bottom: 2px !important; }
+
+/* Тонкая плашка лута */
+#boss-loot-preview > div { padding: 2px 5px !important; font-size: 9px !important; margin-bottom: 4px !important; }
+</style>
+`;
+document.head.insertAdjacentHTML('beforeend', UI_PATCH);
+
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
@@ -818,10 +844,21 @@ function updateUI() {
         document.getElementById("combat-enemy-hp").innerText = Math.max(0, Math.floor(enemy.hp)); document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp; document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        let dashboard = document.querySelector('.combat-dashboard'); let belt = document.getElementById('quick-belt'); if(!belt) { belt = document.createElement('div'); belt.id = 'quick-belt'; belt.className = 'quick-belt'; dashboard.insertBefore(belt, dashboard.firstChild); }
+        // ПЛАВАЮЩИЙ ПОЯС: Переносим пояс внутрь коробки Арены
+        let dashboard = document.querySelector('.combat-dashboard'); 
+        let belt = document.getElementById('quick-belt'); 
+        if(!belt) { 
+            belt = document.createElement('div'); 
+            belt.id = 'quick-belt'; 
+            belt.className = 'quick-belt'; 
+            if (diorama) diorama.appendChild(belt);
+            else if (dashboard) dashboard.insertBefore(belt, dashboard.firstChild); 
+        }
         let consCounts = {}; hero.inventory.forEach((id) => { let it = ITEMS_DB[id]; if(it && it.type === 'consumable') { if(!consCounts[id]) consCounts[id] = {count: 0, item: it}; consCounts[id].count++; } });
         let beltHtml = ''; for(let id in consCounts) { let data = consCounts[id]; beltHtml += `<div class="belt-item rarity-${data.item.rarity}" onclick="useConsumable('${id}')">${data.item.icon}<span class="belt-item-count">${data.count}</span></div>`; }
-        if(beltHtml === '') beltHtml = `<div style="font-size:10px; color:#71717a; text-align:center; width:100%; font-weight:bold; margin-bottom: 4px;">ПОЯС ПУСТ. КУПИТЕ ЗЕЛЬЯ В ЛАВКЕ.</div>`; belt.innerHTML = beltHtml;
+        if(beltHtml === '') beltHtml = ``; // Убираем текст "Пояс пуст" чтобы не засорял интерфейс
+        belt.innerHTML = beltHtml;
+        
         let btnSkill = document.getElementById("btn-use-skill");
         if (isTurnExecuting || combatState.skillCooldown > 0) { btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">Скилл</span>КД (${combatState.skillCooldown})`; btnSkill.disabled = true; btnSkill.style.filter = "grayscale(100%) opacity(0.5)"; } else { let cls = CLASSES[hero.baseClass]; btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0 && !GOD_MODE; btnSkill.style.filter = "none"; }
         ['head', 'chest', 'legs'].forEach(z => { let btnAtk = document.getElementById(`btn-atk-${z}`); let btnDef = document.getElementById(`btn-def-${z}`); btnAtk.className = `zone-btn atk ${combatState.atkZone === z ? 'selected' : ''}`; let defClass = `zone-btn def ${combatState.defZone === z ? 'selected' : ''}`; if (combatState.zoneHealth[z] === 0) defClass += " broken"; btnDef.className = defClass; document.getElementById(`dur-${z}`).innerHTML = renderDurability(z); });
@@ -1016,5 +1053,5 @@ function updateUI() {
     if (currentScreen === 'friends') { renderFriends(); }
 }
 
-// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
+// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ
 loadGame();
