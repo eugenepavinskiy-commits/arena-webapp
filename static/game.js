@@ -1,65 +1,53 @@
-// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Глобальная полировка Арены) ===
+// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Идеальные пропорции Арены) ===
 const UI_PATCH = `
 <style>
 /* Идеальные пропорции Арены */
 #combat-entities-box { 
     flex: 1 1 auto !important; 
-    min-height: 230px !important; 
+    min-height: 200px !important; 
     position: relative !important; 
     display: flex !important; 
     flex-direction: row !important; 
     justify-content: space-between !important; 
-    align-items: center !important; 
-    padding: 15px 10px 5px 10px !important;
+    align-items: stretch !important; 
+    padding: 10px 10px 0 10px !important;
 }
 
 #entity-hero-box, #entity-enemy-box {
     width: 48% !important;
-    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important; 
+    align-items: center !important;
+    position: relative !important;
 }
 
+/* Карточки персонажей */
 .combat-card { 
-    height: 100% !important; 
+    flex: 1 1 auto !important; 
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-end !important; 
+    justify-content: space-between !important; 
     align-items: center !important;
 }
 
-/* Идеальная центровка картинок */
+/* Идеальная центровка картинок (Подняты к имени) */
 .combat-card img { 
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    max-height: 140px !important; 
+    max-height: 160px !important; 
     max-width: 100% !important;
     object-fit: contain !important; 
-    margin: auto 0 8px 0 !important; /* Отталкивает картинку от имени вниз, а от ХП вверх */
+    margin: 4px auto auto auto !important; 
     position: relative !important; 
     z-index: 1 !important; 
 }
 
-/* Плавающий пояс с зельями переносим в левый верхний угол арены */
-#quick-belt { 
-    position: absolute !important; 
-    top: 10px !important; 
-    left: 10px !important; 
-    bottom: auto !important; 
-    display: flex !important; 
-    flex-direction: column !important; 
-    gap: 8px !important; 
-    z-index: 50 !important; 
-    background: transparent !important; 
-    border: none !important; 
-    padding: 0 !important; 
-    margin: 0 !important; 
-}
-.belt-item { width: 36px !important; height: 36px !important; background: rgba(18,18,20,0.95) !important; border: 1px solid #52525b !important; border-radius: 8px !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 18px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8) !important; cursor: pointer; transition: transform 0.1s; }
+/* Стилизация иконок пояса */
+.belt-item { width: 48px !important; height: 48px !important; background: rgba(18,18,20,0.95) !important; border: 1px solid #52525b !important; border-radius: 8px !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 24px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8) !important; cursor: pointer; transition: transform 0.1s; position: relative !important; }
 .belt-item:active { transform: scale(0.9); }
-.belt-item-count { bottom: -6px !important; right: -6px !important; font-size: 10px !important; padding: 2px 5px !important; background: #ef4444 !important; border-radius: 10px !important; border: 1px solid #18181b !important; font-weight: bold !important; color: white !important; }
-
-/* Делаем лог аккуратным и закрепляем снизу диорамы */
-#combat-log { height: 44px !important; font-size: 11px !important; padding: 6px 10px !important; margin-top: auto !important; margin-bottom: 0 !important; border-top: 1px solid #3f3f46 !important; background: rgba(9, 9, 11, 0.95) !important; z-index: 10 !important; display: flex !important; flex-direction: column !important; justify-content: flex-end !important; line-height: 1.3 !important;}
+.belt-item-count { position: absolute !important; bottom: -4px !important; right: -4px !important; font-size: 11px !important; padding: 2px 6px !important; background: #ef4444 !important; border-radius: 10px !important; border: 1px solid #18181b !important; font-weight: bold !important; color: white !important; }
 
 /* Ужимаем кнопки ударов, чтобы спасти место на экране */
 .combat-dashboard { padding-top: 6px !important; gap: 5px !important; flex-shrink: 0 !important; }
@@ -127,10 +115,10 @@ const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: 
 
 // БАЗА ПРЕДМЕТОВ (УМНАЯ НУМЕРАЦИЯ)
 const ITEMS_DB = {
-    "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
+    "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
-    "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", imageId: "scroll_fire", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 🔥 урона.", stats: {} },
-    "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", imageId: "scroll_ice", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 ❄️ урона.", stats: {} },
+    "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", imageId: "scroll_fire", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 🔥 урона и ПОДЖИГАЕТ врага.", stats: {} },
+    "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", imageId: "scroll_ice", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 ❄️ урона и ОГЛУШАЕТ врага.", stats: {} },
     
     "base_sword": { id: "base_sword", name: "Клинок", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, inShop: false, allowedClasses: ["knight", "berserk"], stats: { atk: 6 }, imgPrefix: "sword", maxImages: 7 },
     "base_dagger": { id: "base_dagger", name: "Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, inShop: false, allowedClasses: ["shadow", "ranger"], stats: { atk: 5 }, imgPrefix: "dagger", maxImages: 2 },
@@ -169,7 +157,7 @@ const BOSS_EVENTS = [
 
 let currentScreen = "hero"; let shopMode = "buy"; let previewClassId = "knight"; let inspectInvIndex = null; let forgeSelectedIndex = null; 
 let enemy = null; let combatMode = 'pve'; 
-let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, potionUsed: false, scrollUsed: false, enemyBurn: 0 };
 let savedPveEnemy = null; let savedPveState = null;
 
 let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {}, friends: [] };
@@ -323,7 +311,7 @@ function changeFloor(dir) { hero.floor += dir; if (hero.floor < 1) hero.floor = 
 
 function initCombat() {
     combatMode = 'pve'; enemy = generateEnemy(hero.floor); 
-    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, potionUsed: false, scrollUsed: false, enemyBurn: 0 };
     calculateStats(true); 
     if (enemy.isBoss && !hero.activeAltar) { if (!hero.altarOffers) hero.altarOffers = {}; if (!hero.altarOffers[hero.floor]) { hero.altarOffers[hero.floor] = BOSS_EVENTS[Math.floor(Math.random() * BOSS_EVENTS.length)].id; saveGame(); } updateUI(); showBossEventModal(hero.altarOffers[hero.floor]); } else { startCombatProper(); }
 }
@@ -345,7 +333,7 @@ function startRaid(bossId) {
     let bData = RAID_BOSSES.find(b => b.id === bossId); combatMode = 'raid'; let statMult = 1 + (hero.level * 0.1); 
     enemy = { name: "Рейд: " + bData.name, floor: hero.level, imgUrl: `${STATIC_URL}mobs/B_${bData.imgId}_high_resolution.png`, bgUrl: `${STATIC_URL}begraund/throne.png`, isBoss: true, isMiniBoss: false, isRaid: true, raidData: bData, hp: Math.floor(100 * statMult * bData.hpMult), maxHp: Math.floor(100 * statMult * bData.hpMult), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(10 * statMult * bData.atkMult), armor: Math.floor(5 * statMult * bData.armMult), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) } };
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { if (bData[`dmg_${el}`]) enemy.stats[`dmg_${el}`] = Math.floor(bData[`dmg_${el}`] * statMult); if (bData[`res_${el}`]) enemy.stats[`res_${el}`] = bData[`res_${el}`]; });
-    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, potionUsed: false, scrollUsed: false, enemyBurn: 0 };
     calculateStats(true); document.getElementById("enemy-rage-bg").style.display = "block"; document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Рейд начался! У вас только 15 ходов!</div>`; planEnemyTurn(); document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-PVE').classList.add('active'); currentScreen = 'PVE'; updateUI();
 }
 
@@ -357,7 +345,7 @@ async function startPvP() {
     try { let res = await fetch(`/api/pvp_opponent/${hero.level}`); if(res.ok) { let data = await res.json(); if(data.status === "ok") { pvpEnemyData = data.opponent; } } } catch(e) {}
     if (pvpEnemyData) { enemy = { name: pvpEnemyData.name, floor: pvpEnemyData.level, imgUrl: STATIC_URL + (pvpEnemyData.cls + ".png"), bgUrl: STATIC_URL + "begraund/throne.png", isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true, hp: Math.floor(hero.combatStats.hp * 0.9), maxHp: Math.floor(hero.combatStats.hp * 0.9), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }, ratingReward: 25 + Math.floor(Math.random()*10) }; } 
     else { enemy = { name: bot.name, floor: hero.level, imgUrl: STATIC_URL + bot.img, bgUrl: STATIC_URL + "begraund/throne.png", isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true, hp: Math.floor(hero.combatStats.hp * 0.9), maxHp: Math.floor(hero.combatStats.hp * 0.9), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }, ratingReward: 25 + Math.floor(Math.random()*10) }; }
-    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
+    combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, potionUsed: false, scrollUsed: false, enemyBurn: 0 };
     calculateStats(true); document.getElementById("enemy-rage-bg").style.display = "none"; document.getElementById("combat-log").innerHTML = `<div class="log-entry log-sys">Бой на Арене начался!</div>`; planEnemyTurn(); updateUI();
 }
 
@@ -375,8 +363,8 @@ function updateIntentDisplay() {
         el.className = "intent-box ultimatum"; 
         el.style.display = "block";
     } else { 
-        el.innerHTML = ``; // УБИРАЕМ ТЕКСТ "Враг выжидает..."
-        el.style.display = "none"; // ПРЯЧЕМ ПЛАШКУ, ЧТОБЫ ОСВОБОДИТЬ МЕСТО
+        el.innerHTML = ``; 
+        el.style.display = "none"; 
     } 
 }
 
@@ -391,13 +379,36 @@ function useConsumable(itemId) {
     if (isTurnExecuting || hero.hp <= 0 && !GOD_MODE) return;
     let invIndex = hero.inventory.indexOf(itemId); if (invIndex === -1) return;
     let item = ITEMS_DB[itemId]; if (!item || item.type !== 'consumable') return;
-    if (item.subtype === 'heal' && hero.hp >= hero.combatStats.hp) return alert("Здоровье уже полное!");
-    playSFX('skill');
-    if (item.subtype === 'heal') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys"); logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`); } 
+    
+    if (item.subtype === 'heal') {
+        if (combatState.potionUsed) return alert("За один бой можно выпить только ОДНО зелье!");
+        if (hero.hp >= hero.combatStats.hp) return alert("Здоровье уже полное!");
+        combatState.potionUsed = true;
+        playSFX('skill');
+        hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); 
+        showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys"); 
+        logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`); 
+    } 
     else if (item.subtype.startsWith('dmg_')) { 
+        if (combatState.scrollUsed) return alert("За один бой можно прочитать только ОДИН свиток!");
+        combatState.scrollUsed = true;
+        playSFX('skill');
         let elem = item.subtype.split('_')[1]; let rawDmg = item.power; let res = enemy.stats[`res_${elem}`] || 0; let finalDmg = Math.floor(rawDmg * (1 - res/100)); if (finalDmg < 0) finalDmg = 0; 
         enemy.hp -= finalDmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg); let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️'; showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit"); triggerHitAnim("entity-enemy-box"); shakeScreen(); logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`); 
+        if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg); 
+        let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️'; 
+        showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit"); 
+        triggerHitAnim("entity-enemy-box"); shakeScreen(); 
+        logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`); 
+        
+        // Эффекты свитков
+        if (elem === 'fire') {
+            combatState.enemyBurn = 2; // Горение на 2 хода
+            logCombat(`<span class="log-crit">Враг ПОДЖОГСЯ от Метеорита!</span>`);
+        } else if (elem === 'ice') {
+            combatState.enemyStunned = true;
+            logCombat(`<span class="log-sys">Враг ЗАМОРОЖЕН Бураном!</span>`);
+        }
     }
     hero.inventory.splice(invIndex, 1); saveGame();
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
@@ -502,10 +513,19 @@ function applyTurnEndEffects() {
         let dmgPerStack = Math.floor(enemy.maxHp * 0.05); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; 
         enemy.hp -= poisonDmg; if (enemy.hp < 0) enemy.hp = 0; 
         if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + poisonDmg); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); 
-        if (enemy.hp <= 0) handleCombatWin(); 
+        if (enemy.hp <= 0) { handleCombatWin(); return; }
     }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
+    if (combatState.enemyBurn > 0) {
+        let burnDmg = Math.floor(hero.combatStats.damage * 0.4);
+        enemy.hp -= burnDmg; if (enemy.hp < 0) enemy.hp = 0;
+        combatState.enemyBurn--;
+        showDmgPopup("entity-enemy-box", `ОЖОГ -${burnDmg}`, "log-crit"); 
+        logCombat(`<span class="log-crit">Враг горит: -${burnDmg} HP.</span>`);
+        if (enemy.hp <= 0) { handleCombatWin(); return; }
+    }
 }
+
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
@@ -749,18 +769,19 @@ function renderItemIcon(item) {
     if (!item) return ""; 
     if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`; 
     
-    if (item.type === "consumable" && !item.imageId && item.icon) { 
-        return `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon}</div>`; 
-    }
-    
     let imgId = item.imageId;
     let folder = item.type; 
 
-    // ЗАЩИТА ОТ СТАРЫХ СЕЙВОВ
+    // ЕСЛИ ЭТО РАСХОДНИК, ЗАГРУЖАЕМ ЕГО ИЗ ПАПКИ CONSUMABLE
+    if (folder === 'consumable') {
+        imgId = item.id.replace(/_\d+(_upg_\d+)?$/, ''); 
+        let fallback = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '🧪'}</div>`;
+        return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/consumable/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallback)}')"></div>`;
+    }
+
     if (!imgId || !imgId.includes("_")) {
         let baseId = item.id.replace(/_\d+(_upg_\d+)?$/, '');
         let baseItem = ITEMS_DB[baseId];
-        
         if (baseItem && baseItem.imgPrefix) {
             imgId = baseItem.imgPrefix + "_1"; 
             item.imageId = imgId; 
@@ -770,9 +791,7 @@ function renderItemIcon(item) {
     }
     
     if (folder === 'two_handed') folder = 'two_handed'; 
-    
     let fallbackHTML = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '📦'}</div>`;
-    
     return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallbackHTML)}')"></div>`; 
 }
 
@@ -912,25 +931,57 @@ function updateUI() {
 
         // ДИНАМИЧЕСКИЙ СТАЙЛИНГ ИМЕН И ПЛАШЕК УРОНА
         let heroAtkNode = document.getElementById("combat-hero-atk-val");
-        if(heroAtkNode && heroAtkNode.parentElement) { heroAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 6px 0; width: 100%; border-radius: 6px; border: 1px solid #3f3f46; display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 6px; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
+        if(heroAtkNode && heroAtkNode.parentElement) { heroAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 8px 0; width: 100%; border-radius: 8px; border: 1px solid #52525b; display: flex; gap: 20px; justify-content: center; align-items: center; margin-top: auto; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
         let enemyAtkNode = document.getElementById("combat-enemy-atk-val");
-        if(enemyAtkNode && enemyAtkNode.parentElement) { enemyAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 6px 0; width: 100%; border-radius: 6px; border: 1px solid #3f3f46; display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 6px; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
+        if(enemyAtkNode && enemyAtkNode.parentElement) { enemyAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 8px 0; width: 100%; border-radius: 8px; border: 1px solid #52525b; display: flex; gap: 20px; justify-content: center; align-items: center; margin-top: auto; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
         let heroNameNode = document.getElementById("combat-hero-name-plate");
-        if(heroNameNode) heroNameNode.style.cssText = "margin-bottom: auto; font-size: 14px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(251,191,36,0.5); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
+        if(heroNameNode) heroNameNode.style.cssText = "margin-bottom: 0; margin-top: 0; font-size: 15px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(251,191,36,0.6); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
         let enemyNameNode = document.getElementById("combat-enemy-name-plate");
-        if(enemyNameNode) enemyNameNode.style.cssText = "margin-bottom: auto; font-size: 14px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(239,68,68,0.5); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
+        if(enemyNameNode) enemyNameNode.style.cssText = "margin-bottom: 0; margin-top: 0; font-size: 15px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(239,68,68,0.6); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
 
-        // ПЛАВАЮЩИЙ ПОЯС
-        let belt = document.getElementById('quick-belt'); 
-        if(!belt) { 
-            belt = document.createElement('div'); 
-            belt.id = 'quick-belt'; 
-            belt.className = 'quick-belt'; 
-            if (diorama) diorama.appendChild(belt);
+        // ВСТРАИВАЕМ ПАНЕЛЬ РАСХОДНИКОВ СЛЕВА ОТ ЛОГА БОЯ
+        let dashboard = document.querySelector('.combat-dashboard'); 
+        let logNode = document.getElementById("combat-log");
+        let logWrapper = document.getElementById("log-belt-wrapper");
+        
+        if(!logWrapper && logNode && logNode.parentNode) {
+            logWrapper = document.createElement("div");
+            logWrapper.id = "log-belt-wrapper";
+            logWrapper.style.cssText = "display: flex; gap: 10px; align-items: stretch; margin-top: 5px; width: 100%; height: 48px;";
+            logNode.parentNode.insertBefore(logWrapper, logNode);
+            
+            let beltNode = document.createElement("div");
+            beltNode.id = "quick-belt";
+            beltNode.style.cssText = "display: flex; gap: 6px; flex-shrink: 0;";
+            
+            logNode.style.cssText = "flex: 1; height: 100%; margin: 0; font-size: 11px; padding: 4px 8px; display: flex; flex-direction: column; justify-content: flex-end; border: 1px solid #3f3f46; border-radius: 8px; background: rgba(9,9,11,0.95); line-height: 1.3;";
+            
+            logWrapper.appendChild(beltNode);
+            logWrapper.appendChild(logNode);
         }
-        let consCounts = {}; hero.inventory.forEach((id) => { let it = ITEMS_DB[id]; if(it && it.type === 'consumable') { if(!consCounts[id]) consCounts[id] = {count: 0, item: it}; consCounts[id].count++; } });
-        let beltHtml = ''; for(let id in consCounts) { let data = consCounts[id]; beltHtml += `<div class="belt-item rarity-${data.item.rarity}" onclick="useConsumable('${id}')">${data.item.icon}<span class="belt-item-count">${data.count}</span></div>`; }
-        belt.innerHTML = beltHtml;
+        
+        let belt = document.getElementById('quick-belt'); 
+        if (belt) {
+            let distinctConsumables = [];
+            let counts = {};
+            hero.inventory.forEach(id => {
+                let it = ITEMS_DB[id];
+                if(it && it.type === 'consumable') {
+                    if(!counts[id]) { counts[id] = 0; distinctConsumables.push(it); }
+                    counts[id]++;
+                }
+            });
+            
+            let beltHtml = '';
+            for(let i=0; i < Math.min(2, distinctConsumables.length); i++) {
+                let it = distinctConsumables[i];
+                let count = counts[it.id];
+                let isUsed = (it.subtype === 'heal' && combatState.potionUsed) || (it.subtype.startsWith('dmg_') && combatState.scrollUsed);
+                let filter = isUsed ? "grayscale(100%) opacity(0.3)" : "none";
+                beltHtml += `<div class="belt-item rarity-${it.rarity}" style="filter: ${filter}; pointer-events: ${isUsed ? 'none' : 'auto'};" onclick="useConsumable('${it.id}')">${renderItemIcon(it)}<span class="belt-item-count">${count}</span></div>`;
+            }
+            belt.innerHTML = beltHtml;
+        }
         
         let btnSkill = document.getElementById("btn-use-skill");
         if (isTurnExecuting || combatState.skillCooldown > 0) { btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">Скилл</span>КД (${combatState.skillCooldown})`; btnSkill.disabled = true; btnSkill.style.filter = "grayscale(100%) opacity(0.5)"; } else { let cls = CLASSES[hero.baseClass]; btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0 && !GOD_MODE; btnSkill.style.filter = "none"; }
