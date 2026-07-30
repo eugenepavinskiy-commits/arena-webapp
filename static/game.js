@@ -1,16 +1,66 @@
 // === АВТО-ПАТЧ ИНТЕРФЕЙСА (Глобальная полировка Арены) ===
 const UI_PATCH = `
 <style>
-/* Увеличиваем место для картинок и центруем */
-#combat-entities-box { flex: 1 1 auto !important; min-height: 230px !important; position: relative !important; display: flex !important; flex-direction: column !important; justify-content: center !important; }
+/* ВОЗВРАЩАЕМ ГОРИЗОНТАЛЬНОЕ РАСПОЛОЖЕНИЕ (Исправление наложения) */
+#combat-entities-box { 
+    flex: 1 1 auto !important; 
+    min-height: 220px !important; 
+    position: relative !important; 
+    display: flex !important; 
+    flex-direction: row !important; /* ОШИБКА БЫЛА ЗДЕСЬ */
+    justify-content: space-between !important; 
+    align-items: flex-end !important; 
+    padding: 10px 5px !important;
+}
 
-/* Карточка персонажа - даем воздух сверху и снизу */
-.combat-card { height: 100% !important; min-height: 0 !important; justify-content: center !important; padding-top: 8px !important; gap: 4px !important; }
-.combat-card img { max-height: calc(100% - 65px) !important; object-fit: contain !important; margin: 0 auto !important; position: relative !important; z-index: 1 !important; }
+/* Жестко фиксируем ширину и выравнивание для Героя и Врага */
+#entity-hero-box, #entity-enemy-box {
+    width: 45% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    position: relative !important;
+}
 
-/* Переносим зелья в левый ВЕРХНИЙ угол (вертикально) */
-#quick-belt { position: absolute !important; top: 40px !important; left: 10px !important; bottom: auto !important; display: flex !important; flex-direction: column !important; gap: 10px !important; z-index: 50 !important; background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important; }
-.belt-item { width: 38px !important; height: 38px !important; background: rgba(18,18,20,0.95) !important; border: 1px solid #52525b !important; border-radius: 8px !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 20px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8) !important; cursor: pointer; transition: transform 0.1s; }
+/* Карточки персонажей */
+.combat-card { 
+    height: 100% !important; 
+    width: 100% !important;
+    min-height: 0 !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important; 
+    align-items: center !important;
+}
+
+/* Ограничиваем высоту аватаров, чтобы оставалось место под имена и статы */
+.combat-card img { 
+    max-height: calc(100% - 65px) !important; 
+    max-width: 100% !important;
+    object-fit: contain !important; 
+    margin: 0 auto !important; 
+    position: relative !important; 
+    z-index: 1 !important; 
+}
+
+/* Плавающий пояс с зельями переносим в левый верхний угол арены */
+#quick-belt { 
+    position: absolute !important; 
+    top: 10px !important; 
+    left: 10px !important; 
+    bottom: auto !important; 
+    display: flex !important; 
+    flex-direction: column !important; 
+    gap: 8px !important; 
+    z-index: 50 !important; 
+    background: transparent !important; 
+    border: none !important; 
+    padding: 0 !important; 
+    margin: 0 !important; 
+}
+.belt-item { width: 36px !important; height: 36px !important; background: rgba(18,18,20,0.95) !important; border: 1px solid #52525b !important; border-radius: 8px !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 18px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8) !important; cursor: pointer; transition: transform 0.1s; }
 .belt-item:active { transform: scale(0.9); }
 .belt-item-count { bottom: -6px !important; right: -6px !important; font-size: 10px !important; padding: 2px 5px !important; background: #ef4444 !important; border-radius: 10px !important; border: 1px solid #18181b !important; font-weight: bold !important; color: white !important; }
 
@@ -849,7 +899,7 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; 
         document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        // ДИНАМИЧЕСКИЙ СТАЙЛИНГ ИМЕН И ПЛАШЕК УРОНА (ЧТОБЫ БЫЛО КРАСИВО)
+        // ДИНАМИЧЕСКИЙ СТАЙЛИНГ ИМЕН И ПЛАШЕК УРОНА
         let heroAtkNode = document.getElementById("combat-hero-atk-val");
         if(heroAtkNode && heroAtkNode.parentElement) { heroAtkNode.parentElement.style.cssText = "background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 8px; border: 1px solid #3f3f46; display: inline-flex; gap: 15px; justify-content: center; margin: 4px auto 0; font-size: 11px; font-weight: bold; color: #e4e4e7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;"; }
         let enemyAtkNode = document.getElementById("combat-enemy-atk-val");
@@ -1065,5 +1115,5 @@ function updateUI() {
     if (currentScreen === 'friends') { renderFriends(); }
 }
 
-// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
+// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ
 loadGame();
