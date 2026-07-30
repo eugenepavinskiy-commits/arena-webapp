@@ -1,144 +1,3 @@
-// === АВТО-ПАТЧ ИНТЕРФЕЙСА (Идеальная Арена и ХП бары) ===
-const UI_PATCH = `
-<style>
-/* 1. ЖЕСТКАЯ ФИКСАЦИЯ АРЕНЫ */
-#combat-entities-box { 
-    flex: 1 0 240px !important; 
-    min-height: 240px !important; 
-    position: relative !important; 
-    display: flex !important; 
-    flex-direction: row !important; 
-    justify-content: space-between !important; 
-    align-items: stretch !important; 
-    padding: 10px 10px 0 10px !important;
-    box-sizing: border-box !important;
-}
-
-#entity-hero-box, #entity-enemy-box {
-    width: 48% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important; 
-    align-items: center !important;
-}
-
-.combat-card { 
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important; 
-    align-items: center !important;
-}
-
-/* 2. УВЕЛИЧИВАЕМ АВАТАРЫ И ПРИЖИМАЕМ К ИМЕНИ */
-.combat-card img { 
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    max-height: 170px !important; 
-    max-width: 100% !important;
-    object-fit: contain !important; 
-    position: relative !important; 
-    z-index: 1 !important; 
-}
-
-/* 3. ОБЕРТКА ДЛЯ ЛОГА И ЗЕЛИЙ (Увеличено под 2 строчки) */
-#log-belt-wrapper {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 10px !important;
-    align-items: stretch !important;
-    margin-top: 8px !important;
-    height: 56px !important; 
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-/* 4. ПАНЕЛЬ РАСХОДНИКОВ (2 слота) */
-#quick-belt { 
-    position: static !important; 
-    display: flex !important; 
-    flex-direction: row !important; 
-    gap: 8px !important; 
-    background: transparent !important; 
-    border: none !important; 
-    padding: 0 !important; 
-    margin: 0 !important; 
-    align-items: center !important;
-}
-
-.belt-item { 
-    width: 48px !important; 
-    height: 48px !important; 
-    background: rgba(18,18,20,0.95) !important; 
-    border: 1px solid #52525b !important; 
-    border-radius: 8px !important; 
-    display: flex !important; 
-    justify-content: center !important; 
-    align-items: center !important; 
-    font-size: 24px !important; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important; 
-    cursor: pointer; 
-    position: relative !important; 
-    overflow: hidden !important;
-}
-.belt-item:active { transform: scale(0.9); }
-.belt-item-count { 
-    position: absolute !important; 
-    bottom: 2px !important; 
-    right: 2px !important; 
-    font-size: 10px !important; 
-    padding: 2px 5px !important; 
-    background: #ef4444 !important; 
-    border-radius: 6px !important; 
-    border: 1px solid #18181b !important; 
-    font-weight: bold !important; 
-    color: white !important; 
-    z-index: 10 !important;
-}
-
-/* 5. ЛОГ БОЯ */
-#combat-log { 
-    flex: 1 !important;
-    height: auto !important; 
-    font-size: 11px !important; 
-    padding: 6px 10px !important; 
-    margin: 0 !important; 
-    border: 1px solid #3f3f46 !important; 
-    border-radius: 8px !important;
-    background: rgba(9, 9, 11, 0.95) !important; 
-    display: flex !important; 
-    flex-direction: column !important; 
-    justify-content: flex-end !important; 
-    line-height: 1.4 !important;
-}
-
-/* 6. ПРЕМИАЛЬНЫЕ ПЛАШКИ СТАТОВ */
-.combat-stat-badge {
-    background: linear-gradient(180deg, #27272a 0%, #18181b 100%) !important; 
-    padding: 6px 0 !important; 
-    width: 100% !important; 
-    border-radius: 6px !important; 
-    border: 1px solid #52525b !important; 
-    display: flex !important; 
-    gap: 15px !important; 
-    justify-content: center !important; 
-    align-items: center !important; 
-    font-size: 14px !important; 
-    font-weight: 900 !important; 
-    color: #fff !important; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important;
-}
-
-.combat-dashboard { padding-top: 4px !important; gap: 4px !important; flex-shrink: 0 !important; }
-.zone-btn { height: 38px !important; min-height: 38px !important; font-size: 10px !important; }
-.combat-action-row { margin-top: 2px !important; gap: 6px !important; }
-.btn-use-skill, #btn-execute-turn { height: 42px !important; min-height: 42px !important; font-size: 12px !important; }
-#boss-loot-preview > div { padding: 3px 6px !important; font-size: 10px !important; margin-bottom: 4px !important; border-radius: 6px !important;}
-</style>
-`;
-document.head.insertAdjacentHTML('beforeend', UI_PATCH);
-
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
 if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
@@ -843,12 +702,12 @@ function renderItemIcon(item) {
     let imgId = item.imageId;
     let folder = item.type; 
 
-    // Сверхнадежный загрузчик иконок (чтобы не было багов с битыми ссылками)
+    // Защита иконок (показываем картинку или прячем её и показываем эмодзи)
     if (folder === 'consumable') {
         imgId = item.id.replace(/_\d+(_upg_\d+)?$/, ''); 
-        return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative;">
-            <img src="${STATIC_URL}items/consumable/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width:100%; height:100%; object-fit:contain; border-radius: 6px; position:relative; z-index:2;">
-            <div style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; background:#18181b; border-radius:6px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '📦'}</div>
+        return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative; display:flex; justify-content:center; align-items:center;">
+            <img src="${STATIC_URL}items/consumable/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="max-width:100%; max-height:100%; object-fit:contain; position:relative; z-index:2; border-radius: 8px;">
+            <div class="fallback-icon" style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '🧪'}</div>
         </div>`;
     }
 
@@ -859,9 +718,9 @@ function renderItemIcon(item) {
     }
     
     if (folder === 'two_handed') folder = 'two_handed'; 
-    return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative;">
-            <img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="width:100%; height:100%; object-fit:contain; position:relative; z-index:2;">
-            <div style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '📦'}</div>
+    return `<div class="item-img-wrapper" style="width:100%; height:100%; position:relative; display:flex; justify-content:center; align-items:center;">
+            <img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="max-width:100%; max-height:100%; object-fit:contain; position:relative; z-index:2;">
+            <div class="fallback-icon" style="display:none; justify-content:center; align-items:center; width:100%; height:100%; font-size:24px; position:absolute; top:0; left:0; z-index:1;">${item.icon || '📦'}</div>
         </div>`; 
 }
 
@@ -979,7 +838,19 @@ function updateUI() {
         let titleEl = document.getElementById("combat-floor-title"); if(titleEl) { if (combatMode === 'pvp' || combatMode === 'raid') { titleEl.style.display = 'none'; } else { titleEl.style.display = 'flex'; titleEl.innerHTML = floorNavHtml; } }
         let stageNameEl = document.getElementById("combat-stage-name"); if(stageNameEl) { if (combatMode === 'pvp') { stageNameEl.innerText = "PVP АРЕНА"; stageNameEl.className = "combat-header boss"; } else if (combatMode === 'raid') { stageNameEl.innerText = "МИРОВОЙ БОСС"; stageNameEl.className = "combat-header boss"; } else { stageNameEl.innerText = enemy.isBoss ? "МЕГА-БОСС" : (enemy.isMiniBoss ? "ЭЛИТНЫЙ ВРАГ" : "ОБЫЧНЫЙ ВРАГ"); stageNameEl.className = enemy.isBoss || enemy.isMiniBoss ? "combat-header boss" : "combat-header"; } }
         let arenaOuter = document.getElementById("arena-bg"); arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`; arenaOuter.style.backgroundSize = 'cover'; arenaOuter.style.backgroundPosition = 'center';
-        let diorama = document.getElementById("combat-entities-box"); diorama.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.9) 100%), url('${enemy.bgUrl}')`; diorama.style.backgroundSize = 'cover'; diorama.style.backgroundPosition = 'center';
+        
+        // === НАДЕЖНАЯ ПЕРЕСБОРКА DOM (РЕШАЕТ ПРОБЛЕМУ БОТА И ПОРЯДКА) ===
+        let diorama = document.getElementById("combat-entities-box"); 
+        if (diorama) {
+            diorama.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(9,9,11,0.9) 100%), url('${enemy.bgUrl}')`; 
+            diorama.style.backgroundSize = 'cover'; diorama.style.backgroundPosition = 'center';
+            
+            // Задаем жесткую высоту и убираем старый пояс
+            diorama.style.flex = "1 0 240px"; diorama.style.minHeight = "240px";
+            let oldBelt = diorama.querySelector('#quick-belt');
+            if (oldBelt) oldBelt.remove();
+        }
+
         let comboEl = document.getElementById("combo-display"); if (combatState.combo > 0) { comboEl.innerText = `🔥 КОМБО: x${(1 + combatState.combo * 0.25).toFixed(2)}`; comboEl.className = "combo-meter show"; } else { comboEl.className = "combo-meter"; }
         if (enemy.isBoss || enemy.isRaid) { let rPct = enemy.isRaid ? (enemy.turnCounter / 15 * 100) : ((enemy.turnCounter % 4) / 3 * 100); document.getElementById("enemy-rage-bar").style.width = `${rPct}%`; if(rPct >= 100) document.getElementById("enemy-rage-bar").classList.add("full"); else document.getElementById("enemy-rage-bar").classList.remove("full"); }
         let stunIcon = document.getElementById("enemy-stun-icon"); if (combatState.enemyStunned) stunIcon.style.display = "block"; else stunIcon.style.display = "none";
@@ -988,8 +859,7 @@ function updateUI() {
         let bossIcon = enemy.isBoss ? "👑 " : (enemy.isMiniBoss ? "☠️ " : ""); let enemyCleanName = enemy.name.replace("👑 ", "").replace("☠️ ", "").replace(" (Элита)", ""); let enemyLvlTag = "";
         if(enemy.isRaid || enemy.isPlayer) { enemyLvlTag = `<span class="entity-lvl boss">УР. ${enemy.floor}</span>`; } else if(enemy.isBoss) { enemyLvlTag = `<span class="entity-lvl boss">БОСС ${enemy.floor}</span>`; } else if(enemy.isMiniBoss) { enemyLvlTag = `<span class="entity-lvl elite">ЭЛИТА ${enemy.floor}</span>`; } else { enemyLvlTag = `<span class="entity-lvl">УР. ${enemy.floor}</span>`; }
         document.getElementById("combat-enemy-name-plate").innerHTML = `<span class="entity-name-text">${bossIcon}${enemyCleanName}</span>${enemyLvlTag}`; document.getElementById("combat-enemy-img").src = enemy.imgUrl;
-        let enemyWrapper = document.getElementById("entity-enemy-box"); if (enemyWrapper) { enemyWrapper.className = "combat-entity-wrapper"; let enemyCard = enemyWrapper.querySelector(".combat-card"); if (enemyCard) { enemyCard.className = (enemy.isBoss || enemy.isPlayer) ? "combat-card boss" : "combat-card"; } }
-
+        
         let isHeroDead = hero.hp <= 0 && !GOD_MODE;
         if (GOD_MODE) { document.getElementById("combat-hero-hp").innerText = "GOD MODE"; document.getElementById("combat-hero-maxhp").innerText = "999K"; } else { document.getElementById("combat-hero-hp").innerText = Math.max(0, Math.floor(hero.hp)); document.getElementById("combat-hero-maxhp").innerText = hero.combatStats.hp; }
         document.getElementById("combat-hero-hp-bar").style.width = `${Math.max(0, (hero.hp/hero.combatStats.hp)*100)}%`;
@@ -999,94 +869,66 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; 
         document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        // ПРИМЕНЯЕМ ПОРЯДОК: 1.Имя -> 2.Картинка -> 3.Урон/Броня -> 4.ХП(Текст) -> 5.ХП(Бар)
-        let heroAtkNode = document.getElementById("combat-hero-atk-val");
-        if(heroAtkNode && heroAtkNode.parentElement) { 
-            let badge = heroAtkNode.parentElement;
-            badge.className = "combat-stat-badge"; 
-            badge.style.order = "3";
-            badge.style.marginBottom = "8px";
-            badge.style.marginTop = "0px";
-        }
-        let enemyAtkNode = document.getElementById("combat-enemy-atk-val");
-        if(enemyAtkNode && enemyAtkNode.parentElement) { 
-            let badge = enemyAtkNode.parentElement;
-            badge.className = "combat-stat-badge"; 
-            badge.style.order = "3";
-            badge.style.marginBottom = "8px";
-            badge.style.marginTop = "0px";
-        }
-        
-        let heroNameNode = document.getElementById("combat-hero-name-plate");
-        if(heroNameNode) { heroNameNode.style.order = "1"; heroNameNode.style.marginBottom = "6px"; }
-        let enemyNameNode = document.getElementById("combat-enemy-name-plate");
-        if(enemyNameNode) { enemyNameNode.style.order = "1"; enemyNameNode.style.marginBottom = "6px"; }
+        // ПЕРЕСТРАИВАЕМ БЛОКИ ГЕРОЯ И БОССА ФИЗИЧЕСКИ В DOM
+        function rebuildEntityBox(boxId, nameId, imgId, atkId, hpTxtId, hpBarId) {
+            let box = document.getElementById(boxId);
+            if (!box) return;
+            box.style.cssText = "width: 48%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 100%;";
+            
+            let nameNode = document.getElementById(nameId);
+            let imgNode = document.getElementById(imgId); let cardNode = imgNode ? imgNode.closest('.combat-card') : null;
+            let atkNode = document.getElementById(atkId); let statNode = atkNode ? atkNode.closest('.combat-stat-badge') || atkNode.parentElement : null;
+            let hpTxtNode = document.getElementById(hpTxtId); let hpTxtWrap = hpTxtNode ? hpTxtNode.closest('.stat-item') || hpTxtNode.parentElement : null;
+            let hpBarNode = document.getElementById(hpBarId); let hpBarWrap = hpBarNode ? hpBarNode.closest('.stat-item') || hpBarNode.parentElement : null;
 
-        let heroImgNode = document.getElementById("combat-hero-img");
-        if(heroImgNode) { heroImgNode.style.order = "2"; }
-        let enemyImgNode = document.getElementById("combat-enemy-img");
-        if(enemyImgNode) { enemyImgNode.style.order = "2"; }
-
-        let heroHpText = document.getElementById("combat-hero-hp");
-        if (heroHpText && heroHpText.parentNode) { 
-            heroHpText.parentNode.style.order = "4"; 
-            heroHpText.parentNode.style.fontSize = "11px"; 
-            heroHpText.parentNode.style.fontWeight = "bold"; 
-            heroHpText.parentNode.style.marginBottom = "6px";
-        }
-        let enemyHpText = document.getElementById("combat-enemy-hp");
-        if (enemyHpText && enemyHpText.parentNode) { 
-            enemyHpText.parentNode.style.order = "4"; 
-            enemyHpText.parentNode.style.fontSize = "11px"; 
-            enemyHpText.parentNode.style.fontWeight = "bold"; 
-            enemyHpText.parentNode.style.marginBottom = "6px";
+            if(nameNode) { nameNode.style.cssText = "font-size: 15px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(251,191,36,0.6); text-align: center; margin-bottom: 6px; width: 100%;"; box.appendChild(nameNode); }
+            if(cardNode) { cardNode.style.cssText = "flex: 1 1 auto; width: 100%; display: flex; justify-content: center; align-items: flex-start;"; imgNode.style.cssText = "max-height: 140px; max-width: 100%; object-fit: contain; margin-top: 4px;"; box.appendChild(cardNode); }
+            if(statNode) { statNode.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 6px 0; width: 100%; border-radius: 6px; border: 1px solid #52525b; display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 8px; margin-bottom: 6px; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; box.appendChild(statNode); }
+            if(hpTxtWrap) { hpTxtWrap.style.cssText = "font-size: 11px; font-weight: bold; margin-bottom: 4px; text-align: center; width: 100%; display:block;"; box.appendChild(hpTxtWrap); }
+            if(hpBarWrap) { hpBarWrap.style.cssText = "width: 100%; height: 6px; background: #27272a; border-radius: 4px; overflow: hidden;"; box.appendChild(hpBarWrap); }
         }
 
-        let heroHpBarWrapper = document.getElementById("combat-hero-hp-bar");
-        if (heroHpBarWrapper && heroHpBarWrapper.parentNode) { heroHpBarWrapper.parentNode.style.order = "5"; }
-        let enemyHpBarWrapper = document.getElementById("combat-enemy-hp-bar");
-        if (enemyHpBarWrapper && enemyHpBarWrapper.parentNode) { enemyHpBarWrapper.parentNode.style.order = "5"; }
+        rebuildEntityBox("entity-hero-box", "combat-hero-name-plate", "combat-hero-img", "combat-hero-atk-val", "combat-hero-hp", "combat-hero-hp-bar");
+        rebuildEntityBox("entity-enemy-box", "combat-enemy-name-plate", "combat-enemy-img", "combat-enemy-atk-val", "combat-enemy-hp", "combat-enemy-hp-bar");
 
-        // ВСТРАИВАЕМ ПАНЕЛЬ РАСХОДНИКОВ СЛЕВА ОТ ЛОГА БОЯ
-        let dashboard = document.querySelector('.combat-dashboard'); 
+        // ПАНЕЛЬ РАСХОДНИКОВ СЛЕВА ОТ ЛОГА
         let logNode = document.getElementById("combat-log");
         let logWrapper = document.getElementById("log-belt-wrapper");
         
         if(!logWrapper && logNode && logNode.parentNode) {
             logWrapper = document.createElement("div");
             logWrapper.id = "log-belt-wrapper";
+            logWrapper.style.cssText = "display: flex; flex-direction: row; gap: 10px; align-items: stretch; margin-top: 10px; width: 100%; height: 56px; box-sizing: border-box;";
             logNode.parentNode.insertBefore(logWrapper, logNode);
+            
             let beltNode = document.createElement("div");
             beltNode.id = "quick-belt";
+            beltNode.style.cssText = "display: flex; flex-direction: row; gap: 6px; align-items: center;";
+            
+            logNode.style.cssText = "flex: 1; height: 100%; font-size: 11px; padding: 6px 10px; margin: 0; border: 1px solid #3f3f46; border-radius: 8px; background: rgba(9, 9, 11, 0.95); display: flex; flex-direction: column; justify-content: flex-end; line-height: 1.4;";
+            
             logWrapper.appendChild(beltNode);
             logWrapper.appendChild(logNode);
         }
         
-        let oldBeltInDiorama = diorama.querySelector('#quick-belt');
-        if (oldBeltInDiorama && oldBeltInDiorama.parentNode === diorama) oldBeltInDiorama.remove();
+        // УБИРАЕМ ДУБЛИКАТЫ ПОЯСА
+        document.querySelectorAll('#quick-belt').forEach(b => { if (b.parentElement && b.parentElement.id !== 'log-belt-wrapper') b.remove(); });
         
         let belt = document.getElementById('quick-belt'); 
         if (belt) {
-            let distinctConsumables = [];
-            let counts = {};
+            let distinctConsumables = []; let counts = {};
             hero.inventory.forEach(id => {
                 let it = ITEMS_DB[id];
-                if(it && it.type === 'consumable') {
-                    if(!counts[id]) { counts[id] = 0; distinctConsumables.push(it); }
-                    counts[id]++;
-                }
+                if(it && it.type === 'consumable') { if(!counts[id]) { counts[id] = 0; distinctConsumables.push(it); } counts[id]++; }
             });
             
-            // Фильтруем: стараемся показать 1 зелье и 1 свиток
+            // Лимит: 1 зелье и 1 свиток
             let potions = distinctConsumables.filter(c => c.subtype === 'heal');
             let scrolls = distinctConsumables.filter(c => c.subtype.startsWith('dmg_'));
             let displayItems = [];
             if (potions.length > 0) displayItems.push(potions[0]);
             if (scrolls.length > 0) displayItems.push(scrolls[0]);
-            for (let c of distinctConsumables) {
-                if (displayItems.length >= 2) break;
-                if (!displayItems.includes(c)) displayItems.push(c);
-            }
+            for (let c of distinctConsumables) { if (displayItems.length >= 2) break; if (!displayItems.includes(c)) displayItems.push(c); }
             
             let beltHtml = '';
             displayItems.forEach(it => {
