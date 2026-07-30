@@ -1,46 +1,40 @@
 // === АВТО-ПАТЧ ИНТЕРФЕЙСА (Глобальная полировка Арены) ===
 const UI_PATCH = `
 <style>
-/* ВОЗВРАЩАЕМ ГОРИЗОНТАЛЬНОЕ РАСПОЛОЖЕНИЕ (Исправление наложения) */
+/* Идеальные пропорции Арены */
 #combat-entities-box { 
     flex: 1 1 auto !important; 
-    min-height: 220px !important; 
+    min-height: 230px !important; 
     position: relative !important; 
     display: flex !important; 
-    flex-direction: row !important; /* ОШИБКА БЫЛА ЗДЕСЬ */
+    flex-direction: row !important; 
     justify-content: space-between !important; 
-    align-items: flex-end !important; 
-    padding: 10px 5px !important;
+    align-items: center !important; 
+    padding: 15px 10px 5px 10px !important;
 }
 
-/* Жестко фиксируем ширину и выравнивание для Героя и Врага */
 #entity-hero-box, #entity-enemy-box {
-    width: 45% !important;
+    width: 48% !important;
     height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-end !important;
-    align-items: center !important;
-    position: relative !important;
 }
 
-/* Карточки персонажей */
 .combat-card { 
     height: 100% !important; 
     width: 100% !important;
-    min-height: 0 !important; 
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-end !important; 
     align-items: center !important;
 }
 
-/* Ограничиваем высоту аватаров, чтобы оставалось место под имена и статы */
+/* Идеальная центровка картинок */
 .combat-card img { 
-    max-height: calc(100% - 65px) !important; 
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: 140px !important; 
     max-width: 100% !important;
     object-fit: contain !important; 
-    margin: 0 auto !important; 
+    margin: auto 0 8px 0 !important; /* Отталкивает картинку от имени вниз, а от ХП вверх */
     position: relative !important; 
     z-index: 1 !important; 
 }
@@ -368,7 +362,24 @@ async function startPvP() {
 }
 
 function planEnemyTurn() { if(!enemy) return; enemy.turnCounter++; let delay = hasTalent('r2c') ? 3 : 0; if (enemy.isRaid) { let turnsLeft = (15 + delay) - enemy.turnCounter; if (turnsLeft <= 0) enemy.nextAtkZone = 'ENRAGE'; else if (enemy.turnCounter % 4 === 0) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } else { let ultMod = (enemy.turnCounter - delay) % 4; if (enemy.isBoss && ultMod === 0 && enemy.turnCounter > delay) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } updateIntentDisplay(); }
-function updateIntentDisplay() { let el = document.getElementById("combat-intent"); if(!el || !enemy) return; if (enemy.nextAtkZone === 'ENRAGE') { el.innerHTML = `⚠️ <span style="color:#ef4444;">БОСС ВПАЛ В БЕЗУМИЕ! СМЕРТЬ НЕМИНУЕМА!</span>`; el.className = "intent-box ultimatum"; } else if (enemy.nextAtkZone === 'ULTIMATUM') { el.innerHTML = `☠️ <span style="color:#fca5a5;">БОСС ГОТОВИТ УЛЬТИМАТУМ ПО ВСЕМ ЗОНАМ!</span>`; el.className = "intent-box ultimatum"; } else { el.innerHTML = `🗡️ <span style="color:#a1a1aa;">Враг выжидает и готовится к удару...</span>`; el.className = "intent-box"; } }
+
+function updateIntentDisplay() { 
+    let el = document.getElementById("combat-intent"); 
+    if(!el || !enemy) return; 
+    if (enemy.nextAtkZone === 'ENRAGE') { 
+        el.innerHTML = `⚠️ <span style="color:#ef4444;">БОСС ВПАЛ В БЕЗУМИЕ! СМЕРТЬ НЕМИНУЕМА!</span>`; 
+        el.className = "intent-box ultimatum"; 
+        el.style.display = "block";
+    } else if (enemy.nextAtkZone === 'ULTIMATUM') { 
+        el.innerHTML = `☠️ <span style="color:#fca5a5;">БОСС ГОТОВИТ УЛЬТИМАТУМ ПО ВСЕМ ЗОНАМ!</span>`; 
+        el.className = "intent-box ultimatum"; 
+        el.style.display = "block";
+    } else { 
+        el.innerHTML = ``; // УБИРАЕМ ТЕКСТ "Враг выжидает..."
+        el.style.display = "none"; // ПРЯЧЕМ ПЛАШКУ, ЧТОБЫ ОСВОБОДИТЬ МЕСТО
+    } 
+}
+
 function triggerClashAnim(isHero, isEnemy) { if (isHero) { let hc = document.getElementById("entity-hero-box"); if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); } } if (isEnemy) { let ec = document.getElementById("entity-enemy-box"); if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); } } if (isHero && isEnemy) { let sp = document.getElementById("clash-spark-fx"); if(sp) { sp.classList.remove("spark-anim"); void sp.offsetWidth; sp.classList.add("spark-anim"); } } }
 function triggerHitAnim(elementId) { let el = document.getElementById(elementId); if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); } let slashId = elementId === "entity-hero-box" ? "hero-slash" : "enemy-slash"; let slash = document.getElementById(slashId); if(slash) { slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out'; } }
 function showDmgPopup(entityBoxId, text, colorClass) { let box = document.getElementById(entityBoxId); if (!box) return; let pop = document.createElement("div"); pop.className = `dmg-popup ${colorClass}`; pop.innerText = text; box.appendChild(pop); setTimeout(() => { pop.remove(); }, 800); }
@@ -901,13 +912,13 @@ function updateUI() {
 
         // ДИНАМИЧЕСКИЙ СТАЙЛИНГ ИМЕН И ПЛАШЕК УРОНА
         let heroAtkNode = document.getElementById("combat-hero-atk-val");
-        if(heroAtkNode && heroAtkNode.parentElement) { heroAtkNode.parentElement.style.cssText = "background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 8px; border: 1px solid #3f3f46; display: inline-flex; gap: 15px; justify-content: center; margin: 4px auto 0; font-size: 11px; font-weight: bold; color: #e4e4e7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;"; }
+        if(heroAtkNode && heroAtkNode.parentElement) { heroAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 6px 0; width: 100%; border-radius: 6px; border: 1px solid #3f3f46; display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 6px; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
         let enemyAtkNode = document.getElementById("combat-enemy-atk-val");
-        if(enemyAtkNode && enemyAtkNode.parentElement) { enemyAtkNode.parentElement.style.cssText = "background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 8px; border: 1px solid #3f3f46; display: inline-flex; gap: 15px; justify-content: center; margin: 4px auto 0; font-size: 11px; font-weight: bold; color: #e4e4e7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); white-space: nowrap;"; }
+        if(enemyAtkNode && enemyAtkNode.parentElement) { enemyAtkNode.parentElement.style.cssText = "background: linear-gradient(180deg, #27272a 0%, #18181b 100%); padding: 6px 0; width: 100%; border-radius: 6px; border: 1px solid #3f3f46; display: flex; gap: 15px; justify-content: center; align-items: center; margin-top: 6px; font-size: 14px; font-weight: 900; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.8);"; }
         let heroNameNode = document.getElementById("combat-hero-name-plate");
-        if(heroNameNode) heroNameNode.style.cssText = "margin-bottom: 6px; font-size: 12px; text-shadow: 0 2px 4px black; z-index: 2; position: relative;";
+        if(heroNameNode) heroNameNode.style.cssText = "margin-bottom: auto; font-size: 14px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(251,191,36,0.5); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
         let enemyNameNode = document.getElementById("combat-enemy-name-plate");
-        if(enemyNameNode) enemyNameNode.style.cssText = "margin-bottom: 6px; font-size: 12px; text-shadow: 0 2px 4px black; z-index: 2; position: relative;";
+        if(enemyNameNode) enemyNameNode.style.cssText = "margin-bottom: auto; font-size: 14px; font-weight: 900; text-shadow: 0 2px 4px black, 0 0 10px rgba(239,68,68,0.5); text-align: center; line-height: 1.2; letter-spacing: 0.5px;";
 
         // ПЛАВАЮЩИЙ ПОЯС
         let belt = document.getElementById('quick-belt'); 
