@@ -52,21 +52,23 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
-// БАЗА ПРЕДМЕТОВ С ТОЧНЫМИ ИМЕНАМИ КАРТИНОК ДЛЯ РАСХОДНИКОВ И ПУЛАМИ ДЛЯ ШМОТОК
+// БАЗА ПРЕДМЕТОВ (УМНАЯ НУМЕРАЦИЯ)
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
     "scroll_fire": { id: "scroll_fire", name: "Свиток Метеорита", type: "consumable", subtype: "dmg_fire", power: 150, icon: "📜", imageId: "scroll_fire", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 🔥 урона.", stats: {} },
     "scroll_ice": { id: "scroll_ice", name: "Свиток Бурана", type: "consumable", subtype: "dmg_ice", power: 150, icon: "❄️", imageId: "scroll_ice", rarity: "epic", lvl: 1, price: 150, inShop: true, desc: "Наносит 150 ❄️ урона.", stats: {} },
     
-    "base_sword": { id: "base_sword", name: "Клинок", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, inShop: false, allowedClasses: ["knight", "berserk"], stats: { atk: 6 }, imgPool: ["90523", "61669", "23564", "35056", "47612", "20152", "33616"] },
-    "base_dagger": { id: "base_dagger", name: "Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, inShop: false, allowedClasses: ["shadow", "ranger"], stats: { atk: 5 }, imgPool: ["86389", "48635"] },
-    "base_chest": { id: "base_chest", name: "Доспех", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, inShop: false, stats: { armor: 10 }, imgPool: ["64755", "60684", "52995", "42069", "24119", "34215", "17556", "50560", "50113", "23579"] },
-    "base_shield": { id: "base_shield", name: "Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, inShop: false, allowedClasses: ["knight"], stats: { armor: 8, blockChance: 5 }, imgPool: ["65822", "shields_v2_33", "shields_v2_34", "42540", "shields_v2_37", "shields_v2_38", "shields_v2_39", "shields_v2_40"] },
-    "base_head": { id: "base_head", name: "Шлем", type: "head", icon: "🪖", rarity: "common", lvl: 1, price: 40, inShop: false, stats: { armor: 6 }, imgPool: ["54873", "61409", "52433", "60697", "41139"] },
-    "base_boots": { id: "base_boots", name: "Обувь", type: "boots", icon: "👢", rarity: "common", lvl: 1, price: 35, inShop: false, stats: { armor: 4 }, imgPool: ["51613"] },
-    "base_ring": { id: "base_ring", name: "Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 1, price: 60, inShop: false, stats: { luk: 2 }, imgPool: ["25186", "18824"] },
-    "base_belt": { id: "base_belt", name: "Пояс", type: "belt", icon: "➰", rarity: "common", lvl: 1, price: 55, inShop: false, stats: { end: 2 }, imgPool: ["17271"] }
+    "base_sword": { id: "base_sword", name: "Клинок", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 50, inShop: false, allowedClasses: ["knight", "berserk"], stats: { atk: 6 }, imgPrefix: "sword", maxImages: 7 },
+    "base_dagger": { id: "base_dagger", name: "Кинжал", type: "weapon1", icon: "🗡️", rarity: "common", lvl: 1, price: 40, inShop: false, allowedClasses: ["shadow", "ranger"], stats: { atk: 5 }, imgPrefix: "dagger", maxImages: 2 },
+    "base_two_handed": { id: "base_two_handed", name: "Двуручный меч", type: "two_handed", icon: "🗡️", rarity: "common", lvl: 1, price: 70, inShop: false, allowedClasses: ["berserk"], stats: { atk: 12 }, imgPrefix: "two_handed", maxImages: 2 },
+    "base_shield": { id: "base_shield", name: "Щит", type: "weapon2", icon: "🛡️", rarity: "common", lvl: 1, price: 45, inShop: false, allowedClasses: ["knight"], stats: { armor: 8, blockChance: 5 }, imgPrefix: "shield", maxImages: 7 },
+    "base_head": { id: "base_head", name: "Шлем", type: "head", icon: "🪖", rarity: "common", lvl: 1, price: 40, inShop: false, stats: { armor: 6 }, imgPrefix: "head", maxImages: 7 },
+    "base_chest": { id: "base_chest", name: "Доспех", type: "chest", icon: "👕", rarity: "common", lvl: 1, price: 50, inShop: false, stats: { armor: 10 }, imgPrefix: "chest", maxImages: 9 },
+    "base_boots": { id: "base_boots", name: "Обувь", type: "boots", icon: "👢", rarity: "common", lvl: 1, price: 35, inShop: false, stats: { armor: 4 }, imgPrefix: "boots", maxImages: 1 },
+    "base_belt": { id: "base_belt", name: "Пояс", type: "belt", icon: "➰", rarity: "common", lvl: 1, price: 55, inShop: false, stats: { end: 2 }, imgPrefix: "belt", maxImages: 2 },
+    "base_ring": { id: "base_ring", name: "Кольцо", type: "ring", icon: "💍", rarity: "common", lvl: 1, price: 60, inShop: false, stats: { luk: 2 }, imgPrefix: "ring", maxImages: 3 },
+    "base_amulet": { id: "base_amulet", name: "Амулет", type: "amulet", icon: "📿", rarity: "common", lvl: 1, price: 65, inShop: false, stats: { mst: 2 }, imgPrefix: "amulet", maxImages: 1 }
 };
 
 let SHOP_ASSORTMENT = Object.keys(ITEMS_DB).filter(id => ITEMS_DB[id].inShop);
@@ -97,23 +99,23 @@ let enemy = null; let combatMode = 'pve';
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 let savedPveEnemy = null; let savedPveState = null;
 
-// ДОБАВЛЕН МАССИВ friends: [] В БАЗОВЫЙ ОБЪЕКТ ГЕРОЯ
 let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {}, friends: [] };
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
-// === ГЕНЕРАТОРЫ ЛУТА С РАНДОМОМ ИЗ imgPool ===
+// === ГЕНЕРАТОРЫ ЛУТА ===
 function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, isRaid = false) {
     let baseItem = ITEMS_DB[baseTemplateId]; if(!baseItem) return null;
     let newItem = JSON.parse(JSON.stringify(baseItem));
     
     newItem.id = baseTemplateId + "_" + Date.now() + Math.floor(Math.random()*1000);
     
-    // РАНДОМНАЯ КАРТИНКА ИЗ ПУЛА ШМОТОК
-    if (baseItem.imgPool && baseItem.imgPool.length > 0) {
-        newItem.imageId = baseItem.imgPool[Math.floor(Math.random() * baseItem.imgPool.length)];
+    // УМНАЯ НУМЕРАЦИЯ: выбираем случайную картинку из папки
+    if (baseItem.maxImages && baseItem.imgPrefix) {
+        let randomNum = Math.floor(Math.random() * baseItem.maxImages) + 1;
+        newItem.imageId = baseItem.imgPrefix + "_" + randomNum;
     }
 
     newItem.lvl = targetLevel; newItem.inShop = false; newItem.dropOnly = true;
@@ -196,7 +198,6 @@ function applyLoadedSave(savedHero, savedItems) {
             let h = JSON.parse(savedHero); 
             if (h && typeof h === 'object') {
                 if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(!Array.isArray(h.talents)) h.talents = []; if(!h.setCounts) h.setCounts = {}; if(!h.flags) h.flags = {}; if(!h.quests) h.quests = {}; if(!h.questDate) h.questDate = ""; if(h.rating === undefined) h.rating = 1000; if(!h.baseClass || !CLASSES[h.baseClass]) h.baseClass = 'knight'; if(!Array.isArray(h.inventory)) h.inventory = []; if(!h.equipment) h.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }; if(!h.baseStats) h.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
-                // СЕЙФГАРД ДЛЯ ДРУЗЕЙ ИЗ СТАРЫХ СЕЙВОВ
                 if(!Array.isArray(h.friends)) h.friends = []; 
                 for(let k in h) { if(h[k] !== undefined) hero[k] = h[k]; }
             }
@@ -617,12 +618,25 @@ function renderItemIcon(item) {
         return `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon}</div>`; 
     }
     
-    let imgId = item.imageId || item.id.split('_')[0]; 
-    if (!item.imageId && item.id.includes("shields_v2_")) { 
-        let parts = item.id.split('_'); imgId = parts[0] + "_" + parts[1] + "_" + parts[2]; 
-    } 
-    
+    let imgId = item.imageId;
     let folder = item.type; 
+
+    // ЗАЩИТА ОТ СТАРЫХ СЕЙВОВ: Фоллбек на картинку №1
+    if (!imgId || !imgId.includes("_")) {
+        let baseId = item.id.replace(/_\d+(_upg_\d+)?$/, '');
+        let baseItem = ITEMS_DB[baseId];
+        
+        if (baseItem && baseItem.imgPrefix) {
+            imgId = baseItem.imgPrefix + "_1"; 
+            item.imageId = imgId; // Перезаписываем сейв
+        } else {
+            imgId = "default_1";
+        }
+    }
+    
+    // Перенаправляем двуручное оружие в папку с двуручным
+    if (folder === 'two_handed') folder = 'two_handed'; 
+    
     let fallbackHTML = `<div class=&quot;item-icon&quot; style=&quot;font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;&quot;>${item.icon || '📦'}</div>`;
     
     return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML='${fallbackHTML}'"></div>`; 
