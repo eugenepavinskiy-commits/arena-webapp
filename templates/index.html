@@ -217,21 +217,31 @@
                 </div>
             </div>
 
-        </div> <div class="nav-grid" style="grid-template-columns: repeat(5, 1fr);">
+            <!-- НОВЫЙ ЭКРАН ДРУЗЕЙ -->
+            <div id="screen-friends" class="app-screen">
+                <div class="combat-header boss" style="margin-bottom: 15px; color:#ec4899;">БРАТСТВО (ДРУЗЬЯ)</div>
+                <div id="ui-friends-container"></div>
+            </div>
+
+        </div> 
+        
+        <div class="nav-grid" style="grid-template-columns: repeat(4, 1fr);">
             <div class="nav-btn active" id="nav-hero" onclick="openScreen('hero')">🛡️<br>Герой</div>
             <div class="nav-btn" id="nav-talents" onclick="openScreen('talents')">✨<br>Таланты</div>
             <div class="nav-btn" id="nav-PVE" onclick="openScreen('PVE')">⚔️<br>В бой</div>
             <div class="nav-btn" id="nav-boss" onclick="openScreen('boss')">🐍<br>Рейды</div>
             <div class="nav-btn" id="nav-arena" onclick="openScreen('arena')">🏆<br>Арена</div>
-
             <div class="nav-btn" id="nav-blacksmith" onclick="openScreen('blacksmith')">⚒️<br>Кузня</div>
             <div class="nav-btn" id="nav-shop" onclick="openScreen('shop')">💰<br>Лавка</div>
             <div class="nav-btn" id="nav-class" onclick="openScreen('classes')">🏛️<br>Класс</div>
             <div class="nav-btn" id="nav-quests" onclick="openScreen('quests')">📜<br>Квесты</div>
             <div class="nav-btn" id="nav-rating" onclick="openScreen('rating')">🏅<br>Рейтинг</div>
+            <div class="nav-btn" id="nav-friends" onclick="openScreen('friends')">🤝<br>Друзья</div>
         </div>
 
-    </div> <div class="modal-overlay" id="vic-modal">
+    </div> 
+    
+    <div class="modal-overlay" id="vic-modal">
         <div class="vic-title" id="vic-title-text">ЭТАЖ ПРОЙДЕН!</div>
         <div id="vic-loot-container" style="display: flex; flex-direction: column; align-items: center; display: none;">
             <div class="vic-loot-box" id="vic-loot-box"></div>
