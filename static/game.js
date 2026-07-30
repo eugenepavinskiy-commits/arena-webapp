@@ -97,7 +97,7 @@ let enemy = null; let combatMode = 'pve';
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 let savedPveEnemy = null; let savedPveState = null;
 
-let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {}, referrals: [], referralRewardsToClaim: 0 };
+let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {} };
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
@@ -197,7 +197,6 @@ function applyLoadedSave(savedHero, savedItems) {
             let h = JSON.parse(savedHero); 
             if (h && typeof h === 'object') {
                 if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(!Array.isArray(h.talents)) h.talents = []; if(!h.setCounts) h.setCounts = {}; if(!h.flags) h.flags = {}; if(!h.quests) h.quests = {}; if(!h.questDate) h.questDate = ""; if(h.rating === undefined) h.rating = 1000; if(!h.baseClass || !CLASSES[h.baseClass]) h.baseClass = 'knight'; if(!Array.isArray(h.inventory)) h.inventory = []; if(!h.equipment) h.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }; if(!h.baseStats) h.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
-                if(!Array.isArray(h.referrals)) h.referrals = []; if(h.referralRewardsToClaim === undefined) h.referralRewardsToClaim = 0;
                 for(let k in h) { if(h[k] !== undefined) hero[k] = h[k]; }
             }
         } catch(e) { console.error("Ошибка чтения сейва", e); }
@@ -338,7 +337,7 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     let elemDmgTotal = 0; let elemLog = [];
     ['fire', 'ice', 'dark', 'holy'].forEach(el => { let rawElemDmg = attacker[`dmg_${el}`] || 0; if (rawElemDmg > 0) { let res = defender[`res_${el}`] || 0; let actualElemDmg = Math.floor(rawElemDmg * (1 - res/100)); if (actualElemDmg > 0) { elemDmgTotal += actualElemDmg; let icon = el==='fire'?'🔥':el==='ice'?'❄️':el==='dark'?'☠️':'☀️'; elemLog.push(`+${actualElemDmg}${icon}`); } } });
     let finalDmg = physDmg + elemDmgTotal; let eLogStr = elemLog.length > 0 ? ` <span style="font-size:10px;">(${elemLog.join(' ')})</span>` : '';
-    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "normal")) };
+    return { dmg: finalDmg, rawDmg: baseAtk, elemLog: eLogStr, type: isCrit ? "crit" : (isPerfectBlock ? "perfect_block" : (isBlock ? "block" : "normal")) };
 }
 
 function handleCombatWin() {
@@ -462,7 +461,7 @@ function closeInspectModal() { playSFX('click'); document.getElementById("item-i
 
 function openScreen(screenName) {
     if (isTurnExecuting) return; 
-    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating', 'friends'].includes(screenName)) return alert("В разработке!");
+    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating'].includes(screenName)) return alert("В разработке!");
     if ((combatMode === 'pvp' || combatMode === 'raid') && screenName !== 'PVE') return alert("Сначала завершите текущий бой!"); 
     if ((screenName === 'PVE' || screenName === 'boss' || screenName === 'arena') && hero.hp <= 0 && !GOD_MODE) { if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); return alert("Герой мертв! Сначала вылечитесь в лагере."); }
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); playSFX('click');
@@ -639,73 +638,6 @@ function renderTalents() {
         html += `<div class="talent-tier ${isLocked ? 'locked' : ''}"><div class="talent-tier-header">ТИР ${index + 1} ${lockBadge}</div><div class="talent-options">${optsHtml}</div></div>`;
     });
     let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
-}
-
-// === РЕФЕРАЛЬНАЯ СИСТЕМА (ЭТАП 1: ЛОГИКА) ===
-const BOT_USERNAME = "YourBotNameBot"; // ⚠️ ВАЖНО: Замени на юзернейм твоего бота без @
-
-function getInviteLink() {
-    return `https://t.me/${BOT_USERNAME}?startapp=ref_${getUserId()}`;
-}
-
-function shareInviteLink() {
-    playSFX('click');
-    let text = "Присоединяйся к хардкорной RPG в Telegram! Экипируйся, сражайся и побеждай!";
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(getInviteLink())}&text=${encodeURIComponent(text)}`;
-    
-    if (window.tg && window.tg.openTelegramLink) {
-        window.tg.openTelegramLink(shareUrl);
-    } else {
-        window.open(shareUrl, '_blank');
-    }
-}
-
-function copyInviteLink() {
-    playSFX('click');
-    let link = getInviteLink();
-    
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(link)
-            .then(() => alert("Ссылка скопирована!"))
-            .catch(() => fallbackCopy(link));
-    } else {
-        fallbackCopy(link);
-    }
-}
-
-function fallbackCopy(text) {
-    let textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed"; 
-    textArea.style.left = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.focus(); 
-    textArea.select();
-    try { 
-        document.execCommand('copy'); 
-        alert("Ссылка скопирована!"); 
-    } catch (err) { 
-        alert("Ошибка. Ваша ссылка: " + text); 
-    }
-    document.body.removeChild(textArea);
-}
-
-function claimReferralRewards() {
-    if (isTurnExecuting) return; 
-    if (!hero.referralRewardsToClaim || hero.referralRewardsToClaim <= 0) {
-        return alert("У вас пока нет доступных наград!");
-    }
-    
-    let reward = hero.referralRewardsToClaim;
-    hero.referralRewardsToClaim = 0; 
-    hero.gems += reward;
-    
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    playSFX('coins');
-    saveGame();
-    updateUI();
-    
-    alert(`Успешно! Собрано: +${reward} 💎`);
 }
 
 function updateUI() {
@@ -946,61 +878,7 @@ function updateUI() {
                 </div>`;
         }
     }
-    
     if (currentScreen === 'talents') { renderTalents(); }
-    
-    // === РЕНДЕР ЭКРАНА ДРУЗЕЙ ===
-    if (currentScreen === 'friends') {
-        let friendsContainer = document.getElementById("ui-friends-container");
-        if (friendsContainer) {
-            let claimBtnHtml = (hero.referralRewardsToClaim && hero.referralRewardsToClaim > 0)
-                ? `<button class="shop-btn btn-buy" style="height: auto; padding: 10px 16px; font-size: 12px;" onclick="claimReferralRewards()">ЗАБРАТЬ</button>`
-                : `<button class="shop-btn" style="height: auto; padding: 10px 16px; font-size: 12px;" disabled>ПУСТО</button>`;
-
-            let friendsListHtml = "";
-            if (hero.referrals && hero.referrals.length > 0) {
-                hero.referrals.forEach((ref, index) => {
-                    let refAvatar = CLASS_AVATARS[ref.cls] || CLASS_AVATARS['knight'];
-                    friendsListHtml += `
-                        <div class="ref-player-card">
-                            <div class="pvp-rank" style="font-size: 14px;">${index + 1}</div>
-                            <img src="${refAvatar}" class="pvp-avatar">
-                            <div class="pvp-info">
-                                <div class="pvp-name">${ref.name}</div>
-                                <div class="pvp-stats">Уровень ${ref.level || 1}</div>
-                            </div>
-                            <div class="pvp-rating" style="font-size: 12px; color: #10b981;">✅ Принят</div>
-                        </div>`;
-                });
-            } else {
-                friendsListHtml = `<div style="text-align: center; color: #71717a; padding: 20px; font-size: 11px; border: 1px dashed #3f3f46; border-radius: 8px; margin-top: 10px;">Свиток пуст. Вы еще никого не пригласили в Колизей.</div>`;
-            }
-
-            friendsContainer.innerHTML = `
-                <div class="ref-invite-box">
-                    <div class="ref-invite-title">Призыв Братьев</div>
-                    <div class="ref-invite-desc">За каждого воина, который войдет в игру по вашей ссылке, вы получите <b>+5 💎 Алмазов</b>!</div>
-                    <div class="ref-action-row">
-                        <button class="btn-ref-share" onclick="shareInviteLink()">ПЕРЕСЛАТЬ 🚀</button>
-                        <button class="btn-ref-copy" onclick="copyInviteLink()">КОПИЯ 🔗</button>
-                    </div>
-                </div>
-
-                <div class="ref-reward-box">
-                    <div>
-                        <div style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Доступно наград</div>
-                        <div style="font-size: 20px; font-weight: 900; color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.4);">💎 ${hero.referralRewardsToClaim || 0}</div>
-                    </div>
-                    ${claimBtnHtml}
-                </div>
-
-                <div class="stat-group-title">ВАШИ БРАТЬЯ ПО ОРУЖИЮ</div>
-                <div style="display: flex; flex-direction: column;">
-                    ${friendsListHtml}
-                </div>
-            `;
-        }
-    }
 }
 
 // ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
