@@ -97,15 +97,14 @@ let enemy = null; let combatMode = 'pve';
 let combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0 };
 let savedPveEnemy = null; let savedPveState = null;
 
-let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {} };
+// ДОБАВЛЕН МАССИВ friends: [] В БАЗОВЫЙ ОБЪЕКТ ГЕРОЯ
+let hero = { name: "Гладиатор", rating: 1000, level: 1, floor: 1, maxFloor: 1, exp: 0, expNext: 100, gold: 5000, unspentPoints: 0, gems: 0, tickets: 3, maxTickets: 3, nextTicketTime: 0, baseClass: "knight", hp: 100, maxHp: 100, baseStats: { str: 5, agi: 5, end: 10, mst: 5, luk: 5 }, equipment: { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }, inventory: ["pot_heal_1", "pot_heal_1"], talents: [], finalStats: {}, combatStats: {}, deathDebuffEnd: 0, setCounts: {}, flags: {}, questDate: "", quests: {}, activeAltar: null, altarOffers: {}, friends: [] };
 if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.initDataUnsafe.user.first_name || "Гладиатор";
 
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 
 // === ГЕНЕРАТОРЫ ЛУТА С РАНДОМОМ ИЗ imgPool ===
-const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
-
 function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, isRaid = false) {
     let baseItem = ITEMS_DB[baseTemplateId]; if(!baseItem) return null;
     let newItem = JSON.parse(JSON.stringify(baseItem));
@@ -197,6 +196,8 @@ function applyLoadedSave(savedHero, savedItems) {
             let h = JSON.parse(savedHero); 
             if (h && typeof h === 'object') {
                 if(isNaN(h.hp)) h.hp = 100; if(h.gems === undefined) h.gems = 0; if(h.tickets === undefined) h.tickets = 3; if(h.maxTickets === undefined) h.maxTickets = 3; if(h.nextTicketTime === undefined) h.nextTicketTime = 0; if(h.unspentPoints === undefined) h.unspentPoints = 0; if(!Array.isArray(h.talents)) h.talents = []; if(!h.setCounts) h.setCounts = {}; if(!h.flags) h.flags = {}; if(!h.quests) h.quests = {}; if(!h.questDate) h.questDate = ""; if(h.rating === undefined) h.rating = 1000; if(!h.baseClass || !CLASSES[h.baseClass]) h.baseClass = 'knight'; if(!Array.isArray(h.inventory)) h.inventory = []; if(!h.equipment) h.equipment = { head: null, chest: null, belt: null, boots: null, amulet: null, ring1: null, ring2: null, weapon1: null, weapon2: null }; if(!h.baseStats) h.baseStats = { str: 5, agi: 5, end: 10, mst: 5, luk: 5 };
+                // СЕЙФГАРД ДЛЯ ДРУЗЕЙ ИЗ СТАРЫХ СЕЙВОВ
+                if(!Array.isArray(h.friends)) h.friends = []; 
                 for(let k in h) { if(h[k] !== undefined) hero[k] = h[k]; }
             }
         } catch(e) { console.error("Ошибка чтения сейва", e); }
@@ -461,7 +462,7 @@ function closeInspectModal() { playSFX('click'); document.getElementById("item-i
 
 function openScreen(screenName) {
     if (isTurnExecuting) return; 
-    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating'].includes(screenName)) return alert("В разработке!");
+    if (!['hero', 'shop', 'classes', 'PVE', 'blacksmith', 'boss', 'talents', 'quests', 'arena', 'rating', 'friends'].includes(screenName)) return alert("В разработке!");
     if ((combatMode === 'pvp' || combatMode === 'raid') && screenName !== 'PVE') return alert("Сначала завершите текущий бой!"); 
     if ((screenName === 'PVE' || screenName === 'boss' || screenName === 'arena') && hero.hp <= 0 && !GOD_MODE) { if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); return alert("Герой мертв! Сначала вылечитесь в лагере."); }
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); playSFX('click');
@@ -638,6 +639,79 @@ function renderTalents() {
         html += `<div class="talent-tier ${isLocked ? 'locked' : ''}"><div class="talent-tier-header">ТИР ${index + 1} ${lockBadge}</div><div class="talent-options">${optsHtml}</div></div>`;
     });
     let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
+}
+
+// === ЛОГИКА ДРУЗЕЙ (РЕФЕРАЛОВ) ===
+function claimFriendReward(index) {
+    if (!hero.friends[index] || hero.friends[index].claimed) return;
+    hero.friends[index].claimed = true;
+    hero.gems += 5;
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    playSFX('coins');
+    saveGame();
+    updateUI(); 
+    renderFriends(); 
+}
+
+function addTestFriend() {
+    if (!hero.friends) hero.friends = [];
+    let names = ["Alexey", "ShadowFiend", "Guts", "Liliya", "Nagibator99", "JohnWick"];
+    let rndName = names[Math.floor(Math.random() * names.length)] + "_" + Math.floor(Math.random()*1000);
+    hero.friends.push({ name: rndName, claimed: false });
+    playSFX('click');
+    saveGame();
+    renderFriends();
+}
+
+function shareRefLink() {
+    const botName = "ArenaRpgBot";
+    const refUrl = `https://t.me/share/url?url=https://t.me/${botName}?start=ref_${window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'player'}&text=Заходи в крутую RPG в Telegram!`;
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openTelegramLink(refUrl);
+    } else {
+        alert("Ссылка скопирована!");
+    }
+}
+
+function renderFriends() {
+    let container = document.getElementById('ui-friends-container');
+    if (!container) return;
+
+    let friendsListHtml = '';
+    if (!hero.friends || hero.friends.length === 0) {
+        friendsListHtml = `<div style="text-align:center; color:#71717a; padding: 20px;">У вас пока нет приглашенных друзей.</div>`;
+    } else {
+        hero.friends.forEach((f, index) => {
+            let btnHtml = f.claimed 
+                ? `<button class="modal-btn secondary" style="width:auto; height:32px; font-size:10px; margin-top:0;" disabled>ПОЛУЧЕНО</button>`
+                : `<button class="modal-btn" style="width:auto; height:32px; font-size:10px; margin-top:0; background: #10b981; color: #fff; box-shadow: 0 2px 5px rgba(16,185,129,0.4);" onclick="claimFriendReward(${index})">ЗАБРАТЬ 5 💎</button>`;
+            
+            friendsListHtml += `
+                <div class="ref-player-card">
+                    <div class="silhouette" style="font-size: 24px; opacity: 1; background: #27272a; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #3f3f46;">👤</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #e4e4e7; font-size: 13px;">${f.name}</div>
+                        <div style="font-size: 10px; color: #a1a1aa;">Реферал</div>
+                    </div>
+                    ${btnHtml}
+                </div>
+            `;
+        });
+    }
+
+    container.innerHTML = `
+        <div class="ref-invite-box">
+            <div class="ref-invite-title" onclick="addTestFriend()">Приглашайте друзей</div>
+            <div class="ref-invite-desc">Получайте 💎 по 5 кристаллов за каждого приглашенного бойца! (Нажми на заголовок для теста)</div>
+            <div class="ref-action-row">
+                <button class="btn-ref-share" onclick="shareRefLink()">ПОДЕЛИТЬСЯ ССЫЛКОЙ</button>
+            </div>
+        </div>
+        <div class="stat-group-title">Ваши рефералы (${hero.friends ? hero.friends.length : 0})</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
+            ${friendsListHtml}
+        </div>
+    `;
 }
 
 function updateUI() {
@@ -878,7 +952,9 @@ function updateUI() {
                 </div>`;
         }
     }
+    
     if (currentScreen === 'talents') { renderTalents(); }
+    if (currentScreen === 'friends') { renderFriends(); }
 }
 
 // ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
