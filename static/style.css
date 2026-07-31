@@ -211,13 +211,6 @@ html, body {
     position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 300px;
     background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 4px 8px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10;
 }
-.intent-box.ultimatum { background: rgba(69, 10, 10, 0.9); border-color: #ef4444; color: #fca5a5; animation: pulse-leg 1s infinite; }
-
-.combat-log-box { 
-    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px;
-    background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px 6px; height: 45px; overflow-y: auto; font-size: 10px; line-height: 1.35; color: #a1a1aa; box-shadow: 0 -4px 10px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.8); z-index: 10;
-    -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
-}
 
 .combat-entity-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; width: 48%; height: 100%; justify-content: center; z-index: 2; min-height: 0; }
 
@@ -227,17 +220,11 @@ html, body {
 .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
 .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
 
-.combat-card { 
-    width: 35vw; height: 35vw; min-width: 80px; min-height: 80px; max-width: 140px; max-height: 140px; flex-shrink: 0; 
-    position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
-    background: transparent; border: none; box-shadow: none; overflow: visible; aspect-ratio: 1 / 1;
-}
 .card-avatar-wrap { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
 .card-avatar-img { 
     width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; background-color: transparent; 
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)); transition: filter 0.2s, transform 0.2s ease-out; flex-shrink: 0; transform: scale(1.15);
 }
-.combat-card::after { display: none; }
 .status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
 
 .entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 160px; text-align: center; z-index: 10;}
@@ -249,7 +236,6 @@ html, body {
 .boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
 .boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
 .boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-.combat-vs { font-size: 24px; font-weight: 900; color: #71717a; margin: 0 2px; text-shadow: 0 2px 4px #000; font-style: italic; z-index: 2; flex-shrink: 0;}
 .combo-meter { position: absolute; top: 4px; right: 10px; font-size: 10px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
 .combo-meter.show { opacity: 1; }
 
@@ -275,8 +261,6 @@ html, body {
 .log-block { color: #a78bfa; font-weight: bold; }
 .log-sys { color: #34d399; font-weight: bold; }
 .log-skill { color: #c084fc; font-weight: bold; }
-.combat-mini-stats { font-size: 11px; color: #a1a1aa; margin-top: 4px; display: flex; justify-content: space-around; background: rgba(0,0,0,0.5); border-radius: 4px; border: 1px solid #27272a; padding: 2px; }
-.combat-mini-stats span { color: #e4e4e7; font-weight: bold; white-space: nowrap;}
 
 .combat-dashboard { flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 10px; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05); }
 .control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
@@ -361,87 +345,6 @@ html, body {
 .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;}
 .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
 
-/* === СОЧНЫЕ VFX === */
-@keyframes screen-shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-2px, -2px) rotate(-1deg); }
-    20% { transform: translate(-3px, 0px) rotate(1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(1deg); }
-    50% { transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    80% { transform: translate(-1px, -1px) rotate(1deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(0px, 0px) rotate(0deg); }
-}
-.shake-hard { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-
-@keyframes vfx-berserk { 0% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(1.5) drop-shadow(0 0 30px #ef4444); transform: scale(1.1); } 100% { filter: brightness(1); transform: scale(1); } }
-.vfx-berserk { animation: vfx-berserk 0.4s ease-out; z-index: 10; }
-
-@keyframes vfx-knight { 0% { filter: brightness(1); } 50% { filter: brightness(1.8) drop-shadow(0 0 40px #fbbf24); } 100% { filter: brightness(1); } }
-.vfx-knight { animation: vfx-knight 0.5s ease-out; z-index: 10; }
-
-@keyframes vfx-shadow { 0% { filter: brightness(1); opacity: 1; } 50% { filter: brightness(0.5) drop-shadow(0 0 30px #a855f7); opacity: 0.5; transform: translateY(-10px); } 100% { filter: brightness(1); opacity: 1; transform: translateY(0); } }
-.vfx-shadow { animation: vfx-shadow 0.4s ease-out; z-index: 10; }
-
-@keyframes vfx-ranger { 0% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(2) drop-shadow(0 0 30px #10b981); transform: scale(0.95); } 100% { filter: brightness(1); transform: scale(1); } }
-.vfx-ranger { animation: vfx-ranger 0.3s ease-out; z-index: 10; }
-
-/* === СТИХИИ (ELEMENTS) === */
-.elem-fire { color: #ef4444; font-weight: bold; text-shadow: 0 1px 3px #000; }
-.elem-ice { color: #3b82f6; font-weight: bold; text-shadow: 0 1px 3px #000; }
-.elem-dark { color: #a855f7; font-weight: bold; text-shadow: 0 1px 3px #000; }
-.elem-holy { color: #fbbf24; font-weight: bold; text-shadow: 0 1px 3px #000; }
-.stat-resist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; border: 1px inset #27272a; margin-top: 6px;}
-
-/* === БЫСТРЫЙ ПОЯС (РАСХОДНИКИ В БОЮ) === */
-.quick-belt { 
-    display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid #27272a; 
-    padding-bottom: 10px; overflow-x: auto; scrollbar-width: none;
-}
-.quick-belt::-webkit-scrollbar { display: none; }
-.belt-item { 
-    background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; 
-    width: 44px; height: 44px; font-size: 22px; display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.5); flex-shrink: 0;
-}
-.belt-item:active { transform: scale(0.9); }
-.belt-item-count { 
-    position: absolute; bottom: -4px; right: -4px; background: #ef4444; color: #fff; 
-    font-size: 9px; padding: 2px 5px; border-radius: 6px; font-weight: bold; 
-    border: 1px solid #7f1d1d; box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
-}
-
-/* === АРЕНА PvP === */
-.pvp-player-card {
-    background: #121214; border: 1px solid #3f3f46; border-radius: 8px;
-    display: flex; align-items: center; padding: 10px; gap: 12px;
-}
-.pvp-player-card.top-1 { border-color: #fbbf24; background: linear-gradient(90deg, rgba(251,191,36,0.1) 0%, transparent 100%); }
-.pvp-player-card.top-2 { border-color: #94a3b8; }
-.pvp-player-card.top-3 { border-color: #b45309; }
-.pvp-rank { font-size: 18px; font-weight: 900; color: #71717a; width: 24px; text-align: center; flex-shrink: 0; }
-.top-1 .pvp-rank { color: #fbbf24; }
-.top-2 .pvp-rank { color: #94a3b8; }
-.top-3 .pvp-rank { color: #b45309; }
-.pvp-avatar { width: 40px; height: 40px; border-radius: 6px; border: 1px solid #27272a; object-fit: cover; flex-shrink: 0; }
-.pvp-info { flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-.pvp-name { font-size: 14px; font-weight: bold; color: #e4e4e7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pvp-stats { font-size: 10px; color: #a1a1aa; }
-.pvp-rating { font-size: 14px; font-weight: 900; color: #fbbf24; flex-shrink: 0; }
-
-/* === РЕФЕРАЛЬНАЯ СИСТЕМА (ДРУЗЬЯ) === */
-.ref-invite-box { background: rgba(18, 18, 20, 0.85); border: 1px solid #ec4899; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
-.ref-invite-title { font-size: 14px; font-weight: 900; color: #fbcfe8; margin-bottom: 8px; text-transform: uppercase; text-shadow: 0 2px 4px #000; }
-.ref-invite-desc { font-size: 11px; color: #a1a1aa; margin-bottom: 12px; line-height: 1.4; }
-.ref-action-row { display: flex; gap: 8px; }
-.btn-ref-share { flex: 2; background: linear-gradient(180deg, #db2777 0%, #9d174d 100%); color: #fff; border: 1px solid #f472b6; border-radius: 8px; font-weight: bold; font-size: 12px; height: 42px; cursor: pointer; box-shadow: 0 4px 10px rgba(219,39,119,0.4); text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
-.btn-ref-copy { flex: 1; background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; border-radius: 8px; font-weight: bold; font-size: 12px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.ref-reward-box { display: flex; justify-content: space-between; align-items: center; background: #022c22; border: 1px solid #10b981; border-radius: 8px; padding: 12px; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(16,185,129,0.2); }
-.ref-player-card { display: flex; align-items: center; gap: 12px; background: #121214; border: 1px solid #27272a; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
-
 /* === АДАПТИВНОСТЬ ПОД МАЛЕНЬКИЕ ЭКРАНЫ === */
 @media (max-height: 700px) {
     .top-dashboard { padding: 4px 10px; margin-bottom: 4px; }
@@ -458,30 +361,32 @@ html, body {
 
 /* === ОБНОВЛЕННЫЙ UI БОЯ (ПРОПОРЦИИ И СТАТЫ) === */
 .combat-entities {
-    padding: 15px 6px 70px 6px !important; 
+    padding: 10px 6px 65px 6px !important; 
     align-items: flex-start !important; 
 }
 
-/* Увеличенные карточки персонажей с рамкой */
+/* Возвращаем прозрачность и уменьшаем размер */
 .combat-card {
-    width: 42vw; height: 42vw; 
-    max-width: 170px; max-height: 170px; 
-    border: 2px solid #3f3f46; 
-    background: rgba(0,0,0,0.5);
-    border-radius: 8px;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    width: 35vw !important; 
+    height: 35vw !important; 
+    max-width: 140px !important; 
+    max-height: 140px !important; 
+    border: none !important; 
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
 
-/* Новые статы под персонажами */
+/* Делаем статы компактными (в 2 раза меньше) */
 .combat-mini-stats.new-style {
-    background: #09090b;
+    background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
-    padding: 6px 12px;
-    border-radius: 8px;
-    gap: 12px;
-    margin-top: 6px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    gap: 10px;
+    margin-top: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    font-size: 10px;
 }
 
 /* Центральная зона (VS и Расходники) */
@@ -500,7 +405,7 @@ html, body {
 /* Фиксируем VS между персонажами */
 #combat-vs-text {
     position: absolute;
-    top: 35%; 
+    top: 38%; 
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 5;
@@ -511,19 +416,19 @@ html, body {
 /* Опускаем банки в зеленую зону над логом боя */
 .center-consumables {
     position: absolute;
-    bottom: 60px; /* Идеально над логом боя, высота которого 48px + 6px отступ */
+    bottom: 58px; /* Идеально над логом боя (высота 48px + 6px отступ = 54px) */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: row; /* Зелье слева, свиток справа */
-    gap: 16px; 
+    gap: 25px; /* Раздвигаем банки для красоты */
     z-index: 15;
 }
 
-/* Дизайн кнопок расходников: копируем стиль из сумки */
+/* Дизайн кнопок расходников (уменьшен до 38px) */
 .center-cons-item {
-    width: 44px !important; 
-    height: 44px !important;
+    width: 38px !important; 
+    height: 38px !important;
     border-radius: 6px !important;
     display: flex; 
     align-items: center; 
@@ -543,7 +448,7 @@ html, body {
     filter: grayscale(100%) opacity(0.3);
     cursor: not-allowed;
     box-shadow: none;
-    pointer-events: none; /* Визуально и технически блокируем повторный клик */
+    pointer-events: none; /* Блокируем клик визуально и технически */
 }
 
 /* Всплывающий ультиматум (Финальная атака) */
@@ -558,6 +463,7 @@ html, body {
     border-radius: 12px;
     animation: pulse-leg 0.8s infinite, floatUpAlert 0.3s ease-out;
 }
+
 @keyframes floatUpAlert { 
     from { opacity: 0; transform: translate(-50%, -10%) scale(0.8); } 
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
@@ -569,6 +475,6 @@ html, body {
     position: absolute !important;
     top: auto !important;
     bottom: 6px !important;
-    height: 48px !important; /* Идеальная высота ровно для двух строк */
+    height: 48px !important; /* Ровно 2 строки */
     z-index: 20 !important;
 }
