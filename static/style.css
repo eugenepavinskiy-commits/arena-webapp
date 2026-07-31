@@ -195,42 +195,70 @@ html, body {
 .quest-btn.ready { background: linear-gradient(180deg, #059669 0%, #047857 100%); color: #fff; border-color: #10b981; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
 .quest-btn.claimed { background: #09090b; color: #52525b; border-color: #27272a; cursor: not-allowed; box-shadow: none; }
 
-/* === PVE БОЕВКА === */
+
+/* === ИСТИННО РЕЗИНОВАЯ АРЕНА PVE (FLEXBOX) === */
 .combat-arena { 
-    flex: 1; display: flex; flex-direction: column; border: 1px solid #3f3f46; border-radius: 12px; padding: 8px; margin-bottom: 0; position: relative; overflow: hidden; transition: background-image 0.5s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.8); background-color: #0f172a; min-height: 0;
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    border: 1px solid #3f3f46; 
+    border-radius: 12px; 
+    padding: 8px; 
+    margin-bottom: 0; 
+    position: relative; 
+    overflow: hidden; 
+    transition: background-image 0.5s ease; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8); 
+    background-color: #0f172a; 
+    min-height: 0;
+    gap: 8px !important; /* Строгий отступ между элементами */
 }
 .combat-header { flex-shrink: 0; text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
 
+/* Сцена с бойцами: Растягивается на всё доступное место */
 .combat-entities { 
-    flex: 1; min-height: 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; position: relative; gap: 8px; 
+    flex: 1; min-height: 0; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: stretch !important; /* Растягивает контейнеры по высоте */
+    margin-bottom: 0 !important; 
+    position: relative; 
+    gap: 4px; 
     border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; 
-    padding: 10px 6px 65px 6px; 
-    box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
-}
-.intent-box { 
-    position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 300px;
-    background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 4px 8px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10;
+    padding: 10px 4px 10px 4px !important; /* Равномерный отступ со всех сторон */
+    box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); 
+    background-color: #121214; 
+    transition: background-image 0.5s ease; 
 }
 
-.combat-entity-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; width: 48%; height: 100%; justify-content: center; z-index: 2; min-height: 0; }
+/* Контейнеры Героя и Врага */
+.combat-entity-wrapper { 
+    flex: 1; width: 45%; 
+    display: flex; flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start !important; /* Прижимает всё вверх */
+    z-index: 2; min-height: 0; 
+}
 
+/* Имена героев: Добавляем отступ, чтобы не сливались с рамкой */
 .entity-name-plate { 
     flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; 
-    margin-bottom: 8px; position: relative; z-index: 10; 
+    margin-bottom: 8px !important; position: relative; z-index: 10; 
 }
-
 .entity-name-text { font-family: "Georgia", "Palatino Linotype", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
 .entity-lvl { flex-shrink: 0; color: #e4e4e7; font-size: 9px; font-weight: 900; padding: 2px 4px; background: linear-gradient(135deg, #7f1d1d, #450a0a); border-radius: 4px; border: 1px solid #ef4444; box-shadow: 0 2px 4px rgba(0,0,0,0.8); font-family: -apple-system, sans-serif; }
 .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
 .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
 
-/* ПЕРСОНАЖИ БЕЗ ФОНА */
+/* Аватары: Адаптивный квадрат (Aspect Ratio) */
 .combat-card {
-    width: 40vw; height: 40vw; 
-    min-width: 80px; min-height: 80px; 
-    max-width: 175px; max-height: 175px; 
+    width: 100% !important; /* Берет ширину обертки */
+    height: auto !important; 
+    aspect-ratio: 1 / 1 !important; /* Идеальный квадрат */
+    max-width: 165px !important; /* Лимит для iPad */
+    max-height: 165px !important; 
     flex-shrink: 0; position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
-    background: transparent; border: none; box-shadow: none; overflow: visible; aspect-ratio: 1 / 1;
+    background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible; border-radius: 0 !important;
 }
 
 .card-avatar-wrap { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
@@ -239,7 +267,7 @@ html, body {
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)); transition: filter 0.2s, transform 0.2s ease-out; flex-shrink: 0; transform: scale(1.15);
 }
 
-/* КОМПАКТНЫЕ СТАТЫ И УМЕНЬШЕННЫЙ ПОЛОСОК ХП */
+/* Компактные статы под персонажами */
 .combat-mini-stats.new-style {
     background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
@@ -257,36 +285,36 @@ html, body {
 .hp-bar-outer { width: 100%; height: 4px; background: #09090b; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); }
 .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 6px rgba(239, 68, 68, 0.8); }
 
-/* ЦЕНТРАЛЬНАЯ ЗОНА С РАСХОДНИКАМИ */
+/* ЦЕНТРАЛЬНАЯ ЗОНА: Строгий Flexbox без absolute */
 .combat-center-zone {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative !important;
+    top: auto !important; left: auto !important; transform: none !important;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-end !important; /* Банки аккуратно падают вниз колонки */
+    padding-bottom: 5px; /* Защитный отступ от лога */
     z-index: 15;
 }
 
 #combat-vs-text {
-    display: none !important; 
+    display: none !important; /* Убираем надпись VS полностью */
 }
 
+/* Контейнер банок */
 .center-consumables {
-    position: absolute;
-    bottom: 56px; 
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative !important;
+    bottom: auto !important; left: auto !important; transform: none !important;
     display: flex;
     flex-direction: row; 
-    gap: 25px; 
+    gap: 15px; 
     z-index: 15;
 }
 
 .center-cons-item {
-    width: 38px; height: 38px;
-    border-radius: 6px;
+    width: 38px !important; height: 38px !important;
+    border-radius: 6px !important;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.8);
@@ -315,25 +343,43 @@ html, body {
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* ЛОГ БОЯ */
+/* ЛОГ БОЯ: Жестко фиксированный Flex-блок */
 .combat-log-box {
-    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px;
-    background: rgba(18, 18, 20, 0.95); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px 6px; 
-    height: 46px; 
-    overflow-y: auto; font-size: 11px; line-height: 1.35; color: #a1a1aa; 
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.8); z-index: 20;
-    -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; text-align: left;
+    position: relative !important;
+    bottom: auto !important; left: auto !important; transform: none !important;
+    width: 100% !important; 
+    max-width: 100% !important;
+    flex-shrink: 0 !important; /* Защита от сплющивания */
+    height: 48px !important; /* Идеально для двух строк */
+    margin: 0 !important;
+    background: rgba(18, 18, 20, 0.95) !important;
+    backdrop-filter: blur(6px) !important;
+    border: 1px solid #3f3f46 !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important; 
+    line-height: 1.35 !important;
+    color: #a1a1aa !important;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.8) !important;
+    z-index: 20 !important;
+    overflow-y: auto !important;
+    text-align: left !important;
 }
 
-/* УМЕНЬШЕННЫЕ КНОПКИ УПРАВЛЕНИЯ */
+.combat-log-box * {
+    font-size: 11px !important;
+}
+
+
+/* УМЕНЬШЕННЫЕ КНОПКИ УПРАВЛЕНИЯ ДЛЯ ЭКОНОМИИ МЕСТА */
 .combat-dashboard {
-    flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 6px; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
+    flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 6px !important; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
 }
 .control-row { display: flex; align-items: center; margin-bottom: 6px; gap: 8px;}
 .control-label { font-size: 10px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1; flex-shrink: 0;}
 .zone-group { display: flex; flex: 1; gap: 6px; }
 
-.zone-btn { flex: 1; min-height: 38px; padding: 0 2px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s;}
+.zone-btn { flex: 1; min-height: 38px !important; padding: 0 2px; border-radius: 6px; font-weight: bold; font-size: 9px !important; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s;}
 
 .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
 .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.4);}
@@ -347,9 +393,9 @@ html, body {
 .zone-btn.broken .durability-dots { display: none; }
         
 .main-actions { display: flex; gap: 8px; margin-top: 2px; }
-.btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+.btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px !important; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
 .btn-skill-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
-.btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 40px; display: flex; align-items: center; justify-content: center; }
+.btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 13px !important; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 40px !important; display: flex; align-items: center; justify-content: center; }
 .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
 /* === МОДАЛКИ (ПОБЕДА И ИНСПЕКТ) === */
@@ -417,9 +463,6 @@ html, body {
 @media (max-height: 700px) {
     .top-dashboard { padding: 4px 10px; margin-bottom: 4px; }
     .nav-btn { height: 42px; font-size: 9px; }
-    .combat-log-box { height: 40px; }
-    .combat-entities { padding: 15px 4px 40px 4px; gap: 4px; }
-    .combat-card { max-width: 100px; max-height: 100px; min-width: 70px; min-height: 70px; }
     .class-banner { margin-bottom: 4px; padding: 4px 10px; }
     .zone-btn { min-height: 34px !important; }
     .raid-img-box { width: 75px; height: 75px; min-width: 75px; min-height: 75px; }
