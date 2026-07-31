@@ -201,14 +201,12 @@ html, body {
 }
 .combat-header { flex-shrink: 0; text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
 
-/* ВАЖНО: Восстановлены базовые стили Flexbox для контейнера арены + уменьшены отступы */
 .combat-entities { 
     flex: 1; min-height: 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; position: relative; gap: 8px; 
     border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; 
-    padding: 10px 6px 65px 6px; /* Оставляем место внизу для банок и лога */
+    padding: 10px 6px 65px 6px; 
     box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
 }
-
 .intent-box { 
     position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 300px;
     background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(4px); border: 1px solid #3f3f46; border-radius: 6px; padding: 4px 8px; text-align: center; font-size: 10px; font-weight: bold; color: #d4d4d8; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10;
@@ -218,7 +216,7 @@ html, body {
 
 .entity-name-plate { 
     flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; 
-    margin-bottom: 8px; position: relative; z-index: 10; /* Приподнимаем имена над рамками */
+    margin-bottom: 8px; position: relative; z-index: 10; 
 }
 
 .entity-name-text { font-family: "Georgia", "Palatino Linotype", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
@@ -226,11 +224,11 @@ html, body {
 .entity-lvl.boss { color: #fca5a5; border-color: #ef4444; background: linear-gradient(135deg, #450a0a, #000); }
 .entity-lvl.elite { color: #fcd34d; border-color: #f59e0b; background: linear-gradient(135deg, #451a03, #000); }
 
-/* УВЕЛИЧЕННЫЕ ПЕРСОНАЖИ БЕЗ ФОНА */
+/* ПЕРСОНАЖИ БЕЗ ФОНА */
 .combat-card {
     width: 40vw; height: 40vw; 
     min-width: 80px; min-height: 80px; 
-    max-width: 160px; max-height: 160px; /* Увеличен лимит для пропорциональности */
+    max-width: 175px; max-height: 175px; 
     flex-shrink: 0; position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
     background: transparent; border: none; box-shadow: none; overflow: visible; aspect-ratio: 1 / 1;
 }
@@ -241,20 +239,25 @@ html, body {
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)); transition: filter 0.2s, transform 0.2s ease-out; flex-shrink: 0; transform: scale(1.15);
 }
 
-/* Компактные статы под персонажами */
+/* КОМПАКТНЫЕ СТАТЫ И УМЕНЬШЕННЫЙ ПОЛОСОК ХП */
 .combat-mini-stats.new-style {
     background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
-    padding: 3px 8px;
-    border-radius: 6px;
-    gap: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    gap: 8px;
     margin-top: 2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.8);
-    font-size: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    font-size: 9px;
     display: flex; justify-content: space-around;
 }
 
-/* Центральная зона */
+.entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 130px; text-align: center; z-index: 10;}
+.hp-text-plate { font-size: 10px; font-weight: bold; margin-bottom: 2px; color: #e4e4e7; text-shadow: 0 1px 2px #000; letter-spacing: 0.5px;}
+.hp-bar-outer { width: 100%; height: 4px; background: #09090b; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); }
+.hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 6px rgba(239, 68, 68, 0.8); }
+
+/* ЦЕНТРАЛЬНАЯ ЗОНА С РАСХОДНИКАМИ */
 .combat-center-zone {
     position: absolute;
     top: 50%;
@@ -263,18 +266,16 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
     z-index: 15;
 }
 
 #combat-vs-text {
-    display: none !important; /* Убираем надпись VS полностью */
+    display: none !important; 
 }
 
-/* Опускаем банки в зеленую зону над логом боя */
 .center-consumables {
     position: absolute;
-    bottom: 58px; /* Впритык к логу */
+    bottom: 56px; 
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -314,17 +315,17 @@ html, body {
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* ЖЕСТКО восстанавливаем стили лога боя */
+/* ЛОГ БОЯ */
 .combat-log-box {
     position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px;
     background: rgba(18, 18, 20, 0.95); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px 6px; 
-    height: 46px; /* Ровно 2 строки */
+    height: 46px; 
     overflow-y: auto; font-size: 11px; line-height: 1.35; color: #a1a1aa; 
     box-shadow: 0 -4px 10px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.8); z-index: 20;
     -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; text-align: left;
 }
 
-/* УМЕНЬШАЕМ КНОПКИ УПРАВЛЕНИЯ ДЛЯ ЭКОНОМИИ МЕСТА */
+/* УМЕНЬШЕННЫЕ КНОПКИ УПРАВЛЕНИЯ */
 .combat-dashboard {
     flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 6px; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
 }
@@ -332,7 +333,6 @@ html, body {
 .control-label { font-size: 10px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1; flex-shrink: 0;}
 .zone-group { display: flex; flex: 1; gap: 6px; }
 
-/* ВОССТАНОВЛЕНА БАЗОВАЯ СТИЛИЗАЦИЯ КНОПОК АТАК/ЗАЩИТ (фон, рамка, цвет текста) */
 .zone-btn { flex: 1; min-height: 38px; padding: 0 2px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s;}
 
 .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
@@ -417,6 +417,7 @@ html, body {
 @media (max-height: 700px) {
     .top-dashboard { padding: 4px 10px; margin-bottom: 4px; }
     .nav-btn { height: 42px; font-size: 9px; }
+    .combat-log-box { height: 40px; }
     .combat-entities { padding: 15px 4px 40px 4px; gap: 4px; }
     .combat-card { max-width: 100px; max-height: 100px; min-width: 70px; min-height: 70px; }
     .class-banner { margin-bottom: 4px; padding: 4px 10px; }
