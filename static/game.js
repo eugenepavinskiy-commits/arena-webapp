@@ -104,8 +104,6 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) hero.name = tg.ini
 
 const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.talents.includes(id);
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
-
-// ИСПРАВЛЕНИЕ ОШИБКИ ГЕНЕРАЦИИ (Добавлен недостающий массив статов)
 const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
 
 // === ГЕНЕРАТОРЫ ЛУТА ===
@@ -225,12 +223,44 @@ function checkDailyQuests() { let today = new Date().toDateString(); if (hero.qu
 function addQuestProgress(qId, amount) { if (!hero.quests || !hero.quests[qId]) return; if (hero.quests[qId].claimed) return; hero.quests[qId].progress += amount; let target = DAILY_QUESTS[qId].target; if (hero.quests[qId].progress > target) hero.quests[qId].progress = target; saveGame(); }
 function claimQuest(qId) { let q = hero.quests[qId]; let def = DAILY_QUESTS[qId]; if (!q || q.claimed || q.progress < def.target) return; q.claimed = true; hero.gems += def.rewardGems; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
 
+// === БЕЗОПАСНЫЙ ГЛОБАЛЬНЫЙ ТАЙМЕР ===
 setInterval(() => {
-    if (hero.tickets < hero.maxTickets) { if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; if (Date.now() >= hero.nextTicketTime) { hero.tickets++; if (hero.tickets < hero.maxTickets) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; else hero.nextTicketTime = 0; saveGame(); updateUI(); } }
+    // 1. Таймер билетов (Работает под капотом)
+    if (hero.tickets < hero.maxTickets) { 
+        if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
+        if (Date.now() >= hero.nextTicketTime) { 
+            hero.tickets++; 
+            if (hero.tickets < hero.maxTickets) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
+            else hero.nextTicketTime = 0; 
+            saveGame(); 
+            if (!isTurnExecuting) updateUI(); 
+        } 
+    }
+    
+    // 2. Таймер дебаффа смерти
     let bloodScreen = document.getElementById('blood-screen');
-    if (hero.deathDebuffEnd > Date.now()) { let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; let el = document.getElementById('ui-debuff-timer'); if(el) { el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`; el.style.display = 'block'; } if(bloodScreen) bloodScreen.classList.add('active'); } 
-    else { let el = document.getElementById('ui-debuff-timer'); if(el && hero.deathDebuffEnd !== 0) { el.style.display = 'none'; hero.deathDebuffEnd = 0; if(bloodScreen) bloodScreen.classList.remove('active'); calculateStats(); updateUI(); } }
-    let tTimer = document.getElementById("ui-ticket-timer"); if (tTimer) { if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов"; else { let left = Math.ceil((hero.nextTicketTime - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; tTimer.innerText = `До следующего: ${m}:${s<10?'0':''}${s}`; } }
+    if (hero.deathDebuffEnd > Date.now()) { 
+        let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; 
+        let el = document.getElementById('ui-debuff-timer'); 
+        if(el) { el.innerText = `ШТРАФ СМЕРТИ: ${m}:${s<10?'0':''}${s}`; el.style.display = 'block'; } 
+        if(bloodScreen) bloodScreen.classList.add('active'); 
+    } 
+    else { 
+        let el = document.getElementById('ui-debuff-timer'); 
+        if(el && hero.deathDebuffEnd !== 0) { 
+            el.style.display = 'none'; hero.deathDebuffEnd = 0; 
+            if(bloodScreen) bloodScreen.classList.remove('active'); 
+            calculateStats(); 
+            if (!isTurnExecuting) updateUI(); 
+        } 
+    }
+
+    // 3. Обновление текста билетов (Без полного рендера DOM)
+    let tTimer = document.getElementById("ui-ticket-timer"); 
+    if (tTimer) { 
+        if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов"; 
+        else { let left = Math.ceil((hero.nextTicketTime - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; tTimer.innerText = `До следующего: ${m}:${s<10?'0':''}${s}`; } 
+    }
 }, 1000);
 
 function getExpReq(lvl) { return Math.floor(100 * Math.pow(1.15, lvl - 1)); }
@@ -786,6 +816,9 @@ function renderFriends() {
 }
 
 function updateUI() {
+    // === ГЛОБАЛЬНЫЙ ПРЕДОХРАНИТЕЛЬ ОТ СРЫВА АНИМАЦИЙ ===
+    if (isTurnExecuting) return; 
+
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
@@ -830,7 +863,7 @@ function updateUI() {
         document.getElementById("combat-enemy-hp").innerText = Math.max(0, Math.floor(enemy.hp)); document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp; document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
-        // НОВЫЙ БЛОК: Рендер центральных расходников
+        // Рендер центральных расходников
         let centerConsBox = document.getElementById("center-consumables-box");
         if (centerConsBox) {
             let firstPotionId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype === 'heal');
