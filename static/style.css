@@ -455,3 +455,120 @@ html, body {
     .zone-btn { min-height: 38px; }
     .raid-img-box { width: 75px; height: 75px; min-width: 75px; min-height: 75px; }
 }
+
+/* === ОБНОВЛЕННЫЙ UI БОЯ (ПРОПОРЦИИ И СТАТЫ) === */
+.combat-entities {
+    padding: 15px 6px 70px 6px !important; 
+    align-items: flex-start !important; 
+}
+
+/* Увеличенные карточки персонажей с рамкой */
+.combat-card {
+    width: 42vw; height: 42vw; 
+    max-width: 170px; max-height: 170px; 
+    border: 2px solid #3f3f46; 
+    background: rgba(0,0,0,0.5);
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+/* Новые статы под персонажами */
+.combat-mini-stats.new-style {
+    background: #09090b;
+    border: 1px solid #27272a;
+    padding: 6px 12px;
+    border-radius: 8px;
+    gap: 12px;
+    margin-top: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    font-size: 13px;
+}
+
+/* Центральная зона (VS и Расходники) */
+.combat-center-zone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    z-index: 15;
+}
+
+/* Фиксируем VS между персонажами */
+#combat-vs-text {
+    position: absolute;
+    top: 35%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    font-size: 26px;
+    opacity: 0.6;
+}
+
+/* Опускаем банки в зеленую зону над логом боя */
+.center-consumables {
+    position: absolute;
+    bottom: 60px; /* Идеально над логом боя, высота которого 48px + 6px отступ */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row; /* Зелье слева, свиток справа */
+    gap: 16px; 
+    z-index: 15;
+}
+
+/* Дизайн кнопок расходников: копируем стиль из сумки */
+.center-cons-item {
+    width: 44px !important; 
+    height: 44px !important;
+    border-radius: 6px !important;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    transition: 0.2s ease-out;
+    background: radial-gradient(circle, rgba(39,39,42,0.9) 0%, rgba(9,9,11,0.9) 80%);
+}
+
+.center-cons-item:active { 
+    transform: scale(0.9); 
+}
+
+/* Состояние "использовано" */
+.center-cons-item.dimmed {
+    filter: grayscale(100%) opacity(0.3);
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none; /* Визуально и технически блокируем повторный клик */
+}
+
+/* Всплывающий ультиматум (Финальная атака) */
+.intent-box.ultimatum.popup {
+    top: 25%;
+    transform: translate(-50%, -50%) scale(1.1);
+    padding: 12px 20px;
+    font-size: 15px;
+    background: rgba(69, 10, 10, 0.95);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.9);
+    z-index: 100;
+    border-radius: 12px;
+    animation: pulse-leg 0.8s infinite, floatUpAlert 0.3s ease-out;
+}
+@keyframes floatUpAlert { 
+    from { opacity: 0; transform: translate(-50%, -10%) scale(0.8); } 
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
+}
+
+/* Форсированный возврат лога боя под 2 строки */
+.combat-log-box {
+    display: block !important;
+    position: absolute !important;
+    top: auto !important;
+    bottom: 6px !important;
+    height: 48px !important; /* Идеальная высота ровно для двух строк */
+    z-index: 20 !important;
+}
