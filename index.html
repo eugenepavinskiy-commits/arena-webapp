@@ -68,6 +68,7 @@
                 <div class="combat-header" id="combat-floor-title" style="color:#d4d4d8; font-size:10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;"></div>
                 
                 <div class="combat-arena" id="arena-bg">
+                    
                     <div class="combat-entities" id="combat-entities-box">
                         <div id="combat-intent" class="intent-box"></div>
                         
@@ -81,17 +82,28 @@
                                 <div class="hp-text-plate"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                                 <div class="hp-bar-outer"><div class="hp-bar-inner hero-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
                             </div>
-                            <div class="combat-mini-stats"><span>⚔️ <span id="combat-hero-atk-val">0</span></span> <span>🛡️ <span id="combat-hero-arm-val">0</span></span></div>
+                            <div class="combat-mini-stats new-style">
+                                <span>⚔️ <span id="combat-hero-atk-val">0</span></span> 
+                                <span style="color:#3f3f46;">|</span> 
+                                <span>🛡️ <span id="combat-hero-arm-val">0</span></span>
+                            </div>
                             <div id="hero-slash" class="slash-fx"></div>
                         </div>
                         
-                        <div class="combat-vs">VS</div>
+                        <!-- НОВАЯ ЦЕНТРАЛЬНАЯ ЗОНА -->
+                        <div class="combat-center-zone">
+                            <div class="combat-vs" id="combat-vs-text">VS</div>
+                            <div class="center-consumables" id="center-consumables-box">
+                                <!-- Сюда JS вставит 1 банку и 1 свиток -->
+                            </div>
+                        </div>
+
                         <div id="combo-display" class="combo-meter"></div>
                         <div id="clash-spark-fx" class="clash-spark"></div>
                         
                         <div class="combat-entity-wrapper" id="entity-enemy-box">
                             <div class="entity-name-plate" id="combat-enemy-name-plate"></div>
-                            <div class="combat-card">
+                            <div class="combat-card boss">
                                 <div class="card-avatar-wrap"><img id="combat-enemy-img" class="card-avatar-img" src=""></div>
                                 <div class="status-icon" id="enemy-stun-icon">💫</div>
                             </div>
@@ -100,12 +112,17 @@
                                 <div class="hp-bar-outer"><div class="hp-bar-inner enemy-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
                                 <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
                             </div>
-                            <div class="combat-mini-stats"><span>⚔️ <span id="combat-enemy-atk-val">0</span></span> <span>🛡️ <span id="combat-enemy-arm-val">0</span></span></div>
+                            <div class="combat-mini-stats new-style">
+                                <span>⚔️ <span id="combat-enemy-atk-val">0</span></span> 
+                                <span style="color:#3f3f46;">|</span> 
+                                <span>🛡️ <span id="combat-enemy-arm-val">0</span></span>
+                            </div>
                             <div id="enemy-slash" class="slash-fx"></div>
                         </div>
                     </div>
-                    
-                    <div class="combat-log-box" id="combat-log"></div>
+                    <!-- Лог боя скрыт из стандартного потока, будем вызывать его только по необходимости -->
+                    <div class="combat-log-box" id="combat-log" style="display:none; position: absolute; z-index: 50; top: 15%;"></div>
+
                 </div>
 
                 <div class="combat-dashboard">
