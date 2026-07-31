@@ -840,15 +840,12 @@ function updateUI() {
             if (firstPotionId) {
                 let pItem = ITEMS_DB[firstPotionId];
                 let isUsed = combatState.potionUsed;
-                consHtml += `<div class="center-cons-item rarity-${pItem.rarity} ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstPotionId}', 'potion')">${pItem.icon}</div>`;
+                consHtml += `<div class="inv-item filled rarity-${pItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstPotionId}', 'potion')">${renderItemIcon(pItem)}</div>`;
             }
             if (firstScrollId) {
                 let sItem = ITEMS_DB[firstScrollId];
                 let isUsed = combatState.scrollUsed;
-                consHtml += `<div class="center-cons-item rarity-${sItem.rarity} ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstScrollId}', 'scroll')">${sItem.icon}</div>`;
-            }
-            if (consHtml === '') {
-                consHtml = `<div style="font-size:10px; color:#71717a; font-weight:bold;">ПУСТО</div>`;
+                consHtml += `<div class="inv-item filled rarity-${sItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstScrollId}', 'scroll')">${renderItemIcon(sItem)}</div>`;
             }
             centerConsBox.innerHTML = consHtml;
         }
