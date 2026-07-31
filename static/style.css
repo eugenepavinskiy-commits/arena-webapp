@@ -53,9 +53,9 @@ html, body {
 .exp-bar-wrap { width: 100%; height: 4px; background: #18181b; position: absolute; bottom: 0; left: 0; }
 .exp-bar-fill { height: 100%; background: #34d399; transition: width 0.3s; box-shadow: 0 0 8px #34d399; }
 
-/* === ОСНОВНОЙ КОНТЕЙНЕР ЭКРАНОВ === */
+/* === ОСНОВНОЙ КОНТЕЙНЕР ЭКРАНОВ (ИСПРАВЛЕНО min-height: 0) === */
 .app-screens-wrapper { 
-    flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; 
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; position: relative; 
     scroll-behavior: smooth; border-radius: 8px; padding-right: 2px;
     -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; 
 }
@@ -82,7 +82,6 @@ html, body {
 #screen-hero, #screen-boss { position: relative; padding: 6px; min-height: 100%; border-radius: 8px; z-index: 1; margin: -6px; margin-bottom: 0;}
 #screen-hero::before, #screen-boss::before { content: ''; position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; background-image: url("./begraund/1784901836658.png"); background-size: cover; background-position: center; filter: blur(15px) brightness(0.25); z-index: -1; }
 
-/* ВОССТАНОВЛЕНА И ИСПРАВЛЕНА ПАНЕЛЬ ГЕРОЯ (Кнопка звука и Сброс) */
 .class-banner { 
     background: linear-gradient(90deg, #09090b 0%, #18181b 50%, #09090b 100%); 
     border-top: 1px solid #3f3f46; border-bottom: 1px solid #3f3f46; 
@@ -224,7 +223,7 @@ html, body {
 }
 .combat-header { flex-shrink: 0; text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
 
-/* Сцена с бойцами: Центрируем вертикально! */
+/* Сцена с бойцами */
 .combat-entities { 
     flex: 1; min-height: 0; 
     display: flex; 
@@ -232,7 +231,7 @@ html, body {
     align-items: center !important; 
     position: relative !important; 
     border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; 
-    padding: 10px 4px 65px 4px !important; 
+    padding: 10px 4px 60px 4px !important; /* Чуть уменьшили отступ снизу для мобилок */
     box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); 
     background-color: #121214; 
     transition: background-image 0.5s ease; 
@@ -281,7 +280,7 @@ html, body {
 /* === ВОССТАНОВЛЕННЫЕ АНИМАЦИИ БОЯ === */
 /* ========================================================================== */
 
-/* Анимации рывков (С учетом Flex-пропорций) */
+/* Анимации рывков */
 @keyframes clash-hero { 
     0% { transform: translateX(0) rotate(0deg); } 
     30% { transform: translateX(20px) rotate(4deg) scale(1.05); z-index: 10;} 
@@ -312,11 +311,8 @@ html, body {
     position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); 
     width: 150px; height: 150px; border-radius: 50%; opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; 
 }
-/* Обычный удар (Желтовато-белый) */
 .clash-spark.normal { background: radial-gradient(circle, #fff 0%, rgba(251,191,36,0.8) 30%, transparent 70%); }
-/* Критический удар (Огромный красно-фиолетовый) */
 .clash-spark.crit { background: radial-gradient(circle, #fff 0%, rgba(239,68,68,0.9) 20%, rgba(168,85,247,0.8) 50%, transparent 70%); width: 200px; height: 200px; }
-/* Блок (Синий щит) */
 .clash-spark.block { background: radial-gradient(circle, #fff 0%, rgba(59,130,246,0.8) 30%, transparent 70%); }
 
 @keyframes spark-boom { 
@@ -325,8 +321,7 @@ html, body {
 }
 .spark-anim { animation: spark-boom 0.4s ease-out; }
 
-
-/* Компактные статы (С ЗАЩИТОЙ ОТ ПЕРЕПОЛНЕНИЯ) */
+/* Компактные статы */
 .combat-mini-stats.new-style {
     background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
@@ -354,7 +349,7 @@ html, body {
 .hp-bar-outer { width: 100%; height: 4px; background: #09090b; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); }
 .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 6px rgba(239, 68, 68, 0.8); }
 
-/* ЦЕНТРАЛЬНАЯ ЗОНА: Стекло для банок */
+/* ЦЕНТРАЛЬНАЯ ЗОНА */
 .combat-center-zone {
     position: absolute !important;
     top: 0; left: 0; width: 100% !important; height: 100% !important; 
@@ -364,7 +359,6 @@ html, body {
 
 #combat-vs-text, .combat-vs { display: none !important; }
 
-/* Банки: Жестко прибиты ко дну */
 .center-consumables {
     position: absolute !important;
     bottom: 56px !important; 
@@ -407,7 +401,7 @@ html, body {
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* ВСПЛЫВАЮЩИЙ УРОН: Компактный */
+/* ВСПЛЫВАЮЩИЙ УРОН */
 .dmg-popup { 
     position: absolute; top: 15% !important; left: 50%; transform: translateX(-50%); 
     font-size: 13px !important; 
@@ -480,6 +474,7 @@ html, body {
 .modal-overlay.show { display: flex; }
 .vic-title { font-size: 24px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px rgba(251,191,36,0.6); margin-bottom: 8px; text-transform: uppercase;}
 .vic-loot-box { width: 72px; height: 72px; border-radius: 10px; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239,68,68,0.5); position: relative; overflow: hidden;}
+.vic-loot-box.auto-sold { filter: grayscale(100%) opacity(0.5); border-color: #71717a; box-shadow: none; } /* СТИЛЬ ДЛЯ ПРОДАННОГО ЛУТА */
 .modal-btn { width: 100%; background: #fbbf24; color: #000; border: none; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 10px rgba(251,191,36,0.3); display: flex; align-items: center; justify-content: center; }
 .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
 .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
