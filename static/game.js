@@ -1,5 +1,5 @@
 // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
-if (window.tg && window.tg.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
+if (window.Telegram && window.Telegram.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
 
 const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "local_test_user";
 
@@ -52,6 +52,7 @@ const TALENTS_DATA = {
 
 const SETS_DB = { templar: { name: "Твердыня Храмовника", p2: "+25% Брони, Кап Блока 75%", p4: "Идеал. блок лечит 10% HP и наносит чистый урон врагу." }, bloodied: { name: "Кровавый Оскал", p2: "+50% Крит. Урона, +20% Макс HP", p4: "Жажда Крови: Урон растет от ран в 2 раза сильнее. 1 раз за бой выживает с 1 HP и получает 100% Вампиризм на след. удар." }, void: { name: "Шёпот Пустоты", p2: "+20% Уворот, Кап Уворота 95%", p4: "Фантом: Уворот отравляет врага Ядом. Крит после уворота игнорирует 100% брони." }, storm: { name: "Глаз Бури", p2: "Удача (УДЧ) x2", p4: "Снайпер: Удар в 'Голову' дает +150% Крит. урона и 30% шанс наложить Абсолютное Оглушение." } };
 
+// БАЗА ПРЕДМЕТОВ (УМНАЯ НУМЕРАЦИЯ)
 const ITEMS_DB = {
     "pot_heal_1": { id: "pot_heal_1", name: "Малое Зелье Здоровья", type: "consumable", subtype: "heal", power: 100, icon: "🧪", imageId: "pot_heal_1", rarity: "rare", lvl: 1, price: 80, inShop: true, desc: "Восстанавливает 100 HP.", stats: {} },
     "pot_heal_2": { id: "pot_heal_2", name: "Великое Зелье", type: "consumable", subtype: "heal", power: 250, icon: "🏺", imageId: "pot_heal_2", rarity: "epic", lvl: 5, price: 250, inShop: true, desc: "Восстанавливает 250 HP.", stats: {} },
@@ -105,6 +106,7 @@ const hasTalent = (id) => hero.talents && Array.isArray(hero.talents) && hero.ta
 const getShopPrice = (basePrice) => hasTalent('r4b') ? Math.floor(basePrice * 0.8) : basePrice;
 const SECONDARY_STATS = ['str', 'agi', 'end', 'mst', 'luk', 'critChance', 'dodgeChance', 'armorPen', 'critDmg', 'lifesteal', 'counter', 'thorns'];
 
+// === ГЕНЕРАТОРЫ ЛУТА ===
 function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, isRaid = false) {
     let baseItem = ITEMS_DB[baseTemplateId]; if(!baseItem) return null;
     let newItem = JSON.parse(JSON.stringify(baseItem));
@@ -223,6 +225,7 @@ function claimQuest(qId) { let q = hero.quests[qId]; let def = DAILY_QUESTS[qId]
 
 // === БЕЗОПАСНЫЙ ГЛОБАЛЬНЫЙ ТАЙМЕР ===
 setInterval(() => {
+    // 1. Таймер билетов (Работает под капотом)
     if (hero.tickets < hero.maxTickets) { 
         if (hero.nextTicketTime === 0) hero.nextTicketTime = Date.now() + 60 * 60 * 1000; 
         if (Date.now() >= hero.nextTicketTime) { 
@@ -234,6 +237,7 @@ setInterval(() => {
         } 
     }
     
+    // 2. Таймер дебаффа смерти
     let bloodScreen = document.getElementById('blood-screen');
     if (hero.deathDebuffEnd > Date.now()) { 
         let left = Math.ceil((hero.deathDebuffEnd - Date.now())/1000); let m = Math.floor(left/60); let s = left%60; 
@@ -251,6 +255,7 @@ setInterval(() => {
         } 
     }
 
+    // 3. Обновление текста билетов (Без полного рендера DOM)
     let tTimer = document.getElementById("ui-ticket-timer"); 
     if (tTimer) { 
         if (hero.tickets >= hero.maxTickets) tTimer.innerText = "Максимум билетов"; 
@@ -331,40 +336,10 @@ function updateIntentDisplay() {
     } 
 }
 
-// === ОБНОВЛЕННАЯ СИСТЕМА АНИМАЦИЙ И ИСКР ===
-function triggerClashAnim(isHero, isEnemy, hitType = "normal") { 
-    if (isHero) { 
-        let hc = document.getElementById("entity-hero-box"); 
-        if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); } 
-    } 
-    if (isEnemy) { 
-        let ec = document.getElementById("entity-enemy-box"); 
-        if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); } 
-    } 
-    
-    // Показываем искры нужного цвета
-    let sp = document.getElementById("clash-spark-fx"); 
-    if(sp) { 
-        sp.className = `clash-spark ${hitType} spark-anim`; 
-        void sp.offsetWidth; 
-    } 
-}
-
-function triggerHitAnim(elementId) { 
-    let el = document.getElementById(elementId); 
-    if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); } 
-}
-
+function triggerClashAnim(isHero, isEnemy) { if (isHero) { let hc = document.getElementById("entity-hero-box"); if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); } } if (isEnemy) { let ec = document.getElementById("entity-enemy-box"); if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); } } if (isHero && isEnemy) { let sp = document.getElementById("clash-spark-fx"); if(sp) { sp.classList.remove("spark-anim"); void sp.offsetWidth; sp.classList.add("spark-anim"); } } }
+function triggerHitAnim(elementId) { let el = document.getElementById(elementId); if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); } let slashId = elementId === "entity-hero-box" ? "hero-slash" : "enemy-slash"; let slash = document.getElementById(slashId); if(slash) { slash.style.animation = 'none'; void slash.offsetWidth; slash.style.animation = 'slashAnim 0.3s ease-out'; } }
 function showDmgPopup(entityBoxId, text, colorClass) { let box = document.getElementById(entityBoxId); if (!box) return; let pop = document.createElement("div"); pop.className = `dmg-popup ${colorClass}`; pop.innerText = text; box.appendChild(pop); setTimeout(() => { pop.remove(); }, 800); }
-
-function selectZone(type, zone) { 
-    if(type === 'atk') combatState.atkZone = zone; 
-    if(type === 'def') combatState.defZone = zone; 
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); 
-    playSFX('click'); 
-    updateUI(); 
-}
-
+function selectZone(type, zone) { if(type === 'atk') combatState.atkZone = zone; if(type === 'def') combatState.defZone = zone; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
 function logCombat(text) { let logBox = document.getElementById("combat-log"); if (logBox) { logBox.innerHTML += `<div class="log-entry">${text}</div>`; while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild); logBox.scrollTop = logBox.scrollHeight; } }
 
@@ -377,7 +352,6 @@ function useConsumableInCombat(itemId, type) {
     let item = ITEMS_DB[itemId]; if (!item || item.type !== 'consumable') return;
     if (item.subtype === 'heal' && hero.hp >= hero.combatStats.hp) return alert("Здоровье уже полное!");
     playSFX('skill');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     
     if (item.subtype === 'heal') { 
         hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); 
@@ -399,8 +373,6 @@ function useConsumableInCombat(itemId, type) {
 function useClassSkill() {
     if (isTurnExecuting || combatState.skillCooldown > 0 || hero.hp <= 0) return; 
     let cls = CLASSES[hero.baseClass]; combatState.skillCooldown = hasTalent('k4c') || hasTalent('s4b') ? cls.skill.cd - 1 : cls.skill.cd; playSFX('skill');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-
     if (hero.baseClass === 'knight') { triggerSkillVFX("entity-hero-box", "vfx-knight"); playLottieEffect("entity-hero-box", VFX_DB.knight_skill, "scale-up"); let healPct = hasTalent('k3c') ? 0.50 : 0.25; let heal = Math.floor(hero.combatStats.hp * healPct); hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! +${heal} HP.</span>`); } 
     else if (hero.baseClass === 'berserk') { 
         triggerSkillVFX("entity-enemy-box", "vfx-berserk"); playLottieEffect("entity-enemy-box", VFX_DB.berserk_skill, "scale-huge"); shakeScreen(); let dmg = Math.floor(hero.combatStats.damage * 2.5); 
@@ -417,6 +389,7 @@ function useClassSkill() {
         enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; 
         if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); combatState.enemyStunned = true; triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block"); if (hasTalent('r5a') && enemy.isBoss) { enemy.stats.armor = Math.floor(enemy.stats.armor * 0.9); logCombat(`<span class="log-skill">СКИЛЛ! Броня босса снижена на 10%.</span>`); } else { logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Враг оглушен.</span>`); } 
     }
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
 }
 
@@ -445,7 +418,6 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
 
 function handleCombatWin() {
     enemy.hp = 0; playSFX('win');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     if (combatMode === 'pvp') {
         hero.rating += enemy.ratingReward; let goldGained = 150; hero.gold += goldGained;
         let tTitle = document.getElementById("vic-title-text"); if(tTitle) tTitle.innerText = "ПОБЕДА НА АРЕНЕ!"; 
@@ -501,11 +473,10 @@ function applyTurnEndEffects() {
     }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
-
-// === ОСНОВНОЙ ХОД БОЯ (С ВИБРАЦИЕЙ И ЦВЕТНЫМИ ВСПЫШКАМИ) ===
 function executeTurn() {
     if (isTurnExecuting) return; if (!combatState.atkZone || !combatState.defZone) return; isTurnExecuting = true; 
     try {
+        if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         let heroAtkZone = combatState.atkZone; let heroDefZone = combatState.defZone; resetCombatZones(); updateUI(); 
         let zNameRu = {head: "Голову", chest: "Торс", legs: "Ноги", "ULTIMATUM": "ВСЕ ЗОНЫ (УЛЬТИМАТУМ)", "ENRAGE": "ЯРОСТЬ (ИНСТАКИЛЛ)"};
         if (!enemy.nextAtkZone) { enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; }
@@ -516,15 +487,8 @@ function executeTurn() {
         if (hasTalent('r1c') && hero.baseClass === 'ranger' && combatState.enemyTurns % 3 === 0) { isEnemyStunned = true; logCombat(`<span class="log-sys">ЛОВЧИЙ! Враг замедлен.</span>`); }
 
         let hRes = calcDmg(hero.combatStats, enemy.stats, heroAtkZone, eDefZone, true);
-        
-        // ЗВУК И ВИБРАЦИЯ АТАКИ ГЕРОЯ
-        if (hRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-        else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } 
-        else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-        else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
-        
-        // Запуск рывка героя и искр
-        triggerClashAnim(true, false, hRes.type);
+        if (hRes.type === "dodge") { playSFX('dodge'); } else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); } else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); } else { playSFX('hit'); }
+        triggerClashAnim(true, false);
 
         setTimeout(() => {
             try {
@@ -554,14 +518,8 @@ function executeTurn() {
 
                                 if (!GOD_MODE) { hero.hp -= eRes.dmg; if(hero.hp < 0) hero.hp = 0; }
                                 
-                                // ЗВУК И ВИБРАЦИЯ АТАКИ ВРАГА
-                                if (eRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-                                else if (eRes.type === "crit" || eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { playSFX('crit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } 
-                                else if (eRes.type === "block" || eRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-                                else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
-                                
-                                // Запуск рывка врага
-                                triggerClashAnim(false, true, eRes.type); 
+                                if (eRes.type === "dodge") { playSFX('dodge'); } else if (eRes.type === "crit" || eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { playSFX('crit'); } else if (eRes.type === "block" || eRes.type === "perfect_block") { playSFX('block'); } else { playSFX('hit'); }
+                                triggerClashAnim(false, true); 
 
                                 setTimeout(() => {
                                     try {
@@ -784,6 +742,7 @@ function renderTalents() {
     let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
 }
 
+// === ЛОГИКА ДРУЗЕЙ (РЕФЕРАЛОВ) ===
 function claimFriendReward(index) {
     if (!hero.friends[index] || hero.friends[index].claimed) return;
     hero.friends[index].claimed = true;
@@ -857,6 +816,7 @@ function renderFriends() {
 }
 
 function updateUI() {
+    // === ГЛОБАЛЬНЫЙ ПРЕДОХРАНИТЕЛЬ ОТ СРЫВА АНИМАЦИЙ ===
     if (isTurnExecuting) return; 
 
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
@@ -903,6 +863,7 @@ function updateUI() {
         document.getElementById("combat-enemy-hp").innerText = Math.max(0, Math.floor(enemy.hp)); document.getElementById("combat-enemy-maxhp").innerText = enemy.maxHp; document.getElementById("combat-enemy-hp-bar").style.width = `${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%`;
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
+        // Рендер центральных расходников
         let centerConsBox = document.getElementById("center-consumables-box");
         if (centerConsBox) {
             let firstPotionId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype === 'heal');
@@ -929,11 +890,8 @@ function updateUI() {
     }
 
     if (currentScreen === 'hero') {
-        let cls = CLASSES[hero.baseClass]; 
-        let muteBtn = `<span style="cursor:pointer; filter:grayscale(${sfxMuted?'100%':'0%'}) opacity(${sfxMuted?'0.5':'1'}); padding: 0 8px; font-size:16px;" onclick="toggleMute()">${sfxMuted?'🔇':'🔊'}</span>`;
-        let cn = document.getElementById("ui-class-name"); 
-        if(cn) cn.innerHTML = `<div>${cls.icon} <b>${hero.name}</b> <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span></div> <div style="display:flex; align-items:center; gap:8px;">${muteBtn} <button class="reset-btn" onclick="hardReset()">СБРОС</button></div>`;
-        
+        let cls = CLASSES[hero.baseClass]; let muteBtn = `<span style="cursor:pointer; filter:grayscale(${sfxMuted?'100%':'0%'}) opacity(${sfxMuted?'0.5':'1'}); padding: 0 8px; font-size:16px;" onclick="toggleMute()">${sfxMuted?'🔇':'🔊'}</span>`;
+        let cn = document.getElementById("ui-class-name"); if(cn) cn.innerHTML = `<button class="reset-btn" onclick="hardReset()">СБРОС</button> ${muteBtn} ${cls.icon} ${hero.name} <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span>`;
         let av = document.getElementById("main-hero-avatar"); if(av) av.src = CLASS_AVATARS[hero.baseClass];
         let isCombat = currentScreen === 'PVE' && enemy; let skipHead = isCombat && combatState.zoneHealth.head === 0; let skipChest = isCombat && combatState.zoneHealth.chest === 0; let skipLegs = isCombat && combatState.zoneHealth.legs === 0;
 
@@ -1119,4 +1077,5 @@ function updateUI() {
     if (currentScreen === 'friends') { renderFriends(); }
 }
 
+// ЭТА СТРОЧКА ЗАПУСКАЕТ ИГРУ (Она обязательно должна быть в самом конце файла!)
 loadGame();
