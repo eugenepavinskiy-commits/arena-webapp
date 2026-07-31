@@ -90,12 +90,12 @@
                             <div id="hero-slash" class="slash-fx"></div>
                         </div>
                         
-                        <!-- НОВАЯ ЦЕНТРАЛЬНАЯ ЗОНА -->
-                        <div class="combat-center-zone">
-                            <div class="combat-vs" id="combat-vs-text">VS</div>
-                            <div class="center-consumables" id="center-consumables-box">
-                                <!-- Сюда JS вставит 1 банку и 1 свиток -->
-                            </div>
+                        <!-- VS зафиксирован отдельно -->
+                        <div class="combat-vs" id="combat-vs-text">VS</div>
+                        
+                        <!-- Банки вынесены отдельно для позиционирования ВНИЗУ -->
+                        <div class="center-consumables" id="center-consumables-box">
+                            <!-- Сюда JS вставит 1 банку и 1 свиток -->
                         </div>
 
                         <div id="combo-display" class="combo-meter"></div>
@@ -120,8 +120,9 @@
                             <div id="enemy-slash" class="slash-fx"></div>
                         </div>
                     </div>
-                    <!-- Лог боя скрыт из стандартного потока, будем вызывать его только по необходимости -->
-                    <div class="combat-log-box" id="combat-log" style="display:none; position: absolute; z-index: 50; top: 15%;"></div>
+                    
+                    <!-- Лог возвращен на место -->
+                    <div class="combat-log-box" id="combat-log"></div>
 
                 </div>
 
