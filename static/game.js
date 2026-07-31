@@ -36,7 +36,6 @@ if (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) { if (String(tg.in
 const CLASS_AVATARS = { knight: STATIC_URL + "knight.png", berserk: STATIC_URL + "berserk.png", shadow: STATIC_URL + "shadow.png", ranger: STATIC_URL + "ranger.png" };
 const imgCache = {}; for (let key in CLASS_AVATARS) { imgCache[key] = new Image(); imgCache[key].src = CLASS_AVATARS[key]; }
 
-// МАТЕМАТИЧЕСКИЙ РЕБАЛАНС: Добавлен str_arm для Берсерка
 const CLASSES = {
     knight: { id: "knight", name: "Рыцарь", icon: "🛡️", color: "#fbbf24", lore: "Танк-Рефлект. Выносливость повышает мощь Шипов.", growth: { str: 1, agi: 0, end: 1, mst: 0, luk: 0 }, statWeights: { str_dmg: 1, str_arm: 1, agi_dodge: 0.2, end_hp: 15, mst_block: 1, mst_pen: 0.5, luk_crit: 0.2, luk_drop: 0.1 }, skill: { name: "Эгида", desc: "Блокирует удар и Исцеляет 25% HP.", cd: 3 }, bars: { dmg: 40, def: 100, diff: 20 }, armorMult: 1.25, critDmgMult: 1.4, dodgeMult: 0.9 },
     berserk: { id: "berserk", name: "Берсерк", icon: "🪓", color: "#ef4444", lore: "Стеклянная пушка. Сила дает Пробитие и немного Брони.", growth: { str: 2, agi: 0, end: 0, mst: 0, luk: 0 }, statWeights: { str_dmg: 3, str_arm: 0.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_cdmg: 1, luk_crit: 0.5, luk_drop: 0.1 }, skill: { name: "Яростный Удар", desc: "Удар на x2.5 урона.", cd: 3 }, bars: { dmg: 100, def: 30, diff: 50 }, armorMult: 0.85, critDmgMult: 1.9, dodgeMult: 1.0 },
@@ -44,7 +43,6 @@ const CLASSES = {
     ranger: { id: "ranger", name: "Следопыт", icon: "🏹", color: "#10b981", lore: "Вампир-Охотник. Удача дает Крит и огромный дроп.", growth: { str: 0, agi: 1, end: 0, mst: 0, luk: 1 }, statWeights: { str_dmg: 1, agi_dmg: 1.5, agi_dodge: 0.5, end_hp: 8, mst_pen: 2, mst_crit: 0.5, luk_crit: 0.5, luk_drop: 2.0 }, skill: { name: "Выстрел в Сердце", desc: "Оглушает врага на 1 ход.", cd: 3 }, bars: { dmg: 70, def: 40, diff: 60 }, armorMult: 1.0, critDmgMult: 1.8, dodgeMult: 1.15 }
 };
 
-// МАТЕМАТИЧЕСКИЙ РЕБАЛАНС: Жесткие нерфы 100% капов
 const TALENTS_DATA = {
     knight: [ {lvl:20, opts:[{id:'k1a',n:'Бастион',d:'Блок лечит 5% потер. HP'},{id:'k1b',n:'Шипы',d:'+15% Брони к Урону'},{id:'k1c',n:'Молот',d:'Игнор 30% Брони'}]}, {lvl:40, opts:[{id:'k2a',n:'Крепость',d:'+25% Макс HP'},{id:'k2b',n:'Возмездие',d:'Идеал. блок: возврат 25% урона'},{id:'k2c',n:'Шок',d:'Блок: 25% шанс оглушить'}]}, {lvl:60, opts:[{id:'k3a',n:'Сталь',d:'+50% Брони'},{id:'k3b',n:'Ярость',d:'Урон +20%'},{id:'k3c',n:'Святость',d:'Навык лечит 25% HP'}]}, {lvl:80, opts:[{id:'k4a',n:'Иммунитет',d:'Иммунитет к критам'},{id:'k4b',n:'Тяжесть',d:'МСТ дает +2% Блока'},{id:'k4c',n:'Рвение',d:'КД навыка -1 ход'}]}, {lvl:100, opts:[{id:'k5a',n:'Второе дыхание',d:'<30% HP: Броня x2'},{id:'k5b',n:'Зеркало',d:'Идеал. блок: возврат 50% урона'},{id:'k5c',n:'Кара',d:'Удары игнорируют блок'}]} ],
     berserk: [ {lvl:20, opts:[{id:'b1a',n:'Вампир',d:'Лечит 15% от урона'},{id:'b1b',n:'Гнев',d:'Комбо растет x2 быстрее'},{id:'b1c',n:'Крушитель',d:'Ломает броню с 1 удара'}]}, {lvl:40, opts:[{id:'b2a',n:'Толстая кожа',d:'+20% Макс HP'},{id:'b2b',n:'Жестокость',d:'+50% Крит Урон'},{id:'b2c',n:'Палач',d:'+25% урона по сломанному'}]}, {lvl:60, opts:[{id:'b3a',n:'Регенерация',d:'+5 HP каждый ход'},{id:'b3b',n:'Агония',d:'Бонус от ран x2'},{id:'b3c',n:'Пробитие',d:'+30% Игнор брони'}]}, {lvl:80, opts:[{id:'b4a',n:'Стойкость',d:'Входящий урон -15%'},{id:'b4b',n:'Транс',d:'Комбо не сбрасывается от урона'},{id:'b4c',n:'Кровоточивость',d:'Криты бьют зону x3'}]}, {lvl:100, opts:[{id:'b5a',n:'Бессмертие',d:'Выживает с 1 HP (1 раз)'},{id:'b5b',n:'Аватар',d:'Крит урон до +100% при лоу HP'},{id:'b5c',n:'Резня',d:'50% Игнор брони'}]} ],
@@ -403,7 +401,7 @@ function useClassSkill() {
 
     if (hero.baseClass === 'knight') { 
         triggerSkillVFX("entity-hero-box", "vfx-knight"); playLottieEffect("entity-hero-box", VFX_DB.knight_skill, "scale-up"); 
-        let healPct = hasTalent('k3c') ? 0.25 : 0.25; 
+        let healPct = hasTalent('k3c') ? 0.50 : 0.25; 
         let heal = Math.floor(hero.combatStats.hp * healPct); 
         hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); 
         showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys"); 
@@ -427,7 +425,6 @@ function useClassSkill() {
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
 }
 
-// МАТЕМАТИЧЕСКИЙ РЕБАЛАНС УРОНА
 function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     let dodgeChance = defender.dodge || 0; if (!isHeroAtk && hasTalent('s5a')) dodgeChance = 50; if (Math.random() * 100 < dodgeChance) return { dmg: 0, rawDmg: 0, elemLog: '', type: "dodge" };
     if (!isHeroAtk && hasTalent('r5c') && Math.random() * 100 < 20) return { dmg: 0, rawDmg: 0, elemLog: '', type: "dodge" }; 
@@ -441,7 +438,13 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
     if (bIsRangerAtk) { armPen += Math.floor(defender.armor * 0.3); if (hasTalent('r2a')) armPen += Math.floor(defender.armor * 0.4); if (zAtk === 'head') { if (hasTalent('r1a')) cChance += 30; if (hasTalent('r4a')) cDmg += 50; if (hero.flags.storm) cDmg += 100; } }
     if (isHeroAtk && hero.baseClass === 'knight' && hasTalent('k1c')) armPen += Math.floor(defender.armor * 0.3); 
     
-    if (!isHeroAtk) { if (hasTalent('k4a') && hero.baseClass === 'knight') cChance = 0; if (hasTalent('b4a') && hero.baseClass === 'berserk') baseAtk = Math.floor(baseAtk * 0.85); if (hasTalent('r4c') && hero.baseClass === 'ranger' && attacker.isBoss) baseAtk = Math.floor(baseAtk * 0.90); if (hasTalent('s4c') && hero.baseClass === 'shadow' && combatState.poisonStacks > 0) baseAtk = Math.floor(baseAtk * 0.8); }
+    if (!isHeroAtk) { 
+        if (hasTalent('k4a') && hero.baseClass === 'knight') cChance = 0; 
+        if (hasTalent('b4a') && hero.baseClass === 'berserk') baseAtk = Math.floor(baseAtk * 0.85); 
+        if (hasTalent('r4c') && hero.baseClass === 'ranger' && attacker.isBoss) baseAtk = Math.floor(baseAtk * 0.90); 
+        if (hasTalent('s4c') && hero.baseClass === 'shadow' && combatState.poisonStacks > 0) baseAtk = Math.floor(baseAtk * 0.8); 
+        if (combatState.bloodiedUndying) baseAtk = Math.floor(baseAtk * 1.5);
+    }
     
     let isCrit = Math.random() * 100 < cChance; if (isCrit) baseAtk = Math.floor(baseAtk * (cDmg / 100));
     let defArmor = Math.max(0, (defender.armor || 0) - armPen); let mitigation = defArmor; let isBlock = false; let isPerfectBlock = false;
@@ -505,7 +508,6 @@ function closeVictoryModal() {
     else { initCombat(); } 
 }
 
-// МАТЕМАТИЧЕСКИЙ РЕБАЛАНС ТЕНИ
 function applyTurnEndEffects() {
     if (hasTalent('s1c') && hero.baseClass === 'shadow') { 
         combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); 
@@ -713,7 +715,6 @@ function upgradeItem() {
 
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
 
-// МАТЕМАТИЧЕСКИЙ РЕБАЛАНС: Софткапы (Капы Уворота и Блока занижены до 50%)
 function calculateStats(isCombat = false) {
     let cls = CLASSES[hero.baseClass]; let lvlBonus = hero.level - 1; let setCounts = {};
     for (let key in hero.equipment) { let item = hero.equipment[key]; if (item && item.setId && item.id !== "blocked") { setCounts[item.setId] = (setCounts[item.setId] || 0) + 1; } }
