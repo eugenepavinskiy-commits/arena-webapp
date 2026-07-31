@@ -201,10 +201,12 @@ html, body {
 }
 .combat-header { flex-shrink: 0; text-align: center; color: #fbbf24; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px #000;}
 
-/* Уменьшен верхний отступ для увеличенных персонажей */
-.combat-entities {
-    padding: 4px 6px 65px 6px !important; 
-    align-items: flex-start !important; 
+/* ВАЖНО: Восстановлены базовые стили Flexbox для контейнера арены + уменьшены отступы */
+.combat-entities { 
+    flex: 1; min-height: 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; position: relative; gap: 8px; 
+    border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; 
+    padding: 10px 6px 65px 6px; /* Оставляем место внизу для банок и лога */
+    box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); background-color: #121214; transition: background-image 0.5s ease; 
 }
 
 .intent-box { 
@@ -216,7 +218,7 @@ html, body {
 
 .entity-name-plate { 
     flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; 
-    margin-bottom: 10px !important; /* Увеличен отступ: Приподнимаем ник над картинкой */
+    margin-bottom: 8px; position: relative; z-index: 10; /* Приподнимаем имена над рамками */
 }
 
 .entity-name-text { font-family: "Georgia", "Palatino Linotype", serif; font-weight: bold; font-size: 14px; color: #fbbf24; text-shadow: 0 2px 4px #000, 0 0 10px rgba(251,191,36,0.4); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
@@ -226,14 +228,11 @@ html, body {
 
 /* УВЕЛИЧЕННЫЕ ПЕРСОНАЖИ БЕЗ ФОНА */
 .combat-card {
-    width: 42vw !important; 
-    height: 42vw !important; 
-    max-width: 175px !important; 
-    max-height: 175px !important; 
-    border: none !important; 
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
+    width: 40vw; height: 40vw; 
+    min-width: 80px; min-height: 80px; 
+    max-width: 160px; max-height: 160px; /* Увеличен лимит для пропорциональности */
+    flex-shrink: 0; position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; box-shadow: none; overflow: visible; aspect-ratio: 1 / 1;
 }
 
 .card-avatar-wrap { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
@@ -242,7 +241,7 @@ html, body {
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)); transition: filter 0.2s, transform 0.2s ease-out; flex-shrink: 0; transform: scale(1.15);
 }
 
-/* Компактные статы */
+/* Компактные статы под персонажами */
 .combat-mini-stats.new-style {
     background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
@@ -252,6 +251,7 @@ html, body {
     margin-top: 2px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.8);
     font-size: 10px;
+    display: flex; justify-content: space-around;
 }
 
 /* Центральная зона */
@@ -268,13 +268,13 @@ html, body {
 }
 
 #combat-vs-text {
-    display: none !important; /* Убираем надпись VS, чтобы не мусорила интерфейс */
+    display: none !important; /* Убираем надпись VS полностью */
 }
 
 /* Опускаем банки в зеленую зону над логом боя */
 .center-consumables {
     position: absolute;
-    bottom: 56px; /* Впритык к логу */
+    bottom: 58px; /* Впритык к логу */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -284,12 +284,9 @@ html, body {
 }
 
 .center-cons-item {
-    width: 38px !important; 
-    height: 38px !important;
-    border-radius: 6px !important;
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
+    width: 38px; height: 38px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.8);
     transition: 0.2s ease-out;
@@ -317,89 +314,27 @@ html, body {
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* ЖЕСТКО возвращаем стиль лога боя */
+/* ЖЕСТКО восстанавливаем стили лога боя */
 .combat-log-box {
-    display: block !important;
-    position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 95% !important;
-    max-width: 380px !important;
-    bottom: 6px !important;
-    height: 46px !important; 
-    background: rgba(18, 18, 20, 0.95) !important;
-    backdrop-filter: blur(6px) !important;
-    border: 1px solid #3f3f46 !important;
-    border-radius: 8px !important;
-    padding: 4px 8px !important;
-    font-size: 11px !important; 
-    line-height: 1.4 !important;
-    color: #a1a1aa !important;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.6), inset 0 4px 10px rgba(0,0,0,0.9) !important;
-    z-index: 20 !important;
-    overflow-y: auto !important;
-    text-align: left !important;
-}
-
-.combat-log-box * {
-    font-size: 11px !important;
+    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 380px;
+    background: rgba(18, 18, 20, 0.95); backdrop-filter: blur(6px); border: 1px solid #3f3f46; border-radius: 8px; padding: 4px 6px; 
+    height: 46px; /* Ровно 2 строки */
+    overflow-y: auto; font-size: 11px; line-height: 1.35; color: #a1a1aa; 
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.5), inset 0 4px 10px rgba(0,0,0,0.8); z-index: 20;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; text-align: left;
 }
 
 /* УМЕНЬШАЕМ КНОПКИ УПРАВЛЕНИЯ ДЛЯ ЭКОНОМИИ МЕСТА */
 .combat-dashboard {
-    padding: 6px !important;
+    flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 6px; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
 }
-.zone-btn {
-    min-height: 38px !important;
-    font-size: 9px !important;
-}
-.btn-skill-compact, .btn-exe-compact {
-    height: 40px !important;
-}
-.btn-exe-compact {
-    font-size: 13px !important;
-}
-
-.status-icon { position: absolute; top: 4px; right: 4px; font-size: 20px; filter: drop-shadow(0 2px 4px #000); display: none; z-index: 15;}
-
-.entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 160px; text-align: center; z-index: 10;}
-.hp-text-plate { font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #e4e4e7; text-shadow: 0 1px 3px #000; letter-spacing: 0.5px;}
-.hp-bar-outer { width: 100%; height: 6px; background: #09090b; border-radius: 3px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9); }
-.hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
-.hero-hp-fill { background: linear-gradient(90deg, #dc2626 0%, #fca5a5 100%); }
-.enemy-hp-fill { background: linear-gradient(90deg, #7f1d1d 0%, #ef4444 100%); }
-.boss-rage-bg { width: 100%; height: 3px; background: #050505; border-radius: 1px; overflow: hidden; display: none; margin-top: 4px; border: 1px solid #27272a;}
-.boss-rage-fill { height: 100%; background: #f59e0b; transition: width 0.3s; }
-.boss-rage-fill.full { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-.combo-meter { position: absolute; top: 4px; right: 10px; font-size: 10px; font-weight: bold; color: #f59e0b; text-shadow: 0 1px 3px #000; opacity: 0; transition: opacity 0.3s; z-index: 20; }
-.combo-meter.show { opacity: 1; }
-
-.clash-spark { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: radial-gradient(circle, #fbbf24 0%, #ef4444 20%, transparent 60%); opacity: 0; pointer-events: none; z-index: 25; mix-blend-mode: screen; }
-@keyframes spark-boom { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
-.spark-anim { animation: spark-boom 0.4s ease-out; }
-@keyframes clash-hero { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(15px) rotate(3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(20px) rotate(3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
-@keyframes clash-enemy { 0% { transform: translateX(0) rotate(0deg); } 30% { transform: translateX(-15px) rotate(-3deg) scale(1.02); z-index: 10;} 50% { transform: translateX(-20px) rotate(-3deg) scale(1.02); } 100% { transform: translateX(0) rotate(0deg); } }
-.clash-hero-anim { animation: clash-hero 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.clash-enemy-anim { animation: clash-enemy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes hit-shake { 0% { filter: brightness(1); } 25% { transform: translateX(-2px); filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5); } 50% { transform: translateX(2px); } 75% { transform: translateX(-2px); } 100% { filter: brightness(1); } }
-.hit-anim { animation: hit-shake 0.3s ease-out; }
-.slash-fx { position: absolute; top: 50%; left: 50%; width: 90px; height: 5px; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ef4444; transform: translate(-50%, -50%) rotate(45deg) scaleX(0); pointer-events: none; z-index: 10; opacity: 0; }
-@keyframes slashAnim { 0% { transform: translate(-50%, -50%) rotate(45deg) scaleX(0); opacity: 1; } 50% { transform: translate(-50%, -50%) rotate(45deg) scaleX(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) scaleX(2); opacity: 0; } }
-
-.dmg-popup { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 900; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 25; text-shadow: 0 2px 4px #000;}
-@keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -30px) scale(1.3); } }
-
-.log-entry { border-bottom: 1px dotted #27272a; padding-bottom: 1px; margin-bottom: 1px;}
-.log-dmg { color: #f87171; font-weight: bold; }
-.log-crit { color: #fbbf24; font-weight: bold; }
-.log-dodge { color: #60a5fa; font-weight: bold; }
-.log-block { color: #a78bfa; font-weight: bold; }
-.log-sys { color: #34d399; font-weight: bold; }
-.log-skill { color: #c084fc; font-weight: bold; }
-
-.control-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px;}
+.control-row { display: flex; align-items: center; margin-bottom: 6px; gap: 8px;}
 .control-label { font-size: 10px; font-weight: bold; color: #71717a; width: 45px; text-transform: uppercase; text-align: right; line-height: 1.1; flex-shrink: 0;}
 .zone-group { display: flex; flex: 1; gap: 6px; }
+
+/* ВОССТАНОВЛЕНА БАЗОВАЯ СТИЛИЗАЦИЯ КНОПОК АТАК/ЗАЩИТ (фон, рамка, цвет текста) */
+.zone-btn { flex: 1; min-height: 38px; padding: 0 2px; border-radius: 6px; font-weight: bold; font-size: 9px; cursor: pointer; text-transform: uppercase; background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); transition: 0.1s;}
+
 .zone-btn.atk.selected { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; box-shadow: inset 0 0 10px rgba(239,68,68,0.4);}
 .zone-btn.def.selected { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59,130,246,0.4);}
 .durability-dots { display: flex; gap: 2px; }
@@ -412,9 +347,9 @@ html, body {
 .zone-btn.broken .durability-dots { display: none; }
         
 .main-actions { display: flex; gap: 8px; margin-top: 2px; }
-.btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+.btn-skill-compact { flex: 1; background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 100%); color: #fff; border: 1px solid #a855f7; border-radius: 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
 .btn-skill-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
-.btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
+.btn-exe-compact { flex: 2; background: linear-gradient(180deg, #b45309 0%, #78350f 100%); color: #fff; border: 1px solid #fbbf24; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); height: 40px; display: flex; align-items: center; justify-content: center; }
 .btn-exe-compact:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; cursor: not-allowed; box-shadow: none;}
 
 /* === МОДАЛКИ (ПОБЕДА И ИНСПЕКТ) === */
@@ -477,3 +412,14 @@ html, body {
 
 .select-class-btn { width: 100%; background: #27272a; color: #fff; border: 1px solid #3f3f46; padding: 0 14px; height: 48px; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;}
 .select-class-btn:disabled { color: #10b981; border-color: #065f46; background: #022c22; cursor: not-allowed; box-shadow: inset 0 0 10px rgba(16,185,129,0.1); }
+
+/* === АДАПТИВНОСТЬ ПОД МАЛЕНЬКИЕ ЭКРАНЫ === */
+@media (max-height: 700px) {
+    .top-dashboard { padding: 4px 10px; margin-bottom: 4px; }
+    .nav-btn { height: 42px; font-size: 9px; }
+    .combat-entities { padding: 15px 4px 40px 4px; gap: 4px; }
+    .combat-card { max-width: 100px; max-height: 100px; min-width: 70px; min-height: 70px; }
+    .class-banner { margin-bottom: 4px; padding: 4px 10px; }
+    .zone-btn { min-height: 34px !important; }
+    .raid-img-box { width: 75px; height: 75px; min-width: 75px; min-height: 75px; }
+}
