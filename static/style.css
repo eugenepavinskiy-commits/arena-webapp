@@ -223,16 +223,16 @@ html, body {
     flex: 1; min-height: 0; 
     display: flex; 
     justify-content: space-between; 
-    align-items: center !important; /* ВАЖНО: Центрируем по вертикали, чтобы заполнить пустоту */
+    align-items: center !important; 
     position: relative !important; 
     border: 2px solid #18181b; border-bottom: 4px solid #050505; border-radius: 12px; 
-    padding: 10px 4px 65px 4px !important; /* Оставляем 65px снизу под лог и банки */
+    padding: 10px 4px 65px 4px !important; 
     box-shadow: inset 0 10px 30px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5); 
     background-color: #121214; 
     transition: background-image 0.5s ease; 
 }
 
-/* Строгие 48% ширины для каждого героя (Идеальная симметрия) */
+/* Строгие 48% ширины для каждого героя */
 .combat-entity-wrapper { 
     flex: 0 0 48%; 
     width: 48%; 
@@ -243,7 +243,7 @@ html, body {
     z-index: 2; 
 }
 
-/* Имена героев: Приподняты над картинкой */
+/* Имена героев */
 .entity-name-plate { 
     flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 20px; 
     margin-bottom: 8px !important; position: relative; z-index: 10; 
@@ -258,7 +258,7 @@ html, body {
     width: 100% !important; 
     height: auto !important; 
     aspect-ratio: 1 / 1 !important; 
-    max-width: 170px !important; /* Увеличили предел */
+    max-width: 170px !important; 
     max-height: 170px !important; 
     flex-shrink: 0; position: relative; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
     background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible; border-radius: 0 !important;
@@ -270,7 +270,7 @@ html, body {
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)); transition: filter 0.2s, transform 0.2s ease-out; flex-shrink: 0; transform: scale(1.15);
 }
 
-/* Компактные статы под персонажами */
+/* Компактные статы (С ЗАЩИТОЙ ОТ ПЕРЕПОЛНЕНИЯ) */
 .combat-mini-stats.new-style {
     background: rgba(9, 9, 11, 0.85);
     border: 1px solid #27272a;
@@ -283,25 +283,34 @@ html, body {
     display: flex; justify-content: space-around;
 }
 
-.entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 130px; text-align: center; z-index: 10;}
-.hp-text-plate { font-size: 10px; font-weight: bold; margin-bottom: 2px; color: #e4e4e7; text-shadow: 0 1px 2px #000; letter-spacing: 0.5px;}
+.combat-mini-stats.new-style span {
+    white-space: nowrap;
+    font-size: clamp(8px, 2vw, 9px);
+}
+
+.entity-hp-plate { flex-shrink: 0; width: 100%; max-width: 130px; text-align: center; z-index: 10; overflow: hidden; }
+.hp-text-plate { 
+    font-size: clamp(8px, 2.5vw, 10px); 
+    font-weight: bold; margin-bottom: 2px; color: #e4e4e7; text-shadow: 0 1px 2px #000; letter-spacing: 0.5px;
+    white-space: nowrap; 
+    text-overflow: ellipsis; 
+}
 .hp-bar-outer { width: 100%; height: 4px; background: #09090b; border-radius: 2px; border: 1px solid #27272a; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); }
 .hp-bar-inner { height: 100%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 6px rgba(239, 68, 68, 0.8); }
 
-/* ЦЕНТРАЛЬНАЯ ЗОНА: Вырвана из Flex-потока, чтобы не ломать симметрию */
+/* ЦЕНТРАЛЬНАЯ ЗОНА: Стекло для банок */
 .combat-center-zone {
     position: absolute !important;
-    top: 0; left: 0; width: 100% !important; height: 100% !important; /* Явно задаем 100% высоты */
-    pointer-events: none; /* Стекло: пропускает клики сквозь себя */
+    top: 0; left: 0; width: 100% !important; height: 100% !important; 
+    pointer-events: none; 
     z-index: 15;
 }
 
-/* Полностью прячем VS */
 #combat-vs-text, .combat-vs {
     display: none !important; 
 }
 
-/* Банки: Жестко прибиты ко дну арены (над логом) */
+/* Банки: Жестко прибиты ко дну */
 .center-consumables {
     position: absolute !important;
     bottom: 56px !important; 
@@ -310,7 +319,7 @@ html, body {
     display: flex;
     flex-direction: row; 
     gap: 20px; 
-    pointer-events: auto; /* Включаем клики для самих банок */
+    pointer-events: auto; 
 }
 
 .center-cons-item {
@@ -344,7 +353,7 @@ html, body {
     to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* ВСПЛЫВАЮЩИЙ УРОН: Уменьшили разлет и размер */
+/* ВСПЛЫВАЮЩИЙ УРОН: Компактный */
 .dmg-popup { 
     position: absolute; top: 15% !important; left: 50%; transform: translateX(-50%); 
     font-size: 13px !important; 
@@ -360,7 +369,7 @@ html, body {
     100% { opacity: 0; transform: translate(-50%, -15px) scale(1.05); } 
 }
 
-/* ЛОГ БОЯ: Фиксирован в самом низу */
+/* ЛОГ БОЯ */
 .combat-log-box {
     position: absolute !important;
     bottom: 6px !important; left: 50% !important; transform: translateX(-50%) !important;
@@ -385,8 +394,7 @@ html, body {
     font-size: 11px !important;
 }
 
-
-/* УМЕНЬШЕННЫЕ КНОПКИ УПРАВЛЕНИЯ ДЛЯ ЭКОНОМИИ МЕСТА */
+/* УМЕНЬШЕННЫЕ КНОПКИ УПРАВЛЕНИЯ */
 .combat-dashboard {
     flex-shrink: 0; background: rgba(18, 18, 20, 0.85); backdrop-filter: blur(8px); border: 1px solid #27272a; border-radius: 12px; padding: 6px !important; margin-top: 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05);
 }
