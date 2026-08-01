@@ -392,7 +392,7 @@ function applyLoadedSave(savedHero, savedItems) {
     previewClassId = hero.baseClass; 
     try { calculateStats(); updateUI(); } catch(e) { 
         console.error("Критический сбой рендера:", e); localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items');
-        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); }
+        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); tg.CloudStorage.removeItem('tg_rpg_custom_items'); }
         alert("Критическая ошибка сейва. Кэш сброшен, игра перезапускается."); location.reload();
     }
 }
@@ -557,8 +557,8 @@ async function startPvP() {
         let res = await fetch(FIREBASE_URL + 'players.json'); 
         if(res.ok) { 
             let data = await res.json(); 
-            if(data) { 
-                let players = Object.values(data).filter(p => p.id !== String(getUserId()));
+            if(data && typeof data === 'object' && !data.error) { 
+                let players = Object.values(data).filter(p => p && typeof p === 'object' && p.id && p.id !== String(getUserId()));
                 if (players.length > 0) {
                     let valid = players.filter(p => Math.abs((p.level || 1) - hero.level) <= 5);
                     if (valid.length === 0) valid = players;
@@ -605,6 +605,18 @@ function fleeCombat() {
     }
 }
 
+function buildLeaderboardHTML(players) { 
+    let html = ''; 
+    players.forEach((p, index) => { 
+        let rank = index + 1; 
+        let cardClass = "pvp-player-card"; 
+        if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; 
+        let avatarCls = p.cls || 'knight'; 
+        html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating || 0}</div></div>`; 
+    }); 
+    return html; 
+}
+
 // === УПРАВЛЕНИЕ МУЛЬТИ-РЕЙТИНГОМ (ЗАЛ СЛАВЫ) ===
 function switchRatingTab(tab) {
     playSFX('click');
@@ -627,7 +639,6 @@ function renderRatingScreen() {
         return;
     }
 
-    // Сортировка в зависимости от выбранного таба
     let sorted = [...cachedPlayersList];
     if (currentRatingTab === 'pvp') {
         sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -643,7 +654,6 @@ function renderRatingScreen() {
     let top3 = sorted.slice(0, 3);
     let rest = sorted.slice(3);
 
-    // Рендер пьедестала ТОП-3 (Порядок для красоты: 2-е место слева, 1-е по центру, 3-е справа)
     let orderedTop = [];
     if (top3[1]) orderedTop.push({p: top3[1], rank: 2, cls: 'ped-2'});
     if (top3[0]) orderedTop.push({p: top3[0], rank: 1, cls: 'ped-1'});
@@ -668,7 +678,6 @@ function renderRatingScreen() {
     });
     pedestalContainer.innerHTML = pedHtml;
 
-    // Рендер остальных игроков в списке ниже
     let listHtml = '';
     rest.forEach((p, idx) => {
         let rank = idx + 4;
@@ -689,7 +698,6 @@ function renderRatingScreen() {
         `;
     });
 
-    // Добавляем строчку с игроком (Вы) в конец списка
     let myAvatarCls = hero.baseClass;
     let myScoreVal = currentRatingTab === 'pvp' ? `🏆 ${hero.rating}` : (currentRatingTab === 'pve' ? `🏰 ${hero.maxFloor} эт.` : `💰 ${hero.gold}`);
     listHtml += `
@@ -715,7 +723,7 @@ function openPlayerProfile(pData) {
     document.getElementById("pp-class").innerText = `${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Странник'} • Ур. ${pData.level || 1}`;
     document.getElementById("pp-rating").innerText = `🏆 ${pData.rating || 0}`;
     document.getElementById("pp-floor").innerText = `🏰 ${pData.maxFloor || 1}`;
-    document.getElementById("pp-fights").innerText = `⚔️ ${pData.level ? pData.level * 3 : 5}`; // Аналитическая симуляция боев на основе уровня
+    document.getElementById("pp-fights").innerText = `⚔️ ${pData.level ? pData.level * 3 : 5}`; 
     document.getElementById("pp-gold").innerText = `💰 ${pData.gold || 0}`;
     
     document.getElementById("player-profile-modal").classList.add("show");
@@ -1119,15 +1127,24 @@ function openScreen(screenName) {
         if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`;
         if(pedestal) pedestal.innerHTML = ``;
 
-        fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
-            if(data) {
-                cachedPlayersList = Object.values(data);
-                renderRatingScreen();
+        fetch(FIREBASE_URL + 'players.json')
+        .then(async r => {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+        })
+        .then(data => {
+            if(data && typeof data === 'object' && !data.error) {
+                cachedPlayersList = Object.values(data).filter(p => p && typeof p === 'object' && p.name);
+                if (cachedPlayersList.length > 0) {
+                    renderRatingScreen();
+                } else {
+                    if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`;
+                }
             } else {
-                if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`;
+                if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`;
             }
         }).catch(e => {
-            if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка соединения с Firebase</div>`;
+            if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка: ${e.message}</div>`;
         });
     }
 
@@ -1138,19 +1155,28 @@ function openScreen(screenName) {
 
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
-            fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
-                if(data) {
-                    let players = Object.values(data);
-                    players.sort((a,b) => (b.rating||0) - (a.rating||0));
-                    let top3 = players.slice(0, 3);
-                    let html = buildLeaderboardHTML(top3);
-                    html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
-                    elBoard.innerHTML = html;
+            fetch(FIREBASE_URL + 'players.json')
+            .then(async r => {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.json();
+            })
+            .then(data => {
+                if(data && typeof data === 'object' && !data.error) {
+                    let players = Object.values(data).filter(p => p && typeof p === 'object' && p.name);
+                    if (players.length > 0) {
+                        players.sort((a,b) => (b.rating||0) - (a.rating||0));
+                        let top3 = players.slice(0, 3);
+                        let html = buildLeaderboardHTML(top3);
+                        html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
+                        elBoard.innerHTML = html;
+                    } else {
+                        elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`;
+                    }
                 } else {
                     elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`;
                 }
             }).catch(e => {
-                elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка соединения с Firebase</div>`;
+                elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка: ${e.message}</div>`;
             });
         }
     }
