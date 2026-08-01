@@ -172,7 +172,6 @@ function generateLootDrop(enemyObj) {
     }
 
     if (Math.random() * 100 <= dropChance) {
-        // ФИКС МУТАЦИЙ ЛУТА: берем только базовые болванки (не dropOnly и не апгрейженные)
         let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && !ITEMS_DB[id].dropOnly && !id.includes('_upg_') && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass)));
         if(pool.length === 0) return null;
         let baseTemplate = pool[Math.floor(Math.random() * pool.length)];
@@ -189,6 +188,7 @@ async function syncSaveToServer() { try { await fetch('/api/save', { method: 'PO
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
 function saveGame() {
     try {
+        hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Пылесос призраков
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
         let activeItemIds = [...hero.inventory]; for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
         let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
@@ -281,9 +281,18 @@ function generateEnemy(floorLevel) {
     return baseEnemy;
 }
 
-function changeFloor(dir) { hero.floor += dir; if (hero.floor < 1) hero.floor = 1; if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor; playSFX('click'); saveGame(); initCombat(); }
+function changeFloor(dir) { 
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
+    if (hero.inventory.length > 15) return alert("⚠️ Сумка переполнена! Продайте или наденьте лишние вещи (Максимум 15), чтобы сражаться дальше.");
+    hero.floor += dir; if (hero.floor < 1) hero.floor = 1; if (hero.floor > hero.maxFloor) hero.floor = hero.maxFloor; playSFX('click'); saveGame(); initCombat(); 
+}
 
 function initCombat() {
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
+    if (hero.inventory.length > 15) { 
+        if (currentScreen !== 'hero') openScreen('hero'); 
+        return alert("⚠️ Сумка переполнена! Продайте или наденьте лишние вещи (Максимум 15), чтобы начать бой."); 
+    }
     combatMode = 'pve'; enemy = generateEnemy(hero.floor); 
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, undyingUsed: false, potionUsed: false, scrollUsed: false };
     calculateStats(true); 
@@ -302,6 +311,8 @@ window.declineBossEvent = function() { let el = document.getElementById("boss-ev
 function startCombatProper() { calculateStats(true); if (hero.hp > hero.combatStats.hp && !GOD_MODE) hero.hp = hero.combatStats.hp; let title = document.getElementById("combat-stage-name"); document.getElementById("enemy-rage-bg").style.display = "none"; if (title) { if (enemy.isBoss) { title.innerText = `МЕГА-БОСС`; title.className = "combat-header boss"; document.getElementById("enemy-rage-bg").style.display = "block";} else if (enemy.isMiniBoss) { title.innerText = `ЭЛИТНЫЙ ВРАГ`; title.className = "combat-header boss";} else { title.innerText = `ОБЫЧНЫЙ ВРАГ`; title.className = "combat-header";} } let log = document.getElementById("combat-log"); if (log) log.innerHTML = ``; planEnemyTurn(); updateUI(); }
 
 function startRaid(bossId) {
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
+    if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте вещи (Максимум 15), чтобы начать бой."); }
     if (hero.tickets < 1) return alert("Нет билетов рейда!"); if (hero.hp <= 0) return alert("Герой мертв!"); hero.tickets--; saveGame(); playSFX('click');
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     let bData = RAID_BOSSES.find(b => b.id === bossId); combatMode = 'raid'; let statMult = 1 + (hero.level * 0.1); 
@@ -312,6 +323,8 @@ function startRaid(bossId) {
 }
 
 async function startPvP() {
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
+    if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте вещи (Максимум 15), чтобы начать бой."); }
     if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв!"); playSFX('click');
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     combatMode = 'pvp'; document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-PVE').classList.add('active'); currentScreen = 'PVE';
@@ -491,16 +504,13 @@ function handleCombatWin() {
         
         hero.gold += goldGained; 
         let droppedItem = generateLootDrop(enemy);
-        let isAutoSold = false;
         
         if (droppedItem) { 
-            if (hero.inventory.length < 15) { 
-                hero.inventory.push(droppedItem.id); 
-            } else { 
-                hero.gold += Math.floor(droppedItem.price * 0.5); 
-                logMsg += `<br>Сумка полна! ✨ ${droppedItem.name} продан за ${Math.floor(droppedItem.price * 0.5)}💰.`; 
-                isAutoSold = true;
-            } 
+            hero.inventory.push(droppedItem.id); 
+            logMsg += `<br>✨ Получен предмет: ${droppedItem.name}`;
+            if (hero.inventory.length > 15) {
+                logMsg += `<br><b style="color:#ef4444;">⚠️ СУМКА ПЕРЕПОЛНЕНА! Бои заблокированы.</b>`;
+            }
         }
         
         let tTitle = document.getElementById("vic-title-text"); if(tTitle) tTitle.innerText = isRaid ? "РЕЙД ЗАВЕРШЕН!" : "ВРАГ ПОВЕРЖЕН!"; 
@@ -511,9 +521,9 @@ function handleCombatWin() {
             if (droppedItem) { 
                 lootBox.style.display = "flex"; 
                 let boxEl = document.getElementById("vic-loot-box");
-                boxEl.className = `vic-loot-box rarity-${droppedItem.rarity} ${isAutoSold ? 'auto-sold' : ''}`; 
+                boxEl.className = `vic-loot-box rarity-${droppedItem.rarity}`; 
                 boxEl.innerHTML = renderItemIcon(droppedItem); 
-                document.getElementById("vic-loot-name").innerHTML = isAutoSold ? `<span style="color:#71717a; text-decoration:line-through;">${droppedItem.name}</span><br><b style="color:#ef4444; font-size:10px;">ПРОДАНО АВТОМАТИЧЕСКИ</b>` : droppedItem.name; 
+                document.getElementById("vic-loot-name").innerHTML = droppedItem.name; 
             } else { 
                 lootBox.style.display = "none"; 
             } 
@@ -639,11 +649,57 @@ function executeTurn() {
     } catch (e) { console.error(e); isTurnExecuting = false; }
 }
 
+// === НОВЫЙ UX: ИНСПЕКТ СО СРАВНЕНИЕМ ХАРАКТЕРИСТИК ===
+function formatStats(stats, eqStats = null) {
+    let res = []; if(!stats && !eqStats) return res;
+    let combined = {};
+    if(stats) { for(let k in stats) combined[k] = {n: stats[k], o: 0}; }
+    if(eqStats) { for(let k in eqStats) { if(!combined[k]) combined[k] = {n: 0, o: eqStats[k]}; else combined[k].o = eqStats[k]; } }
+
+    let getDiff = (key) => {
+        if(!eqStats) return "";
+        let diff = (combined[key].n) - (combined[key].o);
+        if(diff > 0) return ` <span style="color:#10b981; font-size:10px;">(+${diff})</span>`;
+        if(diff < 0) return ` <span style="color:#ef4444; font-size:10px;">(${diff})</span>`;
+        return "";
+    };
+
+    let getVal = (key, name, color, isPct=false) => {
+        if (!combined[key]) return;
+        let v = combined[key].n; let o = combined[key].o; let d = getDiff(key);
+        let p = isPct ? '%' : '';
+        if (v === 0 && o === 0) return;
+        if(v > 0) res.push(`<span style="${color}">${name} +${v}${p}${d}</span>`);
+        else if (o > 0) res.push(`<span style="color:#71717a; text-decoration:line-through;">${name} +${o}${p}</span>${d}`);
+    };
+
+    getVal('atk', 'Урон', ''); getVal('armor', 'Броня', '');
+    getVal('str', 'СИЛ', ''); getVal('agi', 'ЛОВ', ''); getVal('end', 'ВЫН', ''); getVal('mst', 'МСТ', ''); getVal('luk', 'УДЧ', '');
+    getVal('critChance', 'Крит', '', true); getVal('dodgeChance', 'Уворот', '', true); getVal('blockChance', 'Блок', '', true);
+    getVal('armorPen', 'Пробитие', ''); getVal('critDmg', 'Крит. Урон', '', true);
+    getVal('lifesteal', 'Вампиризм', 'color:#ef4444;', true); getVal('counter', 'Контратака', 'color:#a855f7;', true); getVal('thorns', 'Шипы', 'color:#fbbf24;', true);
+    getVal('dmg_fire', 'Огонь', 'color:#ef4444;'); getVal('res_fire', 'Рез. Огню', 'color:#ef4444;', true);
+    getVal('dmg_ice', 'Лед', 'color:#3b82f6;'); getVal('res_ice', 'Рез. Льду', 'color:#3b82f6;', true);
+    getVal('dmg_dark', 'Тьма', 'color:#a855f7;'); getVal('res_dark', 'Рез. Тьме', 'color:#a855f7;', true);
+    getVal('dmg_holy', 'Свет', 'color:#fbbf24;'); getVal('res_holy', 'Рез. Свету', 'color:#fbbf24;', true);
+
+    return res;
+}
+
 function openInspectModal(invIndex) {
     playSFX('click'); inspectInvIndex = invIndex; let itemId = hero.inventory[invIndex]; let item = ITEMS_DB[itemId]; if (!item) return;
+    
+    // Ищем надетую вещь для сравнения
+    let eqStats = null;
+    if (item.type !== 'consumable') {
+        let slot = item.type; if (slot === 'two_handed') slot = 'weapon1'; if (slot === 'ring') slot = 'ring1'; // Дефолтное кольцо 1
+        let eqItem = hero.equipment[slot];
+        if (eqItem && eqItem.id !== "blocked") eqStats = eqItem.stats;
+    }
+
     document.getElementById("inspect-title").innerText = item.name; document.getElementById("inspect-icon-box").className = `vic-loot-box rarity-${item.rarity}`; document.getElementById("inspect-icon-box").innerHTML = renderItemIcon(item);
     let setHtmlBlock = ""; if (item.setId && SETS_DB[item.setId]) { let set = SETS_DB[item.setId]; let count = hero.setCounts[item.setId] || 0; setHtmlBlock = `<div style="margin-top:8px; border-top:1px dotted #3f3f46; padding-top:6px; font-size:10px;"><b style="color:#fbbf24;">Сет: ${set.name} (${count}/4)</b><br><span style="color:${count>=2?'#10b981':'#71717a'}">[2 шт] ${set.p2}</span><br><span style="color:${count>=4?'#10b981':'#71717a'}">[4 шт] ${set.p4}</span></div>`; }
-    document.getElementById("inspect-stats-box").innerHTML = `<div style="color: #f4f4f5; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">` + formatStats(item.stats).join(' • ') + `</div>` + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
+    document.getElementById("inspect-stats-box").innerHTML = `<div style="color: #f4f4f5; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">` + formatStats(item.stats, eqStats).join(' • ') + `</div>` + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
     let sellPrice = Math.floor(item.price * 0.5); document.getElementById("btn-inspect-sell").innerText = `ПРОДАТЬ ЗА 💰 ${sellPrice}`;
     let eqBtn = document.getElementById("btn-inspect-equip");
     if(item.type === 'consumable') { eqBtn.innerText = "ИСПОЛЬЗОВАТЬ В БОЮ"; eqBtn.style.background = "#52525b"; eqBtn.style.boxShadow = "none"; eqBtn.onclick = null; } else { eqBtn.innerText = "НАДЕТЬ"; eqBtn.style.background = "#fbbf24"; eqBtn.style.boxShadow = "0 4px 10px rgba(251,191,36,0.3)"; eqBtn.onclick = function() { equipItem(inspectInvIndex); closeInspectModal(); }; }
@@ -670,7 +726,6 @@ function selectPreviewClass(classId) { playSFX('click'); previewClassId = classI
 function changeClass(classKey) {
     if (hero.baseClass === classKey) return; if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
     let itemsToUnequip = []; for (let slot in hero.equipment) { let item = hero.equipment[slot]; if (item && item.id !== "blocked" && item.allowedClasses && !item.allowedClasses.includes(classKey)) itemsToUnequip.push(slot); }
-    let neededSlots = (hero.inventory.length + itemsToUnequip.length) - 15; if (neededSlots > 0) return alert(`Освободите ${neededSlots} мест в сумке для снятия вещей!`);
     if(!confirm("Внимание! При смене класса ВСЕ ВЫБРАННЫЕ ТАЛАНТЫ БУДУТ СБРОШЕНЫ. Продолжить?")) return;
     itemsToUnequip.forEach(slot => { let item = hero.equipment[slot]; if (item && item.id !== "blocked") hero.inventory.push(item.id); hero.equipment[slot] = null; if (item && item.type === 'two_handed') hero.equipment.weapon2 = null; });
     hero.gold -= 5000; hero.baseClass = classKey; hero.talents = []; calculateStats(); playSFX('coins'); saveGame(); openScreen('hero');
@@ -686,7 +741,7 @@ function equipItem(invIndex) {
     let targetSlot = item.type;
     if (item.type === 'two_handed') {
         let w1 = hero.equipment.weapon1; let w2 = hero.equipment.weapon2; let needsExtraSlot = (w1 && w2 && w2.id !== "blocked");
-        if (needsExtraSlot && hero.inventory.length >= 15) return alert("Освободите 1 место в сумке!");
+        if (needsExtraSlot && hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место.");
         hero.inventory.splice(invIndex, 1); if (w1) hero.inventory.push(w1.id); if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id);
         hero.equipment.weapon1 = item; hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
         calculateStats(); saveGame(); updateUI(); return;
@@ -700,12 +755,12 @@ function unequipSlot(slotKey) {
     playSFX('click'); 
     if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя снимать снаряжение на Арене или в Рейде!");
     if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
-    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 15) return alert("Сумка полна!");
+    let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место.");
     if (item.type === 'two_handed') { hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; } else { hero.inventory.push(item.id); hero.equipment[slotKey] = null; } calculateStats(); saveGame(); updateUI();
 }
 
 function addStat(statKey) { if (hero.unspentPoints > 0) { hero.baseStats[statKey]++; hero.unspentPoints--; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); calculateStats(); saveGame(); updateUI(); } }
-function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (hero.inventory.length >= 15) return alert("Сумка полна!"); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
+function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место."); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
 function sellItem(invIndex) { let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return; hero.gold += Math.floor(item.price * 0.5); hero.inventory.splice(invIndex, 1); playSFX('coins'); saveGame(); updateUI(); }
 function healHero() {
     if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!"); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let cost = Math.max(10, Math.floor(missingHp * 0.5));
@@ -728,13 +783,8 @@ function upgradeItem() {
     newItem.upgradeCount = upgCount + 1; 
     newItem.price = Math.floor(newItem.price * 1.5); 
     for (let s in newItem.stats) {
-        // ФИКС КУЗНИ: Процентные статы растут только на 1% за ковку.
         let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
-        if (isPct) {
-            newItem.stats[s] += 1; 
-        } else {
-            newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
-        }
+        if (isPct) { newItem.stats[s] += 1; } else { newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); }
     }
     ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
     addQuestProgress('forge_upg', 1); 
@@ -746,6 +796,7 @@ function upgradeItem() {
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
 
 function calculateStats(isCombat = false) {
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Чистим призраков из инвентаря
     let cls = CLASSES[hero.baseClass]; let lvlBonus = hero.level - 1; let setCounts = {};
     for (let key in hero.equipment) { let item = hero.equipment[key]; if (item && item.setId && item.id !== "blocked") { setCounts[item.setId] = (setCounts[item.setId] || 0) + 1; } }
     hero.setCounts = setCounts; hero.flags = { templar: setCounts['templar'] >= 4, bloodied: setCounts['bloodied'] >= 4, void: setCounts['void'] >= 4, storm: setCounts['storm'] >= 4 };
@@ -771,7 +822,7 @@ function calculateStats(isCombat = false) {
     if (hasTalent('k1b')) damage += Math.floor(total.armor * 0.25); 
     
     total.critChance += total.luk * (w.luk_crit || 0) + total.mst * (w.mst_crit || 0); if (hasTalent('s3b')) total.critChance += 20; 
-    total.critChance = Math.min(80, total.critChance); // ФИКС: ХАРДКАП КРИТА 80%
+    total.critChance = Math.min(80, total.critChance); 
 
     total.dodge += total.agi * (w.agi_dodge || 0) + total.luk * (w.luk_dodge || 0); if (hasTalent('s3a')) total.dodge += 15; if (hasTalent('r3c')) total.dodge += 10; if (setCounts['void'] >= 2) total.dodge += 15;
     total.armorPen += total.mst * (w.mst_pen || 0); total.critDmg += total.mst * (w.mst_cdmg || 0); if (hasTalent('b2b')) total.critDmg += 50; if (setCounts['bloodied'] >= 2) total.critDmg += 30;
@@ -793,24 +844,6 @@ function calculateStats(isCombat = false) {
         hero.finalStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: (typeof total.critChance === 'number' ? total.critChance.toFixed(1) : total.critChance), critDmg: total.critDmg, dodge: (typeof total.dodge === 'number' ? total.dodge.toFixed(1) : total.dodge), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, lifesteal: total.lifesteal, counter: total.counter, thorns: total.thorns, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy }; 
     }
     hero.combatStats = { hp: hp, damage: damage, armor: total.armor, armorPen: total.armorPen, critChance: (typeof total.critChance === 'number' ? total.critChance.toFixed(1) : total.critChance), critDmg: total.critDmg, dodge: (typeof total.dodge === 'number' ? total.dodge.toFixed(1) : total.dodge), blockChance: total.blockChance, str: total.str, agi: total.agi, end: total.end, mst: total.mst, luk: total.luk, lifesteal: total.lifesteal, counter: total.counter, thorns: total.thorns, dmg_fire: total.dmg_fire, dmg_ice: total.dmg_ice, dmg_dark: total.dmg_dark, dmg_holy: total.dmg_holy, res_fire: total.res_fire, res_ice: total.res_ice, res_dark: total.res_dark, res_holy: total.res_holy };
-}
-
-function formatStats(stats) {
-    let res = []; if(!stats) return res;
-    if(stats.atk) res.push(`Урон ${stats.atk>0?'+':''}${stats.atk}`); if(stats.armor) res.push(`Броня ${stats.armor>0?'+':''}${stats.armor}`);
-    if(stats.str) res.push(`СИЛ ${stats.str>0?'+':''}${stats.str}`); if(stats.agi) res.push(`ЛОВ ${stats.agi>0?'+':''}${stats.agi}`);
-    if(stats.end) res.push(`ВЫН ${stats.end>0?'+':''}${stats.end}`); if(stats.mst) res.push(`МСТ ${stats.mst>0?'+':''}${stats.mst}`);
-    if(stats.luk) res.push(`УДЧ ${stats.luk>0?'+':''}${stats.luk}`); if(stats.critChance) res.push(`Крит ${stats.critChance>0?'+':''}${stats.critChance}%`);
-    if(stats.dodgeChance) res.push(`Уворот ${stats.dodgeChance>0?'+':''}${stats.dodgeChance}%`); if(stats.blockChance) res.push(`Блок ${stats.blockChance>0?'+':''}${stats.blockChance}%`);
-    if(stats.armorPen) res.push(`Пробитие ${stats.armorPen>0?'+':''}${stats.armorPen}`); if(stats.critDmg) res.push(`Крит. Урон ${stats.critDmg>0?'+':''}${stats.critDmg}%`);
-    if(stats.lifesteal) res.push(`<span style="color:#ef4444;">Вампиризм ${stats.lifesteal}%</span>`);
-    if(stats.counter) res.push(`<span style="color:#a855f7;">Контратака ${stats.counter}%</span>`);
-    if(stats.thorns) res.push(`<span style="color:#fbbf24;">Шипы ${stats.thorns}%</span>`);
-    if(stats.dmg_fire) res.push(`<span class="elem-fire">Огонь ${stats.dmg_fire>0?'+':''}${stats.dmg_fire}</span>`); if(stats.res_fire) res.push(`<span class="elem-fire">Рез. Огню ${stats.res_fire>0?'+':''}${stats.res_fire}%</span>`);
-    if(stats.dmg_ice) res.push(`<span class="elem-ice">Лед ${stats.dmg_ice>0?'+':''}${stats.dmg_ice}</span>`); if(stats.res_ice) res.push(`<span class="elem-ice">Рез. Льду ${stats.res_ice>0?'+':''}${stats.res_ice}%</span>`);
-    if(stats.dmg_dark) res.push(`<span class="elem-dark">Тьма ${stats.dmg_dark>0?'+':''}${stats.dmg_dark}</span>`); if(stats.res_dark) res.push(`<span class="elem-dark">Рез. Тьме ${stats.res_dark>0?'+':''}${stats.res_dark}%</span>`);
-    if(stats.dmg_holy) res.push(`<span class="elem-holy">Свет ${stats.dmg_holy>0?'+':''}${stats.dmg_holy}</span>`); if(stats.res_holy) res.push(`<span class="elem-holy">Рез. Свету ${stats.res_holy>0?'+':''}${stats.res_holy}%</span>`);
-    return res;
 }
 
 function getSlotName(slotId) { return {head:"Шлем", chest:"Броня", belt:"Пояс", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId]; }
@@ -918,6 +951,8 @@ function renderFriends() {
 }
 
 function updateUI() {
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Очищаем массив от невалидных ID (Призраков)
+    
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
@@ -1009,10 +1044,21 @@ function updateUI() {
             }
         });
 
-        let bc = document.getElementById("ui-bag-capacity"); if(bc) bc.innerText = `${hero.inventory.length}/15`;
+        let bc = document.getElementById("ui-bag-capacity"); 
+        if(bc) {
+            bc.innerText = `${hero.inventory.length}/15`;
+            if (hero.inventory.length > 15) bc.style.color = "#ef4444";
+            else bc.style.color = "#a1a1aa";
+        }
+        
         let invHtml = '';
-        for (let i = 0; i < 15; i++) { 
-            if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } } 
+        let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); // Резиновая сумка
+        for (let i = 0; i < gridLimit; i++) { 
+            if (i < hero.inventory.length) { 
+                let item = ITEMS_DB[hero.inventory[i]]; 
+                if (item) { invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } 
+                else { invHtml += `<div class="inv-item empty"></div>`; } 
+            } 
             else { invHtml += `<div class="inv-item empty"></div>`; } 
         }
         let ig = document.getElementById("ui-inventory-grid"); if(ig) ig.innerHTML = invHtml;
@@ -1114,7 +1160,6 @@ function updateUI() {
                 let statHtml = "";
                 for (let s in item.stats) {
                     let oldVal = item.stats[s]; 
-                    // ФИКС ОТОБРАЖЕНИЯ КУЗНИ
                     let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
                     let newVal = isPct ? oldVal + 1 : Math.max(1, Math.ceil(oldVal * 1.15));
                     
