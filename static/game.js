@@ -640,7 +640,7 @@ function handleCombatWin() {
         let tRewards = document.getElementById("vic-rewards-text"); if(tRewards) tRewards.innerHTML = `Рейтинг: <span style="color:#fbbf24">+${enemy.ratingReward} 🏆</span><br>Золото: +${goldGained} 💰`;
         let lootBox = document.getElementById("vic-loot-container"); if (lootBox) lootBox.style.display = "none";
     } else {
-        let isRaid = enemy.isRaid; let logMsg = ""; let goldGained = isRaid ? (hero.level * 50 + 100) : (15 + (hero.floor * 5)); let expGained = isRaid ? 0 : (20 + (hero.floor * 8));
+        let isRaid = enemy.isRaid; let logMsg = ""; let goldGained = isRaid ? (hero.level * 50 + 100) : (10 + (hero.floor * 3)); let expGained = isRaid ? 0 : (20 + (hero.floor * 8));
         if (!isRaid) { addQuestProgress('kill_mobs', 1); if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; } if (hasTalent('r1b')) goldGained *= 2; hero.exp += expGained; if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level); calculateStats(); logMsg += `<br><span style="color:#34d399;">УРОВЕНЬ ПОВЫШЕН! +3 очка характеристик.</span>`; } } else { let gems = enemy.raidData.gemReward; if (hasTalent('r3b')) gems = Math.floor(gems * 1.5); hero.gems += gems; logMsg += ` | +${gems}💎`; }
         hero.gold += goldGained; let droppedItem = generateLootDrop(enemy);
         if (droppedItem) { hero.inventory.push(droppedItem.id); logMsg += `<br>✨ Получен предмет: ${droppedItem.name}`; if (hero.inventory.length > 15) { logMsg += `<br><b style="color:#ef4444;">⚠️ СУМКА ПЕРЕПОЛНЕНА! Бои заблокированы.</b>`; } }
@@ -901,9 +901,25 @@ function addStat(statKey) { if (hero.unspentPoints > 0) { hero.baseStats[statKey
 function buyItem(itemId) { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); if (hero.gold < price) return alert("Мало золота!"); if (hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место."); hero.gold -= price; hero.inventory.push(itemId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); }
 function sellItem(invIndex) { let item = ITEMS_DB[hero.inventory[invIndex]]; if (!item) return; hero.gold += Math.floor(item.price * 0.5); hero.inventory.splice(invIndex, 1); playSFX('coins'); saveGame(); updateUI(); }
 function healHero() {
-    if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!"); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let cost = Math.max(10, Math.floor(missingHp * 0.5));
-    if (hero.gold < cost) { if (hero.gold > 0) { let affordableHeal = hero.gold * 2; hero.hp += affordableHeal; hero.gold = 0; alert(`Золота хватило лишь на частичное лечение (+${affordableHeal} HP).`); playSFX('coins'); saveGame(); updateUI(); } else { alert(`У вас нет золота!`); } return; }
-    hero.gold -= cost; hero.hp = hero.finalStats.hp; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI();
+    if (hero.hp >= hero.finalStats.hp) return alert("Здоровье уже полное!"); 
+    let missingHp = hero.finalStats.hp - Math.floor(hero.hp); 
+    let cost = Math.max(25, Math.floor(missingHp * 1.5));
+    
+    if (hero.gold < cost) { 
+        if (hero.gold > 0) { 
+            let affordableHeal = Math.floor(hero.gold / 1.5); 
+            hero.hp += affordableHeal; 
+            hero.gold = 0; 
+            alert(`Золота хватило лишь на частичное лечение (+${affordableHeal} HP).`); 
+            playSFX('coins'); saveGame(); updateUI(); 
+        } else { 
+            alert(`У вас нет золота!`); 
+        } 
+        return; 
+    }
+    hero.gold -= cost; hero.hp = hero.finalStats.hp; 
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
+    playSFX('coins'); saveGame(); updateUI();
 }
 
 function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
@@ -1056,7 +1072,8 @@ function updateUI() {
         let invHtml = ''; let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); for (let i = 0; i < gridLimit; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } } else { invHtml += `<div class="inv-item empty"></div>`; } }
         let ig = document.getElementById("ui-inventory-grid"); if(ig) ig.innerHTML = invHtml;
 
-        let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100)); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let healCost = Math.max(10, Math.floor(missingHp * 0.5));
+        let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100)); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); 
+        let healCost = Math.max(25, Math.floor(missingHp * 1.5));
         let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-${healCost}💰)</button>` : ``;
 
         let isDebuff = hero.deathDebuffEnd > Date.now(); let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
