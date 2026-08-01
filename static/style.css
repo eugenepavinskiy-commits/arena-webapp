@@ -541,3 +541,126 @@ html, body {
     .zone-btn { min-height: 34px !important; }
     .raid-img-box { width: 75px; height: 75px; min-width: 75px; min-height: 75px; }
 }
+
+/* === АРЕНА: ТАБЛИЦА ЛИДЕРОВ === */
+.pvp-player-card {
+    display: flex;
+    align-items: center;
+    background: rgba(18, 18, 20, 0.85);
+    border: 1px solid #3f3f46;
+    border-radius: 8px;
+    padding: 10px;
+    gap: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+}
+.pvp-player-card.top-1 { border-color: #fbbf24; box-shadow: 0 4px 15px rgba(251,191,36,0.2); }
+.pvp-player-card.top-2 { border-color: #94a3b8; box-shadow: 0 4px 15px rgba(148,163,184,0.2); }
+.pvp-player-card.top-3 { border-color: #b45309; box-shadow: 0 4px 15px rgba(180,83,9,0.2); }
+
+.pvp-rank {
+    font-size: 16px;
+    font-weight: 900;
+    color: #71717a;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.pvp-player-card.top-1 .pvp-rank { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.8); }
+.pvp-player-card.top-2 .pvp-rank { color: #94a3b8; text-shadow: 0 0 10px rgba(148,163,184,0.8); }
+.pvp-player-card.top-3 .pvp-rank { color: #b45309; text-shadow: 0 0 10px rgba(180,83,9,0.8); }
+
+.pvp-avatar {
+    width: 44px; /* Mobile first ограничение */
+    height: 44px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: radial-gradient(circle, #27272a 0%, #09090b 80%);
+    border: 1px solid #27272a;
+    flex-shrink: 0;
+}
+
+.pvp-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0; /* Чтобы ellipsis работал правильно */
+}
+.pvp-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: #e4e4e7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pvp-stats {
+    font-size: 10px;
+    color: #a1a1aa;
+    text-transform: uppercase;
+}
+
+.pvp-rating {
+    font-size: 14px;
+    font-weight: 900;
+    color: #fbbf24;
+    flex-shrink: 0;
+    text-align: right;
+    text-shadow: 0 2px 4px #000;
+}
+
+/* === БРАТСТВО (ДРУЗЬЯ) === */
+.ref-invite-box {
+    background: rgba(18,18,20,0.85); 
+    border: 1px dashed #ec4899; 
+    border-radius: 12px; 
+    padding: 16px; 
+    text-align: center; 
+    margin-bottom: 20px; 
+    box-shadow: 0 4px 15px rgba(236,72,153,0.1);
+}
+.ref-invite-title {
+    font-size: 16px; 
+    font-weight: 900; 
+    color: #f472b6; 
+    margin-bottom: 8px; 
+    text-transform: uppercase; 
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+    cursor: pointer;
+}
+.ref-invite-desc {
+    font-size: 11px; 
+    color: #a1a1aa; 
+    line-height: 1.4; 
+    margin-bottom: 12px;
+}
+.btn-ref-share {
+    width: 100%; 
+    min-height: 44px; 
+    background: #ec4899; 
+    color: #fff; 
+    border: none; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    font-size: 13px; 
+    text-transform: uppercase; 
+    box-shadow: 0 4px 10px rgba(236,72,153,0.4); 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+.btn-ref-share:active { 
+    transform: scale(0.96); 
+}
+.ref-player-card {
+    display: flex; 
+    align-items: center; 
+    background: #121214; 
+    border: 1px solid #27272a; 
+    border-radius: 8px; 
+    padding: 10px; 
+    gap: 12px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
