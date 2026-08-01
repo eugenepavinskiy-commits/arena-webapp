@@ -30,7 +30,10 @@ if (window.Telegram && window.Telegram.WebApp) {
     fallbackLock();
 }
 
-const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "local_test_user";
+const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? String(tg.initDataUnsafe.user.id) : "local_test_user";
+
+// === FIREBASE БЭКЕНД ===
+const FIREBASE_URL = "https://arenarpg-default-rtdb.europe-west1.firebasedatabase.app/";
 
 // === АУДИО И ЭФФЕКТЫ (СИСТЕМА МИКШИРОВАНИЯ И КРОССФЕЙДА) ===
 const STATIC_URL = "static/";
@@ -335,14 +338,36 @@ function generateLootDrop(enemyObj) {
     return null;
 }
 
-// === СИСТЕМА СОХРАНЕНИЙ И ЗАГРУЗКИ (ПРИОРИТЕТ TELEGRAM CLOUD) ===
+// === СИСТЕМА СОХРАНЕНИЙ И ЗАГРУЗКИ (ПРИОРИТЕТ TELEGRAM CLOUD + FIREBASE) ===
 async function syncSaveToServer() { 
     try { 
-        await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); 
-    } catch (e) { console.warn("Фоновая синхронизация с сервером не удалась (оффлайн).", e); } 
+        let payload = { 
+            id: String(getUserId()), 
+            name: hero.name, 
+            cls: hero.baseClass, 
+            level: hero.level, 
+            rating: hero.rating, 
+            lastUpdate: Date.now() 
+        };
+        await fetch(FIREBASE_URL + 'players/' + getUserId() + '.json', { 
+            method: 'PUT', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
+        }); 
+    } catch (e) { console.warn("Фоновая синхронизация с Firebase не удалась.", e); } 
 }
 
-function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
+function buildLeaderboardHTML(players) { 
+    let html = ''; 
+    players.forEach((p, index) => { 
+        let rank = index + 1; 
+        let cardClass = "pvp-player-card"; 
+        if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; 
+        let avatarCls = p.cls || 'knight'; 
+        html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating || 0}</div></div>`; 
+    }); 
+    return html; 
+}
 
 function saveGame() {
     try {
@@ -545,17 +570,28 @@ async function startPvP() {
 
     let pvpEnemyData = null;
     try { 
-        let res = await fetch(`/api/pvp_opponent/${hero.level}`); 
+        let res = await fetch(FIREBASE_URL + 'players.json'); 
         if(res.ok) { 
             let data = await res.json(); 
-            if(data.status === "ok" && data.opponent) { pvpEnemyData = data.opponent; } 
+            if(data) { 
+                // Преобразуем объект Firebase в массив и убираем себя
+                let players = Object.values(data).filter(p => p.id !== String(getUserId()));
+                if (players.length > 0) {
+                    // Ищем игроков +- 5 уровней от твоего
+                    let valid = players.filter(p => Math.abs((p.level || 1) - hero.level) <= 5);
+                    // Если никого рядом нет, берем любого
+                    if (valid.length === 0) valid = players;
+                    // Выбираем случайного
+                    pvpEnemyData = valid[Math.floor(Math.random() * valid.length)];
+                }
+            } 
         } 
     } catch(e) { console.error("Ошибка поиска противника PvP:", e); }
     
     if (pvpBtn) { pvpBtn.innerText = "ИСКАТЬ ПРОТИВНИКА ⚔️"; pvpBtn.disabled = false; pvpBtn.style.opacity = "1"; }
 
     if (!pvpEnemyData) {
-        alert("Не удалось найти реального противника на сервере. Сервер недоступен или нет игроков подходящего уровня.");
+        alert("Не удалось найти реального противника на сервере. Возможно, вы пока единственный игрок!");
         return; 
     }
 
@@ -980,12 +1016,16 @@ function openScreen(screenName) {
         let scr = document.getElementById("screen-rating");
         if(scr) scr.innerHTML = ` <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div> <div style="background: rgba(18,18,20,0.85); border: 1px solid #38bdf8; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);"> <div style="font-size: 36px; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6);">💎</div> <div style="flex: 1; min-width: 0;"> <div style="font-size: 11px; color: #a1a1aa; font-weight: bold; text-transform: uppercase;">Ваш рейтинг</div> <div style="font-size: 18px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${hero.name}</div> </div> <div style="text-align: right; flex-shrink: 0;"> <div style="font-size: 10px; color: #a1a1aa;">Кубки</div> <div style="font-size: 18px; font-weight: 900; color: #fbbf24;">🏆 ${hero.rating}</div> </div> </div> <div class="stat-group-title">ТОП-10 ИГРОКОВ (СЕРВЕР)</div> <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;"> <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div> </div> `;
 
-        fetch('/api/leaderboard').then(r => r.json()).then(data => {
+        fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
             let tc = document.getElementById("ui-global-top");
-            if(tc && data.status === "ok") {
-                let html = buildLeaderboardHTML(data.leaderboard);
+            if(tc && data) {
+                let players = Object.values(data);
+                players.sort((a,b) => (b.rating||0) - (a.rating||0));
+                let html = buildLeaderboardHTML(players.slice(0, 10));
                 html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;"> <div class="pvp-rank">#</div> <img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"> <div class="pvp-info"> <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div> <div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div> </div> <div class="pvp-rating">🏆 ${hero.rating}</div> </div>`;
                 tc.innerHTML = html;
+            } else if (tc) {
+                 tc.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">В Зале Славы пока пусто. Станьте первым!</div>`;
             }
         }).catch(e => {
             let tc = document.getElementById("ui-global-top");
@@ -997,13 +1037,17 @@ function openScreen(screenName) {
         let elBoard = document.getElementById("ui-pvp-leaderboard");
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
-            fetch('/api/leaderboard').then(r => r.json()).then(data => {
+            fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
                 let elBoard2 = document.getElementById("ui-pvp-leaderboard");
-                if(elBoard2 && data.status === "ok") {
-                    let top3 = data.leaderboard.slice(0, 3);
+                if(elBoard2 && data) {
+                    let players = Object.values(data);
+                    players.sort((a,b) => (b.rating||0) - (a.rating||0));
+                    let top3 = players.slice(0, 3);
                     let html = buildLeaderboardHTML(top3);
                     html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
                     elBoard2.innerHTML = html;
+                } else if (elBoard2) {
+                    elBoard2.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`;
                 }
             }).catch(e => {
                 let elBoard2 = document.getElementById("ui-pvp-leaderboard");
