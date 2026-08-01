@@ -133,7 +133,6 @@ function createDynamicItem(baseTemplateId, targetLevel, rarity, isBoss = false, 
         let idx = Math.floor(Math.random() * possibleStats.length);
         let statName = possibleStats[idx]; possibleStats.splice(idx, 1);
         
-        // ФИКС ГЕНЕРАТОРА: Процентные статы зависят от редкости, а не от уровня
         let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(statName);
         if (isPct) {
             let pctBase = { "common": 2, "rare": 3, "epic": 5, "legendary": 7, "relic": 10 }[rarity] || 2;
@@ -173,7 +172,8 @@ function generateLootDrop(enemyObj) {
     }
 
     if (Math.random() * 100 <= dropChance) {
-        let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass)));
+        // ФИКС МУТАЦИЙ ЛУТА: берем только базовые болванки (не dropOnly и не апгрейженные)
+        let pool = Object.keys(ITEMS_DB).filter(id => !ITEMS_DB[id].inShop && ITEMS_DB[id].type !== "consumable" && !ITEMS_DB[id].dropOnly && !id.includes('_upg_') && (!ITEMS_DB[id].allowedClasses || ITEMS_DB[id].allowedClasses.includes(hero.baseClass)));
         if(pool.length === 0) return null;
         let baseTemplate = pool[Math.floor(Math.random() * pool.length)];
         
@@ -727,7 +727,15 @@ function upgradeItem() {
     newItem.lvl += 1; 
     newItem.upgradeCount = upgCount + 1; 
     newItem.price = Math.floor(newItem.price * 1.5); 
-    for (let s in newItem.stats) newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
+    for (let s in newItem.stats) {
+        // ФИКС КУЗНИ: Процентные статы растут только на 1% за ковку.
+        let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
+        if (isPct) {
+            newItem.stats[s] += 1; 
+        } else {
+            newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); 
+        }
+    }
     ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
     addQuestProgress('forge_upg', 1); 
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
@@ -760,10 +768,10 @@ function calculateStats(isCombat = false) {
     if (hasTalent('k2a')) hp = Math.floor(hp * 1.25); if (hasTalent('b2a')) hp = Math.floor(hp * 1.20); if (setCounts['bloodied'] >= 2) hp = Math.floor(hp * 1.20);
     if (GOD_MODE) { hp = 999999; hero.hp = 999999; hero.deathDebuffEnd = 0; } 
     let damage = Math.floor(total.str * (w.str_dmg || 0) + total.agi * (w.agi_dmg || 0) + total.atk);
-    if (hasTalent('k1b')) damage += Math.floor(total.armor * 0.25); // НЕРФ/АП Рыцаря (15% -> 25%)
+    if (hasTalent('k1b')) damage += Math.floor(total.armor * 0.25); 
     
     total.critChance += total.luk * (w.luk_crit || 0) + total.mst * (w.mst_crit || 0); if (hasTalent('s3b')) total.critChance += 20; 
-    total.critChance = Math.min(80, total.critChance); // ХАРДКАП КРИТА 80%
+    total.critChance = Math.min(80, total.critChance); // ФИКС: ХАРДКАП КРИТА 80%
 
     total.dodge += total.agi * (w.agi_dodge || 0) + total.luk * (w.luk_dodge || 0); if (hasTalent('s3a')) total.dodge += 15; if (hasTalent('r3c')) total.dodge += 10; if (setCounts['void'] >= 2) total.dodge += 15;
     total.armorPen += total.mst * (w.mst_pen || 0); total.critDmg += total.mst * (w.mst_cdmg || 0); if (hasTalent('b2b')) total.critDmg += 50; if (setCounts['bloodied'] >= 2) total.critDmg += 30;
@@ -1105,7 +1113,12 @@ function updateUI() {
                 document.getElementById("f-item-name").innerText = item.name; document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`;
                 let statHtml = "";
                 for (let s in item.stats) {
-                    let oldVal = item.stats[s]; let newVal = Math.max(1, Math.ceil(oldVal * 1.15)); let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %', dmg_fire:'Урон 🔥', dmg_ice:'Урон ❄️', dmg_dark:'Урон ☠️', dmg_holy:'Урон ☀️', lifesteal:'Вампиризм %', counter:'Контратака %', thorns:'Шипы %'}[s] || s;
+                    let oldVal = item.stats[s]; 
+                    // ФИКС ОТОБРАЖЕНИЯ КУЗНИ
+                    let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
+                    let newVal = isPct ? oldVal + 1 : Math.max(1, Math.ceil(oldVal * 1.15));
+                    
+                    let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %', dmg_fire:'Урон 🔥', dmg_ice:'Урон ❄️', dmg_dark:'Урон ☠️', dmg_holy:'Урон ☀️', lifesteal:'Вампиризм %', counter:'Контратака %', thorns:'Шипы %'}[s] || s;
                     statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`;
                 }
                 document.getElementById("f-item-stats").innerHTML = statHtml;
