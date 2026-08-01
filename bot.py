@@ -5,14 +5,11 @@ import threading
 import sqlite3
 import telebot
 import urllib.request
-# Заменили render_template на send_file
 from flask import Flask, jsonify, request, send_file
 from telebot.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
-
-# Убрали привязку к папке templates
 app = Flask(__name__)
 
 # --- ПОДГОТОВКА БАЗЫ ДАННЫХ (SQLite) ---
@@ -37,10 +34,8 @@ def init_db():
 init_db()
 
 # --- МАРШРУТЫ FLASK (ВЕБ-ПРИЛОЖЕНИЕ И API) ---
-
 @app.route("/")
 def index():
-    # Теперь сервер берет свежий index.html прямо из корня проекта!
     return send_file("index.html")
 
 @app.route("/api/save", methods=["POST"])
@@ -162,11 +157,9 @@ def create_invoice():
         return jsonify({"error": str(e)}), 500
 
 # --- ЛОГИКА БОТА (TELEGRAM) ---
-
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
-    # Обновленная ссылка с новой версией (v=27) для принудительного сброса кэша
-    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=27"
+    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=28"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
@@ -198,7 +191,6 @@ def send_welcome(message):
         )
 
 # --- ЗАПУСК СЕРВЕРА И БОТА ---
-
 def run_bot():
     bot.infinity_polling()
 
