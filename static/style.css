@@ -21,8 +21,8 @@ html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
     display: flex; flex-direction: column; position: relative;
     padding: 12px 6px 0 6px; 
-    /* ФИКС: Умный отступ, учитывающий плавающую шапку Telegram */
-    padding-top: max(env(safe-area-inset-top, 12px), var(--tg-content-safe-area-inset-top, 45px));
+    /* ФИКС ОВЕРЛЕЯ TELEGRAM: Жесткий отступ от системной шапки */
+    padding-top: calc(15px + var(--tg-safe-area-inset-top, 40px));
     overflow: hidden;
     box-shadow: 0 0 30px rgba(0,0,0,0.9);
 }
