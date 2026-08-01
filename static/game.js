@@ -1,5 +1,37 @@
-// === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
-if (window.tg && window.tg.WebApp) { window.tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }
+// === ИНИЦИАЛИЗАЦИЯ TELEGRAM И ЖЕСТКИЙ ФИКС ЭКРАНА ===
+if (window.Telegram && window.Telegram.WebApp) { 
+    window.tg = window.Telegram.WebApp; 
+    tg.ready(); 
+    tg.expand(); 
+    
+    // Блокируем свайпы закрытия оболочки (для новых версий API)
+    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+    
+    // Функция-якорь, которая гвоздями прибивает высоту к экрану
+    const lockViewport = () => {
+        let vh = tg.viewportStableHeight || window.innerHeight;
+        document.documentElement.style.height = `${vh}px`;
+        document.body.style.height = `${vh}px`;
+        document.body.style.position = 'fixed';
+        document.body.style.overflow = 'hidden';
+        document.body.style.width = '100%';
+        window.scrollTo(0, 0);
+    };
+    
+    // Телеграм часто меняет размер с задержкой при разворачивании, ловим все события
+    tg.onEvent('viewportChanged', lockViewport);
+    window.addEventListener('resize', lockViewport);
+    setTimeout(lockViewport, 50);
+    setTimeout(lockViewport, 300);
+} else {
+    window.tg = null;
+    const fallbackLock = () => {
+        document.documentElement.style.height = `${window.innerHeight}px`;
+        document.body.style.height = `${window.innerHeight}px`;
+    };
+    window.addEventListener('resize', fallbackLock);
+    fallbackLock();
+}
 
 const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "local_test_user";
 
@@ -188,7 +220,7 @@ async function syncSaveToServer() { try { await fetch('/api/save', { method: 'PO
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
 function saveGame() {
     try {
-        hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Пылесос призраков
+        hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
         let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
         let activeItemIds = [...hero.inventory]; for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
         let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
@@ -689,10 +721,9 @@ function formatStats(stats, eqStats = null) {
 function openInspectModal(invIndex) {
     playSFX('click'); inspectInvIndex = invIndex; let itemId = hero.inventory[invIndex]; let item = ITEMS_DB[itemId]; if (!item) return;
     
-    // Ищем надетую вещь для сравнения
     let eqStats = null;
     if (item.type !== 'consumable') {
-        let slot = item.type; if (slot === 'two_handed') slot = 'weapon1'; if (slot === 'ring') slot = 'ring1'; // Дефолтное кольцо 1
+        let slot = item.type; if (slot === 'two_handed') slot = 'weapon1'; if (slot === 'ring') slot = 'ring1'; 
         let eqItem = hero.equipment[slot];
         if (eqItem && eqItem.id !== "blocked") eqStats = eqItem.stats;
     }
@@ -796,7 +827,7 @@ function upgradeItem() {
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
 
 function calculateStats(isCombat = false) {
-    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Чистим призраков из инвентаря
+    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); 
     let cls = CLASSES[hero.baseClass]; let lvlBonus = hero.level - 1; let setCounts = {};
     for (let key in hero.equipment) { let item = hero.equipment[key]; if (item && item.setId && item.id !== "blocked") { setCounts[item.setId] = (setCounts[item.setId] || 0) + 1; } }
     hero.setCounts = setCounts; hero.flags = { templar: setCounts['templar'] >= 4, bloodied: setCounts['bloodied'] >= 4, void: setCounts['void'] >= 4, storm: setCounts['storm'] >= 4 };
@@ -951,8 +982,6 @@ function renderFriends() {
 }
 
 function updateUI() {
-    hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]); // Очищаем массив от невалидных ID (Призраков)
-    
     let bloodScreen = document.getElementById('blood-screen'); if (hero.deathDebuffEnd > Date.now()) { if(bloodScreen) bloodScreen.classList.add('active'); } else { if(bloodScreen) bloodScreen.classList.remove('active'); }
     document.getElementById("ui-gold").innerText = hero.gold; document.getElementById("ui-gems").innerText = hero.gems; document.getElementById("ui-top-lvl").innerText = hero.level;
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
