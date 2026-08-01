@@ -35,11 +35,10 @@ const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.use
 // === FIREBASE БЭКЕНД ===
 const FIREBASE_URL = "https://arenarpg-default-rtdb.europe-west1.firebasedatabase.app/";
 
-// Глобальный кэш игроков для Зала Славы
 let cachedPlayersList = [];
 let currentRatingTab = 'pvp';
 
-// === АУДИО И ЭФФЕКТЫ (СИСТЕМА МИКШИРОВАНИЯ И КРОССФЕЙДА) ===
+// === АУДИО И ЭФФЕКТЫ ===
 const STATIC_URL = "static/";
 const SFX_FILES = { click: STATIC_URL + "sounds/click.mp3", hit: STATIC_URL + "sounds/hit.mp3", crit: STATIC_URL + "sounds/crit.mp3", dodge: STATIC_URL + "sounds/dodge.mp3", block: STATIC_URL + "sounds/block.mp3", skill: STATIC_URL + "sounds/skill.mp3", coins: STATIC_URL + "sounds/coins.mp3", forge: STATIC_URL + "sounds/forge.mp3", win: STATIC_URL + "sounds/win.mp3", death: STATIC_URL + "sounds/death.mp3" };
 
@@ -49,7 +48,6 @@ const BGM_FILES = {
     boss: STATIC_URL + "sounds/bgm_boss.mp3" 
 };
 
-// Жесткие лимиты громкости для баланса
 const BGM_VOLUMES = { menu: 0.15, combat: 0.25, boss: 0.35 };
 
 let sfxMuted = false;
@@ -58,7 +56,6 @@ const audioCtx = new AudioContext({ latencyHint: 'interactive' });
 const SFX_BUFFERS = {};
 let audioUnlocked = false;
 
-// Студийный компрессор для защиты от перегрузки динамиков
 const masterCompressor = audioCtx.createDynamicsCompressor();
 masterCompressor.threshold.value = -12;
 masterCompressor.knee.value = 10;
@@ -80,101 +77,41 @@ for (let key in BGM_FILES) {
 
 function playBGM(trackId) {
     if (currentBgmId === trackId && !bgmTracks[trackId].paused && bgmTracks[trackId].volume > 0) return;
-    
-    let oldTrackId = currentBgmId;
-    currentBgmId = trackId;
-    if (sfxMuted || !audioUnlocked) return;
-
-    clearInterval(fadeInterval);
-    let oldAudio = bgmTracks[oldTrackId];
-    let newAudio = bgmTracks[trackId];
-    let targetVol = BGM_VOLUMES[trackId] || 0.25;
-
-    if (newAudio.paused) {
-        newAudio.volume = 0;
-        let p = newAudio.play();
-        if (p !== undefined) p.catch(e => {});
-    }
-
+    let oldTrackId = currentBgmId; currentBgmId = trackId; if (sfxMuted || !audioUnlocked) return;
+    clearInterval(fadeInterval); let oldAudio = bgmTracks[oldTrackId]; let newAudio = bgmTracks[trackId]; let targetVol = BGM_VOLUMES[trackId] || 0.25;
+    if (newAudio.paused) { newAudio.volume = 0; let p = newAudio.play(); if (p !== undefined) p.catch(e => {}); }
     fadeInterval = setInterval(() => {
         let done = true;
-        if (oldAudio && oldTrackId !== trackId && oldAudio.volume > 0.02) {
-            oldAudio.volume = Math.max(0, oldAudio.volume - 0.02);
-            done = false;
-        } else if (oldAudio && oldTrackId !== trackId) {
-            oldAudio.pause();
-            oldAudio.volume = 0;
-        }
-        if (newAudio.volume < targetVol - 0.02) {
-            newAudio.volume = Math.min(targetVol, newAudio.volume + 0.02);
-            done = false;
-        } else {
-            newAudio.volume = targetVol;
-        }
-
+        if (oldAudio && oldTrackId !== trackId && oldAudio.volume > 0.02) { oldAudio.volume = Math.max(0, oldAudio.volume - 0.02); done = false; } else if (oldAudio && oldTrackId !== trackId) { oldAudio.pause(); oldAudio.volume = 0; }
+        if (newAudio.volume < targetVol - 0.02) { newAudio.volume = Math.min(targetVol, newAudio.volume + 0.02); done = false; } else { newAudio.volume = targetVol; }
         if (done) clearInterval(fadeInterval);
     }, 40);
 }
 
-async function initAudio() { 
-    for (let key in SFX_FILES) { 
-        try { 
-            let res = await fetch(SFX_FILES[key]); 
-            if (!res.ok) continue; 
-            SFX_BUFFERS[key] = await audioCtx.decodeAudioData(await res.arrayBuffer()); 
-        } catch(e) {} 
-    } 
-}
+async function initAudio() { for (let key in SFX_FILES) { try { let res = await fetch(SFX_FILES[key]); if (!res.ok) continue; SFX_BUFFERS[key] = await audioCtx.decodeAudioData(await res.arrayBuffer()); } catch(e) {} } }
 initAudio();
 
 function unlockAudio() { 
-    if (audioUnlocked) return; 
-    if (audioCtx.state === 'suspended') audioCtx.resume(); 
-    let buffer = audioCtx.createBuffer(1, 1, 22050); 
-    let source = audioCtx.createBufferSource(); 
-    source.buffer = buffer; 
-    source.connect(audioCtx.destination); 
-    source.start(0); 
-    audioUnlocked = true; 
-    document.removeEventListener('touchstart', unlockAudio); 
-    document.removeEventListener('click', unlockAudio); 
-    
+    if (audioUnlocked) return; if (audioCtx.state === 'suspended') audioCtx.resume(); 
+    let buffer = audioCtx.createBuffer(1, 1, 22050); let source = audioCtx.createBufferSource(); source.buffer = buffer; source.connect(audioCtx.destination); source.start(0); 
+    audioUnlocked = true; document.removeEventListener('touchstart', unlockAudio); document.removeEventListener('click', unlockAudio); 
     if (currentBgmId && !sfxMuted) playBGM(currentBgmId);
 }
 document.addEventListener('touchstart', unlockAudio, { once: true }); document.addEventListener('click', unlockAudio, { once: true });
 
 function playSFX(id) { 
-    if (sfxMuted || !SFX_BUFFERS[id]) return; 
-    let now = Date.now();
-    if (sfxThrottle[id] && now - sfxThrottle[id] < 100) return;
-    sfxThrottle[id] = now;
-
+    if (sfxMuted || !SFX_BUFFERS[id]) return; let now = Date.now(); if (sfxThrottle[id] && now - sfxThrottle[id] < 100) return; sfxThrottle[id] = now;
     if (audioCtx.state === 'suspended') audioCtx.resume(); 
-    try { 
-        let source = audioCtx.createBufferSource(); 
-        source.buffer = SFX_BUFFERS[id]; 
-        let gainNode = audioCtx.createGain(); 
-        gainNode.gain.value = 0.5; 
-        source.connect(gainNode); 
-        gainNode.connect(masterCompressor); 
-        source.start(0); 
-    } catch(e) {} 
+    try { let source = audioCtx.createBufferSource(); source.buffer = SFX_BUFFERS[id]; let gainNode = audioCtx.createGain(); gainNode.gain.value = 0.5; source.connect(gainNode); gainNode.connect(masterCompressor); source.start(0); } catch(e) {} 
 }
 
 window.toggleMute = function() { 
     sfxMuted = !sfxMuted; 
-    if (sfxMuted) {
-        clearInterval(fadeInterval);
-        for(let key in bgmTracks) { bgmTracks[key].pause(); bgmTracks[key].volume = 0; }
-    } else {
-        playSFX('click'); 
-        if (audioUnlocked) playBGM(currentBgmId);
-    }
+    if (sfxMuted) { clearInterval(fadeInterval); for(let key in bgmTracks) { bgmTracks[key].pause(); bgmTracks[key].volume = 0; } } else { playSFX('click'); if (audioUnlocked) playBGM(currentBgmId); }
     updateUI(); 
 };
 
 // === ОСТАЛЬНАЯ ЛОГИКА ===
-
 const VFX_DB = { attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" };
 function playLottieEffect(targetId, animationUrl, extraClass = "") { let targetNode = document.getElementById(targetId); if (!targetNode) return; let fxContainer = document.createElement('div'); fxContainer.className = 'lottie-fx-layer ' + extraClass; targetNode.appendChild(fxContainer); let anim = lottie.loadAnimation({ container: fxContainer, renderer: 'svg', loop: false, autoplay: true, path: animationUrl }); anim.addEventListener('complete', () => { fxContainer.remove(); anim.destroy(); }); }
 function shakeScreen() { let app = document.getElementById("app-container"); if(app) { app.classList.remove("shake-hard"); void app.offsetWidth; app.classList.add("shake-hard"); setTimeout(() => app.classList.remove("shake-hard"), 350); } }
@@ -399,7 +336,6 @@ function applyLoadedSave(savedHero, savedItems) {
 
 async function loadGame() {
     let loadedFromCloud = false;
-    
     if (window.tg && tg.CloudStorage) {
         try {
             let cloudValues = await new Promise((resolve) => {
@@ -407,22 +343,15 @@ async function loadGame() {
                     if (!err && values) resolve(values); else resolve(null);
                 });
             });
-            
             if (cloudValues && cloudValues['tg_rpg_hero']) {
                 applyLoadedSave(cloudValues['tg_rpg_hero'], cloudValues['tg_rpg_custom_items']);
                 loadedFromCloud = true;
             }
         } catch(e) { console.error("Ошибка при чтении из CloudStorage:", e); }
     }
-    
     if (!loadedFromCloud) {
-        try { 
-            let localHero = localStorage.getItem('tg_rpg_hero'); 
-            let localItems = localStorage.getItem('tg_rpg_custom_items'); 
-            if (localHero) applyLoadedSave(localHero, localItems); 
-        } catch(e) {}
+        try { let localHero = localStorage.getItem('tg_rpg_hero'); let localItems = localStorage.getItem('tg_rpg_custom_items'); if (localHero) applyLoadedSave(localHero, localItems); } catch(e) {}
     }
-    
     playBGM('menu');
 }
 
@@ -491,10 +420,7 @@ function changeFloor(dir) {
 
 function initCombat() {
     hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
-    if (hero.inventory.length > 15) { 
-        if (currentScreen !== 'hero') openScreen('hero'); 
-        return alert("⚠️ Сумка переполнена! Продайте или наденьте лишние вещи (Максимум 15), чтобы начать бой."); 
-    }
+    if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте лишние вещи (Максимум 15), чтобы начать бой."); }
     combatMode = 'pve'; enemy = generateEnemy(hero.floor); 
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, undyingUsed: false, potionUsed: false, scrollUsed: false };
     calculateStats(true); 
@@ -570,10 +496,7 @@ async function startPvP() {
     
     if (pvpBtn) { pvpBtn.innerText = "ИСКАТЬ ПРОТИВНИКА ⚔️"; pvpBtn.disabled = false; pvpBtn.style.opacity = "1"; }
 
-    if (!pvpEnemyData) {
-        alert("Не удалось найти реального противника на сервере. Возможно, вы пока единственный игрок!");
-        return; 
-    }
+    if (!pvpEnemyData) { alert("Не удалось найти реального противника на сервере. Возможно, вы пока единственный игрок!"); return; }
 
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     combatMode = 'pvp'; document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-PVE').classList.add('active'); currentScreen = 'PVE';
@@ -589,27 +512,14 @@ function fleeCombat() {
     if (isTurnExecuting || hero.hp <= 0) return;
     if (combatMode === 'pvp') return alert("С Арены нельзя сбежать! Сражайтесь до конца.");
     if (!confirm("Сбежать с поля боя? Текущий прогресс здоровья врага будет потерян!")) return;
-    
-    playSFX('dodge');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-    
-    if (combatMode === 'raid') {
-        combatMode = 'pve'; 
-        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
-        playBGM('menu'); 
-        openScreen('boss');
-    } else {
-        initCombat(); 
-        playBGM('menu'); 
-        openScreen('hero');
-    }
+    playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+    if (combatMode === 'raid') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } playBGM('menu'); openScreen('boss'); } else { initCombat(); playBGM('menu'); openScreen('hero'); }
 }
 
 function buildLeaderboardHTML(players) { 
     let html = ''; 
     players.forEach((p, index) => { 
-        let rank = index + 1; 
-        let cardClass = "pvp-player-card"; 
+        let rank = index + 1; let cardClass = "pvp-player-card"; 
         if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; 
         let avatarCls = p.cls || 'knight'; 
         html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating || 0}</div></div>`; 
@@ -617,231 +527,71 @@ function buildLeaderboardHTML(players) {
     return html; 
 }
 
-// === УПРАВЛЕНИЕ МУЛЬТИ-РЕЙТИНГОМ (ЗАЛ СЛАВЫ) ===
-function switchRatingTab(tab) {
-    playSFX('click');
-    currentRatingTab = tab;
-    document.querySelectorAll('.rating-tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-rating-' + tab).classList.add('active');
-    renderRatingScreen();
-}
+// === УПРАВЛЕНИЕ МУЛЬТИ-РЕЙТИНГОМ ===
+function switchRatingTab(tab) { playSFX('click'); currentRatingTab = tab; document.querySelectorAll('.rating-tab').forEach(el => el.classList.remove('active')); document.getElementById('tab-rating-' + tab).classList.add('active'); renderRatingScreen(); }
 
 function renderRatingScreen() {
-    let pedestalContainer = document.getElementById("ui-rating-pedestal");
-    let listContainer = document.getElementById("ui-global-top");
-    let listTitle = document.getElementById("ui-rating-list-title");
-    
+    let pedestalContainer = document.getElementById("ui-rating-pedestal"); let listContainer = document.getElementById("ui-global-top"); let listTitle = document.getElementById("ui-rating-list-title");
     if (!pedestalContainer || !listContainer) return;
-
-    if (cachedPlayersList.length === 0) {
-        pedestalContainer.innerHTML = `<div style="text-align:center; color:#71717a; width:100%; padding:20px;">Нет данных игроков</div>`;
-        listContainer.innerHTML = ``;
-        return;
-    }
+    if (cachedPlayersList.length === 0) { pedestalContainer.innerHTML = `<div style="text-align:center; color:#71717a; width:100%; padding:20px;">Нет данных игроков</div>`; listContainer.innerHTML = ``; return; }
 
     let sorted = [...cachedPlayersList];
-    if (currentRatingTab === 'pvp') {
-        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО КУБКАМ";
-    } else if (currentRatingTab === 'pve') {
-        sorted.sort((a, b) => (b.maxFloor || 1) - (a.maxFloor || 1));
-        if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО ЭТАЖАМ";
-    } else if (currentRatingTab === 'wealth') {
-        sorted.sort((a, b) => (b.gold || 0) - (a.gold || 0));
-        if(listTitle) listTitle.innerText = "МАГНАТЫ СЕРВЕРА";
-    }
+    if (currentRatingTab === 'pvp') { sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0)); if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО КУБКАМ"; } else if (currentRatingTab === 'pve') { sorted.sort((a, b) => (b.maxFloor || 1) - (a.maxFloor || 1)); if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО ЭТАЖАМ"; } else if (currentRatingTab === 'wealth') { sorted.sort((a, b) => (b.gold || 0) - (a.gold || 0)); if(listTitle) listTitle.innerText = "МАГНАТЫ СЕРВЕРА"; }
 
-    let top3 = sorted.slice(0, 3);
-    let rest = sorted.slice(3);
-
-    let orderedTop = [];
-    if (top3[1]) orderedTop.push({p: top3[1], rank: 2, cls: 'ped-2'});
-    if (top3[0]) orderedTop.push({p: top3[0], rank: 1, cls: 'ped-1'});
-    if (top3[2]) orderedTop.push({p: top3[2], rank: 3, cls: 'ped-3'});
+    let top3 = sorted.slice(0, 3); let rest = sorted.slice(3);
+    let orderedTop = []; if (top3[1]) orderedTop.push({p: top3[1], rank: 2, cls: 'ped-2'}); if (top3[0]) orderedTop.push({p: top3[0], rank: 1, cls: 'ped-1'}); if (top3[2]) orderedTop.push({p: top3[2], rank: 3, cls: 'ped-3'});
 
     let pedHtml = '';
-    orderedTop.forEach(item => {
-        let p = item.p;
-        let avatarCls = p.cls || 'knight';
-        let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`);
-        let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;');
-        
-        pedHtml += `
-            <div class="pedestal-item ${item.cls}" onclick='openPlayerProfile(${pIdStr})'>
-                <img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pedestal-avatar">
-                <div class="pedestal-base">
-                    <div class="pedestal-name">${p.name}</div>
-                    <div class="pedestal-score">${scoreVal}</div>
-                </div>
-            </div>
-        `;
-    });
+    orderedTop.forEach(item => { let p = item.p; let avatarCls = p.cls || 'knight'; let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`); let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;'); pedHtml += `<div class="pedestal-item ${item.cls}" onclick='openPlayerProfile(${pIdStr})'><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pedestal-avatar"><div class="pedestal-base"><div class="pedestal-name">${p.name}</div><div class="pedestal-score">${scoreVal}</div></div></div>`; });
     pedestalContainer.innerHTML = pedHtml;
 
     let listHtml = '';
-    rest.forEach((p, idx) => {
-        let rank = idx + 4;
-        let avatarCls = p.cls || 'knight';
-        let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`);
-        let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;');
-        
-        listHtml += `
-            <div class="pvp-player-card" onclick='openPlayerProfile(${pIdStr})' style="cursor:pointer;">
-                <div class="pvp-rank">${rank}</div>
-                <img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar">
-                <div class="pvp-info">
-                    <div class="pvp-name">${p.name}</div>
-                    <div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div>
-                </div>
-                <div class="pvp-rating">${scoreVal}</div>
-            </div>
-        `;
-    });
+    rest.forEach((p, idx) => { let rank = idx + 4; let avatarCls = p.cls || 'knight'; let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`); let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;'); listHtml += `<div class="pvp-player-card" onclick='openPlayerProfile(${pIdStr})' style="cursor:pointer;"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">${scoreVal}</div></div>`; });
 
-    let myAvatarCls = hero.baseClass;
-    let myScoreVal = currentRatingTab === 'pvp' ? `🏆 ${hero.rating}` : (currentRatingTab === 'pve' ? `🏰 ${hero.maxFloor} эт.` : `💰 ${hero.gold}`);
-    listHtml += `
-        <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;">
-            <div class="pvp-rank">#</div>
-            <img src="${CLASS_AVATARS[myAvatarCls]}" class="pvp-avatar">
-            <div class="pvp-info">
-                <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div>
-                <div class="pvp-stats">${CLASSES[myAvatarCls].name} • Ур. ${hero.level}</div>
-            </div>
-            <div class="pvp-rating">${myScoreVal}</div>
-        </div>
-    `;
-
+    let myAvatarCls = hero.baseClass; let myScoreVal = currentRatingTab === 'pvp' ? `🏆 ${hero.rating}` : (currentRatingTab === 'pve' ? `🏰 ${hero.maxFloor} эт.` : `💰 ${hero.gold}`);
+    listHtml += `<div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[myAvatarCls]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[myAvatarCls].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">${myScoreVal}</div></div>`;
     listContainer.innerHTML = listHtml;
 }
 
 function openPlayerProfile(pData) {
-    playSFX('click');
-    let avatarCls = pData.cls || 'knight';
-    document.getElementById("pp-avatar").src = CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight'];
-    document.getElementById("pp-name").innerText = pData.name;
-    document.getElementById("pp-class").innerText = `${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Странник'} • Ур. ${pData.level || 1}`;
-    document.getElementById("pp-rating").innerText = `🏆 ${pData.rating || 0}`;
-    document.getElementById("pp-floor").innerText = `🏰 ${pData.maxFloor || 1}`;
-    document.getElementById("pp-fights").innerText = `⚔️ ${pData.level ? pData.level * 3 : 5}`; 
-    document.getElementById("pp-gold").innerText = `💰 ${pData.gold || 0}`;
-    
-    document.getElementById("player-profile-modal").classList.add("show");
+    playSFX('click'); let avatarCls = pData.cls || 'knight'; document.getElementById("pp-avatar").src = CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']; document.getElementById("pp-name").innerText = pData.name; document.getElementById("pp-class").innerText = `${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Странник'} • Ур. ${pData.level || 1}`; document.getElementById("pp-rating").innerText = `🏆 ${pData.rating || 0}`; document.getElementById("pp-floor").innerText = `🏰 ${pData.maxFloor || 1}`; document.getElementById("pp-fights").innerText = `⚔️ ${pData.level ? pData.level * 3 : 5}`; document.getElementById("pp-gold").innerText = `💰 ${pData.gold || 0}`; document.getElementById("player-profile-modal").classList.add("show");
 }
 
-function closePlayerProfile() {
-    playSFX('click');
-    document.getElementById("player-profile-modal").classList.remove("show");
-}
+function closePlayerProfile() { playSFX('click'); document.getElementById("player-profile-modal").classList.remove("show"); }
 
 function planEnemyTurn() { if(!enemy) return; enemy.turnCounter++; let delay = hasTalent('r2c') ? 3 : 0; if (enemy.isRaid) { let turnsLeft = (15 + delay) - enemy.turnCounter; if (turnsLeft <= 0) enemy.nextAtkZone = 'ENRAGE'; else if (enemy.turnCounter % 4 === 0) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } else { let ultMod = (enemy.turnCounter - delay) % 4; if (enemy.isBoss && ultMod === 0 && enemy.turnCounter > delay) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } updateIntentDisplay(); }
 
-function updateIntentDisplay() { 
-    let el = document.getElementById("combat-intent"); if(!el || !enemy) return; 
-    if (enemy.nextAtkZone === 'ENRAGE') { 
-        el.innerHTML = `⚠️ БОСС ВПАЛ В БЕЗУМИЕ! СМЕРТЬ НЕМИНУЕМА!`; 
-        el.className = "intent-box ultimatum popup"; 
-        el.style.display = "block";
-    } else if (enemy.nextAtkZone === 'ULTIMATUM') { 
-        el.innerHTML = `☠️ БОСС: ФИНАЛЬНАЯ АТАКА!`; 
-        el.className = "intent-box ultimatum popup"; 
-        el.style.display = "block";
-    } else { 
-        el.style.display = "none"; 
-    } 
-}
+function updateIntentDisplay() { let el = document.getElementById("combat-intent"); if(!el || !enemy) return; if (enemy.nextAtkZone === 'ENRAGE') { el.innerHTML = `⚠️ БОСС ВПАЛ В БЕЗУМИЕ! СМЕРТЬ НЕМИНУЕМА!`; el.className = "intent-box ultimatum popup"; el.style.display = "block"; } else if (enemy.nextAtkZone === 'ULTIMATUM') { el.innerHTML = `☠️ БОСС: ФИНАЛЬНАЯ АТАКА!`; el.className = "intent-box ultimatum popup"; el.style.display = "block"; } else { el.style.display = "none"; } }
 
-function triggerClashAnim(isHero, isEnemy, hitType = "normal") { 
-    if (isHero) { 
-        let hc = document.getElementById("entity-hero-box"); 
-        if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); } 
-    } 
-    if (isEnemy) { 
-        let ec = document.getElementById("entity-enemy-box"); 
-        if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); } 
-    } 
-    
-    let sp = document.getElementById("clash-spark-fx"); 
-    if(sp) { 
-        sp.className = `clash-spark ${hitType} spark-anim`; 
-        void sp.offsetWidth; 
-    } 
-}
+function triggerClashAnim(isHero, isEnemy, hitType = "normal") { if (isHero) { let hc = document.getElementById("entity-hero-box"); if(hc) { hc.classList.remove("clash-hero-anim"); void hc.offsetWidth; hc.classList.add("clash-hero-anim"); } } if (isEnemy) { let ec = document.getElementById("entity-enemy-box"); if(ec) { ec.classList.remove("clash-enemy-anim"); void ec.offsetWidth; ec.classList.add("clash-enemy-anim"); } } let sp = document.getElementById("clash-spark-fx"); if(sp) { sp.className = `clash-spark ${hitType} spark-anim`; void sp.offsetWidth; } }
 
-function triggerHitAnim(elementId) { 
-    let el = document.getElementById(elementId); 
-    if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); } 
-}
+function triggerHitAnim(elementId) { let el = document.getElementById(elementId); if(el) { el.classList.remove("hit-anim"); void el.offsetWidth; el.classList.add("hit-anim"); } }
 
 function showDmgPopup(entityBoxId, text, colorClass) { let box = document.getElementById(entityBoxId); if (!box) return; let pop = document.createElement("div"); pop.className = `dmg-popup ${colorClass}`; pop.innerText = text; box.appendChild(pop); setTimeout(() => { pop.remove(); }, 800); }
 
-function selectZone(type, zone) { 
-    if(type === 'atk') combatState.atkZone = zone; 
-    if(type === 'def') combatState.defZone = zone; 
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); 
-    playSFX('click'); 
-    updateUI(); 
-}
+function selectZone(type, zone) { if(type === 'atk') combatState.atkZone = zone; if(type === 'def') combatState.defZone = zone; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 
 function resetCombatZones() { combatState.atkZone = null; combatState.defZone = null; }
 function logCombat(text) { let logBox = document.getElementById("combat-log"); if (logBox) { logBox.innerHTML += `<div class="log-entry">${text}</div>`; while (logBox.children.length > 25) logBox.removeChild(logBox.firstChild); logBox.scrollTop = logBox.scrollHeight; } }
 
 function useConsumableInCombat(itemId, type) {
-    if (isTurnExecuting || hero.hp <= 0 && !GOD_MODE) return;
-    if (type === 'potion' && combatState.potionUsed) return;
-    if (type === 'scroll' && combatState.scrollUsed) return;
-
-    let invIndex = hero.inventory.indexOf(itemId); if (invIndex === -1) return;
-    let item = ITEMS_DB[itemId]; if (!item || item.type !== 'consumable') return;
-    if (item.subtype === 'heal' && hero.hp >= hero.combatStats.hp) return alert("Здоровье уже полное!");
-    playSFX('skill');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+    if (isTurnExecuting || hero.hp <= 0 && !GOD_MODE) return; if (type === 'potion' && combatState.potionUsed) return; if (type === 'scroll' && combatState.scrollUsed) return;
+    let invIndex = hero.inventory.indexOf(itemId); if (invIndex === -1) return; let item = ITEMS_DB[itemId]; if (!item || item.type !== 'consumable') return;
+    if (item.subtype === 'heal' && hero.hp >= hero.combatStats.hp) return alert("Здоровье уже полное!"); playSFX('skill'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     
-    if (item.subtype === 'heal') { 
-        hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); 
-        showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys"); 
-        logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`); 
-        combatState.potionUsed = true;
-    } 
-    else if (item.subtype.startsWith('dmg_')) { 
-        let elem = item.subtype.split('_')[1]; let rawDmg = item.power; let res = enemy.stats[`res_${elem}`] || 0; let finalDmg = Math.floor(rawDmg * (1 - res/100)); if (finalDmg < 0) finalDmg = 0; 
-        enemy.hp -= finalDmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg); let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️'; showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit"); triggerHitAnim("entity-enemy-box"); shakeScreen(); logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`); 
-        combatState.scrollUsed = true;
-    }
+    if (item.subtype === 'heal') { hero.hp = Math.min(hero.combatStats.hp, hero.hp + item.power); showDmgPopup("entity-hero-box", `+${item.power} HP`, "log-sys"); logCombat(`<span class="log-sys">Вы применили ${item.name}: +${item.power} HP.</span>`); combatState.potionUsed = true; } 
+    else if (item.subtype.startsWith('dmg_')) { let elem = item.subtype.split('_')[1]; let rawDmg = item.power; let res = enemy.stats[`res_${elem}`] || 0; let finalDmg = Math.floor(rawDmg * (1 - res/100)); if (finalDmg < 0) finalDmg = 0; enemy.hp -= finalDmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid) addQuestProgress('boss_dmg', finalDmg); let icon = elem==='fire'?'🔥':elem==='ice'?'❄️':elem==='dark'?'☠️':'☀️'; showDmgPopup("entity-enemy-box", `-${finalDmg}`, "log-crit"); triggerHitAnim("entity-enemy-box"); shakeScreen(); logCombat(`<span class="log-crit">${item.name} наносит ${finalDmg} ${icon} урона!</span>`); combatState.scrollUsed = true; }
     
     hero.inventory.splice(invIndex, 1); saveGame();
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
 }
 
 function useClassSkill() {
-    if (isTurnExecuting || combatState.skillCooldown > 0 || hero.hp <= 0) return; 
-    let cls = CLASSES[hero.baseClass]; combatState.skillCooldown = hasTalent('k4c') || hasTalent('s4b') ? cls.skill.cd - 1 : cls.skill.cd; playSFX('skill');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-
-    if (hero.baseClass === 'knight') { 
-        triggerSkillVFX("entity-hero-box", "vfx-knight"); playLottieEffect("entity-hero-box", VFX_DB.knight_skill, "scale-up"); 
-        let healPct = hasTalent('k3c') ? 0.50 : 0.25; 
-        let heal = Math.floor(hero.combatStats.hp * healPct); 
-        hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); 
-        showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys"); 
-        logCombat(`<span class="log-skill">Вы применили СКИЛЛ! +${heal} HP.</span>`); 
-    } 
-    else if (hero.baseClass === 'berserk') { 
-        triggerSkillVFX("entity-enemy-box", "vfx-berserk"); playLottieEffect("entity-enemy-box", VFX_DB.berserk_skill, "scale-huge"); shakeScreen(); let dmg = Math.floor(hero.combatStats.damage * 2.5); 
-        enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! -${dmg} HP.</span>`); playSFX('crit'); 
-    } 
-    else if (hero.baseClass === 'shadow') { 
-        triggerSkillVFX("entity-hero-box", "vfx-shadow"); playLottieEffect("entity-enemy-box", VFX_DB.shadow_skill, "scale-up"); let dmg = Math.floor(hero.combatStats.damage * 1.8); 
-        enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Уворот активен.</span>`); playSFX('hit'); 
-    } 
-    else if (hero.baseClass === 'ranger') { 
-        triggerSkillVFX("entity-hero-box", "vfx-ranger"); playLottieEffect("entity-enemy-box", VFX_DB.ranger_skill, "scale-up"); let dmg = Math.floor(hero.combatStats.damage * 1.5); 
-        enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); combatState.enemyStunned = true; triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block"); if (hasTalent('r5a') && enemy.isBoss) { enemy.stats.armor = Math.floor(enemy.stats.armor * 0.85); logCombat(`<span class="log-skill">СКИЛЛ! Броня босса снижена на 15%.</span>`); } else { logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Враг оглушен.</span>`); } 
-    }
+    if (isTurnExecuting || combatState.skillCooldown > 0 || hero.hp <= 0) return; let cls = CLASSES[hero.baseClass]; combatState.skillCooldown = hasTalent('k4c') || hasTalent('s4b') ? cls.skill.cd - 1 : cls.skill.cd; playSFX('skill'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+    if (hero.baseClass === 'knight') { triggerSkillVFX("entity-hero-box", "vfx-knight"); playLottieEffect("entity-hero-box", VFX_DB.knight_skill, "scale-up"); let healPct = hasTalent('k3c') ? 0.50 : 0.25; let heal = Math.floor(hero.combatStats.hp * healPct); hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); showDmgPopup("entity-hero-box", `+${heal} HP`, "log-sys"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! +${heal} HP.</span>`); } 
+    else if (hero.baseClass === 'berserk') { triggerSkillVFX("entity-enemy-box", "vfx-berserk"); playLottieEffect("entity-enemy-box", VFX_DB.berserk_skill, "scale-huge"); shakeScreen(); let dmg = Math.floor(hero.combatStats.damage * 2.5); enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! -${dmg} HP.</span>`); playSFX('crit'); } 
+    else if (hero.baseClass === 'shadow') { triggerSkillVFX("entity-hero-box", "vfx-shadow"); playLottieEffect("entity-enemy-box", VFX_DB.shadow_skill, "scale-up"); let dmg = Math.floor(hero.combatStats.damage * 1.8); enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); showDmgPopup("entity-enemy-box", `-${dmg}`, "log-crit"); logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Уворот активен.</span>`); playSFX('hit'); } 
+    else if (hero.baseClass === 'ranger') { triggerSkillVFX("entity-hero-box", "vfx-ranger"); playLottieEffect("entity-enemy-box", VFX_DB.ranger_skill, "scale-up"); let dmg = Math.floor(hero.combatStats.damage * 1.5); enemy.hp -= dmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid) addQuestProgress('boss_dmg', dmg); combatState.enemyStunned = true; triggerHitAnim("entity-enemy-box"); showDmgPopup("entity-enemy-box", `ОГЛУШЕНИЕ!`, "log-block"); if (hasTalent('r5a') && enemy.isBoss) { enemy.stats.armor = Math.floor(enemy.stats.armor * 0.85); logCombat(`<span class="log-skill">СКИЛЛ! Броня босса снижена на 15%.</span>`); } else { logCombat(`<span class="log-skill">Вы применили СКИЛЛ! Враг оглушен.</span>`); } }
     if (enemy.hp <= 0) { isTurnExecuting = true; setTimeout(() => { isTurnExecuting = false; handleCombatWin(); }, 400); } else { updateUI(); }
 }
 
@@ -881,8 +631,7 @@ function calcDmg(attacker, defender, zAtk, zDef, isHeroAtk) {
 }
 
 function handleCombatWin() {
-    enemy.hp = 0; playSFX('win');
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    enemy.hp = 0; playSFX('win'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     
     if (combatMode === 'pvp') {
         hero.rating += enemy.ratingReward; let goldGained = 150; hero.gold += goldGained;
@@ -891,73 +640,21 @@ function handleCombatWin() {
         let lootBox = document.getElementById("vic-loot-container"); if (lootBox) lootBox.style.display = "none";
     } else {
         let isRaid = enemy.isRaid; let logMsg = ""; let goldGained = isRaid ? (hero.level * 50 + 100) : (15 + (hero.floor * 5)); let expGained = isRaid ? 0 : (20 + (hero.floor * 8));
-        
-        if (!isRaid) {
-            addQuestProgress('kill_mobs', 1); if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; }
-            if (hasTalent('r1b')) goldGained *= 2; hero.exp += expGained;
-            if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level); calculateStats(); logMsg += `<br><span style="color:#34d399;">УРОВЕНЬ ПОВЫШЕН! +3 очка характеристик.</span>`; }
-        } else { 
-            let gems = enemy.raidData.gemReward; if (hasTalent('r3b')) gems = Math.floor(gems * 1.5); hero.gems += gems; logMsg += ` | +${gems}💎`; 
-        }
-        
-        hero.gold += goldGained; 
-        let droppedItem = generateLootDrop(enemy);
-        
-        if (droppedItem) { 
-            hero.inventory.push(droppedItem.id); 
-            logMsg += `<br>✨ Получен предмет: ${droppedItem.name}`;
-            if (hero.inventory.length > 15) {
-                logMsg += `<br><b style="color:#ef4444;">⚠️ СУМКА ПЕРЕПОЛНЕНА! Бои заблокированы.</b>`;
-            }
-        }
-        
+        if (!isRaid) { addQuestProgress('kill_mobs', 1); if (enemy.isMiniBoss) { goldGained *= 2; expGained *= 2; } if (enemy.isBoss) { goldGained *= 4; expGained *= 3; } if (hasTalent('r1b')) goldGained *= 2; hero.exp += expGained; if (hero.exp >= hero.expNext) { hero.exp -= hero.expNext; hero.level++; hero.unspentPoints += 3; hero.expNext = getExpReq(hero.level); calculateStats(); logMsg += `<br><span style="color:#34d399;">УРОВЕНЬ ПОВЫШЕН! +3 очка характеристик.</span>`; } } else { let gems = enemy.raidData.gemReward; if (hasTalent('r3b')) gems = Math.floor(gems * 1.5); hero.gems += gems; logMsg += ` | +${gems}💎`; }
+        hero.gold += goldGained; let droppedItem = generateLootDrop(enemy);
+        if (droppedItem) { hero.inventory.push(droppedItem.id); logMsg += `<br>✨ Получен предмет: ${droppedItem.name}`; if (hero.inventory.length > 15) { logMsg += `<br><b style="color:#ef4444;">⚠️ СУМКА ПЕРЕПОЛНЕНА! Бои заблокированы.</b>`; } }
         let tTitle = document.getElementById("vic-title-text"); if(tTitle) tTitle.innerText = isRaid ? "РЕЙД ЗАВЕРШЕН!" : "ВРАГ ПОВЕРЖЕН!"; 
         let tRewards = document.getElementById("vic-rewards-text"); if(tRewards) tRewards.innerHTML = `Заработано: +${goldGained}💰 ${expGained>0?`| +${expGained} EXP`:''} ${logMsg}`;
-        
-        let lootBox = document.getElementById("vic-loot-container"); 
-        if (lootBox) { 
-            if (droppedItem) { 
-                lootBox.style.display = "flex"; 
-                let boxEl = document.getElementById("vic-loot-box");
-                boxEl.className = `vic-loot-box rarity-${droppedItem.rarity}`; 
-                boxEl.innerHTML = renderItemIcon(droppedItem); 
-                document.getElementById("vic-loot-name").innerHTML = droppedItem.name; 
-            } else { 
-                lootBox.style.display = "none"; 
-            } 
-        }
-        
+        let lootBox = document.getElementById("vic-loot-container"); if (lootBox) { if (droppedItem) { lootBox.style.display = "flex"; let boxEl = document.getElementById("vic-loot-box"); boxEl.className = `vic-loot-box rarity-${droppedItem.rarity}`; boxEl.innerHTML = renderItemIcon(droppedItem); document.getElementById("vic-loot-name").innerHTML = droppedItem.name; } else { lootBox.style.display = "none"; } }
         if (!isRaid && hero.floor === hero.maxFloor && hero.maxFloor < 100) { hero.maxFloor++; hero.floor = hero.maxFloor; }
     }
-    
-    saveGame(); 
-    let modal = document.getElementById("vic-modal"); if(modal) modal.classList.add("show"); 
-    updateUI(); 
+    saveGame(); let modal = document.getElementById("vic-modal"); if(modal) modal.classList.add("show"); updateUI(); 
 }
 
-function closeVictoryModal() { 
-    playSFX('click'); let modal = document.getElementById("vic-modal"); if(modal) modal.classList.remove("show"); 
-    if (combatMode === 'pvp') { 
-        combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } 
-        playBGM('menu'); openScreen('arena'); 
-    } 
-    else if (combatMode === 'raid') { 
-        combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } 
-        playBGM('menu'); openScreen('boss'); 
-    } 
-    else { initCombat(); } 
-}
+function closeVictoryModal() { playSFX('click'); let modal = document.getElementById("vic-modal"); if(modal) modal.classList.remove("show"); if (combatMode === 'pvp') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } playBGM('menu'); openScreen('arena'); } else if (combatMode === 'raid') { combatMode = 'pve'; if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); } playBGM('menu'); openScreen('boss'); } else { initCombat(); } }
 
 function applyTurnEndEffects() {
-    if (hasTalent('s1c') && hero.baseClass === 'shadow') { 
-        combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); 
-        let dmgPerStack = Math.floor(hero.combatStats.mst * 0.5); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; 
-        enemy.hp -= poisonDmg; if (enemy.hp < 0) enemy.hp = 0; 
-        if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); 
-        if (hasTalent('s2c')) { let missing = hero.combatStats.hp - hero.hp; hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(missing * 0.05)); } 
-        logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); 
-        if (enemy.hp <= 0) handleCombatWin(); 
-    }
+    if (hasTalent('s1c') && hero.baseClass === 'shadow') { combatState.poisonStacks = Math.min(hasTalent('s5c') ? 3 : 1, combatState.poisonStacks + 1); let dmgPerStack = Math.floor(hero.combatStats.mst * 0.5); if (hasTalent('s3c')) dmgPerStack = Math.floor(dmgPerStack * 1.5); let poisonDmg = dmgPerStack * combatState.poisonStacks; enemy.hp -= poisonDmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid) addQuestProgress('boss_dmg', poisonDmg); if (hasTalent('s2c')) { let missing = hero.combatStats.hp - hero.hp; hero.hp = Math.min(hero.combatStats.hp, hero.hp + Math.floor(missing * 0.05)); } logCombat(`<span class="log-skill">ЯД наносит ${poisonDmg} урона.</span>`); showDmgPopup("entity-enemy-box", `ЯД -${poisonDmg}`, "log-skill"); if (enemy.hp <= 0) handleCombatWin(); }
     if (hasTalent('b3a') && hero.baseClass === 'berserk' && hero.hp > 0) { hero.hp = Math.min(hero.combatStats.hp, hero.hp + 5); } 
 }
 
@@ -975,33 +672,16 @@ function executeTurn() {
 
         let hRes = calcDmg(hero.combatStats, enemy.stats, heroAtkZone, eDefZone, true);
         
-        if (hRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-        else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } 
-        else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-        else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
-        
+        if (hRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } else if (hRes.type === "crit") { playSFX('crit'); shakeScreen(); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } else if (hRes.type === "block" || hRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
         triggerClashAnim(true, false, hRes.type);
 
         setTimeout(() => {
             try {
-                enemy.hp -= hRes.dmg; 
-                if (enemy.hp < 0) enemy.hp = 0; 
-                
-                if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
-                
+                enemy.hp -= hRes.dmg; if (enemy.hp < 0) enemy.hp = 0; if (enemy.isRaid && hRes.dmg > 0) addQuestProgress('boss_dmg', hRes.dmg);
                 let ls = hero.combatStats.lifesteal || 0; if (hasTalent('b1a') && hero.baseClass === 'berserk') ls += 15; if (combatState.bloodiedLifesteal) { ls += 100; combatState.bloodiedLifesteal = false; }
-                if (hRes.dmg > 0 && ls > 0) { 
-                    let heal = Math.floor(hRes.dmg * (ls / 100)); 
-                    heal = Math.min(heal, Math.floor(hero.combatStats.hp * 0.20));
-                    hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); 
-                    showDmgPopup("entity-hero-box", `ВАМП +${heal}`, "log-sys"); 
-                }
+                if (hRes.dmg > 0 && ls > 0) { let heal = Math.floor(hRes.dmg * (ls / 100)); heal = Math.min(heal, Math.floor(hero.combatStats.hp * 0.20)); hero.hp = Math.min(hero.combatStats.hp, hero.hp + heal); showDmgPopup("entity-hero-box", `ВАМП +${heal}`, "log-sys"); }
                 triggerHitAnim("entity-enemy-box"); playLottieEffect("entity-enemy-box", VFX_DB.attack_hero); 
-                
-                if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); }
-                else if (hRes.type === "crit") { showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } if (hero.flags.storm && heroAtkZone === 'head' && Math.random() < 0.2) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); } } 
-                else if (hRes.type === "block" || hRes.type === "perfect_block") { showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); } else { showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); }
-                
+                if (hRes.type === "dodge") { showDmgPopup("entity-enemy-box", "УВОРОТ", "log-dodge"); } else if (hRes.type === "crit") { showDmgPopup("entity-enemy-box", `КРИТ -${hRes.dmg}`, "log-crit"); if (hasTalent('b4c') && hero.baseClass === 'berserk' && combatState.zoneHealth[eDefZone] > 0) { combatState.zoneHealth[eDefZone] = Math.max(0, combatState.zoneHealth[eDefZone] - 2); } if (hero.flags.storm && heroAtkZone === 'head' && Math.random() < 0.2) { combatState.enemyStunned = true; logCombat(`<span class="log-sys">СНАЙПЕР! Враг оглушен.</span>`); } } else if (hRes.type === "block" || hRes.type === "perfect_block") { showDmgPopup("entity-enemy-box", `БЛОК -${hRes.dmg}`, "log-block"); } else { showDmgPopup("entity-enemy-box", `-${hRes.dmg}`, "log-dmg"); }
                 let comboTxt = combatState.combo > 0 ? ` (Комбо x${(1 + combatState.combo * 0.25).toFixed(2)})` : ''; logCombat(`Вы ударили в ${zNameRu[heroAtkZone]}: -${hRes.dmg} HP${comboTxt}${hRes.elemLog}.`); updateUI();
 
                 if (enemy.hp <= 0) { isTurnExecuting = false; setTimeout(() => handleCombatWin(), 400); } 
@@ -1015,12 +695,7 @@ function executeTurn() {
                                 if (eAtkZone === 'ENRAGE') { eRes = { dmg: 99999, rawDmg: 99999, elemLog: '', type: "crit" }; shakeScreen(); } else if (eAtkZone === 'ULTIMATUM') { shakeScreen(); let baseAtk = Math.floor((enemy.stats.atk || 5) * 2.0); if (forceDodge) eRes = { dmg: 0, rawDmg: 0, elemLog: '', type: "dodge" }; else { let mitigation = Math.floor(hero.combatStats.armor * 0.2); let finalDmg = Math.max(Math.floor(baseAtk * 0.2), baseAtk - mitigation); eRes = { dmg: finalDmg, rawDmg: baseAtk, elemLog: '', type: "crit" }; } } else { eRes = calcDmg(enemy.stats, hero.combatStats, eAtkZone, heroDefZone, false); if(forceDodge) eRes = { dmg: 0, rawDmg: 0, elemLog: '', type: "dodge" }; }
 
                                 if (!GOD_MODE) { hero.hp -= eRes.dmg; if(hero.hp < 0) hero.hp = 0; }
-                                
-                                if (eRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-                                else if (eRes.type === "crit" || eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { playSFX('crit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } 
-                                else if (eRes.type === "block" || eRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } 
-                                else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
-                                
+                                if (eRes.type === "dodge") { playSFX('dodge'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } else if (eRes.type === "crit" || eAtkZone === 'ENRAGE' || eAtkZone === 'ULTIMATUM') { playSFX('crit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy'); } else if (eRes.type === "block" || eRes.type === "perfect_block") { playSFX('block'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); } else { playSFX('hit'); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium'); }
                                 triggerClashAnim(false, true, eRes.type); 
 
                                 setTimeout(() => {
@@ -1053,29 +728,13 @@ function executeTurn() {
     } catch (e) { console.error(e); isTurnExecuting = false; }
 }
 
-// === НОВЫЙ UX: ИНСПЕКТ СО СРАВНЕНИЕМ ХАРАКТЕРИСТИК ===
+// === ИНСПЕКТ ===
 function formatStats(stats, eqStats = null) {
-    let res = []; if(!stats && !eqStats) return res;
-    let combined = {};
+    let res = []; if(!stats && !eqStats) return res; let combined = {};
     if(stats) { for(let k in stats) combined[k] = {n: stats[k], o: 0}; }
     if(eqStats) { for(let k in eqStats) { if(!combined[k]) combined[k] = {n: 0, o: eqStats[k]}; else combined[k].o = eqStats[k]; } }
-
-    let getDiff = (key) => {
-        if(!eqStats) return "";
-        let diff = (combined[key].n) - (combined[key].o);
-        if(diff > 0) return ` <span style="color:#10b981; font-size:10px;">(+${diff})</span>`;
-        if(diff < 0) return ` <span style="color:#ef4444; font-size:10px;">(${diff})</span>`;
-        return "";
-    };
-
-    let getVal = (key, name, color, isPct=false) => {
-        if (!combined[key]) return;
-        let v = combined[key].n; let o = combined[key].o; let d = getDiff(key);
-        let p = isPct ? '%' : '';
-        if (v === 0 && o === 0) return;
-        if(v > 0) res.push(`<span style="${color}">${name} +${v}${p}${d}</span>`);
-        else if (o > 0) res.push(`<span style="color:#71717a; text-decoration:line-through;">${name} +${o}${p}</span>${d}`);
-    };
+    let getDiff = (key) => { if(!eqStats) return ""; let diff = (combined[key].n) - (combined[key].o); if(diff > 0) return ` <span style="color:#10b981; font-size:10px;">(+${diff})</span>`; if(diff < 0) return ` <span style="color:#ef4444; font-size:10px;">(${diff})</span>`; return ""; };
+    let getVal = (key, name, color, isPct=false) => { if (!combined[key]) return; let v = combined[key].n; let o = combined[key].o; let d = getDiff(key); let p = isPct ? '%' : ''; if (v === 0 && o === 0) return; if(v > 0) res.push(`<span style="${color}">${name} +${v}${p}${d}</span>`); else if (o > 0) res.push(`<span style="color:#71717a; text-decoration:line-through;">${name} +${o}${p}</span>${d}`); };
 
     getVal('atk', 'Урон', ''); getVal('armor', 'Броня', '');
     getVal('str', 'СИЛ', ''); getVal('agi', 'ЛОВ', ''); getVal('end', 'ВЫН', ''); getVal('mst', 'МСТ', ''); getVal('luk', 'УДЧ', '');
@@ -1092,14 +751,7 @@ function formatStats(stats, eqStats = null) {
 
 function openInspectModal(invIndex) {
     playSFX('click'); inspectInvIndex = invIndex; let itemId = hero.inventory[invIndex]; let item = ITEMS_DB[itemId]; if (!item) return;
-    
-    let eqStats = null;
-    if (item.type !== 'consumable') {
-        let slot = item.type; if (slot === 'two_handed') slot = 'weapon1'; if (slot === 'ring') slot = 'ring1'; 
-        let eqItem = hero.equipment[slot];
-        if (eqItem && eqItem.id !== "blocked") eqStats = eqItem.stats;
-    }
-
+    let eqStats = null; if (item.type !== 'consumable') { let slot = item.type; if (slot === 'two_handed') slot = 'weapon1'; if (slot === 'ring') slot = 'ring1'; let eqItem = hero.equipment[slot]; if (eqItem && eqItem.id !== "blocked") eqStats = eqItem.stats; }
     document.getElementById("inspect-title").innerText = item.name; document.getElementById("inspect-icon-box").className = `vic-loot-box rarity-${item.rarity}`; document.getElementById("inspect-icon-box").innerHTML = renderItemIcon(item);
     let setHtmlBlock = ""; if (item.setId && SETS_DB[item.setId]) { let set = SETS_DB[item.setId]; let count = hero.setCounts[item.setId] || 0; setHtmlBlock = `<div style="margin-top:8px; border-top:1px dotted #3f3f46; padding-top:6px; font-size:10px;"><b style="color:#fbbf24;">Сет: ${set.name} (${count}/4)</b><br><span style="color:${count>=2?'#10b981':'#71717a'}">[2 шт] ${set.p2}</span><br><span style="color:${count>=4?'#10b981':'#71717a'}">[4 шт] ${set.p4}</span></div>`; }
     document.getElementById("inspect-stats-box").innerHTML = `<div style="color: #f4f4f5; font-size: 13px; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">` + formatStats(item.stats, eqStats).join(' • ') + `</div>` + setHtmlBlock + `<br><i style="color:#71717a; margin-top:4px; display:block;">${item.desc||''}</i>`;
@@ -1117,85 +769,100 @@ function openScreen(screenName) {
     if ((combatMode === 'pvp' || combatMode === 'raid') && screenName !== 'PVE') return alert("Сначала завершите текущий бой!"); 
     if ((screenName === 'PVE' || screenName === 'boss' || screenName === 'arena') && hero.hp <= 0 && !GOD_MODE) { if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); return alert("Герой мертв! Сначала вылечитесь в лагере."); }
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); playSFX('click');
-    
     if (screenName !== 'PVE') playBGM('menu');
 
-    // ДИНАМИЧЕСКИЙ ЗАЛ СЛАВЫ (FIREBASE)
     if(screenName === 'rating') {
-        let globalTop = document.getElementById("ui-global-top");
-        let pedestal = document.getElementById("ui-rating-pedestal");
-        if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`;
-        if(pedestal) pedestal.innerHTML = ``;
-
-        fetch(FIREBASE_URL + 'players.json')
-        .then(async r => {
-            if (!r.ok) throw new Error("HTTP " + r.status);
-            return r.json();
-        })
-        .then(data => {
-            if(data && typeof data === 'object' && !data.error) {
-                cachedPlayersList = Object.values(data).filter(p => p && typeof p === 'object' && p.name);
-                if (cachedPlayersList.length > 0) {
-                    renderRatingScreen();
-                } else {
-                    if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`;
-                }
-            } else {
-                if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`;
-            }
-        }).catch(e => {
-            if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка: ${e.message}</div>`;
-        });
+        let globalTop = document.getElementById("ui-global-top"); let pedestal = document.getElementById("ui-rating-pedestal");
+        if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`; if(pedestal) pedestal.innerHTML = ``;
+        fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+            if(data && typeof data === 'object' && !data.error) { cachedPlayersList = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (cachedPlayersList.length > 0) { renderRatingScreen(); } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`; } } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`; }
+        }).catch(e => { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка: ${e.message}</div>`; });
     }
 
     if(screenName === 'arena') {
-        let elBoard = document.getElementById("ui-pvp-leaderboard");
-        let elRating = document.getElementById("ui-pvp-rating");
-        if(elRating) elRating.innerText = hero.rating;
-
+        let elBoard = document.getElementById("ui-pvp-leaderboard"); let elRating = document.getElementById("ui-pvp-rating"); if(elRating) elRating.innerText = hero.rating;
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
-            fetch(FIREBASE_URL + 'players.json')
-            .then(async r => {
-                if (!r.ok) throw new Error("HTTP " + r.status);
-                return r.json();
-            })
-            .then(data => {
-                if(data && typeof data === 'object' && !data.error) {
-                    let players = Object.values(data).filter(p => p && typeof p === 'object' && p.name);
-                    if (players.length > 0) {
-                        players.sort((a,b) => (b.rating||0) - (a.rating||0));
-                        let top3 = players.slice(0, 3);
-                        let html = buildLeaderboardHTML(top3);
-                        html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
-                        elBoard.innerHTML = html;
-                    } else {
-                        elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`;
-                    }
-                } else {
-                    elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`;
-                }
-            }).catch(e => {
-                elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка: ${e.message}</div>`;
-            });
+            fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+                if(data && typeof data === 'object' && !data.error) { let players = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (players.length > 0) { players.sort((a,b) => (b.rating||0) - (a.rating||0)); let top3 = players.slice(0, 3); let html = buildLeaderboardHTML(top3); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`; } } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`; }
+            }).catch(e => { elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка: ${e.message}</div>`; });
         }
     }
 
-    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
-    document.getElementById('screen-' + screenName).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    if(document.getElementById('nav-' + screenName)) document.getElementById('nav-' + screenName).classList.add('active');
-
-    currentScreen = screenName;
-    let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
-    if(screenName === 'classes') previewClassId = hero.baseClass;
-    if(screenName === 'PVE' && (!enemy || enemy.isRaid || enemy.isPlayer)) initCombat();
-    if(screenName === 'blacksmith') forgeSelectedIndex = null;
-
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-' + screenName).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); if(document.getElementById('nav-' + screenName)) document.getElementById('nav-' + screenName).classList.add('active');
+    currentScreen = screenName; let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0; if(screenName === 'classes') previewClassId = hero.baseClass; if(screenName === 'PVE' && (!enemy || enemy.isRaid || enemy.isPlayer)) initCombat(); if(screenName === 'blacksmith') forgeSelectedIndex = null;
     updateUI();
 }
 
-function setShopMode(mode) { playSFX('click'); shopMode = mode; updateUI(); }
+// === ПОКУПКА АЛМАЗОВ (TELEGRAM STARS) ===
+async function buyGemsWithStars(gemsAmount, starsPrice) {
+    playSFX('click');
+    if (!window.tg || !tg.openInvoice) {
+        return alert("Оплата Звездами доступна только при запуске игры внутри Telegram!");
+    }
+    
+    let originalHtml = event.currentTarget.innerHTML;
+    event.currentTarget.innerHTML = "⏳...";
+    event.currentTarget.disabled = true;
+
+    try {
+        const response = await fetch('/api/create-invoice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                starsAmount: starsPrice,
+                title: `${gemsAmount} Алмазов`,
+                description: `Покупка премиум-валюты: ${gemsAmount} 💎`,
+                payload: `buy_gems_${gemsAmount}_${Date.now()}`
+            })
+        });
+        
+        const data = await response.json();
+        event.currentTarget.innerHTML = originalHtml;
+        event.currentTarget.disabled = false;
+        
+        if (data.error) { return alert("Ошибка сервера: " + data.error); }
+        
+        tg.openInvoice(data.invoiceUrl, function(status) {
+            if (status === 'paid') {
+                hero.gems += gemsAmount;
+                saveGame();
+                updateUI();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                playSFX('coins');
+                alert(`Оплата успешна! Вы получили ${gemsAmount} 💎`);
+            } else if (status === 'failed') {
+                alert("Произошла ошибка при оплате.");
+            }
+        });
+        
+    } catch (e) {
+        event.currentTarget.innerHTML = originalHtml;
+        event.currentTarget.disabled = false;
+        alert("Ошибка соединения с сервером платежей.");
+    }
+}
+
+function setShopMode(mode) { 
+    playSFX('click'); 
+    shopMode = mode; 
+    
+    document.querySelectorAll('.shop-tab').forEach(el => { el.classList.remove('active', 'active-sell', 'active-premium'); });
+    if (mode === 'buy') document.getElementById('tab-buy').classList.add('active');
+    if (mode === 'sell') document.getElementById('tab-sell').classList.add('active-sell');
+    if (mode === 'premium') document.getElementById('tab-premium').classList.add('active-premium');
+    
+    let shopList = document.getElementById('ui-shop-list');
+    let shopFilters = document.getElementById('shop-filters-box');
+    let premiumList = document.getElementById('ui-premium-list');
+
+    if (shopList) shopList.style.display = (mode === 'premium') ? 'none' : 'flex';
+    if (shopFilters) shopFilters.style.display = (mode === 'premium') ? 'none' : 'flex';
+    if (premiumList) premiumList.style.display = (mode === 'premium') ? 'flex' : 'none';
+
+    updateUI(); 
+}
+
 function selectPreviewClass(classId) { playSFX('click'); previewClassId = classId; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); updateUI(); }
 function changeClass(classKey) {
     if (hero.baseClass === classKey) return; if (hero.gold < 5000) return alert(`Нужно 5000 золота!`);
@@ -1206,29 +873,18 @@ function changeClass(classKey) {
 }
 
 function equipItem(invIndex) {
-    playSFX('click'); 
-    if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя менять снаряжение на Арене или в Рейде!");
-    if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
+    playSFX('click'); if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя менять снаряжение на Арене или в Рейде!"); if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
     let itemId = hero.inventory[invIndex]; if (!itemId) return; let item = ITEMS_DB[itemId];
     if (item.lvl > hero.level) return alert(`Нужен Ур. ${item.lvl}! Вы пока Ур. ${hero.level}.`); if (item.allowedClasses && !item.allowedClasses.includes(hero.baseClass)) return alert(`Этот предмет не подходит для вашего класса!`);
-    if (item.type === 'consumable') return alert("Расходники используются в бою!");
-    let targetSlot = item.type;
-    if (item.type === 'two_handed') {
-        let w1 = hero.equipment.weapon1; let w2 = hero.equipment.weapon2; let needsExtraSlot = (w1 && w2 && w2.id !== "blocked");
-        if (needsExtraSlot && hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место.");
-        hero.inventory.splice(invIndex, 1); if (w1) hero.inventory.push(w1.id); if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id);
-        hero.equipment.weapon1 = item; hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} };
-        calculateStats(); saveGame(); updateUI(); return;
-    }
+    if (item.type === 'consumable') return alert("Расходники используются в бою!"); let targetSlot = item.type;
+    if (item.type === 'two_handed') { let w1 = hero.equipment.weapon1; let w2 = hero.equipment.weapon2; let needsExtraSlot = (w1 && w2 && w2.id !== "blocked"); if (needsExtraSlot && hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место."); hero.inventory.splice(invIndex, 1); if (w1) hero.inventory.push(w1.id); if (w2 && w2.id !== "blocked") hero.inventory.push(w2.id); hero.equipment.weapon1 = item; hero.equipment.weapon2 = { id: "blocked", icon: "🔒", name: "Занято", type: "weapon2", rarity: "common", stats: {} }; calculateStats(); saveGame(); updateUI(); return; }
     if ((targetSlot === 'weapon1' || targetSlot === 'weapon2') && hero.equipment.weapon1 && hero.equipment.weapon1.type === 'two_handed') { let twoHandedItem = hero.equipment.weapon1; hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; hero.inventory.splice(invIndex, 1); hero.inventory.push(twoHandedItem.id); hero.equipment[targetSlot] = item; calculateStats(); saveGame(); updateUI(); return; }
     if (item.type === 'ring') targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
     let oldItem = hero.equipment[targetSlot]; hero.equipment[targetSlot] = item; hero.inventory.splice(invIndex, 1); if (oldItem && oldItem.id !== "blocked") hero.inventory.push(oldItem.id); calculateStats(); saveGame(); updateUI();
 }
 
 function unequipSlot(slotKey) {
-    playSFX('click'); 
-    if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя снимать снаряжение на Арене или в Рейде!");
-    if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
+    playSFX('click'); if (combatMode === 'pvp' || combatMode === 'raid') return alert("Нельзя снимать снаряжение на Арене или в Рейде!"); if (enemy && enemy.hp > 0 && hero.hp > 0 && combatState.enemyTurns > 0) return alert("Бой уже начался! Менять экипировку можно только перед первым ударом по новому врагу.");
     let item = hero.equipment[slotKey]; if (!item || item.id === "blocked") return; if (hero.inventory.length >= 30) return alert("Рюкзак трещит по швам! Освободите место.");
     if (item.type === 'two_handed') { hero.inventory.push(item.id); hero.equipment.weapon1 = null; hero.equipment.weapon2 = null; } else { hero.inventory.push(item.id); hero.equipment[slotKey] = null; } calculateStats(); saveGame(); updateUI();
 }
@@ -1245,26 +901,7 @@ function healHero() {
 function selectForgeItem(idx) { forgeSelectedIndex = idx; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); playSFX('click'); updateUI(); }
 
 function upgradeItem() {
-    if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; 
-    let upgCount = item.upgradeCount || 0;
-    if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!");
-    let cost = item.lvl * item.price * 2; 
-    if (hero.gold < cost) return alert("Не хватает золота!"); 
-    hero.gold -= cost; 
-    let newItem = JSON.parse(JSON.stringify(item)); 
-    if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); }
-    newItem.lvl += 1; 
-    newItem.upgradeCount = upgCount + 1; 
-    newItem.price = Math.floor(newItem.price * 1.5); 
-    for (let s in newItem.stats) {
-        let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
-        if (isPct) { newItem.stats[s] += 1; } else { newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); }
-    }
-    ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; 
-    addQuestProgress('forge_upg', 1); 
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
-    let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } 
-    playSFX('forge'); saveGame(); updateUI();
+    if (forgeSelectedIndex === null) return; let itemId = hero.inventory[forgeSelectedIndex]; let item = ITEMS_DB[itemId]; let upgCount = item.upgradeCount || 0; if (upgCount >= 10) return alert("Этот предмет достиг предела ковки!"); let cost = item.lvl * item.price * 2; if (hero.gold < cost) return alert("Не хватает золота!"); hero.gold -= cost; let newItem = JSON.parse(JSON.stringify(item)); if (!newItem.id.includes("_upg_")) { newItem.id = newItem.id + "_upg_" + Date.now(); } else { newItem.id = newItem.id.split("_upg_")[0] + "_upg_" + Date.now(); } newItem.lvl += 1; newItem.upgradeCount = upgCount + 1; newItem.price = Math.floor(newItem.price * 1.5); for (let s in newItem.stats) { let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s); if (isPct) { newItem.stats[s] += 1; } else { newItem.stats[s] = Math.max(1, Math.ceil(newItem.stats[s] * 1.15)); } } ITEMS_DB[newItem.id] = newItem; hero.inventory[forgeSelectedIndex] = newItem.id; addQuestProgress('forge_upg', 1); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); let anvil = document.getElementById("forge-anvil"); if (anvil) { anvil.classList.remove("hammer-hit"); void anvil.offsetWidth; anvil.classList.add("hammer-hit"); } playSFX('forge'); saveGame(); updateUI();
 }
 
 function pickTalent(tierIndex, talentId) { let tData = TALENTS_DATA[hero.baseClass][tierIndex]; if (hero.level < tData.lvl) return alert(`Требуется ${tData.lvl} уровень!`); let tierTalentIds = tData.opts.map(o => o.id); if (hero.talents.some(t => tierTalentIds.includes(t))) return alert("Талант в этом тире уже выбран!"); if(confirm("Вы уверены? Этот выбор навсегда определит стиль игры.")) { hero.talents.push(talentId); if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('skill'); calculateStats(); saveGame(); updateUI(); } }
@@ -1323,20 +960,11 @@ function calculateStats(isCombat = false) {
 function getSlotName(slotId) { return {head:"Шлем", chest:"Броня", belt:"Пояс", boots:"Обувь", amulet:"Амулет", ring1:"Кольцо", ring2:"Кольцо", weapon1:"Оружие", weapon2:"Щит"}[slotId]; }
 
 function renderItemIcon(item) { 
-    if (!item) return ""; 
-    if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`; 
-    if (item.type === "consumable" && !item.imageId && item.icon) { 
-        return `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon}</div>`; 
-    }
+    if (!item) return ""; if (item.id === "blocked") return `<div class="item-icon">${item.icon}</div>`; 
+    if (item.type === "consumable" && !item.imageId && item.icon) { return `<div class="item-icon" style="font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">${item.icon}</div>`; }
     let imgId = item.imageId; let folder = item.type; 
-    if (!imgId || !imgId.includes("_")) {
-        let baseId = item.id.replace(/_\d+(_upg_\d+)?$/, '');
-        let baseItem = ITEMS_DB[baseId];
-        if (baseItem && baseItem.imgPrefix) { imgId = baseItem.imgPrefix + "_1"; item.imageId = imgId; } else { imgId = "default_1"; }
-    }
-    if (folder === 'two_handed') folder = 'two_handed'; 
-    let fallbackHTML = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '📦'}</div>`;
-    return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallbackHTML)}')"></div>`; 
+    if (!imgId || !imgId.includes("_")) { let baseId = item.id.replace(/_\d+(_upg_\d+)?$/, ''); let baseItem = ITEMS_DB[baseId]; if (baseItem && baseItem.imgPrefix) { imgId = baseItem.imgPrefix + "_1"; item.imageId = imgId; } else { imgId = "default_1"; } }
+    if (folder === 'two_handed') folder = 'two_handed'; let fallbackHTML = `<div style='font-size:32px; display:flex; justify-content:center; align-items:center; width:100%; height:100%;'>${item.icon || '📦'}</div>`; return `<div class="item-img-wrapper"><img src="${STATIC_URL}items/${folder}/${imgId}.png" class="item-img" alt="${item.name}" onerror="this.outerHTML=decodeURIComponent('${encodeURIComponent(fallbackHTML)}')"></div>`; 
 }
 
 function renderDurability(zoneKey) { let dur = combatState.zoneHealth[zoneKey]; if(dur === 3) return `<span class="dur-dot g"></span><span class="dur-dot g"></span><span class="dur-dot g"></span>`; if(dur === 2) return `<span class="dur-dot y"></span><span class="dur-dot y"></span><span class="dur-dot" style="background:#27272a"></span>`; if(dur === 1) return `<span class="dur-dot o"></span><span class="dur-dot" style="background:#27272a"></span><span class="dur-dot" style="background:#27272a"></span>`; return ``; }
@@ -1352,76 +980,15 @@ function renderTalents() {
     let tc = document.getElementById("ui-talents-container"); if(tc) tc.innerHTML = html;
 }
 
-function claimFriendReward(index) {
-    if (!hero.friends[index] || hero.friends[index].claimed) return;
-    hero.friends[index].claimed = true;
-    hero.gems += 5;
-    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    playSFX('coins');
-    saveGame();
-    updateUI(); 
-    renderFriends(); 
-}
-
-function addTestFriend() {
-    if (!hero.friends) hero.friends = [];
-    let names = ["Alexey", "ShadowFiend", "Guts", "Liliya", "Nagibator99", "JohnWick"];
-    let rndName = names[Math.floor(Math.random() * names.length)] + "_" + Math.floor(Math.random()*1000);
-    hero.friends.push({ name: rndName, claimed: false });
-    playSFX('click');
-    saveGame();
-    renderFriends();
-}
-
-function shareRefLink() {
-    const botName = "ArenaRpgBot";
-    const refUrl = `https://t.me/share/url?url=https://t.me/${botName}?start=ref_${window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'player'}&text=Заходи в крутую RPG в Telegram!`;
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.openTelegramLink(refUrl);
-    } else {
-        alert("Ссылка скопирована!");
-    }
-}
+function claimFriendReward(index) { if (!hero.friends[index] || hero.friends[index].claimed) return; hero.friends[index].claimed = true; hero.gems += 5; if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); playSFX('coins'); saveGame(); updateUI(); renderFriends(); }
+function addTestFriend() { if (!hero.friends) hero.friends = []; let names = ["Alexey", "ShadowFiend", "Guts", "Liliya", "Nagibator99", "JohnWick"]; let rndName = names[Math.floor(Math.random() * names.length)] + "_" + Math.floor(Math.random()*1000); hero.friends.push({ name: rndName, claimed: false }); playSFX('click'); saveGame(); renderFriends(); }
+function shareRefLink() { const botName = "ArenaRpgBot"; const refUrl = `https://t.me/share/url?url=https://t.me/${botName}?start=ref_${window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'player'}&text=Заходи в крутую RPG в Telegram!`; if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.openTelegramLink(refUrl); } else { alert("Ссылка скопирована!"); } }
 
 function renderFriends() {
-    let container = document.getElementById('ui-friends-container');
-    if (!container) return;
-
+    let container = document.getElementById('ui-friends-container'); if (!container) return;
     let friendsListHtml = '';
-    if (!hero.friends || hero.friends.length === 0) {
-        friendsListHtml = `<div style="text-align:center; color:#71717a; padding: 20px;">У вас пока нет приглашенных друзей.</div>`;
-    } else {
-        hero.friends.forEach((f, index) => {
-            let btnHtml = f.claimed 
-                ? `<button class="modal-btn secondary" style="width:auto; height:32px; font-size:10px; margin-top:0;" disabled>ПОЛУЧЕНО</button>`
-                : `<button class="modal-btn" style="width:auto; height:32px; font-size:10px; margin-top:0; background: #10b981; color: #fff; box-shadow: 0 2px 5px rgba(16,185,129,0.4);" onclick="claimFriendReward(${index})">ЗАБРАТЬ 5 💎</button>`;
-            
-            friendsListHtml += `
-                <div class="ref-player-card">
-                    <div class="silhouette" style="font-size: 24px; opacity: 1; background: #27272a; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #3f3f46;">👤</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; color: #e4e4e7; font-size: 13px;">${f.name}</div>
-                        <div style="font-size: 10px; color: #a1a1aa;">Реферал</div>
-                    </div>
-                    ${btnHtml}
-                </div>
-            `;
-        });
-    }
-
-    container.innerHTML = `
-        <div class="ref-invite-box">
-            <div class="ref-invite-title" onclick="addTestFriend()">Приглашайте друзей</div>
-            <div class="ref-invite-desc">Получайте 💎 по 5 кристаллов за каждого приглашенного бойца! (Нажми на заголовок для теста)</div>
-            <div class="ref-action-row">
-                <button class="btn-ref-share" onclick="shareRefLink()">ПОДЕЛИТЬСЯ ССЫЛКОЙ</button>
-            </div>
-        </div>
-        <div class="stat-group-title">Ваши рефералы (${hero.friends ? hero.friends.length : 0})</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
-            ${friendsListHtml}
-        </div>
-    `;
+    if (!hero.friends || hero.friends.length === 0) { friendsListHtml = `<div style="text-align:center; color:#71717a; padding: 20px;">У вас пока нет приглашенных друзей.</div>`; } else { hero.friends.forEach((f, index) => { let btnHtml = f.claimed ? `<button class="modal-btn secondary" style="width:auto; height:32px; font-size:10px; margin-top:0;" disabled>ПОЛУЧЕНО</button>` : `<button class="modal-btn" style="width:auto; height:32px; font-size:10px; margin-top:0; background: #10b981; color: #fff; box-shadow: 0 2px 5px rgba(16,185,129,0.4);" onclick="claimFriendReward(${index})">ЗАБРАТЬ 5 💎</button>`; friendsListHtml += `<div class="ref-player-card"><div class="silhouette" style="font-size: 24px; opacity: 1; background: #27272a; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #3f3f46;">👤</div><div style="flex: 1;"><div style="font-weight: bold; color: #e4e4e7; font-size: 13px;">${f.name}</div><div style="font-size: 10px; color: #a1a1aa;">Реферал</div></div>${btnHtml}</div>`; }); }
+    container.innerHTML = `<div class="ref-invite-box"><div class="ref-invite-title" onclick="addTestFriend()">Приглашайте друзей</div><div class="ref-invite-desc">Получайте 💎 по 5 кристаллов за каждого приглашенного бойца! (Нажми на заголовок для теста)</div><div class="ref-action-row"><button class="btn-ref-share" onclick="shareRefLink()">ПОДЕЛИТЬСЯ ССЫЛКОЙ</button></div></div><div class="stat-group-title">Ваши рефералы (${hero.friends ? hero.friends.length : 0})</div><div style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">${friendsListHtml}</div>`;
 }
 
 function updateUI() {
@@ -1430,35 +997,14 @@ function updateUI() {
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
-    if (currentScreen === 'arena') {
-        let elRating = document.getElementById("ui-pvp-rating");
-        if(elRating) elRating.innerText = hero.rating;
-    }
+    if (currentScreen === 'arena') { let elRating = document.getElementById("ui-pvp-rating"); if(elRating) elRating.innerText = hero.rating; }
 
     if (currentScreen === 'quests') { checkDailyQuests(); let html = ''; for (let qId in DAILY_QUESTS) { let def = DAILY_QUESTS[qId]; let q = hero.quests[qId] || { progress: 0, claimed: false }; let pct = Math.min(100, (q.progress / def.target) * 100); let btnHtml = ''; if (q.claimed) { btnHtml = `<div class="quest-btn claimed">ВЫПОЛНЕНО</div>`; } else if (q.progress >= def.target) { btnHtml = `<div class="quest-btn ready" onclick="claimQuest('${qId}')">ЗАБРАТЬ НАГРАДУ</div>`; } else { btnHtml = `<div class="quest-btn">${Math.floor(q.progress)} / ${def.target}</div>`; } html += `<div class="quest-card"><div class="quest-header"><span>${def.name}</span><span class="quest-reward">+${def.rewardGems} 💎</span></div><div class="quest-desc">${def.desc}</div><div class="quest-progress-wrap"><div class="quest-progress-fill" style="width: ${pct}%"></div></div>${btnHtml}</div>`; } let qList = document.getElementById("ui-quests-list"); if(qList) qList.innerHTML = html; }
 
     if (currentScreen === 'PVE' && enemy) {
-        let fleeBtn = document.getElementById("btn-flee-combat");
-        if (fleeBtn) {
-            if (combatMode === 'pvp' || hero.hp <= 0 || isTurnExecuting) {
-                fleeBtn.style.display = "none";
-            } else {
-                fleeBtn.style.display = "block";
-            }
-        }
-
-        let lootPreviewEl = document.getElementById("boss-loot-preview");
-        if (!lootPreviewEl) { lootPreviewEl = document.createElement("div"); lootPreviewEl.id = "boss-loot-preview"; let dashboard = document.querySelector('.combat-dashboard'); if (dashboard) dashboard.insertBefore(lootPreviewEl, dashboard.firstChild); }
-        if (enemy.isBoss || enemy.isMiniBoss || enemy.isRaid) {
-            let dropInfoHtml = enemy.isRaid 
-                ? `🏆 <b>Награда Рейда:</b> <span style="color:#c084fc">Эпик+ 100%</span> | <span style="color:#fbbf24">Шанс на Сет 25%</span>`
-                : (enemy.isBoss 
-                    ? `👑 <b>Дроп Босса (100%):</b> <span style="color:#c084fc">Эпик 50%</span> | <span style="color:#facc15">Лега 40%</span> | <span style="color:#fbbf24">Сет 5%</span>`
-                    : `☠️ <b>Дроп Элиты (30%):</b> <span style="color:#60a5fa">Редкое 60%</span> | <span style="color:#c084fc">Эпик 30%</span> | <span style="color:#facc15">Лега 10%</span>`);
-            lootPreviewEl.innerHTML = `<div style="background: rgba(24, 24, 27, 0.9); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 10px; text-align: center; color: #d4d4d8; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">${dropInfoHtml}</div>`;
-            lootPreviewEl.style.display = "block";
-        } else if (lootPreviewEl) { lootPreviewEl.style.display = "none"; }
-
+        let fleeBtn = document.getElementById("btn-flee-combat"); if (fleeBtn) { if (combatMode === 'pvp' || hero.hp <= 0 || isTurnExecuting) { fleeBtn.style.display = "none"; } else { fleeBtn.style.display = "block"; } }
+        let lootPreviewEl = document.getElementById("boss-loot-preview"); if (!lootPreviewEl) { lootPreviewEl = document.createElement("div"); lootPreviewEl.id = "boss-loot-preview"; let dashboard = document.querySelector('.combat-dashboard'); if (dashboard) dashboard.insertBefore(lootPreviewEl, dashboard.firstChild); }
+        if (enemy.isBoss || enemy.isMiniBoss || enemy.isRaid) { let dropInfoHtml = enemy.isRaid ? `🏆 <b>Награда Рейда:</b> <span style="color:#c084fc">Эпик+ 100%</span> | <span style="color:#fbbf24">Шанс на Сет 25%</span>` : (enemy.isBoss ? `👑 <b>Дроп Босса (100%):</b> <span style="color:#c084fc">Эпик 50%</span> | <span style="color:#facc15">Лега 40%</span> | <span style="color:#fbbf24">Сет 5%</span>` : `☠️ <b>Дроп Элиты (30%):</b> <span style="color:#60a5fa">Редкое 60%</span> | <span style="color:#c084fc">Эпик 30%</span> | <span style="color:#facc15">Лега 10%</span>`); lootPreviewEl.innerHTML = `<div style="background: rgba(24, 24, 27, 0.9); border: 1px solid #3f3f46; border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 10px; text-align: center; color: #d4d4d8; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">${dropInfoHtml}</div>`; lootPreviewEl.style.display = "block"; } else if (lootPreviewEl) { lootPreviewEl.style.display = "none"; }
         let titleEl = document.getElementById("combat-floor-title"); if(titleEl) { if (combatMode === 'pvp' || combatMode === 'raid') { titleEl.style.display = 'none'; } else { titleEl.style.display = 'flex'; titleEl.innerHTML = floorNavHtml; } }
         let stageNameEl = document.getElementById("combat-stage-name"); if(stageNameEl) { if (combatMode === 'pvp') { stageNameEl.innerText = "PVP АРЕНА"; stageNameEl.className = "combat-header boss"; } else if (combatMode === 'raid') { stageNameEl.innerText = "МИРОВОЙ БОСС"; stageNameEl.className = "combat-header boss"; } else { stageNameEl.innerText = enemy.isBoss ? "МЕГА-БОСС" : (enemy.isMiniBoss ? "ЭЛИТНЫЙ ВРАГ" : "ОБЫЧНЫЙ ВРАГ"); stageNameEl.className = enemy.isBoss || enemy.isMiniBoss ? "combat-header boss" : "combat-header"; } }
         let arenaOuter = document.getElementById("arena-bg"); arenaOuter.style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(9,9,11,0.95) 100%), url('${enemy.bgUrl}')`; arenaOuter.style.backgroundSize = 'cover'; arenaOuter.style.backgroundPosition = 'center';
@@ -1480,23 +1026,7 @@ function updateUI() {
         document.getElementById("combat-hero-atk-val").innerText = hero.combatStats.damage; document.getElementById("combat-hero-arm-val").innerText = hero.combatStats.armor; document.getElementById("combat-enemy-atk-val").innerText = enemy.stats.atk; document.getElementById("combat-enemy-arm-val").innerText = enemy.stats.armor;
 
         let centerConsBox = document.getElementById("center-consumables-box");
-        if (centerConsBox) {
-            let firstPotionId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype === 'heal');
-            let firstScrollId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype && ITEMS_DB[id].subtype.startsWith('dmg_'));
-
-            let consHtml = '';
-            if (firstPotionId) {
-                let pItem = ITEMS_DB[firstPotionId];
-                let isUsed = combatState.potionUsed;
-                consHtml += `<div class="inv-item filled rarity-${pItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstPotionId}', 'potion')">${renderItemIcon(pItem)}</div>`;
-            }
-            if (firstScrollId) {
-                let sItem = ITEMS_DB[firstScrollId];
-                let isUsed = combatState.scrollUsed;
-                consHtml += `<div class="inv-item filled rarity-${sItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstScrollId}', 'scroll')">${renderItemIcon(sItem)}</div>`;
-            }
-            centerConsBox.innerHTML = consHtml;
-        }
+        if (centerConsBox) { let firstPotionId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype === 'heal'); let firstScrollId = hero.inventory.find(id => ITEMS_DB[id] && ITEMS_DB[id].subtype && ITEMS_DB[id].subtype.startsWith('dmg_')); let consHtml = ''; if (firstPotionId) { let pItem = ITEMS_DB[firstPotionId]; let isUsed = combatState.potionUsed; consHtml += `<div class="inv-item filled rarity-${pItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstPotionId}', 'potion')">${renderItemIcon(pItem)}</div>`; } if (firstScrollId) { let sItem = ITEMS_DB[firstScrollId]; let isUsed = combatState.scrollUsed; consHtml += `<div class="inv-item filled rarity-${sItem.rarity} center-cons-item ${isUsed ? 'dimmed' : ''}" onclick="useConsumableInCombat('${firstScrollId}', 'scroll')">${renderItemIcon(sItem)}</div>`; } centerConsBox.innerHTML = consHtml; }
 
         let btnSkill = document.getElementById("btn-use-skill");
         if (isTurnExecuting || combatState.skillCooldown > 0) { btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">Скилл</span>КД (${combatState.skillCooldown})`; btnSkill.disabled = true; btnSkill.style.filter = "grayscale(100%) opacity(0.5)"; } else { let cls = CLASSES[hero.baseClass]; btnSkill.innerHTML = `<span style="font-size:7px; color:#d8b4fe">${cls.name}</span>ПРИМЕНИТЬ`; btnSkill.disabled = hero.hp <= 0 && !GOD_MODE; btnSkill.style.filter = "none"; }
@@ -1507,175 +1037,73 @@ function updateUI() {
     if (currentScreen === 'hero') {
         let cls = CLASSES[hero.baseClass]; 
         let muteBtn = `<span style="cursor:pointer; filter:grayscale(${sfxMuted?'100%':'0%'}) opacity(${sfxMuted?'0.5':'1'}); padding: 0 8px; font-size:16px;" onclick="toggleMute()">${sfxMuted?'🔇':'🔊'}</span>`;
-        let cn = document.getElementById("ui-class-name"); 
-        if(cn) cn.innerHTML = `<div>${cls.icon} <b>${hero.name}</b> <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span></div> <div style="display:flex; align-items:center; gap:8px;">${muteBtn} <button class="reset-btn" onclick="hardReset()">СБРОС</button></div>`;
-        
+        let cn = document.getElementById("ui-class-name"); if(cn) cn.innerHTML = `<div>${cls.icon} <b>${hero.name}</b> <span style="font-size:11px; color:#71717a; font-weight:normal;">[${cls.name}]</span></div> <div style="display:flex; align-items:center; gap:8px;">${muteBtn} <button class="reset-btn" onclick="hardReset()">СБРОС</button></div>`;
         let av = document.getElementById("main-hero-avatar"); if(av) av.src = CLASS_AVATARS[hero.baseClass];
         let isCombat = currentScreen === 'PVE' && enemy; let skipHead = isCombat && combatState.zoneHealth.head === 0; let skipChest = isCombat && combatState.zoneHealth.chest === 0; let skipLegs = isCombat && combatState.zoneHealth.legs === 0;
 
         const slots = ["head", "chest", "belt", "boots", "amulet", "ring1", "ring2", "weapon1", "weapon2"];
-        slots.forEach(slotKey => {
-            let el = document.getElementById("slot-" + slotKey);
-            if (el) {
-                let item = hero.equipment[slotKey]; let isBroken = false;
-                if(skipHead && slotKey === 'head') isBroken = true; if(skipChest && (slotKey === 'chest' || slotKey === 'weapon1' || slotKey === 'weapon2')) isBroken = true; if(skipLegs && (slotKey === 'boots' || slotKey === 'belt')) isBroken = true;
-                el.className = `equip-slot ${item ? (item.id === "blocked" ? "blocked" : "filled rarity-" + (item.rarity || "common")) : "empty"} ${isBroken ? "blocked" : ""}`;
-                let silIcon = el.getAttribute("data-sil") || "🛡️";
-                el.innerHTML = item ? `${renderItemIcon(item)}<span class="slot-label" ${item.id==="blocked"||isBroken?'style="color:#ef4444"':''}>${isBroken?'СЛОМАНО':getSlotName(slotKey)}</span>` : `<div class="silhouette">${silIcon}</div><span class="slot-label">${getSlotName(slotKey)}</span>`;
-                if(isBroken) el.style.filter = "grayscale(100%) opacity(0.5)"; else el.style.filter = "none";
-            }
-        });
+        slots.forEach(slotKey => { let el = document.getElementById("slot-" + slotKey); if (el) { let item = hero.equipment[slotKey]; let isBroken = false; if(skipHead && slotKey === 'head') isBroken = true; if(skipChest && (slotKey === 'chest' || slotKey === 'weapon1' || slotKey === 'weapon2')) isBroken = true; if(skipLegs && (slotKey === 'boots' || slotKey === 'belt')) isBroken = true; el.className = `equip-slot ${item ? (item.id === "blocked" ? "blocked" : "filled rarity-" + (item.rarity || "common")) : "empty"} ${isBroken ? "blocked" : ""}`; let silIcon = el.getAttribute("data-sil") || "🛡️"; el.innerHTML = item ? `${renderItemIcon(item)}<span class="slot-label" ${item.id==="blocked"||isBroken?'style="color:#ef4444"':''}>${isBroken?'СЛОМАНО':getSlotName(slotKey)}</span>` : `<div class="silhouette">${silIcon}</div><span class="slot-label">${getSlotName(slotKey)}</span>`; if(isBroken) el.style.filter = "grayscale(100%) opacity(0.5)"; else el.style.filter = "none"; } });
 
-        let bc = document.getElementById("ui-bag-capacity"); 
-        if(bc) {
-            bc.innerText = `${hero.inventory.length}/15`;
-            if (hero.inventory.length > 15) bc.style.color = "#ef4444";
-            else bc.style.color = "#a1a1aa";
-        }
-        
-        let invHtml = '';
-        let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); 
-        for (let i = 0; i < gridLimit; i++) { 
-            if (i < hero.inventory.length) { 
-                let item = ITEMS_DB[hero.inventory[i]]; 
-                if (item) { invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } 
-                else { invHtml += `<div class="inv-item empty"></div>`; } 
-            } 
-            else { invHtml += `<div class="inv-item empty"></div>`; } 
-        }
+        let bc = document.getElementById("ui-bag-capacity"); if(bc) { bc.innerText = `${hero.inventory.length}/15`; if (hero.inventory.length > 15) bc.style.color = "#ef4444"; else bc.style.color = "#a1a1aa"; }
+        let invHtml = ''; let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); for (let i = 0; i < gridLimit; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { invHtml += `<div class="inv-item filled rarity-${item.rarity}" onclick="openInspectModal(${i})">${renderItemIcon(item)}</div>`; } else { invHtml += `<div class="inv-item empty"></div>`; } } else { invHtml += `<div class="inv-item empty"></div>`; } }
         let ig = document.getElementById("ui-inventory-grid"); if(ig) ig.innerHTML = invHtml;
 
         let hpPercent = Math.min(100, Math.max(0, (hero.hp / hero.finalStats.hp) * 100)); let missingHp = hero.finalStats.hp - Math.floor(hero.hp); let healCost = Math.max(10, Math.floor(missingHp * 0.5));
         let healBtnHtml = hero.hp < hero.finalStats.hp ? `<button class="heal-btn" onclick="healHero()">ЛЕЧИТЬ (-${healCost}💰)</button>` : ``;
 
-        let isDebuff = hero.deathDebuffEnd > Date.now();
-        let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
+        let isDebuff = hero.deathDebuffEnd > Date.now(); let warnTxt = isDebuff ? `<div style="color:#ef4444; font-size:9px; font-weight:bold; margin-bottom:4px;">⚠️ АКТИВЕН ШТРАФ СМЕРТИ (-25%)</div>` : '';
         let altarTxt = ''; if (hero.activeAltar) { let ev = BOSS_EVENTS.find(e => e.id === hero.activeAltar); if (ev) altarTxt = `<div style="background:#4c0519; color:#fca5a5; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px dashed #be123c; box-shadow: 0 0 10px rgba(190, 18, 60, 0.3);">🔮 АКТИВНО ПРОКЛЯТИЕ ЗАБЕГА:<br><span style="font-size:11px; color:#fff;">${ev.title}</span></div>`; }
 
         let unspentHtml = hero.unspentPoints > 0 ? `<div style="background:#064e3b; color:#34d399; padding:6px; border-radius:6px; text-align:center; margin-bottom:12px; font-weight:bold; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">ОЧКОВ ХАРАКТЕРИСТИК: ${hero.unspentPoints}</div>` : '';
         function renderStatRow(icon, name, key, val) { let btn = hero.unspentPoints > 0 ? `<button class="stat-btn-add" onclick="addStat('${key}')">+</button>` : ''; return `<div class="stat-item"><span>${icon} ${name}</span> <div style="display:flex; align-items:center;"><b>${val}</b>${btn}</div></div>`; }
 
-        let elemTable = `
-            <div class="stat-group-title" style="margin-top:10px;">Стихийный урон и Защита</div>
-            <div class="stat-resist-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; background:#18181b; padding:8px; border-radius:8px; border:1px solid #27272a;">
-                <div style="font-size:10px;"><span class="elem-fire">🔥 Огонь:</span> <b>+${hero.finalStats.dmg_fire || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_fire || 0}%</span></div>
-                <div style="font-size:10px;"><span class="elem-ice">❄️ Лёд:</span> <b>+${hero.finalStats.dmg_ice || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_ice || 0}%</span></div>
-                <div style="font-size:10px;"><span class="elem-dark">☠️ Тьма:</span> <b>+${hero.finalStats.dmg_dark || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_dark || 0}%</span></div>
-                <div style="font-size:10px;"><span class="elem-holy">☀️ Свет:</span> <b>+${hero.finalStats.dmg_holy || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_holy || 0}%</span></div>
-            </div>
-        `;
+        let elemTable = `<div class="stat-group-title" style="margin-top:10px;">Стихийный урон и Защита</div><div class="stat-resist-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; background:#18181b; padding:8px; border-radius:8px; border:1px solid #27272a;"><div style="font-size:10px;"><span class="elem-fire">🔥 Огонь:</span> <b>+${hero.finalStats.dmg_fire || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_fire || 0}%</span></div><div style="font-size:10px;"><span class="elem-ice">❄️ Лёд:</span> <b>+${hero.finalStats.dmg_ice || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_ice || 0}%</span></div><div style="font-size:10px;"><span class="elem-dark">☠️ Тьма:</span> <b>+${hero.finalStats.dmg_dark || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_dark || 0}%</span></div><div style="font-size:10px;"><span class="elem-holy">☀️ Свет:</span> <b>+${hero.finalStats.dmg_holy || 0}</b> <br><span style="color:#71717a;">Рез: ${hero.finalStats.res_holy || 0}%</span></div></div>`;
 
         let sc = document.getElementById("ui-stats-container");
-        if(sc) sc.innerHTML = `
-            <div class="stats-card">
-                ${unspentHtml}
-                <div class="stat-group-title">Базовые параметры</div>
-                ${renderStatRow('⚔️', 'Сила (СИЛ)', 'str', hero.finalStats.str)}
-                ${renderStatRow('🏃', 'Ловкость (ЛОВ)', 'agi', hero.finalStats.agi)}
-                ${renderStatRow('❤️', 'Выносл-ть (ВЫН)', 'end', hero.finalStats.end)}
-                ${renderStatRow('🎯', 'Мастерство (МСТ)', 'mst', hero.finalStats.mst)}
-                ${renderStatRow('🍀', 'Удача (УДЧ)', 'luk', hero.finalStats.luk)}
-            </div>
-            <div class="stats-card">
-                <div class="stat-group-title">Боевые параметры</div>
-                ${altarTxt} ${warnTxt}
-                <div class="stat-item" style="flex-direction:column; align-items:stretch;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;">
-                        <span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>${healBtnHtml}
-                    </div>
-                    <div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div>
-                </div>
-                <div class="stat-item"><span>🗡️ Урон</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.damage}</b></div>
-                <div class="stat-item"><span>🛡️ Броня</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.armor}</b></div>
-                <div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div>
-                <div class="stat-item"><span>⚡ Крит / Урон</span> <b>${hero.finalStats.critChance}% / ${hero.finalStats.critDmg}%</b></div>
-                <div style="display:flex; gap:6px; margin-top:8px; font-size:10px;">
-                    <div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#ef4444">Вампиризм</span><br><b style="font-size:13px;">${hero.finalStats.lifesteal || 0}%</b></div>
-                    <div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#a855f7">Контратака</span><br><b style="font-size:13px;">${hero.finalStats.counter || 0}%</b></div>
-                    <div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#fbbf24">Шипы</span><br><b style="font-size:13px;">${hero.finalStats.thorns || 0}%</b></div>
-                </div>
-                ${elemTable}
-            </div>
-        `;
+        if(sc) sc.innerHTML = `<div class="stats-card">${unspentHtml}<div class="stat-group-title">Базовые параметры</div>${renderStatRow('⚔️', 'Сила (СИЛ)', 'str', hero.finalStats.str)}${renderStatRow('🏃', 'Ловкость (ЛОВ)', 'agi', hero.finalStats.agi)}${renderStatRow('❤️', 'Выносл-ть (ВЫН)', 'end', hero.finalStats.end)}${renderStatRow('🎯', 'Мастерство (МСТ)', 'mst', hero.finalStats.mst)}${renderStatRow('🍀', 'Удача (УДЧ)', 'luk', hero.finalStats.luk)}</div><div class="stats-card"><div class="stat-group-title">Боевые параметры</div>${altarTxt} ${warnTxt}<div class="stat-item" style="flex-direction:column; align-items:stretch;"><div style="display:flex; justify-content:space-between; margin-bottom:2px; align-items:center;"><span>🩸 Здоровье <b>${Math.floor(hero.hp)} / ${hero.finalStats.hp}</b></span>${healBtnHtml}</div><div class="hp-bar-bg"><div class="hp-bar-fill" style="width: ${hpPercent}%;"></div></div></div><div class="stat-item"><span>🗡️ Урон</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.damage}</b></div><div class="stat-item"><span>🛡️ Броня</span> <b style="${isDebuff?'color:#ef4444':''}">${hero.finalStats.armor}</b></div><div class="stat-item"><span>⛏️ Пробитие</span> <b style="color:#f59e0b;">${hero.finalStats.armorPen}</b></div><div class="stat-item"><span>⚡ Крит / Урон</span> <b>${hero.finalStats.critChance}% / ${hero.finalStats.critDmg}%</b></div><div style="display:flex; gap:6px; margin-top:8px; font-size:10px;"><div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#ef4444">Вампиризм</span><br><b style="font-size:13px;">${hero.finalStats.lifesteal || 0}%</b></div><div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#a855f7">Контратака</span><br><b style="font-size:13px;">${hero.finalStats.counter || 0}%</b></div><div style="flex:1; background:#27272a; padding:6px; border-radius:6px; text-align:center;"><span style="color:#fbbf24">Шипы</span><br><b style="font-size:13px;">${hero.finalStats.thorns || 0}%</b></div></div>${elemTable}</div>`;
     }
 
     if (currentScreen === 'boss') {
         let tEl = document.getElementById("ui-raid-tickets"); if(tEl) tEl.innerText = `${hero.tickets}/${hero.maxTickets}`;
         let raidHtml = ""; let statMult = 1 + (hero.level * 0.1); 
-        RAID_BOSSES.forEach(b => {
-            let imgUrl = `${STATIC_URL}mobs/B_${b.imgId}_high_resolution.png`; let canAfford = hero.tickets > 0; let btnHtml = canAfford ? `<button class="raid-btn" onclick="startRaid('${b.id}')">В БОЙ (1 🎟️)</button>` : `<button class="raid-btn" disabled>НЕТ БИЛЕТОВ</button>`;
-            let bHp = Math.floor(100 * statMult * b.hpMult); let bAtk = Math.floor(10 * statMult * b.atkMult); let bArm = Math.floor(5 * statMult * b.armMult);
-            let weakHtml = ""; if (b.res_holy < 0) weakHtml = `<span class="elem-holy" style="font-size:9px;">Уязвим к Свету</span>`; if (b.res_ice < 0) weakHtml = `<span class="elem-ice" style="font-size:9px;">Уязвим ко Льду</span>`;
-            let tierLvl = Math.floor(hero.level / 20) * 20; if (tierLvl === 0) tierLvl = 1;
-
-            raidHtml += `
-                <div class="raid-boss-card">
-                    <div class="raid-img-box"><div class="silhouette">👾</div><img src="${imgUrl}" class="raid-img"></div>
-                    <div class="raid-info">
-                        <div>
-                            <div class="raid-name">${b.name} <span class="entity-lvl boss" style="font-size:8px;">УР. ${hero.level}</span></div>
-                            <div class="raid-desc">${b.desc} <b style="color:#fbbf24; font-size:10px;">Дроп: Сет Ур. ${tierLvl}</b> ${weakHtml}</div>
-                            <div class="combat-mini-stats" style="margin-bottom: 6px; justify-content: space-between; padding: 4px 6px;"><span>❤️ ${bHp}</span> <span>⚔️ ${bAtk}</span> <span>🛡️ ${bArm}</span></div>
-                        </div>
-                        ${btnHtml}
-                    </div>
-                </div>
-            `;
-        });
+        RAID_BOSSES.forEach(b => { let imgUrl = `${STATIC_URL}mobs/B_${b.imgId}_high_resolution.png`; let canAfford = hero.tickets > 0; let btnHtml = canAfford ? `<button class="raid-btn" onclick="startRaid('${b.id}')">В БОЙ (1 🎟️)</button>` : `<button class="raid-btn" disabled>НЕТ БИЛЕТОВ</button>`; let bHp = Math.floor(100 * statMult * b.hpMult); let bAtk = Math.floor(10 * statMult * b.atkMult); let bArm = Math.floor(5 * statMult * b.armMult); let weakHtml = ""; if (b.res_holy < 0) weakHtml = `<span class="elem-holy" style="font-size:9px;">Уязвим к Свету</span>`; if (b.res_ice < 0) weakHtml = `<span class="elem-ice" style="font-size:9px;">Уязвим ко Льду</span>`; let tierLvl = Math.floor(hero.level / 20) * 20; if (tierLvl === 0) tierLvl = 1; raidHtml += `<div class="raid-boss-card"><div class="raid-img-box"><div class="silhouette">👾</div><img src="${imgUrl}" class="raid-img"></div><div class="raid-info"><div><div class="raid-name">${b.name} <span class="entity-lvl boss" style="font-size:8px;">УР. ${hero.level}</span></div><div class="raid-desc">${b.desc} <b style="color:#fbbf24; font-size:10px;">Дроп: Сет Ур. ${tierLvl}</b> ${weakHtml}</div><div class="combat-mini-stats" style="margin-bottom: 6px; justify-content: space-between; padding: 4px 6px;"><span>❤️ ${bHp}</span> <span>⚔️ ${bAtk}</span> <span>🛡️ ${bArm}</span></div></div>${btnHtml}</div></div>`; });
         let rl = document.getElementById("ui-raid-list"); if(rl) rl.innerHTML = raidHtml;
     }
 
     if (currentScreen === 'blacksmith') {
-        let forgeHtml = '';
-        for (let i = 0; i < 15; i++) { 
-            if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } else { forgeHtml += `<div class="inv-item empty"></div>`; } } 
-            else { forgeHtml += `<div class="inv-item empty"></div>`; } 
-        }
+        let forgeHtml = ''; for (let i = 0; i < 15; i++) { if (i < hero.inventory.length) { let item = ITEMS_DB[hero.inventory[i]]; if (item) { let selClass = forgeSelectedIndex === i ? 'selected' : ''; forgeHtml += `<div class="inv-item filled rarity-${item.rarity} ${selClass}" onclick="selectForgeItem(${i})">${renderItemIcon(item)}</div>`; } else { forgeHtml += `<div class="inv-item empty"></div>`; } } else { forgeHtml += `<div class="inv-item empty"></div>`; } }
         let fg = document.getElementById("ui-forge-grid"); if(fg) fg.innerHTML = forgeHtml;
 
         let dPanel = document.getElementById("forge-details-panel"); let btnUpg = document.getElementById("btn-forge-upgrade");
-        if (forgeSelectedIndex !== null && hero.inventory[forgeSelectedIndex]) {
-            let item = ITEMS_DB[hero.inventory[forgeSelectedIndex]]; 
-            if (item) {
-                let cost = item.lvl * item.price * 2; let nextLvl = item.lvl + 1;
-                document.getElementById("f-item-name").innerText = item.name; document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`;
-                let statHtml = "";
-                for (let s in item.stats) {
-                    let oldVal = item.stats[s]; 
-                    let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s);
-                    let newVal = isPct ? oldVal + 1 : Math.max(1, Math.ceil(oldVal * 1.15));
-                    
-                    let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %', dmg_fire:'Урон 🔥', dmg_ice:'Урон ❄️', dmg_dark:'Урон ☠️', dmg_holy:'Урон ☀️', lifesteal:'Вампиризм %', counter:'Контратака %', thorns:'Шипы %'}[s] || s;
-                    statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`;
-                }
-                document.getElementById("f-item-stats").innerHTML = statHtml;
-                
-                let upgCount = item.upgradeCount || 0;
-                if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || upgCount >= 10; if (upgCount >= 10) btnUpg.innerText = "ПРЕДЕЛ КОВКИ"; }
-                
-                if(dPanel) dPanel.classList.add("show");
-            }
-        } else { if(dPanel) dPanel.classList.remove("show"); }
+        if (forgeSelectedIndex !== null && hero.inventory[forgeSelectedIndex]) { let item = ITEMS_DB[hero.inventory[forgeSelectedIndex]]; if (item) { let cost = item.lvl * item.price * 2; let nextLvl = item.lvl + 1; document.getElementById("f-item-name").innerText = item.name; document.getElementById("f-item-lvl").innerText = `УР. ${item.lvl} ➔ ${nextLvl}`; let statHtml = ""; for (let s in item.stats) { let oldVal = item.stats[s]; let isPct = ['critChance', 'dodgeChance', 'lifesteal', 'counter', 'thorns', 'blockChance'].includes(s); let newVal = isPct ? oldVal + 1 : Math.max(1, Math.ceil(oldVal * 1.15)); let sName = {atk:'Урон', armor:'Броня', str:'Сила', agi:'Ловкость', end:'Выносливость', mst:'Мастерство', luk:'Удача', critChance:'Крит %', dodgeChance:'Уворот %', armorPen:'Пробитие', blockChance:'Блок %', critDmg: 'Крит. Урон %', dmg_fire:'Урон 🔥', dmg_ice:'Урон ❄️', dmg_dark:'Урон ☠️', dmg_holy:'Урон ☀️', lifesteal:'Вампиризм %', counter:'Контратака %', thorns:'Шипы %'}[s] || s; statHtml += `<div class="f-stat-row"><span>${sName}</span><div><span class="f-old">${oldVal}</span><span class="f-arrow">➔</span><span class="f-new">${newVal}</span></div></div>`; } document.getElementById("f-item-stats").innerHTML = statHtml; let upgCount = item.upgradeCount || 0; if(btnUpg) { btnUpg.innerText = `КОВАТЬ (💰 ${cost})`; btnUpg.disabled = hero.gold < cost || upgCount >= 10; if (upgCount >= 10) btnUpg.innerText = "ПРЕДЕЛ КОВКИ"; } if(dPanel) dPanel.classList.add("show"); } } else { if(dPanel) dPanel.classList.remove("show"); }
     }
 
     if (currentScreen === 'shop') {
         let shopHtml = '';
         if (shopMode === 'buy') {
             let sortedAssortment = [...SHOP_ASSORTMENT].filter(id => ITEMS_DB[id] && ITEMS_DB[id].inShop).sort((a, b) => ITEMS_DB[a].price - ITEMS_DB[b].price);
-            sortedAssortment.forEach(itemId => {
-                let item = ITEMS_DB[itemId];
-                let price = getShopPrice(item.price); let canAfford = hero.gold >= price; let meetLvl = hero.level >= item.lvl;
-                let btnHtml = (canAfford && meetLvl) ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${price}</button>` : `<button class="shop-btn btn-buy" disabled>💰 ${price}</button>`;
-                shopHtml += `<div class="shop-item-card"><div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div><div class="shop-item-info"><div class="shop-item-name"><span>${item.name}</span></div><div class="shop-item-stats">${item.desc}</div></div>${btnHtml}</div>`;
-            });
+            sortedAssortment.forEach(itemId => { let item = ITEMS_DB[itemId]; let price = getShopPrice(item.price); let canAfford = hero.gold >= price; let meetLvl = hero.level >= item.lvl; let btnHtml = (canAfford && meetLvl) ? `<button class="shop-btn btn-buy" onclick="buyItem('${item.id}')">Купить<br>💰 ${price}</button>` : `<button class="shop-btn btn-buy" disabled>💰 ${price}</button>`; shopHtml += `<div class="shop-item-card"><div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div><div class="shop-item-info"><div class="shop-item-name"><span>${item.name}</span></div><div class="shop-item-stats">${item.desc}</div></div>${btnHtml}</div>`; });
             if(sortedAssortment.length === 0) shopHtml = `<div style="text-align:center; padding:20px; color:#a1a1aa;">Торгаш ушел за новыми зельями...</div>`;
-        } else {
-            if (hero.inventory.length === 0) shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Ваша сумка пуста. Экипировка добывается в Башне!</div>`;
-            else {
-                hero.inventory.forEach((itemId, index) => {
-                    let item = ITEMS_DB[itemId]; if (!item) return;
-                    shopHtml += `<div class="shop-item-card"><div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div><div class="shop-item-info"><div class="shop-item-name">${item.name} <span class="shop-item-lvl">Ур. ${item.lvl}</span></div><div class="shop-item-stats" style="color:#71717a;">Возврат: 50%</div></div><button class="shop-btn btn-sell" onclick="sellItem(${index})">Продать<br>💰 +${Math.floor(item.price * 0.5)}</button></div>`;
-                });
+        } else if (shopMode === 'sell') {
+            if (hero.inventory.length === 0) shopHtml = `<div style="text-align:center; padding: 20px; color:#71717a;">Ваша сумка пуста. Экипировка добывается в Башне!</div>`; else { hero.inventory.forEach((itemId, index) => { let item = ITEMS_DB[itemId]; if (!item) return; shopHtml += `<div class="shop-item-card"><div class="shop-item-icon rarity-${item.rarity}">${renderItemIcon(item)}</div><div class="shop-item-info"><div class="shop-item-name">${item.name} <span class="shop-item-lvl">Ур. ${item.lvl}</span></div><div class="shop-item-stats" style="color:#71717a;">Возврат: 50%</div></div><button class="shop-btn btn-sell" onclick="sellItem(${index})">Продать<br>💰 +${Math.floor(item.price * 0.5)}</button></div>`; }); }
+        } else if (shopMode === 'premium') {
+            let premList = document.getElementById("ui-premium-list");
+            if (premList) {
+                premList.innerHTML = `
+                    <div class="gem-card">
+                        <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">100 Алмазов</div></div>
+                        <button class="btn-stars" onclick="buyGemsWithStars(100, 50)">50 <span class="star-icon">⭐️</span></button>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">500 Алмазов <span class="gem-bonus">+ Хит!</span></div></div>
+                        <button class="btn-stars" onclick="buyGemsWithStars(500, 200)">200 <span class="star-icon">⭐️</span></button>
+                    </div>
+                    <div class="gem-card">
+                        <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">1500 Алмазов <span class="gem-bonus">+ Выгодно!</span></div></div>
+                        <button class="btn-stars" onclick="buyGemsWithStars(1500, 500)">500 <span class="star-icon">⭐️</span></button>
+                    </div>
+                    <div style="text-align:center; color:#71717a; font-size:10px; margin-top:10px;">Оплата происходит через официальную систему Telegram Stars. Звезды можно купить в настройках вашего профиля Telegram.</div>
+                `;
             }
         }
         let sl = document.getElementById("ui-shop-list"); if(sl) sl.innerHTML = shopHtml;
@@ -1688,22 +1116,7 @@ function updateUI() {
         let selCls = CLASSES[previewClassId]; let isCurrentHeroClass = hero.baseClass === previewClassId;
         
         let cd = document.getElementById("ui-class-detail");
-        if (cd) {
-            cd.innerHTML = `
-                <div class="class-detail-card" style="border-color: ${selCls.color}40;">
-                    <div class="class-detail-img-box"><div class="silhouette" style="position:absolute; font-size:80px; z-index:1; opacity:0.3;">👤</div><img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img"><div class="class-gradient-fade"></div></div>
-                    <div class="class-detail-content">
-                        <div class="class-detail-header"><div class="class-detail-title" style="color:${selCls.color}; text-shadow: 0 0 15px ${selCls.color}80;">${selCls.icon} ${selCls.name}</div><div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div></div>
-                        <div class="class-detail-lore">"${selCls.lore}"</div>
-                        <div class="class-bars">
-                            <div class="c-bar-row"><span>Атака</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.dmg}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
-                            <div class="c-bar-row"><span>Защита</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.def}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
-                            <div class="c-bar-row"><span>Сложность</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.diff}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div>
-                        </div>
-                        <button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 4px 15px ${selCls.color}40; border-color: ${selCls.color};` : ''}">${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}</button>
-                    </div>
-                </div>`;
-        }
+        if (cd) { cd.innerHTML = `<div class="class-detail-card" style="border-color: ${selCls.color}40;"><div class="class-detail-img-box"><div class="silhouette" style="position:absolute; font-size:80px; z-index:1; opacity:0.3;">👤</div><img src="${CLASS_AVATARS[previewClassId]}" alt="${selCls.name}" class="class-preview-img"><div class="class-gradient-fade"></div></div><div class="class-detail-content"><div class="class-detail-header"><div class="class-detail-title" style="color:${selCls.color}; text-shadow: 0 0 15px ${selCls.color}80;">${selCls.icon} ${selCls.name}</div><div class="class-detail-growth">Авто-рост: СИЛ +${selCls.growth.str} | ЛОВ +${selCls.growth.agi} | ВЫН +${selCls.growth.end} | МСТ +${selCls.growth.mst} | УДЧ +${selCls.growth.luk}</div></div><div class="class-detail-lore">"${selCls.lore}"</div><div class="class-bars"><div class="c-bar-row"><span>Атака</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.dmg}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div><div class="c-bar-row"><span>Защита</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.def}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div><div class="c-bar-row"><span>Сложность</span><div class="c-bar-wrap"><div class="c-bar-fill" style="width: ${selCls.bars.diff}%; background: ${selCls.color}; box-shadow: 0 0 10px ${selCls.color};"></div></div></div></div><button class="select-class-btn" ${isCurrentHeroClass ? 'disabled' : ''} onclick="changeClass('${previewClassId}')" style="${!isCurrentHeroClass ? `box-shadow: 0 4px 15px ${selCls.color}40; border-color: ${selCls.color};` : ''}">${isCurrentHeroClass ? '✔ ТЕКУЩИЙ КЛАСС' : 'СМЕНИТЬ КЛАСС (💰 5000)'}</button></div></div>`; }
     }
     
     if (currentScreen === 'talents') { renderTalents(); }
