@@ -4,6 +4,7 @@ import random
 import threading
 import sqlite3
 import telebot
+import urllib.request
 from flask import Flask, jsonify, request, render_template
 from telebot.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -17,7 +18,6 @@ DB_FILE = "database.db"
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    # Создаем таблицу, если ее еще нет
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id TEXT PRIMARY KEY,
@@ -37,7 +37,6 @@ init_db()
 
 @app.route("/")
 def index():
-    # Отдаем нашу крутую страницу с игрой!
     return render_template("index.html")
 
 @app.route("/api/save", methods=["POST"])
@@ -48,8 +47,6 @@ def save_player():
 
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    
-    # Сохраняем или обновляем профиль игрока в базе
     c.execute('''
         INSERT INTO users (id, name, class_id, level, rating, hero_data)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -67,7 +64,6 @@ def save_player():
         data.get("rating", 1000), 
         data.get("hero_data", "")
     ))
-    
     conn.commit()
     conn.close()
     return jsonify({"status": "ok"})
@@ -79,7 +75,6 @@ def load_player(user_id):
     c.execute('SELECT hero_data FROM users WHERE id = ?', (str(user_id),))
     row = c.fetchone()
     conn.close()
-    
     if row:
         return jsonify({"status": "ok", "hero_data": row[0]})
     return jsonify({"status": "not_found"})
@@ -88,11 +83,9 @@ def load_player(user_id):
 def get_leaderboard():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    # Берем топ-10 игроков с самым высоким рейтингом
     c.execute('SELECT name, class_id, level, rating FROM users ORDER BY rating DESC LIMIT 10')
     rows = c.fetchall()
     conn.close()
-    
     leaderboard = []
     for row in rows:
         leaderboard.append({
@@ -107,7 +100,6 @@ def get_leaderboard():
 def get_pvp_opponent(level):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    # Ищем реального случайного противника близкого уровня (+/- 3 уровня)
     min_level = max(1, level - 3)
     max_level = level + 3
     c.execute('''
@@ -118,7 +110,6 @@ def get_pvp_opponent(level):
     ''', (min_level, max_level))
     row = c.fetchone()
     conn.close()
-    
     if row:
         return jsonify({
             "status": "ok",
@@ -132,12 +123,46 @@ def get_pvp_opponent(level):
         })
     return jsonify({"status": "not_found"})
 
+# --- ЭНДПОИНТ ДЛЯ ПОКУПКИ АЛМАЗОВ ЗА TELEGRAM STARS ---
+@app.route("/api/create-invoice", methods=["POST"])
+def create_invoice():
+    data = request.json
+    if not data:
+        return jsonify({"error": "Нет данных"}), 400
+        
+    tg_url = f"https://api.telegram.org/bot{TOKEN}/createInvoiceLink"
+    
+    payload = {
+        "title": data.get("title"),
+        "description": data.get("description"),
+        "payload": data.get("payload"),
+        "provider_token": "",  # Обязательно пусто для Telegram Stars
+        "currency": "XTR",     # Валюта Telegram Stars
+        "prices": [{"label": "Алмазы", "amount": data.get("starsAmount")}]
+    }
+    
+    req_obj = urllib.request.Request(
+        tg_url, 
+        data=json.dumps(payload).encode('utf-8'), 
+        headers={'Content-Type': 'application/json'}
+    )
+    
+    try:
+        with urllib.request.urlopen(req_obj) as response:
+            resp_data = json.loads(response.read().decode())
+            if resp_data.get("ok"):
+                return jsonify({"invoiceUrl": resp_data["result"]})
+            else:
+                return jsonify({"error": resp_data.get("description")}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # --- ЛОГИКА БОТА (TELEGRAM) ---
 
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
-    # Обновил версию, чтобы сбросить кэш у игроков
-    webapp_url = "https://arena-webapp-production.up.railway.app/?v=25"
+    # Обновленная правильная ссылка с версией для сброса кэша
+    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=26"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
@@ -174,8 +199,5 @@ def run_bot():
     bot.infinity_polling()
 
 if __name__ == "__main__":
-    # Запускаем бота в отдельном потоке, чтобы он не мешал веб-серверу
     threading.Thread(target=run_bot, daemon=True).start()
-    
-    # Запускаем веб-сервер Flask
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
