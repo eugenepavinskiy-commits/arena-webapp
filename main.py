@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -6,6 +6,8 @@ from fastapi.responses import HTMLResponse
 import sqlite3
 import uvicorn
 import os
+import urllib.request
+import json
 
 app = FastAPI(title="Arena RPG API")
 
@@ -126,8 +128,43 @@ def get_pvp_opponent(level: int):
         }
     return {"status": "not_found", "message": "Подходящий противник не найден"}
 
+# === ЭНДПОИНТ ДЛЯ ПОКУПКИ АЛМАЗОВ (TELEGRAM STARS) ===
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+
+@app.post("/api/create-invoice")
+async def create_invoice(req: Request):
+    if not BOT_TOKEN:
+        return {"error": "Токен бота не настроен на сервере Railway"}
+    
+    data = await req.json()
+    tg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/createInvoiceLink"
+    
+    payload = {
+        "title": data.get("title"),
+        "description": data.get("description"),
+        "payload": data.get("payload"),
+        "provider_token": "",  # Для Telegram Stars поле ДОЛЖНО быть пустым
+        "currency": "XTR",     # Код валюты Telegram Stars
+        "prices": [{"label": "Алмазы", "amount": data.get("starsAmount")}]
+    }
+    
+    req_obj = urllib.request.Request(
+        tg_url, 
+        data=json.dumps(payload).encode('utf-8'), 
+        headers={'Content-Type': 'application/json'}
+    )
+    
+    try:
+        with urllib.request.urlopen(req_obj) as response:
+            resp_data = json.loads(response.read().decode())
+            if resp_data.get("ok"):
+                return {"invoiceUrl": resp_data["result"]}
+            else:
+                return {"error": resp_data.get("description")}
+    except Exception as e:
+        return {"error": str(e)}
+
 # Подключаем раздачу статики (HTML, CSS, JS, Картинки)
-# Чтобы сервер отдавал саму игру при переходе по ссылке
 if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -141,4 +178,3 @@ if __name__ == "__main__":
     print("🚀 Сервер Arena RPG запускается...")
     print("💡 Перейди по адресу: http://127.0.0.1:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
