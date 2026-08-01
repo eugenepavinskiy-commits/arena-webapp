@@ -6,7 +6,7 @@
     <title>Arena RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-    <link rel="stylesheet" href="static/style.css?v=34">
+    <link rel="stylesheet" href="static/style.css?v=36">
 </head>
 <body>
     <div class="blood-overlay" id="blood-screen"></div>
@@ -68,7 +68,9 @@
                 <div class="combat-header" id="combat-floor-title" style="color:#d4d4d8; font-size:10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;"></div>
                 
                 <div class="combat-arena" id="arena-bg">
+                    
                     <div class="combat-entities" id="combat-entities-box">
+                        <button class="btn-flee" id="btn-flee-combat" onclick="fleeCombat()">СБЕЖАТЬ 🏃‍♂️</button>
                         <div id="combat-intent" class="intent-box"></div>
                         
                         <div class="combat-entity-wrapper" id="entity-hero-box">
@@ -81,17 +83,28 @@
                                 <div class="hp-text-plate"><span id="combat-hero-hp">100</span> / <span id="combat-hero-maxhp">100</span></div>
                                 <div class="hp-bar-outer"><div class="hp-bar-inner hero-hp-fill" id="combat-hero-hp-bar" style="width: 100%;"></div></div>
                             </div>
-                            <div class="combat-mini-stats"><span>⚔️ <span id="combat-hero-atk-val">0</span></span> <span>🛡️ <span id="combat-hero-arm-val">0</span></span></div>
+                            <div class="combat-mini-stats new-style">
+                                <span>⚔️ <span id="combat-hero-atk-val">0</span></span> 
+                                <span style="color:#3f3f46;">|</span> 
+                                <span>🛡️ <span id="combat-hero-arm-val">0</span></span>
+                            </div>
                             <div id="hero-slash" class="slash-fx"></div>
                         </div>
                         
-                        <div class="combat-vs">VS</div>
+                        <!-- VS зафиксирован отдельно -->
+                        <div class="combat-vs" id="combat-vs-text">VS</div>
+                        
+                        <!-- Банки вынесены отдельно для позиционирования ВНИЗУ -->
+                        <div class="center-consumables" id="center-consumables-box">
+                            <!-- Сюда JS вставит 1 банку и 1 свиток -->
+                        </div>
+
                         <div id="combo-display" class="combo-meter"></div>
                         <div id="clash-spark-fx" class="clash-spark"></div>
                         
                         <div class="combat-entity-wrapper" id="entity-enemy-box">
                             <div class="entity-name-plate" id="combat-enemy-name-plate"></div>
-                            <div class="combat-card">
+                            <div class="combat-card boss">
                                 <div class="card-avatar-wrap"><img id="combat-enemy-img" class="card-avatar-img" src=""></div>
                                 <div class="status-icon" id="enemy-stun-icon">💫</div>
                             </div>
@@ -100,12 +113,18 @@
                                 <div class="hp-bar-outer"><div class="hp-bar-inner enemy-hp-fill" id="combat-enemy-hp-bar" style="width: 100%;"></div></div>
                                 <div class="boss-rage-bg" id="enemy-rage-bg"><div class="boss-rage-fill" id="enemy-rage-bar" style="width: 0%;"></div></div>
                             </div>
-                            <div class="combat-mini-stats"><span>⚔️ <span id="combat-enemy-atk-val">0</span></span> <span>🛡️ <span id="combat-enemy-arm-val">0</span></span></div>
+                            <div class="combat-mini-stats new-style">
+                                <span>⚔️ <span id="combat-enemy-atk-val">0</span></span> 
+                                <span style="color:#3f3f46;">|</span> 
+                                <span>🛡️ <span id="combat-enemy-arm-val">0</span></span>
+                            </div>
                             <div id="enemy-slash" class="slash-fx"></div>
                         </div>
                     </div>
                     
+                    <!-- Лог возвращен на место -->
                     <div class="combat-log-box" id="combat-log"></div>
+
                 </div>
 
                 <div class="combat-dashboard">
@@ -158,8 +177,7 @@
                 </div>
 
                 <div class="stat-group-title">ТАБЛИЦА ЛИДЕРОВ (ТОП-3)</div>
-                <div id="ui-pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;">
-                    </div>
+                <div id="ui-pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div id="screen-blacksmith" class="app-screen">
@@ -184,17 +202,25 @@
 
             <div id="screen-shop" class="app-screen">
                 <div class="combat-header boss" style="margin-bottom: 15px; color:#10b981;">ЛАВКА ТОРГОВЦА</div>
+                
+                <!-- ОБНОВЛЕННЫЕ ВКЛАДКИ МАГАЗИНА С ПРЕМИУМОМ -->
                 <div class="shop-controls">
-                    <div class="shop-tab active" onclick="setShopMode('buy'); this.classList.add('active'); this.nextElementSibling.classList.remove('active-sell');">КУПИТЬ</div>
-                    <div class="shop-tab" onclick="setShopMode('sell'); this.classList.add('active-sell'); this.previousElementSibling.classList.remove('active');">ПРОДАТЬ</div>
+                    <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">КУПИТЬ</div>
+                    <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">ПРОДАТЬ</div>
+                    <div class="shop-tab" id="tab-premium" onclick="setShopMode('premium')">АЛМАЗЫ 💎</div>
                 </div>
-                <div class="shop-filters">
+
+                <div class="shop-filters" id="shop-filters-box">
                     <select id="filter-class" class="shop-select" onchange="updateUI()">
                         <option value="all">Все классы</option>
                         <option value="my_class">Для моего класса</option>
                     </select>
                 </div>
+                
                 <div class="shop-list" id="ui-shop-list"></div>
+                
+                <!-- КОНТЕЙНЕР ДЛЯ ПОКУПКИ ЗА ЗВЕЗДЫ -->
+                <div class="premium-container" id="ui-premium-list" style="display: none;"></div>
             </div>
 
             <div id="screen-classes" class="app-screen">
@@ -209,15 +235,22 @@
             </div>
 
             <div id="screen-rating" class="app-screen">
-                <div class="combat-header boss" style="margin-bottom: 15px;">ГЛОБАЛЬНЫЙ РЕЙТИНГ</div>
-                <div style="text-align: center; color: #a1a1aa; padding: 40px 20px; border: 1px dashed #3f3f46; border-radius: 8px; background: #121214;">
-                    <div style="font-size: 40px; margin-bottom: 10px;">🛠️</div>
-                    <b style="color: #fbbf24;">В РАЗРАБОТКЕ</b><br>
-                    <span style="font-size: 12px;">Здесь будет таблица лучших игроков. Мы подключим её, когда настроим сервер!</span>
+                <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div>
+                
+                <div class="rating-tabs-container">
+                    <div class="rating-tab active" id="tab-rating-pvp" onclick="switchRatingTab('pvp')">🏆 Гладиаторы</div>
+                    <div class="rating-tab" id="tab-rating-pve" onclick="switchRatingTab('pve')">🏰 Этажи</div>
+                    <div class="rating-tab" id="tab-rating-wealth" onclick="switchRatingTab('wealth')">💰 Магнаты</div>
+                </div>
+
+                <div class="pedestal-container" id="ui-rating-pedestal"></div>
+
+                <div class="stat-group-title" id="ui-rating-list-title">ОСТАЛЬНЫЕ ПРЕТЕНДЕНТЫ</div>
+                <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
+                    <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div>
                 </div>
             </div>
 
-            <!-- НОВЫЙ ЭКРАН ДРУЗЕЙ -->
             <div id="screen-friends" class="app-screen">
                 <div class="combat-header boss" style="margin-bottom: 15px; color:#ec4899;">БРАТСТВО (ДРУЗЬЯ)</div>
                 <div id="ui-friends-container"></div>
@@ -225,7 +258,7 @@
 
         </div> 
         
-        <div class="nav-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="nav-grid">
             <div class="nav-btn active" id="nav-hero" onclick="openScreen('hero')">🛡️<br>Герой</div>
             <div class="nav-btn" id="nav-talents" onclick="openScreen('talents')">✨<br>Таланты</div>
             <div class="nav-btn" id="nav-PVE" onclick="openScreen('PVE')">⚔️<br>В бой</div>
@@ -265,6 +298,35 @@
         </div>
     </div>
 
-    <script src="static/game.js?v=8688499"></script>
+    <div class="modal-overlay" id="player-profile-modal">
+        <div class="player-profile-modal">
+            <img src="" class="profile-avatar" id="pp-avatar">
+            <div class="profile-name" id="pp-name">Имя</div>
+            <div class="profile-class" id="pp-class">Класс • Ур. X</div>
+            
+            <div class="profile-stat-grid">
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Кубки</span>
+                    <span class="profile-stat-val" id="pp-rating" style="color:#fbbf24;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Макс. Этаж</span>
+                    <span class="profile-stat-val" id="pp-floor" style="color:#34d399;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Боев (PvE)</span>
+                    <span class="profile-stat-val" id="pp-fights" style="color:#60a5fa;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Золото</span>
+                    <span class="profile-stat-val" id="pp-gold" style="color:#fcd34d;">0</span>
+                </div>
+            </div>
+            
+            <button class="modal-btn secondary" onclick="closePlayerProfile()" style="margin-top: 0;">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+
+    <script src="static/game.js?v=2001"></script>
 </body>
 </html>
