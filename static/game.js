@@ -239,7 +239,7 @@ const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстро�
 
 const BOSS_EVENTS = [
     { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
-    { id: "iron_will", title: "Желез Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
+    { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
     { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
     { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
 ];
@@ -567,6 +567,26 @@ async function startPvP() {
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, undyingUsed: false, potionUsed: false, scrollUsed: false };
     
     calculateStats(true); document.getElementById("enemy-rage-bg").style.display = "none"; document.getElementById("combat-log").innerHTML = ``; planEnemyTurn(); updateUI();
+}
+
+function fleeCombat() {
+    if (isTurnExecuting || hero.hp <= 0) return;
+    if (combatMode === 'pvp') return alert("С Арены нельзя сбежать! Сражайтесь до конца.");
+    if (!confirm("Сбежать с поля боя? Текущий прогресс здоровья врага будет потерян!")) return;
+    
+    playSFX('dodge');
+    if (window.tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+    
+    if (combatMode === 'raid') {
+        combatMode = 'pve'; 
+        if (savedPveEnemy) { enemy = savedPveEnemy; combatState = savedPveState; savedPveEnemy = null; savedPveState = null; } else { initCombat(); }
+        playBGM('menu'); 
+        openScreen('boss');
+    } else {
+        initCombat(); // Сброс врага на этаже
+        playBGM('menu'); 
+        openScreen('hero');
+    }
 }
 
 function planEnemyTurn() { if(!enemy) return; enemy.turnCounter++; let delay = hasTalent('r2c') ? 3 : 0; if (enemy.isRaid) { let turnsLeft = (15 + delay) - enemy.turnCounter; if (turnsLeft <= 0) enemy.nextAtkZone = 'ENRAGE'; else if (enemy.turnCounter % 4 === 0) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } else { let ultMod = (enemy.turnCounter - delay) % 4; if (enemy.isBoss && ultMod === 0 && enemy.turnCounter > delay) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } updateIntentDisplay(); }
@@ -1204,6 +1224,15 @@ function updateUI() {
     if (currentScreen === 'quests') { checkDailyQuests(); let html = ''; for (let qId in DAILY_QUESTS) { let def = DAILY_QUESTS[qId]; let q = hero.quests[qId] || { progress: 0, claimed: false }; let pct = Math.min(100, (q.progress / def.target) * 100); let btnHtml = ''; if (q.claimed) { btnHtml = `<div class="quest-btn claimed">ВЫПОЛНЕНО</div>`; } else if (q.progress >= def.target) { btnHtml = `<div class="quest-btn ready" onclick="claimQuest('${qId}')">ЗАБРАТЬ НАГРАДУ</div>`; } else { btnHtml = `<div class="quest-btn">${Math.floor(q.progress)} / ${def.target}</div>`; } html += `<div class="quest-card"><div class="quest-header"><span>${def.name}</span><span class="quest-reward">+${def.rewardGems} 💎</span></div><div class="quest-desc">${def.desc}</div><div class="quest-progress-wrap"><div class="quest-progress-fill" style="width: ${pct}%"></div></div>${btnHtml}</div>`; } let qList = document.getElementById("ui-quests-list"); if(qList) qList.innerHTML = html; }
 
     if (currentScreen === 'PVE' && enemy) {
+        let fleeBtn = document.getElementById("btn-flee-combat");
+        if (fleeBtn) {
+            if (combatMode === 'pvp' || hero.hp <= 0 || isTurnExecuting) {
+                fleeBtn.style.display = "none";
+            } else {
+                fleeBtn.style.display = "block";
+            }
+        }
+
         let lootPreviewEl = document.getElementById("boss-loot-preview");
         if (!lootPreviewEl) { lootPreviewEl = document.createElement("div"); lootPreviewEl.id = "boss-loot-preview"; let dashboard = document.querySelector('.combat-dashboard'); if (dashboard) dashboard.insertBefore(lootPreviewEl, dashboard.firstChild); }
         if (enemy.isBoss || enemy.isMiniBoss || enemy.isRaid) {
