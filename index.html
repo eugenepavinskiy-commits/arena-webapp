@@ -177,8 +177,7 @@
                 </div>
 
                 <div class="stat-group-title">ТАБЛИЦА ЛИДЕРОВ (ТОП-3)</div>
-                <div id="ui-pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;">
-                    </div>
+                <div id="ui-pvp-leaderboard" style="display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div id="screen-blacksmith" class="app-screen">
@@ -227,12 +226,23 @@
                 <div id="ui-quests-list" style="display: flex; flex-direction: column;"></div>
             </div>
 
+            <!-- ОБНОВЛЕННЫЙ ЗАЛ СЛАВЫ -->
             <div id="screen-rating" class="app-screen">
-                <div class="combat-header boss" style="margin-bottom: 15px;">ГЛОБАЛЬНЫЙ РЕЙТИНГ</div>
-                <div style="text-align: center; color: #a1a1aa; padding: 40px 20px; border: 1px dashed #3f3f46; border-radius: 8px; background: #121214;">
-                    <div style="font-size: 40px; margin-bottom: 10px;">🛠️</div>
-                    <b style="color: #fbbf24;">В РАЗРАБОТКЕ</b><br>
-                    <span style="font-size: 12px;">Здесь будет таблица лучших игроков. Мы подключим её, когда настроим сервер!</span>
+                <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div>
+                
+                <div class="rating-tabs-container">
+                    <div class="rating-tab active" id="tab-rating-pvp" onclick="switchRatingTab('pvp')">🏆 Гладиаторы</div>
+                    <div class="rating-tab" id="tab-rating-pve" onclick="switchRatingTab('pve')">🏰 Этажи</div>
+                    <div class="rating-tab" id="tab-rating-wealth" onclick="switchRatingTab('wealth')">💰 Магнаты</div>
+                </div>
+
+                <div class="pedestal-container" id="ui-rating-pedestal">
+                    <!-- Заполняется JS -->
+                </div>
+
+                <div class="stat-group-title" id="ui-rating-list-title">ОСТАЛЬНЫЕ ПРЕТЕНДЕНТЫ</div>
+                <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
+                    <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div>
                 </div>
             </div>
 
@@ -283,6 +293,36 @@
         </div>
     </div>
 
-    <script src="static/game.js?v=1047800"></script>
+    <!-- МОДАЛКА ПРОФИЛЯ ИГРОКА (ДЛЯ ЗАЛА СЛАВЫ) -->
+    <div class="modal-overlay" id="player-profile-modal">
+        <div class="player-profile-modal">
+            <img src="" class="profile-avatar" id="pp-avatar">
+            <div class="profile-name" id="pp-name">Имя</div>
+            <div class="profile-class" id="pp-class">Класс • Ур. X</div>
+            
+            <div class="profile-stat-grid">
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Кубки</span>
+                    <span class="profile-stat-val" id="pp-rating" style="color:#fbbf24;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Макс. Этаж</span>
+                    <span class="profile-stat-val" id="pp-floor" style="color:#34d399;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Боев (PvE)</span>
+                    <span class="profile-stat-val" id="pp-fights" style="color:#60a5fa;">0</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-label">Золото</span>
+                    <span class="profile-stat-val" id="pp-gold" style="color:#fcd34d;">0</span>
+                </div>
+            </div>
+            
+            <button class="modal-btn secondary" onclick="closePlayerProfile()" style="margin-top: 0;">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+
+    <script src="static/game.js?v=1087800"></script>
 </body>
 </html>
