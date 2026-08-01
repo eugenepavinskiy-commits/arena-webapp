@@ -35,6 +35,10 @@ const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.use
 // === FIREBASE БЭКЕНД ===
 const FIREBASE_URL = "https://arenarpg-default-rtdb.europe-west1.firebasedatabase.app/";
 
+// Глобальный кэш игроков для Зала Славы
+let cachedPlayersList = [];
+let currentRatingTab = 'pvp';
+
 // === АУДИО И ЭФФЕКТЫ (СИСТЕМА МИКШИРОВАНИЯ И КРОССФЕЙДА) ===
 const STATIC_URL = "static/";
 const SFX_FILES = { click: STATIC_URL + "sounds/click.mp3", hit: STATIC_URL + "sounds/hit.mp3", crit: STATIC_URL + "sounds/crit.mp3", dodge: STATIC_URL + "sounds/dodge.mp3", block: STATIC_URL + "sounds/block.mp3", skill: STATIC_URL + "sounds/skill.mp3", coins: STATIC_URL + "sounds/coins.mp3", forge: STATIC_URL + "sounds/forge.mp3", win: STATIC_URL + "sounds/win.mp3", death: STATIC_URL + "sounds/death.mp3" };
@@ -66,16 +70,14 @@ masterCompressor.connect(audioCtx.destination);
 const bgmTracks = {};
 let currentBgmId = 'menu';
 let fadeInterval = null;
-const sfxThrottle = {}; // Защита от наложения одних и тех же звуков
+const sfxThrottle = {}; 
 
-// Подготовка фоновых треков (Стриминг, не жрет ОЗУ)
 for (let key in BGM_FILES) {
     bgmTracks[key] = new Audio(BGM_FILES[key]);
     bgmTracks[key].loop = true;
-    bgmTracks[key].volume = 0; // Изначально 0 для фейда
+    bgmTracks[key].volume = 0; 
 }
 
-// Плавный кроссфейд между треками
 function playBGM(trackId) {
     if (currentBgmId === trackId && !bgmTracks[trackId].paused && bgmTracks[trackId].volume > 0) return;
     
@@ -94,10 +96,8 @@ function playBGM(trackId) {
         if (p !== undefined) p.catch(e => {});
     }
 
-    // Цикл перекрестного затухания
     fadeInterval = setInterval(() => {
         let done = true;
-        // Глушим старый
         if (oldAudio && oldTrackId !== trackId && oldAudio.volume > 0.02) {
             oldAudio.volume = Math.max(0, oldAudio.volume - 0.02);
             done = false;
@@ -105,7 +105,6 @@ function playBGM(trackId) {
             oldAudio.pause();
             oldAudio.volume = 0;
         }
-        // Поднимаем новый
         if (newAudio.volume < targetVol - 0.02) {
             newAudio.volume = Math.min(targetVol, newAudio.volume + 0.02);
             done = false;
@@ -146,8 +145,6 @@ document.addEventListener('touchstart', unlockAudio, { once: true }); document.a
 
 function playSFX(id) { 
     if (sfxMuted || !SFX_BUFFERS[id]) return; 
-    
-    // Блокируем спам одинаковыми звуками (не чаще 1 раза в 100мс)
     let now = Date.now();
     if (sfxThrottle[id] && now - sfxThrottle[id] < 100) return;
     sfxThrottle[id] = now;
@@ -157,9 +154,9 @@ function playSFX(id) {
         let source = audioCtx.createBufferSource(); 
         source.buffer = SFX_BUFFERS[id]; 
         let gainNode = audioCtx.createGain(); 
-        gainNode.gain.value = 0.5; // Сниженный общий уровень SFX
+        gainNode.gain.value = 0.5; 
         source.connect(gainNode); 
-        gainNode.connect(masterCompressor); // Пропускаем через лимитер
+        gainNode.connect(masterCompressor); 
         source.start(0); 
     } catch(e) {} 
 }
@@ -347,6 +344,8 @@ async function syncSaveToServer() {
             cls: hero.baseClass, 
             level: hero.level, 
             rating: hero.rating, 
+            maxFloor: hero.maxFloor || 1,
+            gold: hero.gold || 0,
             lastUpdate: Date.now() 
         };
         await fetch(FIREBASE_URL + 'players/' + getUserId() + '.json', { 
@@ -355,18 +354,6 @@ async function syncSaveToServer() {
             body: JSON.stringify(payload) 
         }); 
     } catch (e) { console.warn("Фоновая синхронизация с Firebase не удалась.", e); } 
-}
-
-function buildLeaderboardHTML(players) { 
-    let html = ''; 
-    players.forEach((p, index) => { 
-        let rank = index + 1; 
-        let cardClass = "pvp-player-card"; 
-        if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; 
-        let avatarCls = p.cls || 'knight'; 
-        html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating || 0}</div></div>`; 
-    }); 
-    return html; 
 }
 
 function saveGame() {
@@ -405,7 +392,7 @@ function applyLoadedSave(savedHero, savedItems) {
     previewClassId = hero.baseClass; 
     try { calculateStats(); updateUI(); } catch(e) { 
         console.error("Критический сбой рендера:", e); localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items');
-        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); tg.CloudStorage.removeItem('tg_rpg_custom_items'); }
+        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); }
         alert("Критическая ошибка сейва. Кэш сброшен, игра перезапускается."); location.reload();
     }
 }
@@ -413,7 +400,6 @@ function applyLoadedSave(savedHero, savedItems) {
 async function loadGame() {
     let loadedFromCloud = false;
     
-    // ПРИОРИТЕТ 1: Загрузка из облака Telegram
     if (window.tg && tg.CloudStorage) {
         try {
             let cloudValues = await new Promise((resolve) => {
@@ -429,7 +415,6 @@ async function loadGame() {
         } catch(e) { console.error("Ошибка при чтении из CloudStorage:", e); }
     }
     
-    // ПРИОРИТЕТ 2: Если облако пустое (первый запуск) или недоступно - читаем localStorage
     if (!loadedFromCloud) {
         try { 
             let localHero = localStorage.getItem('tg_rpg_hero'); 
@@ -564,7 +549,6 @@ async function startPvP() {
     if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте вещи (Максимум 15), чтобы начать бой."); }
     if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв!"); playSFX('click');
     
-    // Блокируем кнопку, пока ищем противника
     let pvpBtn = document.querySelector("#screen-arena button");
     if (pvpBtn) { pvpBtn.innerText = "ПОИСК ПРОТИВНИКА..."; pvpBtn.disabled = true; pvpBtn.style.opacity = "0.7"; }
 
@@ -574,14 +558,10 @@ async function startPvP() {
         if(res.ok) { 
             let data = await res.json(); 
             if(data) { 
-                // Преобразуем объект Firebase в массив и убираем себя
                 let players = Object.values(data).filter(p => p.id !== String(getUserId()));
                 if (players.length > 0) {
-                    // Ищем игроков +- 5 уровней от твоего
                     let valid = players.filter(p => Math.abs((p.level || 1) - hero.level) <= 5);
-                    // Если никого рядом нет, берем любого
                     if (valid.length === 0) valid = players;
-                    // Выбираем случайного
                     pvpEnemyData = valid[Math.floor(Math.random() * valid.length)];
                 }
             } 
@@ -619,10 +599,131 @@ function fleeCombat() {
         playBGM('menu'); 
         openScreen('boss');
     } else {
-        initCombat(); // Сброс врага на этаже
+        initCombat(); 
         playBGM('menu'); 
         openScreen('hero');
     }
+}
+
+// === УПРАВЛЕНИЕ МУЛЬТИ-РЕЙТИНГОМ (ЗАЛ СЛАВЫ) ===
+function switchRatingTab(tab) {
+    playSFX('click');
+    currentRatingTab = tab;
+    document.querySelectorAll('.rating-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-rating-' + tab).classList.add('active');
+    renderRatingScreen();
+}
+
+function renderRatingScreen() {
+    let pedestalContainer = document.getElementById("ui-rating-pedestal");
+    let listContainer = document.getElementById("ui-global-top");
+    let listTitle = document.getElementById("ui-rating-list-title");
+    
+    if (!pedestalContainer || !listContainer) return;
+
+    if (cachedPlayersList.length === 0) {
+        pedestalContainer.innerHTML = `<div style="text-align:center; color:#71717a; width:100%; padding:20px;">Нет данных игроков</div>`;
+        listContainer.innerHTML = ``;
+        return;
+    }
+
+    // Сортировка в зависимости от выбранного таба
+    let sorted = [...cachedPlayersList];
+    if (currentRatingTab === 'pvp') {
+        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО КУБКАМ";
+    } else if (currentRatingTab === 'pve') {
+        sorted.sort((a, b) => (b.maxFloor || 1) - (a.maxFloor || 1));
+        if(listTitle) listTitle.innerText = "ПРЕТЕНДЕНТЫ ПО ЭТАЖАМ";
+    } else if (currentRatingTab === 'wealth') {
+        sorted.sort((a, b) => (b.gold || 0) - (a.gold || 0));
+        if(listTitle) listTitle.innerText = "МАГНАТЫ СЕРВЕРА";
+    }
+
+    let top3 = sorted.slice(0, 3);
+    let rest = sorted.slice(3);
+
+    // Рендер пьедестала ТОП-3 (Порядок для красоты: 2-е место слева, 1-е по центру, 3-е справа)
+    let orderedTop = [];
+    if (top3[1]) orderedTop.push({p: top3[1], rank: 2, cls: 'ped-2'});
+    if (top3[0]) orderedTop.push({p: top3[0], rank: 1, cls: 'ped-1'});
+    if (top3[2]) orderedTop.push({p: top3[2], rank: 3, cls: 'ped-3'});
+
+    let pedHtml = '';
+    orderedTop.forEach(item => {
+        let p = item.p;
+        let avatarCls = p.cls || 'knight';
+        let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`);
+        let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;');
+        
+        pedHtml += `
+            <div class="pedestal-item ${item.cls}" onclick='openPlayerProfile(${pIdStr})'>
+                <img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pedestal-avatar">
+                <div class="pedestal-base">
+                    <div class="pedestal-name">${p.name}</div>
+                    <div class="pedestal-score">${scoreVal}</div>
+                </div>
+            </div>
+        `;
+    });
+    pedestalContainer.innerHTML = pedHtml;
+
+    // Рендер остальных игроков в списке ниже
+    let listHtml = '';
+    rest.forEach((p, idx) => {
+        let rank = idx + 4;
+        let avatarCls = p.cls || 'knight';
+        let scoreVal = currentRatingTab === 'pvp' ? `🏆 ${p.rating || 0}` : (currentRatingTab === 'pve' ? `🏰 ${p.maxFloor || 1} эт.` : `💰 ${p.gold || 0}`);
+        let pIdStr = JSON.stringify(p).replace(/"/g, '&quot;');
+        
+        listHtml += `
+            <div class="pvp-player-card" onclick='openPlayerProfile(${pIdStr})' style="cursor:pointer;">
+                <div class="pvp-rank">${rank}</div>
+                <img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar">
+                <div class="pvp-info">
+                    <div class="pvp-name">${p.name}</div>
+                    <div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div>
+                </div>
+                <div class="pvp-rating">${scoreVal}</div>
+            </div>
+        `;
+    });
+
+    // Добавляем строчку с игроком (Вы) в конец списка
+    let myAvatarCls = hero.baseClass;
+    let myScoreVal = currentRatingTab === 'pvp' ? `🏆 ${hero.rating}` : (currentRatingTab === 'pve' ? `🏰 ${hero.maxFloor} эт.` : `💰 ${hero.gold}`);
+    listHtml += `
+        <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;">
+            <div class="pvp-rank">#</div>
+            <img src="${CLASS_AVATARS[myAvatarCls]}" class="pvp-avatar">
+            <div class="pvp-info">
+                <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div>
+                <div class="pvp-stats">${CLASSES[myAvatarCls].name} • Ур. ${hero.level}</div>
+            </div>
+            <div class="pvp-rating">${myScoreVal}</div>
+        </div>
+    `;
+
+    listContainer.innerHTML = listHtml;
+}
+
+function openPlayerProfile(pData) {
+    playSFX('click');
+    let avatarCls = pData.cls || 'knight';
+    document.getElementById("pp-avatar").src = CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight'];
+    document.getElementById("pp-name").innerText = pData.name;
+    document.getElementById("pp-class").innerText = `${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Странник'} • Ур. ${pData.level || 1}`;
+    document.getElementById("pp-rating").innerText = `🏆 ${pData.rating || 0}`;
+    document.getElementById("pp-floor").innerText = `🏰 ${pData.maxFloor || 1}`;
+    document.getElementById("pp-fights").innerText = `⚔️ ${pData.level ? pData.level * 3 : 5}`; // Аналитическая симуляция боев на основе уровня
+    document.getElementById("pp-gold").innerText = `💰 ${pData.gold || 0}`;
+    
+    document.getElementById("player-profile-modal").classList.add("show");
+}
+
+function closePlayerProfile() {
+    playSFX('click');
+    document.getElementById("player-profile-modal").classList.remove("show");
 }
 
 function planEnemyTurn() { if(!enemy) return; enemy.turnCounter++; let delay = hasTalent('r2c') ? 3 : 0; if (enemy.isRaid) { let turnsLeft = (15 + delay) - enemy.turnCounter; if (turnsLeft <= 0) enemy.nextAtkZone = 'ENRAGE'; else if (enemy.turnCounter % 4 === 0) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } else { let ultMod = (enemy.turnCounter - delay) % 4; if (enemy.isBoss && ultMod === 0 && enemy.turnCounter > delay) enemy.nextAtkZone = 'ULTIMATUM'; else enemy.nextAtkZone = ["head", "chest", "legs"][Math.floor(Math.random()*3)]; } updateIntentDisplay(); }
@@ -1011,47 +1112,45 @@ function openScreen(screenName) {
     
     if (screenName !== 'PVE') playBGM('menu');
 
-    // ЗАГРУЗКА РЕЙТИНГА И АРЕНЫ ТОЛЬКО ПРИ ОТКРЫТИИ (БЕЗ СПАМА КАЖДУЮ СЕКУНДУ)
+    // ДИНАМИЧЕСКИЙ ЗАЛ СЛАВЫ (FIREBASE)
     if(screenName === 'rating') {
-        let scr = document.getElementById("screen-rating");
-        if(scr) scr.innerHTML = ` <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div> <div style="background: rgba(18,18,20,0.85); border: 1px solid #38bdf8; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);"> <div style="font-size: 36px; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6);">💎</div> <div style="flex: 1; min-width: 0;"> <div style="font-size: 11px; color: #a1a1aa; font-weight: bold; text-transform: uppercase;">Ваш рейтинг</div> <div style="font-size: 18px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${hero.name}</div> </div> <div style="text-align: right; flex-shrink: 0;"> <div style="font-size: 10px; color: #a1a1aa;">Кубки</div> <div style="font-size: 18px; font-weight: 900; color: #fbbf24;">🏆 ${hero.rating}</div> </div> </div> <div class="stat-group-title">ТОП-10 ИГРОКОВ (СЕРВЕР)</div> <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;"> <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div> </div> `;
+        let globalTop = document.getElementById("ui-global-top");
+        let pedestal = document.getElementById("ui-rating-pedestal");
+        if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`;
+        if(pedestal) pedestal.innerHTML = ``;
 
         fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
-            let tc = document.getElementById("ui-global-top");
-            if(tc && data) {
-                let players = Object.values(data);
-                players.sort((a,b) => (b.rating||0) - (a.rating||0));
-                let html = buildLeaderboardHTML(players.slice(0, 10));
-                html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;"> <div class="pvp-rank">#</div> <img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"> <div class="pvp-info"> <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div> <div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div> </div> <div class="pvp-rating">🏆 ${hero.rating}</div> </div>`;
-                tc.innerHTML = html;
-            } else if (tc) {
-                 tc.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">В Зале Славы пока пусто. Станьте первым!</div>`;
+            if(data) {
+                cachedPlayersList = Object.values(data);
+                renderRatingScreen();
+            } else {
+                if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`;
             }
         }).catch(e => {
-            let tc = document.getElementById("ui-global-top");
-            if(tc) tc.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Сервер недоступен (Оффлайн режим)</div>`;
+            if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка соединения с Firebase</div>`;
         });
     }
 
     if(screenName === 'arena') {
         let elBoard = document.getElementById("ui-pvp-leaderboard");
+        let elRating = document.getElementById("ui-pvp-rating");
+        if(elRating) elRating.innerText = hero.rating;
+
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
             fetch(FIREBASE_URL + 'players.json').then(r => r.json()).then(data => {
-                let elBoard2 = document.getElementById("ui-pvp-leaderboard");
-                if(elBoard2 && data) {
+                if(data) {
                     let players = Object.values(data);
                     players.sort((a,b) => (b.rating||0) - (a.rating||0));
                     let top3 = players.slice(0, 3);
                     let html = buildLeaderboardHTML(top3);
                     html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
-                    elBoard2.innerHTML = html;
-                } else if (elBoard2) {
-                    elBoard2.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`;
+                    elBoard.innerHTML = html;
+                } else {
+                    elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`;
                 }
             }).catch(e => {
-                let elBoard2 = document.getElementById("ui-pvp-leaderboard");
-                if(elBoard2) elBoard2.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Сервер недоступен (Оффлайн режим)</div>`;
+                elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка соединения с Firebase</div>`;
             });
         }
     }
