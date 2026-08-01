@@ -32,16 +32,18 @@ if (window.Telegram && window.Telegram.WebApp) {
 
 const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : "local_test_user";
 
-// === АУДИО И ЭФФЕКТЫ ===
+// === АУДИО И ЭФФЕКТЫ (СИСТЕМА МИКШИРОВАНИЯ И КРОССФЕЙДА) ===
 const STATIC_URL = "static/";
 const SFX_FILES = { click: STATIC_URL + "sounds/click.mp3", hit: STATIC_URL + "sounds/hit.mp3", crit: STATIC_URL + "sounds/crit.mp3", dodge: STATIC_URL + "sounds/dodge.mp3", block: STATIC_URL + "sounds/block.mp3", skill: STATIC_URL + "sounds/skill.mp3", coins: STATIC_URL + "sounds/coins.mp3", forge: STATIC_URL + "sounds/forge.mp3", win: STATIC_URL + "sounds/win.mp3", death: STATIC_URL + "sounds/death.mp3" };
 
-// === ФОНОВАЯ МУЗЫКА (BGM) ===
-const BGM_FILES = {
-    menu: STATIC_URL + "sounds/bgm_menu.mp3",
-    combat: STATIC_URL + "sounds/bgm_combat.mp3",
-    boss: STATIC_URL + "sounds/bgm_boss.mp3"
+const BGM_FILES = { 
+    menu: STATIC_URL + "sounds/bgm_menu.mp3", 
+    combat: STATIC_URL + "sounds/bgm_combat.mp3", 
+    boss: STATIC_URL + "sounds/bgm_boss.mp3" 
 };
+
+// Жесткие лимиты громкости для баланса
+const BGM_VOLUMES = { menu: 0.15, combat: 0.25, boss: 0.35 };
 
 let sfxMuted = false;
 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -49,27 +51,78 @@ const audioCtx = new AudioContext({ latencyHint: 'interactive' });
 const SFX_BUFFERS = {};
 let audioUnlocked = false;
 
-const bgmTracks = {};
-let currentBgmId = 'menu'; // Дефолтный трек
+// Студийный компрессор для защиты от перегрузки динамиков
+const masterCompressor = audioCtx.createDynamicsCompressor();
+masterCompressor.threshold.value = -12;
+masterCompressor.knee.value = 10;
+masterCompressor.ratio.value = 12;
+masterCompressor.attack.value = 0.003;
+masterCompressor.release.value = 0.25;
+masterCompressor.connect(audioCtx.destination);
 
+const bgmTracks = {};
+let currentBgmId = 'menu';
+let fadeInterval = null;
+const sfxThrottle = {}; // Защита от наложения одних и тех же звуков
+
+// Подготовка фоновых треков (Стриминг, не жрет ОЗУ)
 for (let key in BGM_FILES) {
     bgmTracks[key] = new Audio(BGM_FILES[key]);
     bgmTracks[key].loop = true;
-    bgmTracks[key].volume = (key === 'menu') ? 0.2 : 0.4; 
+    bgmTracks[key].volume = 0; // Изначально 0 для фейда
 }
 
+// Плавный кроссфейд между треками
 function playBGM(trackId) {
-    if (currentBgmId === trackId && !bgmTracks[trackId].paused) return;
-    if (currentBgmId && bgmTracks[currentBgmId]) bgmTracks[currentBgmId].pause();
+    if (currentBgmId === trackId && !bgmTracks[trackId].paused && bgmTracks[trackId].volume > 0) return;
     
+    let oldTrackId = currentBgmId;
     currentBgmId = trackId;
-    if (!sfxMuted && audioUnlocked && bgmTracks[trackId]) {
-        let playPromise = bgmTracks[trackId].play();
-        if (playPromise !== undefined) playPromise.catch(e => {});
+    if (sfxMuted || !audioUnlocked) return;
+
+    clearInterval(fadeInterval);
+    let oldAudio = bgmTracks[oldTrackId];
+    let newAudio = bgmTracks[trackId];
+    let targetVol = BGM_VOLUMES[trackId] || 0.25;
+
+    if (newAudio.paused) {
+        newAudio.volume = 0;
+        let p = newAudio.play();
+        if (p !== undefined) p.catch(e => {});
     }
+
+    // Цикл перекрестного затухания
+    fadeInterval = setInterval(() => {
+        let done = true;
+        // Глушим старый
+        if (oldAudio && oldTrackId !== trackId && oldAudio.volume > 0.02) {
+            oldAudio.volume = Math.max(0, oldAudio.volume - 0.02);
+            done = false;
+        } else if (oldAudio && oldTrackId !== trackId) {
+            oldAudio.pause();
+            oldAudio.volume = 0;
+        }
+        // Поднимаем новый
+        if (newAudio.volume < targetVol - 0.02) {
+            newAudio.volume = Math.min(targetVol, newAudio.volume + 0.02);
+            done = false;
+        } else {
+            newAudio.volume = targetVol;
+        }
+
+        if (done) clearInterval(fadeInterval);
+    }, 40);
 }
 
-async function initAudio() { for (let key in SFX_FILES) { try { let res = await fetch(SFX_FILES[key]); if (!res.ok) continue; SFX_BUFFERS[key] = await audioCtx.decodeAudioData(await res.arrayBuffer()); } catch(e) {} } }
+async function initAudio() { 
+    for (let key in SFX_FILES) { 
+        try { 
+            let res = await fetch(SFX_FILES[key]); 
+            if (!res.ok) continue; 
+            SFX_BUFFERS[key] = await audioCtx.decodeAudioData(await res.arrayBuffer()); 
+        } catch(e) {} 
+    } 
+}
 initAudio();
 
 function unlockAudio() { 
@@ -84,27 +137,43 @@ function unlockAudio() {
     document.removeEventListener('touchstart', unlockAudio); 
     document.removeEventListener('click', unlockAudio); 
     
-    if (currentBgmId && !sfxMuted && bgmTracks[currentBgmId]) {
-        let playPromise = bgmTracks[currentBgmId].play();
-        if (playPromise !== undefined) playPromise.catch(e => {});
-    }
+    if (currentBgmId && !sfxMuted) playBGM(currentBgmId);
 }
 document.addEventListener('touchstart', unlockAudio, { once: true }); document.addEventListener('click', unlockAudio, { once: true });
 
-function playSFX(id) { if (sfxMuted || !SFX_BUFFERS[id]) return; if (audioCtx.state === 'suspended') audioCtx.resume(); try { let source = audioCtx.createBufferSource(); source.buffer = SFX_BUFFERS[id]; let gainNode = audioCtx.createGain(); gainNode.gain.value = 0.6; source.connect(gainNode); gainNode.connect(audioCtx.destination); source.start(0); } catch(e) {} }
+function playSFX(id) { 
+    if (sfxMuted || !SFX_BUFFERS[id]) return; 
+    
+    // Блокируем спам одинаковыми звуками (не чаще 1 раза в 100мс)
+    let now = Date.now();
+    if (sfxThrottle[id] && now - sfxThrottle[id] < 100) return;
+    sfxThrottle[id] = now;
+
+    if (audioCtx.state === 'suspended') audioCtx.resume(); 
+    try { 
+        let source = audioCtx.createBufferSource(); 
+        source.buffer = SFX_BUFFERS[id]; 
+        let gainNode = audioCtx.createGain(); 
+        gainNode.gain.value = 0.5; // Сниженный общий уровень SFX
+        source.connect(gainNode); 
+        gainNode.connect(masterCompressor); // Пропускаем через лимитер
+        source.start(0); 
+    } catch(e) {} 
+}
+
 window.toggleMute = function() { 
     sfxMuted = !sfxMuted; 
     if (sfxMuted) {
-        if (currentBgmId && bgmTracks[currentBgmId]) bgmTracks[currentBgmId].pause();
+        clearInterval(fadeInterval);
+        for(let key in bgmTracks) { bgmTracks[key].pause(); bgmTracks[key].volume = 0; }
     } else {
         playSFX('click'); 
-        if (currentBgmId && audioUnlocked && bgmTracks[currentBgmId]) {
-            let playPromise = bgmTracks[currentBgmId].play();
-            if (playPromise !== undefined) playPromise.catch(e => {});
-        }
+        if (audioUnlocked) playBGM(currentBgmId);
     }
     updateUI(); 
 };
+
+// === ОСТАЛЬНАЯ ЛОГИКА ===
 
 const VFX_DB = { attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" };
 function playLottieEffect(targetId, animationUrl, extraClass = "") { let targetNode = document.getElementById(targetId); if (!targetNode) return; let fxContainer = document.createElement('div'); fxContainer.className = 'lottie-fx-layer ' + extraClass; targetNode.appendChild(fxContainer); let anim = lottie.loadAnimation({ container: fxContainer, renderer: 'svg', loop: false, autoplay: true, path: animationUrl }); anim.addEventListener('complete', () => { fxContainer.remove(); anim.destroy(); }); }
@@ -306,7 +375,7 @@ async function loadGame() {
     try { let localHero = localStorage.getItem('tg_rpg_hero'); let localItems = localStorage.getItem('tg_rpg_custom_items'); applyLoadedSave(localHero, localItems); } catch(e) {}
     if (window.tg && tg.CloudStorage) { tg.CloudStorage.getItem('tg_rpg_hero', function(err, cloudHero) { if (!err && cloudHero) { tg.CloudStorage.getItem('tg_rpg_custom_items', function(err2, cloudItems) { if (!err2) applyLoadedSave(cloudHero, cloudItems); }); } }); }
     try { let res = await fetch(`/api/load/${getUserId()}`); if (res.ok) { let data = await res.json(); if (data.status === "ok" && data.hero_data) applyLoadedSave(data.hero_data, localStorage.getItem('tg_rpg_custom_items')); } } catch(e) {}
-    playBGM('menu'); // Стартовый трек при загрузке
+    playBGM('menu');
 }
 
 function hardReset() { if(confirm("СБРОС ПРОГРЕССА НАВСЕГДА! Вы уверены?")) { localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items'); if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); tg.CloudStorage.removeItem('tg_rpg_custom_items'); } location.reload(); } }
@@ -1164,7 +1233,7 @@ function updateUI() {
         }
         
         let invHtml = '';
-        let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); // Резиновая сумка
+        let gridLimit = Math.max(15, Math.ceil(hero.inventory.length / 5) * 5); 
         for (let i = 0; i < gridLimit; i++) { 
             if (i < hero.inventory.length) { 
                 let item = ITEMS_DB[hero.inventory[i]]; 
