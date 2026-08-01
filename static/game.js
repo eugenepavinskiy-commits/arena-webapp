@@ -774,8 +774,8 @@ function openScreen(screenName) {
     if(screenName === 'rating') {
         let globalTop = document.getElementById("ui-global-top"); let pedestal = document.getElementById("ui-rating-pedestal");
         if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`; if(pedestal) pedestal.innerHTML = ``;
-        fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
-            if(data && typeof data === 'object' && !data.error) { cachedPlayersList = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (cachedPlayersList.length > 0) { renderRatingScreen(); } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`; } } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`; }
+        fetch('/api/leaderboard').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+            if(data && data.status === 'ok' && data.leaderboard) { cachedPlayersList = data.leaderboard; if (cachedPlayersList.length > 0) { renderRatingScreen(); } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`; } } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`; }
         }).catch(e => { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка: ${e.message}</div>`; });
     }
 
@@ -783,8 +783,8 @@ function openScreen(screenName) {
         let elBoard = document.getElementById("ui-pvp-leaderboard"); let elRating = document.getElementById("ui-pvp-rating"); if(elRating) elRating.innerText = hero.rating;
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
-            fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
-                if(data && typeof data === 'object' && !data.error) { let players = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (players.length > 0) { players.sort((a,b) => (b.rating||0) - (a.rating||0)); let top3 = players.slice(0, 3); let html = buildLeaderboardHTML(top3); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`; } } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`; }
+            fetch('/api/leaderboard').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+                if(data && data.status === 'ok' && data.leaderboard) { let players = data.leaderboard; if (players.length > 0) { players.sort((a,b) => (b.rating||0) - (a.rating||0)); let top3 = players.slice(0, 3); let html = buildLeaderboardHTML(top3); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`; } } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`; }
             }).catch(e => { elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка: ${e.message}</div>`; });
         }
     }
@@ -795,15 +795,17 @@ function openScreen(screenName) {
 }
 
 // === ПОКУПКА АЛМАЗОВ (TELEGRAM STARS) ===
-async function buyGemsWithStars(gemsAmount, starsPrice) {
+async function buyGemsWithStars(gemsAmount, starsPrice, btn) {
     playSFX('click');
     if (!window.tg || !tg.openInvoice) {
         return alert("Оплата Звездами доступна только при запуске игры внутри Telegram!");
     }
     
-    let originalHtml = event.currentTarget.innerHTML;
-    event.currentTarget.innerHTML = "⏳...";
-    event.currentTarget.disabled = true;
+    let originalHtml = btn ? btn.innerHTML : "";
+    if (btn) {
+        btn.innerHTML = "⏳...";
+        btn.disabled = true;
+    }
 
     try {
         const response = await fetch('/api/create-invoice', {
@@ -818,8 +820,10 @@ async function buyGemsWithStars(gemsAmount, starsPrice) {
         });
         
         const data = await response.json();
-        event.currentTarget.innerHTML = originalHtml;
-        event.currentTarget.disabled = false;
+        if (btn) {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
         
         if (data.error) { return alert("Ошибка сервера: " + data.error); }
         
@@ -837,8 +841,10 @@ async function buyGemsWithStars(gemsAmount, starsPrice) {
         });
         
     } catch (e) {
-        event.currentTarget.innerHTML = originalHtml;
-        event.currentTarget.disabled = false;
+        if (btn) {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
         alert("Ошибка соединения с сервером платежей.");
     }
 }
@@ -1092,15 +1098,15 @@ function updateUI() {
                 premList.innerHTML = `
                     <div class="gem-card">
                         <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">100 Алмазов</div></div>
-                        <button class="btn-stars" onclick="buyGemsWithStars(100, 50)">50 <span class="star-icon">⭐️</span></button>
+                        <button class="btn-stars" onclick="buyGemsWithStars(100, 50, this)">50 <span class="star-icon">⭐️</span></button>
                     </div>
                     <div class="gem-card">
                         <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">500 Алмазов <span class="gem-bonus">+ Хит!</span></div></div>
-                        <button class="btn-stars" onclick="buyGemsWithStars(500, 200)">200 <span class="star-icon">⭐️</span></button>
+                        <button class="btn-stars" onclick="buyGemsWithStars(500, 200, this)">200 <span class="star-icon">⭐️</span></button>
                     </div>
                     <div class="gem-card">
                         <div class="gem-info"><div class="gem-icon">💎</div><div class="gem-amount">1500 Алмазов <span class="gem-bonus">+ Выгодно!</span></div></div>
-                        <button class="btn-stars" onclick="buyGemsWithStars(1500, 500)">500 <span class="star-icon">⭐️</span></button>
+                        <button class="btn-stars" onclick="buyGemsWithStars(1500, 500, this)">500 <span class="star-icon">⭐️</span></button>
                     </div>
                     <div style="text-align:center; color:#71717a; font-size:10px; margin-top:10px;">Оплата происходит через официальную систему Telegram Stars. Звезды можно купить в настройках вашего профиля Telegram.</div>
                 `;
