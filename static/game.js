@@ -235,13 +235,11 @@ const RAID_BOSSES = [
     { id: "raid_3", name: "Древний Дракон", imgId: 17, diff: "Хардкор", desc: "Гарант: Реликтовый сет по Уровню.", hpMult: 8, atkMult: 2.5, armMult: 2, gemReward: 10, dmg_fire: 50, res_fire: 80, res_ice: -50 }
 ];
 
-const MOCK_PLAYERS = [ {name: "ShadowFiend", cls: "shadow", img: "shadow.png"}, {name: "Guts", cls: "berserk", img: "berserk.png"}, {name: "Arthur", cls: "knight", img: "knight.png"} ];
-
 const DAILY_QUESTS = { "kill_mobs": { name: "Охотник на монстров", desc: "Победите 10 обычных или элитных врагов.", target: 10, rewardGems: 2 }, "forge_upg": { name: "Мастер-кузнец", desc: "Улучшите любой предмет в кузнице 3 раза.", target: 3, rewardGems: 2 }, "boss_dmg": { name: "Убийца гигантов", desc: "Нанесите 2000 урона Мировым Боссам.", target: 2000, rewardGems: 3 } };
 
 const BOSS_EVENTS = [
     { id: "blood_pact", title: "Кровавый Контракт", desc: "Огромный урон ценой здоровья. Работает на всех этажах.", buffText: "+40% Урон", debuffText: "-30% Макс Здоровья", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.4); stats.hp = Math.floor(stats.hp * 0.7); } },
-    { id: "iron_will", title: "Железная Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
+    { id: "iron_will", title: "Желез Воля", desc: "Проклятые доспехи защитят вас, но сделают удары медленными.", buffText: "+50% Броня", debuffText: "-20% Урон", apply: (stats) => { stats.armor = Math.floor(stats.armor * 1.5); stats.damage = Math.floor(stats.damage * 0.8); } },
     { id: "shadow_step", title: "Шепот Тени", desc: "Неуловимость в обмен на защиту. Работает на всех этажах.", buffText: "+20% Уворот и Крит", debuffText: "-40% Броня", apply: (stats) => { stats.dodge = Math.min(95, parseFloat(stats.dodge) + 20).toFixed(1); stats.critChance = Math.min(100, parseFloat(stats.critChance) + 20).toFixed(1); stats.armor = Math.floor(stats.armor * 0.6); } },
     { id: "berserker_rage", title: "Безумие Берсерка", desc: "Убить или умереть. Никакой защиты.", buffText: "+75% Урон", debuffText: "Броня падает до 0", apply: (stats) => { stats.damage = Math.floor(stats.damage * 1.75); stats.armor = 0; } }
 ];
@@ -337,16 +335,32 @@ function generateLootDrop(enemyObj) {
     return null;
 }
 
-async function syncSaveToServer() { try { await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); } catch (e) { console.error("Ошибка сохранения на сервер:", e); } }
+// === СИСТЕМА СОХРАНЕНИЙ И ЗАГРУЗКИ (ПРИОРИТЕТ TELEGRAM CLOUD) ===
+async function syncSaveToServer() { 
+    try { 
+        await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: String(getUserId()), name: hero.name, class_id: hero.baseClass, level: hero.level, rating: hero.rating, hero_data: JSON.stringify(hero) }) }); 
+    } catch (e) { console.warn("Фоновая синхронизация с сервером не удалась (оффлайн).", e); } 
+}
+
 function buildLeaderboardHTML(players) { let html = ''; players.forEach((p, index) => { let rank = index + 1; let cardClass = "pvp-player-card"; if (rank === 1) cardClass += " top-1"; else if (rank === 2) cardClass += " top-2"; else if (rank === 3) cardClass += " top-3"; let avatarCls = p.cls || 'knight'; html += `<div class="${cardClass}"><div class="pvp-rank">${rank}</div><img src="${CLASS_AVATARS[avatarCls] || CLASS_AVATARS['knight']}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${p.name}</div><div class="pvp-stats">${CLASSES[avatarCls] ? CLASSES[avatarCls].name : 'Неизвестный'} • Ур. ${p.level || 1}</div></div><div class="pvp-rating">🏆 ${p.rating}</div></div>`; }); return html; }
+
 function saveGame() {
     try {
         hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
-        let heroStr = JSON.stringify(hero); localStorage.setItem('tg_rpg_hero', heroStr);
-        let activeItemIds = [...hero.inventory]; for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
-        let customItems = {}; for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
-        let itemsStr = JSON.stringify(customItems); localStorage.setItem('tg_rpg_custom_items', itemsStr);
-        if (window.tg && tg.CloudStorage) { tg.CloudStorage.setItem('tg_rpg_hero', heroStr); tg.CloudStorage.setItem('tg_rpg_custom_items', itemsStr); }
+        let heroStr = JSON.stringify(hero); 
+        localStorage.setItem('tg_rpg_hero', heroStr);
+        
+        let activeItemIds = [...hero.inventory]; 
+        for (let key in hero.equipment) { if (hero.equipment[key] && hero.equipment[key].id !== "blocked") activeItemIds.push(hero.equipment[key].id); }
+        let customItems = {}; 
+        for(let key in ITEMS_DB) { if((ITEMS_DB[key].dropOnly || ITEMS_DB[key].id.includes('_upg_')) && activeItemIds.includes(key)) customItems[key] = ITEMS_DB[key]; }
+        let itemsStr = JSON.stringify(customItems); 
+        localStorage.setItem('tg_rpg_custom_items', itemsStr);
+        
+        if (window.tg && tg.CloudStorage) { 
+            tg.CloudStorage.setItem('tg_rpg_hero', heroStr); 
+            tg.CloudStorage.setItem('tg_rpg_custom_items', itemsStr); 
+        }
         syncSaveToServer();
     } catch (e) { console.error("Ошибка сохранения.", e); }
 }
@@ -366,15 +380,39 @@ function applyLoadedSave(savedHero, savedItems) {
     previewClassId = hero.baseClass; 
     try { calculateStats(); updateUI(); } catch(e) { 
         console.error("Критический сбой рендера:", e); localStorage.removeItem('tg_rpg_hero'); localStorage.removeItem('tg_rpg_custom_items');
-        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); }
+        if (window.tg && tg.CloudStorage) { tg.CloudStorage.removeItem('tg_rpg_hero'); tg.CloudStorage.removeItem('tg_rpg_custom_items'); }
         alert("Критическая ошибка сейва. Кэш сброшен, игра перезапускается."); location.reload();
     }
 }
 
 async function loadGame() {
-    try { let localHero = localStorage.getItem('tg_rpg_hero'); let localItems = localStorage.getItem('tg_rpg_custom_items'); applyLoadedSave(localHero, localItems); } catch(e) {}
-    if (window.tg && tg.CloudStorage) { tg.CloudStorage.getItem('tg_rpg_hero', function(err, cloudHero) { if (!err && cloudHero) { tg.CloudStorage.getItem('tg_rpg_custom_items', function(err2, cloudItems) { if (!err2) applyLoadedSave(cloudHero, cloudItems); }); } }); }
-    try { let res = await fetch(`/api/load/${getUserId()}`); if (res.ok) { let data = await res.json(); if (data.status === "ok" && data.hero_data) applyLoadedSave(data.hero_data, localStorage.getItem('tg_rpg_custom_items')); } } catch(e) {}
+    let loadedFromCloud = false;
+    
+    // ПРИОРИТЕТ 1: Загрузка из облака Telegram
+    if (window.tg && tg.CloudStorage) {
+        try {
+            let cloudValues = await new Promise((resolve) => {
+                tg.CloudStorage.getItems(['tg_rpg_hero', 'tg_rpg_custom_items'], (err, values) => {
+                    if (!err && values) resolve(values); else resolve(null);
+                });
+            });
+            
+            if (cloudValues && cloudValues['tg_rpg_hero']) {
+                applyLoadedSave(cloudValues['tg_rpg_hero'], cloudValues['tg_rpg_custom_items']);
+                loadedFromCloud = true;
+            }
+        } catch(e) { console.error("Ошибка при чтении из CloudStorage:", e); }
+    }
+    
+    // ПРИОРИТЕТ 2: Если облако пустое (первый запуск) или недоступно - читаем localStorage
+    if (!loadedFromCloud) {
+        try { 
+            let localHero = localStorage.getItem('tg_rpg_hero'); 
+            let localItems = localStorage.getItem('tg_rpg_custom_items'); 
+            if (localHero) applyLoadedSave(localHero, localItems); 
+        } catch(e) {}
+    }
+    
     playBGM('menu');
 }
 
@@ -500,14 +538,34 @@ async function startPvP() {
     hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
     if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте вещи (Максимум 15), чтобы начать бой."); }
     if (hero.hp <= 0 && !GOD_MODE) return alert("Герой мертв!"); playSFX('click');
+    
+    // Блокируем кнопку, пока ищем противника
+    let pvpBtn = document.querySelector("#screen-arena button");
+    if (pvpBtn) { pvpBtn.innerText = "ПОИСК ПРОТИВНИКА..."; pvpBtn.disabled = true; pvpBtn.style.opacity = "0.7"; }
+
+    let pvpEnemyData = null;
+    try { 
+        let res = await fetch(`/api/pvp_opponent/${hero.level}`); 
+        if(res.ok) { 
+            let data = await res.json(); 
+            if(data.status === "ok" && data.opponent) { pvpEnemyData = data.opponent; } 
+        } 
+    } catch(e) { console.error("Ошибка поиска противника PvP:", e); }
+    
+    if (pvpBtn) { pvpBtn.innerText = "ИСКАТЬ ПРОТИВНИКА ⚔️"; pvpBtn.disabled = false; pvpBtn.style.opacity = "1"; }
+
+    if (!pvpEnemyData) {
+        alert("Не удалось найти реального противника на сервере. Сервер недоступен или нет игроков подходящего уровня.");
+        return; 
+    }
+
     if (combatMode === 'pve') { savedPveEnemy = JSON.parse(JSON.stringify(enemy)); savedPveState = JSON.parse(JSON.stringify(combatState)); }
     combatMode = 'pvp'; document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-PVE').classList.add('active'); currentScreen = 'PVE';
     playBGM('boss');
-    let bot = MOCK_PLAYERS[Math.floor(Math.random() * MOCK_PLAYERS.length)]; let pvpEnemyData = null;
-    try { let res = await fetch(`/api/pvp_opponent/${hero.level}`); if(res.ok) { let data = await res.json(); if(data.status === "ok") { pvpEnemyData = data.opponent; } } } catch(e) {}
-    if (pvpEnemyData) { enemy = { name: pvpEnemyData.name, floor: pvpEnemyData.level, imgUrl: STATIC_URL + (pvpEnemyData.cls + ".png"), bgUrl: STATIC_URL + "begraund/throne.png", isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true, hp: Math.floor(hero.combatStats.hp * 0.9), maxHp: Math.floor(hero.combatStats.hp * 0.9), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }, ratingReward: 25 + Math.floor(Math.random()*10) }; } 
-    else { enemy = { name: bot.name, floor: hero.level, imgUrl: STATIC_URL + bot.img, bgUrl: STATIC_URL + "begraund/throne.png", isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true, hp: Math.floor(hero.combatStats.hp * 0.9), maxHp: Math.floor(hero.combatStats.hp * 0.9), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }, ratingReward: 25 + Math.floor(Math.random()*10) }; }
+    
+    enemy = { name: pvpEnemyData.name, floor: pvpEnemyData.level, imgUrl: STATIC_URL + (pvpEnemyData.cls + ".png"), bgUrl: STATIC_URL + "begraund/throne.png", isBoss: false, isMiniBoss: false, isRaid: false, isPlayer: true, hp: Math.floor(hero.combatStats.hp * 0.9), maxHp: Math.floor(hero.combatStats.hp * 0.9), nextAtkZone: ["head", "chest", "legs"][Math.floor(Math.random()*3)], turnCounter: 0, stats: { atk: Math.floor(hero.combatStats.damage * 0.8), armor: Math.floor(hero.combatStats.armor * 0.8), critChance: 10, dodge: 5, armorPen: Math.floor(hero.level) }, ratingReward: 25 + Math.floor(Math.random()*10) };
     combatState = { atkZone: null, defZone: null, enemyNextAtkZone: null, skillCooldown: 0, enemyStunned: false, combo: 0, zoneHealth: { head: 3, chest: 3, legs: 3 }, shadowCritReady: false, bloodiedUndying: false, bloodiedLifesteal: false, poisonStacks: 0, enemyTurns: 0, undyingUsed: false, potionUsed: false, scrollUsed: false };
+    
     calculateStats(true); document.getElementById("enemy-rage-bg").style.display = "none"; document.getElementById("combat-log").innerHTML = ``; planEnemyTurn(); updateUI();
 }
 
