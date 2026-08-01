@@ -32,7 +32,7 @@ if (window.Telegram && window.Telegram.WebApp) {
 
 const getUserId = () => (window.tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? String(tg.initDataUnsafe.user.id) : "local_test_user";
 
-// === FIREBASE БЭКЕНД ===
+// === FIREBASE БЭКЕНД (ДЛЯ СОХРАНЕНИЙ И РЕЙТИНГОВ) ===
 const FIREBASE_URL = "https://arenarpg-default-rtdb.europe-west1.firebasedatabase.app/";
 
 let cachedPlayersList = [];
@@ -111,7 +111,7 @@ window.toggleMute = function() {
     updateUI(); 
 };
 
-// === ОСТАЛЬНАЯ ЛОГИКА ===
+// === ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ===
 const VFX_DB = { attack_hero: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", attack_enemy: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", knight_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", berserk_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", shadow_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json", ranger_skill: "https://lottie.host/8c1c5b8b-e8d1-4e42-88f2-89518dbdc035/3gB5H5E7b4.json" };
 function playLottieEffect(targetId, animationUrl, extraClass = "") { let targetNode = document.getElementById(targetId); if (!targetNode) return; let fxContainer = document.createElement('div'); fxContainer.className = 'lottie-fx-layer ' + extraClass; targetNode.appendChild(fxContainer); let anim = lottie.loadAnimation({ container: fxContainer, renderer: 'svg', loop: false, autoplay: true, path: animationUrl }); anim.addEventListener('complete', () => { fxContainer.remove(); anim.destroy(); }); }
 function shakeScreen() { let app = document.getElementById("app-container"); if(app) { app.classList.remove("shake-hard"); void app.offsetWidth; app.classList.add("shake-hard"); setTimeout(() => app.classList.remove("shake-hard"), 350); } }
@@ -470,6 +470,7 @@ function startRaid(bossId) {
     calculateStats(true); document.getElementById("enemy-rage-bg").style.display = "block"; document.getElementById("combat-log").innerHTML = ``; planEnemyTurn(); document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-PVE').classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('nav-PVE').classList.add('active'); currentScreen = 'PVE'; updateUI();
 }
 
+// === ПОИСК PVP ПРОТИВНИКА (FIREBASE) ===
 async function startPvP() {
     hero.inventory = hero.inventory.filter(id => ITEMS_DB[id]);
     if (hero.inventory.length > 15) { if (currentScreen !== 'hero') openScreen('hero'); return alert("⚠️ Сумка переполнена! Продайте или наденьте вещи (Максимум 15), чтобы начать бой."); }
@@ -771,11 +772,12 @@ function openScreen(screenName) {
     if (window.tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); playSFX('click');
     if (screenName !== 'PVE') playBGM('menu');
 
+    // === ЗАГРУЗКА РЕЙТИНГОВ ИЗ FIREBASE ===
     if(screenName === 'rating') {
         let globalTop = document.getElementById("ui-global-top"); let pedestal = document.getElementById("ui-rating-pedestal");
         if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Загрузка Зала Славы...</div>`; if(pedestal) pedestal.innerHTML = ``;
-        fetch('/api/leaderboard').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
-            if(data && data.status === 'ok' && data.leaderboard) { cachedPlayersList = data.leaderboard; if (cachedPlayersList.length > 0) { renderRatingScreen(); } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`; } } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`; }
+        fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+            if(data && typeof data === 'object' && !data.error) { cachedPlayersList = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (cachedPlayersList.length > 0) { renderRatingScreen(); } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст. Станьте первым!</div>`; } } else { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">Зал Славы пуст.</div>`; }
         }).catch(e => { if(globalTop) globalTop.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Ошибка: ${e.message}</div>`; });
     }
 
@@ -783,8 +785,8 @@ function openScreen(screenName) {
         let elBoard = document.getElementById("ui-pvp-leaderboard"); let elRating = document.getElementById("ui-pvp-rating"); if(elRating) elRating.innerText = hero.rating;
         if(elBoard) {
             elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
-            fetch('/api/leaderboard').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
-                if(data && data.status === 'ok' && data.leaderboard) { let players = data.leaderboard; if (players.length > 0) { players.sort((a,b) => (b.rating||0) - (a.rating||0)); let top3 = players.slice(0, 3); let html = buildLeaderboardHTML(top3); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`; } } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`; }
+            fetch(FIREBASE_URL + 'players.json').then(async r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(data => {
+                if(data && typeof data === 'object' && !data.error) { let players = Object.values(data).filter(p => p && typeof p === 'object' && p.name); if (players.length > 0) { players.sort((a,b) => (b.rating||0) - (a.rating||0)); let top3 = players.slice(0, 3); let html = buildLeaderboardHTML(top3); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Никто еще не бросал вызов Арене.</div>`; } } else { elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">Нет данных арены.</div>`; }
             }).catch(e => { elBoard.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Ошибка: ${e.message}</div>`; });
         }
     }
@@ -794,7 +796,7 @@ function openScreen(screenName) {
     updateUI();
 }
 
-// === ПОКУПКА АЛМАЗОВ (TELEGRAM STARS) ===
+// === ПОКУПКА АЛМАЗОВ (TELEGRAM STARS ЧЕРЕЗ PYTHON БЭКЕНД) ===
 async function buyGemsWithStars(gemsAmount, starsPrice, btn) {
     playSFX('click');
     if (!window.tg || !tg.openInvoice) {
