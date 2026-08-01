@@ -975,11 +975,55 @@ function openScreen(screenName) {
     
     if (screenName !== 'PVE') playBGM('menu');
 
-    if(screenName === 'rating') { let tc = document.getElementById("ui-global-top"); if(tc) tc.innerHTML = `<div style="text-align:center; color:#71717a; padding:20px;">⏳ Обновление данных...</div>`; let scr = document.getElementById("screen-rating"); if(scr) scr.innerHTML = ''; }
-    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active')); document.getElementById('screen-' + screenName).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); if(document.getElementById('nav-' + screenName)) document.getElementById('nav-' + screenName).classList.add('active');
-    currentScreen = screenName; let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
-    if(screenName === 'classes') previewClassId = hero.baseClass; if(screenName === 'PVE' && (!enemy || enemy.isRaid || enemy.isPlayer)) initCombat(); if(screenName === 'blacksmith') forgeSelectedIndex = null; updateUI();
+    // ЗАГРУЗКА РЕЙТИНГА И АРЕНЫ ТОЛЬКО ПРИ ОТКРЫТИИ (БЕЗ СПАМА КАЖДУЮ СЕКУНДУ)
+    if(screenName === 'rating') {
+        let scr = document.getElementById("screen-rating");
+        if(scr) scr.innerHTML = ` <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div> <div style="background: rgba(18,18,20,0.85); border: 1px solid #38bdf8; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);"> <div style="font-size: 36px; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6);">💎</div> <div style="flex: 1; min-width: 0;"> <div style="font-size: 11px; color: #a1a1aa; font-weight: bold; text-transform: uppercase;">Ваш рейтинг</div> <div style="font-size: 18px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${hero.name}</div> </div> <div style="text-align: right; flex-shrink: 0;"> <div style="font-size: 10px; color: #a1a1aa;">Кубки</div> <div style="font-size: 18px; font-weight: 900; color: #fbbf24;">🏆 ${hero.rating}</div> </div> </div> <div class="stat-group-title">ТОП-10 ИГРОКОВ (СЕРВЕР)</div> <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;"> <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div> </div> `;
+
+        fetch('/api/leaderboard').then(r => r.json()).then(data => {
+            let tc = document.getElementById("ui-global-top");
+            if(tc && data.status === "ok") {
+                let html = buildLeaderboardHTML(data.leaderboard);
+                html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;"> <div class="pvp-rank">#</div> <img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"> <div class="pvp-info"> <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div> <div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div> </div> <div class="pvp-rating">🏆 ${hero.rating}</div> </div>`;
+                tc.innerHTML = html;
+            }
+        }).catch(e => {
+            let tc = document.getElementById("ui-global-top");
+            if(tc) tc.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Сервер недоступен (Оффлайн режим)</div>`;
+        });
+    }
+
+    if(screenName === 'arena') {
+        let elBoard = document.getElementById("ui-pvp-leaderboard");
+        if(elBoard) {
+            elBoard.innerHTML = `<div style="text-align:center; color:#71717a; padding:10px;">⏳ Загрузка топ-3...</div>`;
+            fetch('/api/leaderboard').then(r => r.json()).then(data => {
+                let elBoard2 = document.getElementById("ui-pvp-leaderboard");
+                if(elBoard2 && data.status === "ok") {
+                    let top3 = data.leaderboard.slice(0, 3);
+                    let html = buildLeaderboardHTML(top3);
+                    html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `;
+                    elBoard2.innerHTML = html;
+                }
+            }).catch(e => {
+                let elBoard2 = document.getElementById("ui-pvp-leaderboard");
+                if(elBoard2) elBoard2.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">❌ Сервер недоступен (Оффлайн режим)</div>`;
+            });
+        }
+    }
+
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen-' + screenName).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    if(document.getElementById('nav-' + screenName)) document.getElementById('nav-' + screenName).classList.add('active');
+
+    currentScreen = screenName;
+    let wrapper = document.querySelector('.app-screens-wrapper'); if(wrapper) wrapper.scrollTop = 0;
+    if(screenName === 'classes') previewClassId = hero.baseClass;
+    if(screenName === 'PVE' && (!enemy || enemy.isRaid || enemy.isPlayer)) initCombat();
+    if(screenName === 'blacksmith') forgeSelectedIndex = null;
+
+    updateUI();
 }
 
 function setShopMode(mode) { playSFX('click'); shopMode = mode; updateUI(); }
@@ -1217,9 +1261,10 @@ function updateUI() {
     let floorNavHtml = `<button class="floor-nav-btn" onclick="changeFloor(-1)" ${hero.floor <= 1 || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>◀</button><span id="pve-floor-display" style="font-size: 13px;">ЭТАЖ ${hero.floor}</span><button class="floor-nav-btn" onclick="changeFloor(1)" ${hero.floor >= hero.maxFloor || combatMode === 'raid' || combatMode === 'pvp' ? 'disabled' : ''}>▶</button>`;
     document.getElementById("ui-top-floor").innerText = hero.floor; document.getElementById("ui-top-exp").innerText = `${hero.exp}/${hero.expNext}`; document.getElementById("ui-exp-bar").style.width = `${(hero.exp / hero.expNext) * 100}%`;
 
-    if (currentScreen === 'rating') { let topContainer = document.getElementById("ui-global-top"); if (!topContainer) { let scr = document.getElementById("screen-rating"); if(scr) scr.innerHTML = ` <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div> <div style="background: rgba(18,18,20,0.85); border: 1px solid #38bdf8; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);"> <div style="font-size: 36px; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6);">💎</div> <div style="flex: 1; min-width: 0;"> <div style="font-size: 11px; color: #a1a1aa; font-weight: bold; text-transform: uppercase;">Ваш рейтинг</div> <div style="font-size: 18px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${hero.name}</div> </div> <div style="text-align: right; flex-shrink: 0;"> <div style="font-size: 10px; color: #a1a1aa;">Кубки</div> <div style="font-size: 18px; font-weight: 900; color: #fbbf24;">🏆 ${hero.rating}</div> </div> </div> <div class="stat-group-title">ТОП-10 ИГРОКОВ (СЕРВЕР)</div> <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;"> <div style="text-align:center; color:#71717a; padding:20px;">⏳ Подключение к серверу...</div> </div> `; fetch('/api/leaderboard').then(r => r.json()).then(data => { let tc = document.getElementById("ui-global-top"); if(tc && data.status === "ok") { let html = buildLeaderboardHTML(data.leaderboard); html += ` <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed; border-color: #38bdf8;"> <div class="pvp-rank">#</div> <img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"> <div class="pvp-info"> <div class="pvp-name" style="color: #38bdf8;">${hero.name} (Вы)</div> <div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div> </div> <div class="pvp-rating">🏆 ${hero.rating}</div> </div>`; tc.innerHTML = html; } }).catch(e => { let tc = document.getElementById("ui-global-top"); if(tc) tc.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">❌ Сервер недоступен (Оффлайн режим)</div>`; }); } }
-
-    if (currentScreen === 'arena') { let elRating = document.getElementById("ui-pvp-rating"); if(elRating) elRating.innerText = hero.rating; let elBoard = document.getElementById("ui-pvp-leaderboard"); if(elBoard) { let html = ` <div class="pvp-player-card top-1"><div class="pvp-rank">1</div><img src="${STATIC_URL}berserk.png" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">Nagibator99</div><div class="pvp-stats">Берсерк • Ур. 84</div></div><div class="pvp-rating">🏆 4520</div></div> <div class="pvp-player-card top-2"><div class="pvp-rank">2</div><img src="${STATIC_URL}shadow.png" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">JohnWick</div><div class="pvp-stats">Тень • Ур. 79</div></div><div class="pvp-rating">🏆 3810</div></div> <div class="pvp-player-card top-3"><div class="pvp-rank">3</div><img src="${STATIC_URL}knight.png" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">Paladinus</div><div class="pvp-stats">Рыцарь • Ур. 75</div></div><div class="pvp-rating">🏆 3100</div></div> <div class="pvp-player-card" style="margin-top: 10px; border-style: dashed;"><div class="pvp-rank">#</div><img src="${CLASS_AVATARS[hero.baseClass]}" class="pvp-avatar"><div class="pvp-info"><div class="pvp-name">${hero.name} (Вы)</div><div class="pvp-stats">${CLASSES[hero.baseClass].name} • Ур. ${hero.level}</div></div><div class="pvp-rating">🏆 ${hero.rating}</div></div> `; elBoard.innerHTML = html; } }
+    if (currentScreen === 'arena') {
+        let elRating = document.getElementById("ui-pvp-rating");
+        if(elRating) elRating.innerText = hero.rating;
+    }
 
     if (currentScreen === 'quests') { checkDailyQuests(); let html = ''; for (let qId in DAILY_QUESTS) { let def = DAILY_QUESTS[qId]; let q = hero.quests[qId] || { progress: 0, claimed: false }; let pct = Math.min(100, (q.progress / def.target) * 100); let btnHtml = ''; if (q.claimed) { btnHtml = `<div class="quest-btn claimed">ВЫПОЛНЕНО</div>`; } else if (q.progress >= def.target) { btnHtml = `<div class="quest-btn ready" onclick="claimQuest('${qId}')">ЗАБРАТЬ НАГРАДУ</div>`; } else { btnHtml = `<div class="quest-btn">${Math.floor(q.progress)} / ${def.target}</div>`; } html += `<div class="quest-card"><div class="quest-header"><span>${def.name}</span><span class="quest-reward">+${def.rewardGems} 💎</span></div><div class="quest-desc">${def.desc}</div><div class="quest-progress-wrap"><div class="quest-progress-fill" style="width: ${pct}%"></div></div>${btnHtml}</div>`; } let qList = document.getElementById("ui-quests-list"); if(qList) qList.innerHTML = html; }
 
