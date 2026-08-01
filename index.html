@@ -95,9 +95,7 @@
                         <div class="combat-vs" id="combat-vs-text">VS</div>
                         
                         <!-- Банки вынесены отдельно для позиционирования ВНИЗУ -->
-                        <div class="center-consumables" id="center-consumables-box">
-                            <!-- Сюда JS вставит 1 банку и 1 свиток -->
-                        </div>
+                        <div class="center-consumables" id="center-consumables-box"></div>
 
                         <div id="combo-display" class="combo-meter"></div>
                         <div id="clash-spark-fx" class="clash-spark"></div>
@@ -122,9 +120,7 @@
                         </div>
                     </div>
                     
-                    <!-- Лог возвращен на место -->
                     <div class="combat-log-box" id="combat-log"></div>
-
                 </div>
 
                 <div class="combat-dashboard">
@@ -202,11 +198,13 @@
 
             <div id="screen-shop" class="app-screen">
                 <div class="combat-header boss" style="margin-bottom: 15px; color:#10b981;">ЛАВКА ТОРГОВЦА</div>
+                <!-- ОБНОВЛЕННЫЕ ВКЛАДКИ МАГАЗИНА -->
                 <div class="shop-controls">
-                    <div class="shop-tab active" onclick="setShopMode('buy'); this.classList.add('active'); this.nextElementSibling.classList.remove('active-sell');">КУПИТЬ</div>
-                    <div class="shop-tab" onclick="setShopMode('sell'); this.classList.add('active-sell'); this.previousElementSibling.classList.remove('active');">ПРОДАТЬ</div>
+                    <div class="shop-tab active" id="tab-shop-buy" onclick="setShopMode('buy')">КУПИТЬ</div>
+                    <div class="shop-tab" id="tab-shop-sell" onclick="setShopMode('sell')">ПРОДАТЬ</div>
+                    <div class="shop-tab" id="tab-shop-premium" onclick="setShopMode('premium')" style="color:#fbbf24; border-color:#f59e0b;">АЛМАЗЫ 💎</div>
                 </div>
-                <div class="shop-filters">
+                <div class="shop-filters" id="shop-filters-row">
                     <select id="filter-class" class="shop-select" onchange="updateUI()">
                         <option value="all">Все классы</option>
                         <option value="my_class">Для моего класса</option>
@@ -226,7 +224,6 @@
                 <div id="ui-quests-list" style="display: flex; flex-direction: column;"></div>
             </div>
 
-            <!-- ОБНОВЛЕННЫЙ ЗАЛ СЛАВЫ -->
             <div id="screen-rating" class="app-screen">
                 <div class="combat-header boss" style="margin-bottom: 15px; color: #38bdf8;">ЗАЛ СЛАВЫ</div>
                 
@@ -236,9 +233,7 @@
                     <div class="rating-tab" id="tab-rating-wealth" onclick="switchRatingTab('wealth')">💰 Магнаты</div>
                 </div>
 
-                <div class="pedestal-container" id="ui-rating-pedestal">
-                    <!-- Заполняется JS -->
-                </div>
+                <div class="pedestal-container" id="ui-rating-pedestal"></div>
 
                 <div class="stat-group-title" id="ui-rating-list-title">ОСТАЛЬНЫЕ ПРЕТЕНДЕНТЫ</div>
                 <div id="ui-global-top" style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px;">
@@ -293,7 +288,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ПРОФИЛЯ ИГРОКА (ДЛЯ ЗАЛА СЛАВЫ) -->
     <div class="modal-overlay" id="player-profile-modal">
         <div class="player-profile-modal">
             <img src="" class="profile-avatar" id="pp-avatar">
@@ -323,6 +317,6 @@
         </div>
     </div>
 
-    <script src="static/game.js?v=1087800"></script>
+    <script src="static/game.js?v=1087802"></script>
 </body>
 </html>
