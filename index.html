@@ -6,7 +6,7 @@
     <title>Arena RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-    <link rel="stylesheet" href="static/style.css?v=35">
+    <link rel="stylesheet" href="static/style.css?v=36">
 </head>
 <body>
     <div class="blood-overlay" id="blood-screen"></div>
@@ -95,7 +95,9 @@
                         <div class="combat-vs" id="combat-vs-text">VS</div>
                         
                         <!-- Банки вынесены отдельно для позиционирования ВНИЗУ -->
-                        <div class="center-consumables" id="center-consumables-box"></div>
+                        <div class="center-consumables" id="center-consumables-box">
+                            <!-- Сюда JS вставит 1 банку и 1 свиток -->
+                        </div>
 
                         <div id="combo-display" class="combo-meter"></div>
                         <div id="clash-spark-fx" class="clash-spark"></div>
@@ -120,7 +122,9 @@
                         </div>
                     </div>
                     
+                    <!-- Лог возвращен на место -->
                     <div class="combat-log-box" id="combat-log"></div>
+
                 </div>
 
                 <div class="combat-dashboard">
@@ -198,19 +202,25 @@
 
             <div id="screen-shop" class="app-screen">
                 <div class="combat-header boss" style="margin-bottom: 15px; color:#10b981;">ЛАВКА ТОРГОВЦА</div>
-                <!-- ОБНОВЛЕННЫЕ ВКЛАДКИ МАГАЗИНА -->
+                
+                <!-- ОБНОВЛЕННЫЕ ВКЛАДКИ МАГАЗИНА С ПРЕМИУМОМ -->
                 <div class="shop-controls">
-                    <div class="shop-tab active" id="tab-shop-buy" onclick="setShopMode('buy')">КУПИТЬ</div>
-                    <div class="shop-tab" id="tab-shop-sell" onclick="setShopMode('sell')">ПРОДАТЬ</div>
-                    <div class="shop-tab" id="tab-shop-premium" onclick="setShopMode('premium')" style="color:#fbbf24; border-color:#f59e0b;">АЛМАЗЫ 💎</div>
+                    <div class="shop-tab active" id="tab-buy" onclick="setShopMode('buy')">КУПИТЬ</div>
+                    <div class="shop-tab" id="tab-sell" onclick="setShopMode('sell')">ПРОДАТЬ</div>
+                    <div class="shop-tab" id="tab-premium" onclick="setShopMode('premium')">АЛМАЗЫ 💎</div>
                 </div>
-                <div class="shop-filters" id="shop-filters-row">
+
+                <div class="shop-filters" id="shop-filters-box">
                     <select id="filter-class" class="shop-select" onchange="updateUI()">
                         <option value="all">Все классы</option>
                         <option value="my_class">Для моего класса</option>
                     </select>
                 </div>
+                
                 <div class="shop-list" id="ui-shop-list"></div>
+                
+                <!-- КОНТЕЙНЕР ДЛЯ ПОКУПКИ ЗА ЗВЕЗДЫ -->
+                <div class="premium-container" id="ui-premium-list" style="display: none;"></div>
             </div>
 
             <div id="screen-classes" class="app-screen">
@@ -317,6 +327,6 @@
         </div>
     </div>
 
-    <script src="static/game.js?v=1087802"></script>
+    <script src="static/game.js?v=2001"></script>
 </body>
 </html>
