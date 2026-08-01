@@ -5,12 +5,15 @@ import threading
 import sqlite3
 import telebot
 import urllib.request
-from flask import Flask, jsonify, request, render_template
+# Заменили render_template на send_file
+from flask import Flask, jsonify, request, send_file
 from telebot.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 TOKEN = "8630345177:AAGAWF_NoazomK6XJmjRKY3fkF_Ue_R9YuM"
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__, template_folder="templates")
+
+# Убрали привязку к папке templates
+app = Flask(__name__)
 
 # --- ПОДГОТОВКА БАЗЫ ДАННЫХ (SQLite) ---
 DB_FILE = "database.db"
@@ -37,7 +40,8 @@ init_db()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Теперь сервер берет свежий index.html прямо из корня проекта!
+    return send_file("index.html")
 
 @app.route("/api/save", methods=["POST"])
 def save_player():
@@ -161,8 +165,8 @@ def create_invoice():
 
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
-    # Обновленная правильная ссылка с версией для сброса кэша
-    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=26"
+    # Обновленная ссылка с новой версией (v=27) для принудительного сброса кэша
+    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=27"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
