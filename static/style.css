@@ -488,12 +488,13 @@ html, body {
 .modal-btn.danger { background: #ef4444; color: #fff; box-shadow: 0 4px 10px rgba(239,68,68,0.3);}
 .modal-btn.secondary { background: #27272a; color: #a1a1aa; box-shadow: none;}
 
-/* === ЛАВКА (МАГАЗИН) === */
+/* === ЛАВКА (МАГАЗИН И ПРЕМИУМ) === */
 .shop-item-icon { width: 52px; height: 52px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: radial-gradient(circle, #27272a 0%, #09090b 80%); border: 1px solid #27272a; position: relative; overflow: hidden; }
 .shop-controls { display: flex; gap: 10px; margin-bottom: 12px; }
 .shop-tab { flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; background: #18181b; border: 1px solid #27272a; border-radius: 6px; font-weight: bold; color: #71717a; cursor: pointer; text-transform: uppercase;}
 .shop-tab.active { background: #1e293b; color: #60a5fa; border-color: #3b82f6; }
 .shop-tab.active-sell { background: #450a0a; color: #f87171; border-color: #dc2626; }
+.shop-tab.active-premium { background: #1e1b4b; color: #34d399; border-color: #10b981; }
 .shop-filters { display: flex; gap: 8px; margin-bottom: 16px; }
 .shop-select { flex: 1; background: #121214; color: #a1a1aa; border: 1px solid #27272a; border-radius: 6px; padding: 0 12px; height: 44px; font-size: 12px; outline: none; appearance: none;}
 .shop-list { display: flex; flex-direction: column; gap: 12px; }
@@ -501,14 +502,22 @@ html, body {
 .shop-item-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; z-index: 2;}
 .shop-item-name { font-weight: bold; font-size: 14px; color: #e4e4e7; display:flex; justify-content:space-between; }
 .shop-item-lvl { font-size: 10px; color: #fbbf24; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; border: 1px solid #3f3f46; }
-.shop-class-tag { font-size: 9px; padding: 3px 6px; border-radius: 4px; display: inline-block; font-weight: bold; text-transform: uppercase;}
-.tag-uni { background: #18181b; color: #a1a1aa; border: 1px solid #3f3f46; }
-.tag-class { background: #022c22; color: #10b981; border: 1px solid #065f46; }
 
 .shop-btn { background: #18181b; color: #e4e4e7; border: 1px solid #3f3f46; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; height: 40px; padding: 0 10px; min-width: 60px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
 .shop-btn.btn-buy { background: linear-gradient(180deg, #064e3b 0%, #022c22 100%); border-color: #10b981; color: #fff; }
 .shop-btn.btn-sell { background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%); border-color: #ef4444; color: #fff; }
 .shop-btn:disabled { background: #27272a; border-color: #3f3f46; color: #52525b; box-shadow: none; cursor: not-allowed; }
+
+/* === ПРЕМИУМ МАГАЗИН (АЛМАЗЫ) === */
+.premium-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.gem-card { background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
+.gem-info { display: flex; align-items: center; gap: 10px; }
+.gem-icon { font-size: 32px; filter: drop-shadow(0 0 10px rgba(96,165,250,0.8)); }
+.gem-amount { font-size: 18px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px #000; display: flex; flex-direction: column; line-height: 1.1; }
+.gem-bonus { font-size: 10px; color: #60a5fa; font-weight: bold; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; }
+.btn-stars { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); color: #fff; border: 1px solid #7dd3fc; border-radius: 8px; padding: 8px 16px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(2,132,199,0.5); display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 90px; }
+.btn-stars:active { transform: scale(0.95); }
+.star-icon { color: #fbbf24; font-size: 16px; filter: drop-shadow(0 0 5px rgba(251,191,36,0.8)); }
 
 /* === ВЫБОР КЛАССОВ === */
 .classes-gallery { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
