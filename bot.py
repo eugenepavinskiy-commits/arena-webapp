@@ -159,7 +159,8 @@ def create_invoice():
 # --- ЛОГИКА БОТА (TELEGRAM) ---
 @bot.message_handler(commands=["start"])
 def send_welcome(message):
-    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=28"
+    # Обновлен кэш на v=29
+    webapp_url = "https://arena-webapp-production-63ef.up.railway.app/?v=29"
     
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("⚔️ Играть в Арену", web_app=WebAppInfo(url=webapp_url)))
